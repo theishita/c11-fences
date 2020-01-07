@@ -20,11 +20,11 @@ parser.add_argument("--file", "-f", type=str, required=True)
 
 args = parser.parse_args()
 
-# copy = 'cp '+args.file+' $HOME/code/model-checker/test'
-# make = 'cd $HOME/code/model-checker && make'
+copy = 'cp '+args.file+' $HOME/code/model-checker/test'
+make = 'cd $HOME/code/model-checker && make'
 
-# os.system(copy)													# copy input file to cds checker directory
-# os.system(make)													# make/compile into object file
+os.system(copy)													# copy input file to cds checker directory
+os.system(make)													# make/compile into object file
 
 input_file = args.file[:-2]+'o'
 cds = './run.sh '+input_file										# run cds checker

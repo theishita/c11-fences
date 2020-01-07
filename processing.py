@@ -35,8 +35,8 @@ class Processing:
             self.fence(trace)
 
         # print(self.events_order)
-        # print(self.sw_edges)
-        print(self.sb_edges)
+        print("sw:",self.sw_edges)
+        print("sb:",self.sb_edges)
         
     def fence(self,trace):
 
@@ -44,18 +44,18 @@ class Processing:
         threads = 0
         for a in trace:
             threads = max(threads,int(a[1]))
-        
-        print("Number of threads (including main thread) =",threads)
 
+            
+        # print("trace n")
 
-        fences = 1
-        print("trace n")
-
-        exec = ['F1']
+        exec = []
 
         for j in range(2,threads+1):
+            fences=0
             for i in range(len(trace)):
                 if int(trace[i][1])==j:
+                    fences+=1
+                    exec.append(str(j)+str(fences))
                     event = {'no': trace[i][0],                         # trace[i][0] is the event number
                             'thread': j
                     }
@@ -65,8 +65,8 @@ class Processing:
                     elif trace[i][3]=='write':
                         event["type"] = "write"
                     exec.append(event)
-                    fences+=1
-                    exec.append('F'+str(fences))
+            fences+=1
+            exec.append(str(j)+str(fences))
         
         self.events_order.append(exec)
         self.sw(exec)
@@ -101,7 +101,7 @@ class Processing:
                 if 'thread' in trace[j] and trace[j]['thread']==i:
                     if trace[j-1] not in sb:
                         sb.append(trace[j-1])
-                    if i==threads:
+                    if trace[j+1] not in sb:
                         sb.append(trace[j+1])
   
             edges.append(tuple(sb))
