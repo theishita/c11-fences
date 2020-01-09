@@ -4,6 +4,8 @@
 # Sequenced-Befores (sb).
 # --------------------------------------------------------
 
+from stitch_z3 import Z3
+
 class Processing:
     def __init__(self,p):
 
@@ -14,8 +16,6 @@ class Processing:
 
         f=0                                                         # flag for finding execution trace
         for line in p.split('\n'):
-
-
             if f==2:
                 if "HASH" in line:                                  # indicates end of one execution trace
                     f=0
@@ -31,7 +31,7 @@ class Processing:
                 trace_list = []
                 f=1
 
-        for trace in self.traces:
+        for trace in self.traces:                                   # run for each trace
             self.fence(trace)
 
         # print(self.events_order)
@@ -55,7 +55,7 @@ class Processing:
             for i in range(len(trace)):
                 if int(trace[i][1])==j:
                     fences+=1
-                    exec.append(str(j)+str(fences))
+                    exec.append('F'+str(j)+str(fences))
                     event = {'no': trace[i][0],                         # trace[i][0] is the event number
                             'thread': j
                     }
@@ -66,7 +66,7 @@ class Processing:
                         event["type"] = "write"
                     exec.append(event)
             fences+=1
-            exec.append(str(j)+str(fences))
+            exec.append('F'+str(j)+str(fences))
         
         self.events_order.append(exec)
         self.sw(exec)
