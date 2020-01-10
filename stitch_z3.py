@@ -9,17 +9,26 @@ class Z3:
 		file = open("c11","w")
 		contents = ""
 		
-		# declare function for sb's
-		contents+=self.function("sb",["Bool","Bool"],"Bool")
 
-		# declare function for sw's
-		contents+=self.function("sw",["Bool","Bool"],"Bool")
 		
+		n = 0
+		# counting the number of constants 
+		for thread in sb:
+			for edge in thread:
+				n+=1
+		const_dtype = "(_ BitVec "+str(n)+")"								# the fences datatypes are (BitVector n) where n is the size
+
 		# creating the constants 
 		for thread in sb:
 			for edge in thread:
-				contents+= self.constant(edge,"Bool")
+				contents+= self.constant(edge,const_dtype)
 
+		# declare function for sb's
+		contents+=self.function("sb",[const_dtype,const_dtype],"Bool")
+
+		# declare function for sw's
+		contents+=self.function("sw",[const_dtype,const_dtype],"Bool")
+		
 		# make the sb assertions
 		for thread in sb:
 			for i in range(len(thread)):
