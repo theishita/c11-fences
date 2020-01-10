@@ -73,23 +73,18 @@ class Processing:
         self.sb(exec,threads)
 
     def sw(self,trace):
-
+        sw = []                                                         # list of sw edges in this execution
         for i in range(len(trace)):
-
-            if 'rf' in trace[i]:
-                sw = []                                                  # list of sw edges in this execution
-                flag = 0                                                 # flag to add only the required edges
+            if 'rf' in trace[i]:                                        # if the event is a write
                 rf = trace[i]['rf']
                 f1 = trace[i+1]
 
                 for j in range(len(trace)):
                     if 'no' in trace[j] and trace[j]['no']==rf:
-                        flag = 1
                         f2 = trace[j-1]
                         sw.append((f2,f1))
-
-                if flag == 1:
-                    self.sw_edges.append(sw)
+        
+        self.sw_edges.append(sw)
 
     def sb(self, trace, threads):
 
