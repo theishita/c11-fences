@@ -8,10 +8,8 @@ class Z3:
 	def __init__(self,sb,sw):
 		file = open("c11","w")
 		contents = ""
-		
-
-		
-		n = 0
+				
+		n = 0																# n = number of total fences
 		# counting the number of constants 
 		for thread in sb:
 			for edge in thread:

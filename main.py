@@ -28,7 +28,10 @@ make = 'cd $HOME/code/model-checker && make'
 os.system(copy)														# copy input file to cds checker directory
 os.system(make)														# make/compile into object file
 
-input_file = args.file[:-2]+'o'
+input_file = args.file.split('/')
+input_file = input_file[-1]
+
+input_file = "test/"+input_file[:-2]+'o'
 cds = './run.sh '+input_file										# run cds checker
 cds = shlex.split(cds)
 
