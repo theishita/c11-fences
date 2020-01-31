@@ -5,14 +5,15 @@
 # --------------------------------------------------------
 
 from stitch_z3 import Z3
+from hb import hb
 
 class Processing:
     def __init__(self,p):
 
         self.traces = []                                            # lists of all execution traces
         self.events_order = []                                      # order of events including fences
-        self.sw_edges = []                                          # list of sw edges
-        self.sb_edges = []                                          # list of sb edges
+        self.sw_edges = []                                          # list of sw edges between fences
+        self.sb_edges = []                                          # list of sb edges between fences
 
         f=0                                                         # flag for finding execution trace
         for line in p.split('\n'):
@@ -33,10 +34,13 @@ class Processing:
 
         for trace in self.traces:                                   # run for each trace
             self.fence(trace)
+            hb(trace)
 
         # print(self.events_order)
-        print("sw:",self.sw_edges)
-        print("sb:",self.sb_edges)
+        # print("sw:",self.sw_edges)
+        # print("sb:",self.sb_edges)
+
+        # Z3(self.sb_edges[0],self.sw_edges[0])
         
     def fence(self,trace):
 
@@ -94,11 +98,10 @@ class Processing:
             sb = []                                                         # list to store sb's of each thread
             for j in range(len(trace)):
                 if 'thread' in trace[j] and trace[j]['thread']==i:
-                    if trace[j-1] not in sb:
-                        sb.append(trace[j-1])
-                    if trace[j+1] not in sb:
-                        sb.append(trace[j+1])
+                    t = (trace[j-1],trace[j+1])
+                    if t not in sb:
+                        sb.append(t)
   
-            edges.append(tuple(sb))
+            edges.append(sb)
 
         self.sb_edges.append(edges)
