@@ -2,38 +2,16 @@
 
 # --------------------------------------------------------
 
-class Graph:
-    def __init__(self, size):
-        self.adjMatrix = []
-        for i in range(size):
-            self.adjMatrix.append([0 for i in range(size)])
-        self.size = size
-    def addEdge(self, v1, v2):
-        if v1 == v2:
-            print("Same vertex %d and %d" % (v1, v2))
-        self.adjMatrix[v1][v2] = 1
-    def removeEdge(self, v1, v2):
-        if self.adjMatrix[v1][v2] == 0:
-            print("No edge between %d and %d" % (v1, v2))
-            return
-        self.adjMatrix[v1][v2] = 0
-    def containsEdge(self, v1, v2):
-        return True if self.adjMatrix[v1][v2] > 0 else False
-    def __len__(self):
-        return self.size
-        
-    def toString(self):
-        for row in self.adjMatrix:
-            print(row)
+from graph import Graph
 
 class hb:
 	
 	def __init__(self,trace):
 
-		self.sb_edges = []							# list of all sb edges between instructions
-		self.sw_edges = []							# list of all sw edges between instructions
-		self.size = 0								# number of instructions in the execution trace
-		self.edge_map = {}							# instruction numbers mapped to graph indices
+		self.sb_edges = []									# list of all sb edges between instructions
+		self.sw_edges = []									# list of all sw edges between instructions
+		self.size = 0										# number of instructions in the execution trace
+		self.edge_map = {}									# instruction numbers mapped to graph indices
 
 		# find out the number of threads in the program
 		threads = 0
@@ -50,6 +28,12 @@ class hb:
 		for i in range(len(self.sb_edges)):
 			v1 = self.edge_map[self.sb_edges[i][0]]
 			v2 = self.edge_map[self.sb_edges[i][1]]
+			mat.addEdge(v1,v2)
+		
+		# loop for basic sw edges
+		for i in range(len(self.sw_edges)):
+			v1 = self.edge_map[self.sw_edges[i][0]]
+			v2 = self.edge_map[self.sw_edges[i][1]]
 			mat.addEdge(v1,v2)
 
 		while flag==0:
@@ -69,9 +53,11 @@ class hb:
 				flag = 1
 			
 		
-		# mat.toString()
+		mat.toString()
 		# self.hb_matrix(self.sb_edges)
 		# print(self.sb_edges,self.edge_map)
+		print(self.sw_edges)
+
 		
 	def sb(self,trace,threads):
 
@@ -97,6 +83,8 @@ class hb:
 
 	def sw(self,trace,threads):
 		instr = []
+		write_models = ["release","seq_cst"]
+		read_models = ["acquire","seq_cst"]
 		for i in trace:
 			if i[3] == "write":
 				inf = {}
@@ -112,4 +100,12 @@ class hb:
 				inf['rf'] = i[7]
 				instr.append(inf)
 		
-		print(instr)
+		for i in instr:
+			if i['type'] == 'read':
+				rf = i['rf']
+				for j in instr:
+					if j['no'] == rf:
+						if j['model'] in write_models and i['model'] in read_models:
+							self.sw_edges.append((j['no'],i['no']))
+		
+		
