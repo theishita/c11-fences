@@ -6,6 +6,8 @@
 
 from stitch_z3 import Z3
 from hb import hb
+from graph import Graph
+from mo import mo
 
 class Processing:
     def __init__(self,p):
@@ -34,12 +36,13 @@ class Processing:
 
         for trace in self.traces:                                   # run for each trace
             self.fence(trace)
-            hb(trace)
+            hb_graph = hb(trace)
+            mat,vertex_map,instr,size = hb_graph.get()
+            mo(mat,vertex_map,instr,size)
 
         # print(self.events_order)
         # print("sw:",self.sw_edges)
         # print("sb:",self.sb_edges)
-
         # Z3(self.sb_edges[0],self.sw_edges[0])
         
     def fence(self,trace):
