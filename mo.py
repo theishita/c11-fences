@@ -19,7 +19,8 @@ class mo:
 		self.rule2()
 		self.rule3()
 		self.rule4()
-
+		self.mo_edges = list(dict.fromkeys(self.mo_edges))
+		print("mo edges=",self.mo_edges)
 
 	def rule1(self):
 		for i in range(self.size):
@@ -73,12 +74,16 @@ class mo:
 					if j['type'] == 'write':
 						b_no = j['no']
 
-						a = self.vertex_map[a_no]
-						b = self.vertex_map[b_no]
+						a_var = i['loc']
+						b_var = j['loc']
 
-						if self.mat.containsEdge(a,b):
-							x = i['rf']
-							self.mo_edges.append((x,b))
+						if a_var == b_var:
+							a = self.vertex_map[a_no]
+							b = self.vertex_map[b_no]
+
+							if self.mat.containsEdge(a,b):
+								x = i['rf']
+								self.mo_edges.append((x,b_no))
 
 	def rule4(self):
 		for i in self.instr:
@@ -89,11 +94,15 @@ class mo:
 					if j['type'] == 'read':
 						b_no = j['no']
 
-						x = self.vertex_map[x_no]
-						b = self.vertex_map[b_no]
+						x_var = i['loc']
+						b_var = j['loc']
 
-						if self.mat.containsEdge(x,b):
-							rf = j['rf']
+						if x_var == b_var:
+							x = self.vertex_map[x_no]
+							b = self.vertex_map[b_no]
 
-							if not rf == x:
-								self.mo_edges.append((x,rf))
+							if self.mat.containsEdge(x,b):
+								b_rf = j['rf']
+
+								if not b_rf == x_no:
+									self.mo_edges.append((x_no,b_rf))

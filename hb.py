@@ -44,12 +44,12 @@ class hb:
 			v2 = self.vertex_map[self.sw_edges[i][1]]
 			self.mat.addEdge(v1,v2)
 
-		while flag==0:
-			temp = Graph(self.size)
-			temp.adjMatrix = self.mat.adjMatrix
+		temp = Graph(self.size)
+		temp.adjMatrix = self.mat.adjMatrix
 
-			for i in range(len(self.sb_edges)):
-				v1 = self.vertex_map[self.sb_edges[i][0]]
+		while flag!=2:
+			for i in range(self.size):
+				v1 = i
 
 				for j in range(self.size):
 					if(self.mat.containsEdge(v1,j)):
@@ -58,13 +58,17 @@ class hb:
 								self.mat.addEdge(v1,k)
 			
 			if(temp.adjMatrix == self.mat.adjMatrix):
-				flag = 1
+				flag += 1
+			
+			temp.adjMatrix = self.mat.adjMatrix
+			
 			
 		
+		print("hb relations=")
 		self.mat.toString()
 		# self.hb_matrix(self.sb_edges)
-		print(self.sb_edges,self.vertex_map)
-		print(self.sw_edges)
+		print("sb edges=",self.sb_edges)
+		print("sw edges=",self.sw_edges)
 
 		
 	def sb(self,trace,threads):
@@ -100,7 +104,6 @@ class hb:
 				self.sw_edges.append((v1,v2))
 			if trace[i][3] == "finish":														# sw's between thread finish and join statements
 				t = '0x'+trace[i][1]
-				print("t=",t)
 				for j in range(i,len(trace)):
 					if trace[j][3] == "join" and trace[j][6] == t:
 						v1 = trace[i][0]
