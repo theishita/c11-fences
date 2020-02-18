@@ -27,6 +27,9 @@ class hb:
 		
 		self.mat = Graph(self.size)
 		self.matrix()
+		
+	def get(self):
+		return self.mat,self.vertex_map,self.instr,self.size	
 
 	def matrix(self):
 
@@ -140,7 +143,3 @@ class hb:
 						if j['model'] in write_models and i['model'] in read_models:
 							self.sw_edges.append((j['no'],i['no']))
 
-	def get(self):
-		return self.mat,self.vertex_map,self.instr,self.size
-		
-		

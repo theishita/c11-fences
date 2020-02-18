@@ -21,6 +21,9 @@ class mo:
 		self.rule4()
 		self.mo_edges = list(dict.fromkeys(self.mo_edges))
 		print("mo edges=",self.mo_edges)
+	
+	def get(self):
+		return self.mo_edges
 
 	def rule1(self):
 		for i in range(self.size):
