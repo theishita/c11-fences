@@ -4,9 +4,10 @@
 
 class to:
 
-	def __init__(self,order,mo_edges):
+	def __init__(self,order,mo_edges,sb_edges):
 		self.order = order
 		self.mo_edges = mo_edges
+		self.sb_edges = sb_edges
 
 		self.to_edges = []
 
@@ -14,6 +15,9 @@ class to:
 		self.rule2()
 		self.rule3()
 
+		self.all_to()
+
+		self.to_edges.sort(key = lambda x: x[0])
 		print("to edges=",self.to_edges)
 	
 	def get(self):
@@ -64,4 +68,26 @@ class to:
 					x = self.order[j+1]
 			
 			if x and y:
-				self.to_edges.append((y,x))
+				self.to_edges.append((y,x))		
+	
+	def all_to(self):
+		for edge in self.to_edges:
+			e1 = edge[0]
+			e2 = edge[1]
+
+			for sb in self.sb_edges:
+				s1 = sb[0]
+				if e2 == s1:
+					s2 = sb[1]
+					if (e1,s2) not in self.to_edges:
+						self.to_edges.append((e1,s2))
+			
+			for sb in self.sb_edges:
+				s2 = sb[1]
+				if e1 == s2:
+					s1 = sb[0]
+					for to in self.to_edges:
+						t1 = to[0]
+						t2 = to[1]
+						if t1 == s2 and (s1,t2) not in self.to_edges:
+							self.to_edges.append((s1,t2))

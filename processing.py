@@ -61,7 +61,7 @@ class Processing:
             get_mo = mo(mat,vertex_map,instr,size)
             mo_edges = get_mo.get()
 
-            get_to = to(order,mo_edges)
+            get_to = to(order,mo_edges,self.sb_edges)
             to_edges = get_to.get()
 
             print("sb fence=",self.sb_edges)
@@ -126,6 +126,27 @@ class Processing:
                     t = (trace[j-1],trace[j+1])
                     if t not in sb:
                         self.sb_edges.append(t)
+
+        sb_temp = self.sb_edges
+        flag = 0
+
+        while flag != 2:
+            for i in self.sb_edges:
+                f1 = i[0]
+                f2 = i[1]
+
+                for j in self.sb_edges:
+                    if j[0] == f2:
+                        f3 = j[1]
+                        self.sb_edges.append((f1,f3))
+                
+            if sb_temp == self.sb_edges:
+                flag += 1
+                
+                sb_temp = self.sb_edges
+        
+        self.sb_edges = list(dict.fromkeys(self.sb_edges))
+        self.sb_edges.sort(key = lambda x: x[0])
 
         # self.events_order.append(exec)
         # self.sw(exec)
