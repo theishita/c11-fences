@@ -40,5 +40,5 @@ p = subprocess.check_output(cds,
 							stderr=subprocess.PIPE)					# get std output
 p = p.decode('utf-8')												# convert to string
 
-
-Processing(p)
+filename = args.file
+Processing(p,filename)

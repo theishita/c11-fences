@@ -16,4 +16,20 @@ class Cycles:
 		G.add_edges_from(to_edges)
 
 		#Return a list of cycles described as a list o nodes
-		print(list(nx.simple_cycles(G)))
+		self.cycles = list(nx.simple_cycles(G))
+		self.smallest = []
+
+		if len(self.cycles) > 0:
+			self.smallest = self.detect_smallest()
+	
+	def get(self):
+		return self.smallest
+
+	def detect_smallest(self):
+		smallest = self.cycles[0]
+		
+		for i in self.cycles:
+			if len(i)<len(smallest):
+				smallest = i
+		
+		return smallest

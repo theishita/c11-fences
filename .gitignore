@@ -3,3 +3,5 @@ __pycache__/
 *.py[cod]
 
 c11
+test.py
+test-programs/*_fence.cc
