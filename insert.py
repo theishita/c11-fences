@@ -26,6 +26,17 @@ class insert:
 					new = self.loc[i]
 					self.loc[i] = self.loc[j]
 					self.loc[j] = new
+
+		for i in range(len(self.loc)):
+			loci = self.loc[i]
+			thread = loci['thread']
+			for j in range(i,len(self.loc)):
+				locj = self.loc[j]
+				if locj['thread'] == thread:
+					if locj['no_in_thread']<loci['no_in_thread']:
+						new = self.loc[i]
+						self.loc[i] = self.loc[j]
+						self.loc[j] = new
 		
 		print("req locs=",self.loc)
 					
