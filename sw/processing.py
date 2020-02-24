@@ -1,3 +1,5 @@
+from sw import sw
+
 class Processing:
 	def __init__(self,p,filename):
 
@@ -34,10 +36,11 @@ class Processing:
 			order=self.fence(trace)
 
 			# print("\norder=",order)
-			print("\nfence sb=",self.fence_sb)
-			print("\nsb=",self.sb_edges)
-			# for i in self.sb_edges:
-				# print(i)
+			# print("\nfence sb=",self.fence_sb)
+			# print("\nsb=",self.sb_edges)
+			
+			sw(order,self.fence_sb,self.sb_edges)
+
 			
 	def fence(self,trace):
 		# find out the number of threads in the program
@@ -57,7 +60,8 @@ class Processing:
 					self.fences.append('F'+str(j)+str(fences))
 					event = {'no': trace[i][0],						# trace[i][0] is the event number
 							'thread': j,
-							'no_in_thread': instr_no
+							'no_in_thread': instr_no,
+							'model': trace[i][4]
 					}
 					instr_no += 1
 					if trace[i][3]=='read':
@@ -118,21 +122,26 @@ class Processing:
 		self.fence_sb = list(dict.fromkeys(self.fence_sb))
 		self.fence_sb.sort(key = lambda x: x[0])
 
-		# sb_temp = self.sb_edges
-		# flag = 0
-		# while flag != 1:
-		# 	print(flag,self.sb_edges)
-		# 	for i in self.sb_edges:
-		# 		e1 = i[0]
-		# 		e2 = i[1]
 
-		# 		for j in self.sb_edges:
-		# 			if j[0] == e2:
-		# 				e3 = j[1]
-		# 				self.sb_edges.append((e1,e3))
+		flag = 0
+		while flag!=100:
+			# if flag == 2:
+				# break
+			for i in self.sb_edges:
+				e1 = i[0]
+				e2 = i[1]
+
+				for j in self.sb_edges:
+					e3 = j[0]
+					if e2 == e3:
+						self.sb_edges.append((e1,j[1]))
+						self.sb_edges = list(set(self.sb_edges))
+				
+			# if temp == sb:
+			flag += 1
 			
-		# 	sb_temp = self.sb_edges
+			# temp = list(set(sb))
 
-		# 	if sb_temp == self.sb_edges:
-		# 		flag += 1
+		self.sb_edges = sorted(self.sb_edges)
+		# print(self.sb_edges)
 			

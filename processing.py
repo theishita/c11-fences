@@ -52,14 +52,15 @@ class Processing:
         self.loc = []                                               # list of locations of the required fence insertions
 
         for trace in self.traces:                                   # run for each trace
-            order=self.fence(trace)
-            print(order)
 
             hb_graph = hb(trace)
             mat,vertex_map,instr,size = hb_graph.get()
             
             get_mo = mo(mat,vertex_map,instr,size)
             mo_edges = get_mo.get()
+
+            order=self.fence(trace)
+            print(order)
 
             get_to = to(order,mo_edges,self.sb_edges)
             to_edges = get_to.get()
