@@ -19,6 +19,8 @@ class Cycles:
 		self.cycles = list(nx.simple_cycles(G))
 		self.smallest = []
 
+		print("cycles=",self.cycles)
+
 		if len(self.cycles) > 0:
 			self.smallest = self.detect_smallest()
 	

@@ -30,6 +30,7 @@ class Processing:
         self.sw_edges = []                                          # list of sw edges between fences
         self.sb_edges = []                                          # list of sb edges between fences
         self.fences = []                                            # list of all fences
+        self.fence_sb = []                                          # list of fences separated by sb's
         self.cycles = []                                            # list of all cycles between the fences
 
         f=0                                                         # flag for finding execution trace
@@ -60,13 +61,14 @@ class Processing:
             mo_edges = get_mo.get()
 
             order=self.fence(trace)
-            print(order)
+            # print(order)
 
             get_to = to(order,mo_edges,self.sb_edges)
             to_edges = get_to.get()
 
-            print("sb fence=",self.sb_edges)
-            print("list of all fences=",self.fences)
+            # print("sb fence=",self.sb_edges)
+            # print("list of all fences=",self.fences)
+            # print("fences in sb=",self.fence_sb)
 
             get_cycle = Cycles(self.fences,self.sb_edges,to_edges)
             cycle = get_cycle.get()
@@ -88,14 +90,17 @@ class Processing:
             threads = max(threads,int(a[1]))
 
         exec = []
+        self.fence_sb = []
 
         for j in range(1,threads+1):
             fences=0
             instr_no = 0
+            fence_thread = []
             for i in range(len(trace)):
                 if int(trace[i][1])==j:
                     fences+=1
                     exec.append('F'+str(j)+str(fences))
+                    fence_thread.append('F'+str(j)+str(fences))         # fence order in a thread
                     self.fences.append('F'+str(j)+str(fences))
                     event = {'no': trace[i][0],                         # trace[i][0] is the event number
                             'thread': j,
@@ -110,7 +115,9 @@ class Processing:
                     exec.append(event)
             fences+=1
             exec.append('F'+str(j)+str(fences))
+            fence_thread.append('F'+str(j)+str(fences))
             self.fences.append('F'+str(j)+str(fences))
+            self.fence_sb.append(fence_thread)
         
         self.sb(exec,threads)
                     
@@ -120,48 +127,10 @@ class Processing:
 
         self.sb_edges = []                                                # list to store sb's of an execution
 
-        for i in range(1,threads+1):
-            sb = []                                                       # list to store sb's of each thread
-            for j in range(len(trace)):
-                if 'thread' in trace[j] and trace[j]['thread']==i:
-                    t = (trace[j-1],trace[j+1])
-                    if t not in sb:
-                        self.sb_edges.append(t)
+        for i in self.fence_sb:
+            for j in range(len(i)):
+                for k in range(j+1,len(i)):
+                    self.sb_edges.append((i[j],i[k]))      
 
-        sb_temp = self.sb_edges
-        flag = 0
-
-        while flag != 2:
-            for i in self.sb_edges:
-                f1 = i[0]
-                f2 = i[1]
-
-                for j in self.sb_edges:
-                    if j[0] == f2:
-                        f3 = j[1]
-                        self.sb_edges.append((f1,f3))
-                
-            if sb_temp == self.sb_edges:
-                flag += 1
-                
-                sb_temp = self.sb_edges
-        
         self.sb_edges = list(dict.fromkeys(self.sb_edges))
         self.sb_edges.sort(key = lambda x: x[0])
-
-        # self.events_order.append(exec)
-        # self.sw(exec)
-
-    # def sw(self,trace):
-    #     sw = []                                                         # list of sw edges in this execution
-    #     for i in range(len(trace)):
-    #         if 'rf' in trace[i]:                                        # if the event is a write
-    #             rf = trace[i]['rf']
-    #             f1 = trace[i+1]
-
-    #             for j in range(len(trace)):
-    #                 if 'no' in trace[j] and trace[j]['no']==rf:
-    #                     f2 = trace[j-1]
-    #                     sw.append((f2,f1))
-        
-    #     self.sw_edges.append(sw)
