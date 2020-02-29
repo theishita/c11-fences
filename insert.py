@@ -2,7 +2,7 @@
 # import os
 # import fileinput
 
-# parser = argparse.ArgumentParser()                                               
+# parser = argparse.ArgumentParser()
 # parser.add_argument("--file", "-f", type=str, required=True)
 
 # args = parser.parse_args()
@@ -37,9 +37,9 @@ class insert:
 						new = self.loc[i]
 						self.loc[i] = self.loc[j]
 						self.loc[j] = new
-		
+
 		print("req locs=",self.loc)
-					
+
 
 	def insert_fences(self):
 
@@ -66,7 +66,7 @@ class insert:
 
 			for i in range(line_no,len(lines)):
 				line = lines[i]
-				temp.writelines(line+'\n')
+				temp.writelines(line)
 
 				if in_thread:
 					if '{' in line:
@@ -93,4 +93,4 @@ class insert:
 					in_thread = 1
 
 		for w in range(line_no,len(lines)):
-			temp.writelines(lines[w]+'\n')
+			temp.writelines(lines[w])

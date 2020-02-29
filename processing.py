@@ -41,7 +41,7 @@ class Processing:
                     self.traces.append(trace_list)
                 else:
                     trace_list.append(line.split())                 # collect data from the execution trace and convert to list structure
- 
+
             if f==1:
                 f=2
 
@@ -56,7 +56,7 @@ class Processing:
 
             hb_graph = hb(trace)
             mat,vertex_map,instr,size = hb_graph.get()
-            
+
             get_mo = mo(mat,vertex_map,instr,size)
             mo_edges = get_mo.get()
 
@@ -75,9 +75,13 @@ class Processing:
             for fence in cycle:
                 for i in range(len(order)):
                     if fence == order[i]:
-                        self.loc.append(order[i-1])
+                        o = order[i-1]
+                        temp = {'thread': o['thread'],
+                                'no_in_thread': o['no_in_thread']}
+                        if temp not in self.loc:
+                            self.loc.append(temp)
 
-        self.loc = [i for n, i in enumerate(self.loc) if i not in self.loc[:n]] 
+        # self.loc = [i for n, i in enumerate(self.loc) if i not in self.loc[:n]]
         # print("req locs=",self.loc)
         insert(self.loc,filename)
 
@@ -118,9 +122,9 @@ class Processing:
             fence_thread.append('F'+str(j)+str(fences))
             self.fences.append('F'+str(j)+str(fences))
             self.fence_sb.append(fence_thread)
-        
+
         self.sb(exec,threads)
-                    
+
         return exec
 
     def sb(self, trace, threads):
@@ -130,7 +134,7 @@ class Processing:
         for i in self.fence_sb:
             for j in range(len(i)):
                 for k in range(j+1,len(i)):
-                    self.sb_edges.append((i[j],i[k]))      
+                    self.sb_edges.append((i[j],i[k]))
 
         self.sb_edges = list(dict.fromkeys(self.sb_edges))
         self.sb_edges.sort(key = lambda x: x[0])

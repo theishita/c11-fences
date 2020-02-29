@@ -1,7 +1,7 @@
 # --------------------------------------------------------
 # Inputs a c++ file and outputs fences and fence positions
 # with respect to C++11 version compiler.
-# 
+#
 # Runs the entire program.
 # Usage:
 #   python3 main.py -f [input file]
@@ -16,7 +16,7 @@ import shlex
 
 from processing import Processing
 
-parser = argparse.ArgumentParser()                                               
+parser = argparse.ArgumentParser()
 parser.add_argument("--file", "-f", type=str, required=True)
 # parser.add_argument("--help","-h", type=)
 
@@ -35,8 +35,8 @@ input_file = "test/"+input_file[:-2]+'o'
 cds = './run.sh '+input_file										# run cds checker
 cds = shlex.split(cds)
 
-p = subprocess.check_output(cds, 
-							cwd="/home/ij/code/model-checker",
+p = subprocess.check_output(cds,
+							cwd="../model-checker",
 							stderr=subprocess.PIPE)					# get std output
 p = p.decode('utf-8')												# convert to string
 
