@@ -20,7 +20,7 @@ class convert_z3:
 		else:
 			conjunction = disjunctions[0]
 
-		contents += self.fact('=',conjunction,'1')
+		contents += self.fact('=',conjunction,'#b1')
 		contents += self.minimize("bvadd",consts)
 		contents+="(check-sat)\n(get-model)"
 		file.write(contents)

@@ -24,9 +24,7 @@ from stitch_z3 import convert_z3
 import sys
 
 class Processing:
-    def __init__(self,p,filename):
-
-        print(filename)
+    def __init__(self,p):
 
         self.traces = []                                            # lists of all execution traces
         self.events_order = []                                      # order of events including fences
@@ -37,6 +35,7 @@ class Processing:
         self.cycles = []                                            # list of all cycles between the fences
         self.constants = []                                         # list of all z3 constants
         self.disjunctions = []                                      # list of disjunctions for the z3 function
+        self.loc_info = []                                          # information regaring the required fence locations
 
         f=0                                                         # flag for finding execution trace
         for line in p.split('\n'):
@@ -59,7 +58,7 @@ class Processing:
         for trace in self.traces:                                   # run for each trace
 
             trace_no += 1
-            self.loc = []                                               # list of locations of the required fence insertions
+            loc = []                                               # list of locations of the required fence insertions
 
             hb_graph = hb(trace)
             mat,vertex_map,instr,size = hb_graph.get()
@@ -90,10 +89,15 @@ class Processing:
                                     'no_in_thread': o['no_in_thread'],
                                     'var_name': var_name,
                                     'fence': order[i]}
-                            if temp not in self.loc:
-                                self.loc.append(temp)
+                            if temp not in loc:
+                                loc.append(temp)
+                                temp2 = {'thread': temp['thread'],
+                                        'no_in_thread': temp['no_in_thread'],
+                                        'var_name': temp['var_name']}
+                                if temp2 not in self.loc_info:
+                                    self.loc_info.append(temp2)
 
-                get_translation = translate_z3(cycles,self.loc)
+                get_translation = translate_z3(cycles,loc)
                 constants, translation = get_translation.get()
                 for i in constants:
                     self.constants.append(i)
@@ -106,9 +110,8 @@ class Processing:
 
         convert_z3(self.constants,self.disjunctions)
 
-        # self.loc = [i for n, i in enumerate(self.loc) if i not in self.loc[:n]]
-        # print("req locs=",self.loc)
-        # insert(self.loc,filename)
+        # loc = [i for n, i in enumerate(loc) if i not in loc[:n]]
+        # print("req locs=",self.loc_info)
 
 
     def fence(self,trace):
@@ -163,3 +166,6 @@ class Processing:
 
         self.sb_edges = list(dict.fromkeys(self.sb_edges))
         self.sb_edges.sort(key = lambda x: x[0])
+
+    def get(self):
+        return self.loc_info

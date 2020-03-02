@@ -15,6 +15,8 @@ import subprocess
 import shlex
 
 from processing import Processing
+from run_z3 import run_z3
+from insert import insert
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--file", "-f", type=str, required=True)
@@ -41,4 +43,17 @@ p = subprocess.check_output(cds,
 p = p.decode('utf-8')												# convert to string
 
 filename = args.file
-Processing(p,filename)
+
+get_p = Processing(p)
+loc_info = get_p.get()
+
+z3_cmd = 'z3 c11'
+z3_run = shlex.split(z3_cmd)										# run z3 file
+
+z3 = subprocess.check_output(z3_run,
+							stderr=subprocess.PIPE)					# get std output
+z3 = z3.decode('utf-8')												
+get_locs = run_z3(loc_info,z3)
+req_locs = get_locs.get()
+
+insert(req_locs,filename)
