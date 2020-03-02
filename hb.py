@@ -8,7 +8,7 @@ class hb:
 
 	mat = Graph(0)
 	vertex_map = None
-	
+
 	def __init__(self,trace):
 
 		self.sb_edges = []									# list of all sb edges between instructions
@@ -21,15 +21,15 @@ class hb:
 		threads = 0
 		for a in trace:
 			threads = max(threads,int(a[1]))
-		
+
 		self.sb(trace,threads)
 		self.sw(trace,threads)
-		
+
 		self.mat = Graph(self.size)
 		self.matrix()
-		
+
 	def get(self):
-		return self.mat,self.vertex_map,self.instr,self.size	
+		return self.mat,self.vertex_map,self.instr,self.size
 
 	def matrix(self):
 
@@ -40,7 +40,7 @@ class hb:
 			v1 = self.vertex_map[self.sb_edges[i][0]]
 			v2 = self.vertex_map[self.sb_edges[i][1]]
 			self.mat.addEdge(v1,v2)
-		
+
 		# loop for basic sw edges
 		for i in range(len(self.sw_edges)):
 			v1 = self.vertex_map[self.sw_edges[i][0]]
@@ -59,21 +59,21 @@ class hb:
 						for k in range(self.size):
 							if(self.mat.containsEdge(j,k)):
 								self.mat.addEdge(v1,k)
-			
+
 			if(temp.adjMatrix == self.mat.adjMatrix):
 				flag += 1
-			
+
 			temp.adjMatrix = self.mat.adjMatrix
-			
-			
-		
+
+
+
 		print("hb relations=")
 		self.mat.toString()
 		# self.hb_matrix(self.sb_edges)
-		print("sb edges=",self.sb_edges)
-		print("sw edges=",self.sw_edges)
+		# print("sb edges=",self.sb_edges)
+		# print("sw edges=",self.sw_edges)
 
-		
+
 	def sb(self,trace,threads):
 
 		key = 0
@@ -92,7 +92,7 @@ class hb:
 			for i in range(len(sb_order)):
 				if not i == len(sb_order)-1:
 					sb_tuples.append((sb_order[i],sb_order[i+1]))
-			
+
 			for i in sb_tuples:
 				self.sb_edges.append(i)
 
@@ -134,7 +134,7 @@ class hb:
 				inf['model'] = trace[i][4]
 				inf['loc'] = trace[i][5]
 				self.instr.append(inf)
-		
+
 		for i in self.instr:
 			if i['type'] == 'read':
 				rf = i['rf']
@@ -142,4 +142,3 @@ class hb:
 					if j['no'] == rf:
 						if j['model'] in write_models and i['model'] in read_models:
 							self.sw_edges.append((j['no'],i['no']))
-

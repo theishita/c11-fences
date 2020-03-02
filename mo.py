@@ -5,7 +5,7 @@
 from graph import Graph
 
 class mo:
-	
+
 	def __init__(self,mat,vertex_map,instr,size):
 		self.mat = mat
 		self.vertex_map = vertex_map
@@ -20,8 +20,8 @@ class mo:
 		self.rule3()
 		self.rule4()
 		self.mo_edges = list(dict.fromkeys(self.mo_edges))
-		print("mo edges=",self.mo_edges)
-	
+		# print("mo edges=",self.mo_edges)
+
 	def get(self):
 		return self.mo_edges
 
@@ -33,23 +33,23 @@ class mo:
 					a = self.vertex_map_swap[i]
 					b = self.vertex_map_swap[j]
 					flag = 0																			# set flag for checking if both are write commands
-					
+
 					for k in self.instr:
 						if k['no'] == a and k['type'] == 'write':
 							a_var = k['loc']															# check if the variable is the same
 							flag += 1
 						if k['no'] == b and k['type'] == 'write':
-							b_var = k['loc'] 
+							b_var = k['loc']
 							flag += 1
-					
+
 					if flag == 2 and a_var == b_var:
 						self.mo_edges.append((a,b))
-	
+
 	def rule2(self):
 		for i in self.instr:
 			if i['type'] == 'read':
 				a_no = i['no']
-				
+
 				for j in self.instr:
 					if j['type'] == 'read':
 						b_no = j['no']

@@ -1,56 +1,29 @@
 # --------------------------------------------------------
-# Creates functions and realtions for the Z3 sat solver in
+# Creates constants and assertions for the Z3 sat solver in
 # the SMT programming language.
 # --------------------------------------------------------
 
-class Z3:
+class convert_z3:
 
-	def __init__(self,sb,sw):
+	def __init__(self,consts,disjunctions):
 		file = open("c11","w")
 		contents = ""
-				
-		n = 0																# n = number of total fences
-		# counting the number of constants 
-		for thread in sb:
-			for edge in thread:
-				n+=1
-		const_dtype = "(_ BitVec "+str(n)+")"								# the fences datatypes are (BitVector n) where n is the size
 
-		# creating the constants 
-		for thread in sb:
-			for edge in thread:
-				contents+= self.constant(edge,const_dtype)
+		conjunction = ""
 
-		# declare function for sb's
-		contents+=self.function("sb",[const_dtype,const_dtype],"Bool")
+		# creating the constants
+		for var in consts:
+			contents+= self.constant(var,'(_ BitVec 1)')
 
-		# declare function for sw's
-		contents+=self.function("sw",[const_dtype,const_dtype],"Bool")
-		
-		# make the sb assertions
-		for thread in sb:
-			for i in range(len(thread)):
-				if i!=len(thread)-1:
-					left = "(sb "+thread[i]+" "+thread[i+1]+")"
-					contents+=self.fact("=",left,"true")
+		if len(disjunctions)>1:
+			conjunction = self.conjunct(disjunctions)
+		else:
+			conjunction = disjunctions[0]
 
-		# make the sw assertions
-		for thread in sw:
-			for i in range(len(thread)):
-				if i!=len(thread)-1:
-					left = "(sw "+thread[i]+" "+thread[i+1]+")"
-					contents+=self.fact("=",left,"true")
-		
+		contents += self.fact('=',conjunction,'1')
+		contents += self.minimize("bvadd",consts)
 		contents+="(check-sat)\n(get-model)"
 		file.write(contents)
-
-	# to declare and define a function
-	def function(self,name,inputs,output):
-		fn = "(declare-fun "+name+" ("
-		for val in inputs:
-			fn+=val+" "
-		fn+=") "+output+")\n"
-		return fn
 
 	# to declare and define a constant
 	def constant(self,name,dtype):
@@ -59,5 +32,29 @@ class Z3:
 
 	# to add assertions/facts
 	def fact(self,operator,left,right):
-		assertion = "(assert ("+operator+" "+left+" "+right+"))\n"
+		assertion = "(assert ("+operator+" "+left+" "+str(right)+"))\n"
 		return assertion
+
+    # to return a conjunction of given variables
+	def conjunct(self,vars):
+		cnf = "(bvand"
+		for i in vars:
+			cnf += " "+str(i)
+		cnf += ")"
+		return cnf
+
+	# to create a minimize function
+	def minimize(self,operator,variables):
+		mini = "(minimize ("+operator
+		for var in variables:
+			mini += " "+var
+		mini += "))\n"
+		return mini
+
+	# to declare and define a function
+	def function(self,name,inputs,output):
+		fn = "(declare-fun "+name+" ("
+		for val in inputs:
+			fn+=val+" "
+		fn+=") "+output+")\n"
+		return fn

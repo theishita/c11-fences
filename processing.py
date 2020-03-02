@@ -12,13 +12,16 @@
 # program.
 # --------------------------------------------------------
 
-from stitch_z3 import Z3
 from hb import hb
 from graph import Graph
 from mo import mo
 from to import to
 from cycle import Cycles
 from insert import insert
+from instructions_z3 import translate_z3
+from stitch_z3 import convert_z3
+
+import sys
 
 class Processing:
     def __init__(self,p,filename):
@@ -32,6 +35,8 @@ class Processing:
         self.fences = []                                            # list of all fences
         self.fence_sb = []                                          # list of fences separated by sb's
         self.cycles = []                                            # list of all cycles between the fences
+        self.constants = []                                         # list of all z3 constants
+        self.disjunctions = []                                      # list of disjunctions for the z3 function
 
         f=0                                                         # flag for finding execution trace
         for line in p.split('\n'):
@@ -50,9 +55,11 @@ class Processing:
                 trace_list = []
                 f=1
 
-        self.loc = []                                               # list of locations of the required fence insertions
-
+        trace_no = 0
         for trace in self.traces:                                   # run for each trace
+
+            trace_no += 1
+            self.loc = []                                               # list of locations of the required fence insertions
 
             hb_graph = hb(trace)
             mat,vertex_map,instr,size = hb_graph.get()
@@ -61,7 +68,6 @@ class Processing:
             mo_edges = get_mo.get()
 
             order=self.fence(trace)
-            # print(order)
 
             get_to = to(order,mo_edges,self.sb_edges)
             to_edges = get_to.get()
@@ -71,19 +77,38 @@ class Processing:
             # print("fences in sb=",self.fence_sb)
 
             get_cycle = Cycles(self.fences,self.sb_edges,to_edges)
-            cycle = get_cycle.get()
-            for fence in cycle:
-                for i in range(len(order)):
-                    if fence == order[i]:
-                        o = order[i-1]
-                        temp = {'thread': o['thread'],
-                                'no_in_thread': o['no_in_thread']}
-                        if temp not in self.loc:
-                            self.loc.append(temp)
+            cycles = get_cycle.get()
+            unique_fences = list(sorted(set(x for l in cycles for x in l)))
+
+            if len(unique_fences)>0:
+                for fence in unique_fences:
+                    for i in range(len(order)):
+                        if fence == order[i]:
+                            o = order[i-1]
+                            var_name = 't'+str(o['thread'])+'n'+str(o['no_in_thread'])
+                            temp = {'thread': o['thread'],
+                                    'no_in_thread': o['no_in_thread'],
+                                    'var_name': var_name,
+                                    'fence': order[i]}
+                            if temp not in self.loc:
+                                self.loc.append(temp)
+
+                get_translation = translate_z3(cycles,self.loc)
+                constants, translation = get_translation.get()
+                for i in constants:
+                    self.constants.append(i)
+                self.disjunctions.append(translation)
+            else:
+                print("No TO cycles can be formed for trace",trace_no,"\nHence this behaviour cannot be stopped using SC fences")
+                sys.exit()
+
+        self.constants = list(sorted(set(self.constants)))
+
+        convert_z3(self.constants,self.disjunctions)
 
         # self.loc = [i for n, i in enumerate(self.loc) if i not in self.loc[:n]]
         # print("req locs=",self.loc)
-        insert(self.loc,filename)
+        # insert(self.loc,filename)
 
 
     def fence(self,trace):

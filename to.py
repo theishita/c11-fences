@@ -18,8 +18,8 @@ class to:
 		self.all_to()
 
 		self.to_edges.sort(key = lambda x: x[0])
-		print("to edges=",self.to_edges)
-	
+		# print("to edges=",self.to_edges)
+
 	def get(self):
 		return self.to_edges
 
@@ -50,10 +50,10 @@ class to:
 						y = self.order[j-1]
 				if 'no' in self.order[j] and self.order[j]['no'] == a:
 					x = self.order[j+1]
-					
+
 			if x and y:
 				self.to_edges.append((y,x))
-	
+
 	def rule3(self):
 		for i in self.mo_edges:
 			b = i[0]
@@ -66,10 +66,10 @@ class to:
 					y = self.order[j-1]
 				if 'no' in self.order[j] and self.order[j]['no'] == a:
 					x = self.order[j+1]
-			
+
 			if x and y:
-				self.to_edges.append((y,x))		
-	
+				self.to_edges.append((y,x))
+
 	def all_to(self):
 		for edge in self.to_edges:
 			e1 = edge[0]
@@ -81,7 +81,7 @@ class to:
 					s2 = sb[1]
 					if (e1,s2) not in self.to_edges:
 						self.to_edges.append((e1,s2))
-			
+
 			for sb in self.sb_edges:
 				s2 = sb[1]
 				if e1 == s2:
