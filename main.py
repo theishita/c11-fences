@@ -67,7 +67,7 @@ insert(req_locs,filename)
 
 end = time.time()
 total_time = end-start
-print("Total time elapsed:",total_time,"sec")
+print("\nTotal time elapsed:",total_time,"sec")
 cds_time = cds_end-cds_start
 print("Time taken by CDS Checker:",cds_time,"sec")
 z3_time = z3_end-z3_start

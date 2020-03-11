@@ -8,6 +8,8 @@
 # args = parser.parse_args()
 # filename = args.file
 
+from operator import itemgetter
+
 class insert:
 	def __init__(self,loc,filename):
 		self.loc = loc
@@ -17,28 +19,10 @@ class insert:
 		self.insert_fences()
 
 	def sort_locs(self):
-		new = {}
-		for i in range(len(self.loc)):
-			loci = self.loc[i]
-			for j in range(i,len(self.loc)):
-				locj = self.loc[j]
-				if locj['thread']<loci['thread']:
-					new = self.loc[i]
-					self.loc[i] = self.loc[j]
-					self.loc[j] = new
-
-		for i in range(len(self.loc)):
-			loci = self.loc[i]
-			thread = loci['thread']
-			for j in range(i,len(self.loc)):
-				locj = self.loc[j]
-				if locj['thread'] == thread:
-					if locj['no_in_thread']<loci['no_in_thread']:
-						new = self.loc[i]
-						self.loc[i] = self.loc[j]
-						self.loc[j] = new
-
+		
+		self.loc = sorted(self.loc,key=itemgetter('thread','no_in_thread'))
 		print("Number of fences inserted:",len(self.loc))
+		# print("req locs=",self.loc)
 
 
 	def insert_fences(self):
