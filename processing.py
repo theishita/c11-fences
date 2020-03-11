@@ -54,6 +54,9 @@ class Processing:
                 trace_list = []
                 f=1
 
+            if "Number of buggy executions" in line:
+                print('\n\n',line)
+
         trace_no = 0
         for trace in self.traces:                                   # run for each trace
 

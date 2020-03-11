@@ -67,8 +67,8 @@ class hb:
 
 
 
-		print("hb relations=")
-		self.mat.toString()
+		# print("hb relations=")
+		# self.mat.toString()
 		# self.hb_matrix(self.sb_edges)
 		# print("sb edges=",self.sb_edges)
 		# print("sw edges=",self.sw_edges)

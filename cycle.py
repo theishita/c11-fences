@@ -18,7 +18,7 @@ class Cycles:
 		#Return a list of cycles described as a list o nodes
 		self.cycles = list(nx.simple_cycles(G))
 
-		print("cycles=",self.cycles)
+		# print("cycles=",self.cycles)
 
 	def get(self):
 		return self.cycles

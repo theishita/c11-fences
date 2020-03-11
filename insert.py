@@ -38,7 +38,7 @@ class insert:
 						self.loc[i] = self.loc[j]
 						self.loc[j] = new
 
-		print("req locs=",self.loc)
+		print("Number of fences inserted:",len(self.loc))
 
 
 	def insert_fences(self):
