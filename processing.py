@@ -55,7 +55,10 @@ class Processing:
                 f=1
 
             if "Number of buggy executions" in line:
-                print('\n\n',line)
+                print('\n')
+                print(line)
+                if line == "Number of buggy executions: 0":
+                    sys.exit()
 
         trace_no = 0
         for trace in self.traces:                                   # run for each trace
