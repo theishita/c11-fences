@@ -12,7 +12,6 @@
 # program.
 # --------------------------------------------------------
 
-from map_var import map_var
 from hb import hb
 from graph import Graph
 from mo import mo
@@ -25,7 +24,7 @@ from stitch_z3 import convert_z3
 import sys
 
 class Processing:
-    def __init__(self,p,filename):
+    def __init__(self,traces):
 
         self.traces = []                                            # lists of all execution traces
         self.events_order = []                                      # order of events including fences
@@ -38,35 +37,9 @@ class Processing:
         self.disjunctions = []                                      # list of disjunctions for the z3 function
         self.loc_info = []                                          # information regaring the required fence locations
 
-        f=0                                                         # flag for finding execution trace
-        for line in p.split('\n'):
-            if f==2:
-                if "HASH" in line:                                  # indicates end of one execution trace
-                    f=0
-                    self.traces.append(trace_list)
-                else:
-                    trace_list.append(line.split())                 # collect data from the execution trace and convert to list structure
-
-            if f==1:
-                f=2
-
-            # check assertion violation case
-            if 'Rf' in line:
-                trace_list = []
-                f=1
-
-            if "Number of buggy executions" in line:
-                print('\n')
-                print(line)
-                if line == "Number of buggy executions: 0":
-                    sys.exit()
-
         trace_no = 0
 
-        get_var = map_var(self.traces[0],filename)
-        file_vars,trace_locs = get_var.get()
-
-        for trace in self.traces:                                   # run for each trace
+        for trace in traces:                                   # run for each trace
 
             trace_no += 1
             loc = []                                               # list of locations of the required fence insertions
