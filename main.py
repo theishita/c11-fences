@@ -49,7 +49,7 @@ p = p.decode('utf-8')												# convert to string
 
 filename = args.file
 
-get_p = Processing(p)
+get_p = Processing(p,filename)
 loc_info = get_p.get()
 
 z3_cmd = 'z3 c11'

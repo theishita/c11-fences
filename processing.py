@@ -12,6 +12,7 @@
 # program.
 # --------------------------------------------------------
 
+from map_var import map_var
 from hb import hb
 from graph import Graph
 from mo import mo
@@ -24,7 +25,7 @@ from stitch_z3 import convert_z3
 import sys
 
 class Processing:
-    def __init__(self,p):
+    def __init__(self,p,filename):
 
         self.traces = []                                            # lists of all execution traces
         self.events_order = []                                      # order of events including fences
@@ -61,6 +62,10 @@ class Processing:
                     sys.exit()
 
         trace_no = 0
+
+        get_var = map_var(self.traces[0],filename)
+        file_vars,trace_locs = get_var.get()
+
         for trace in self.traces:                                   # run for each trace
 
             trace_no += 1
@@ -148,8 +153,12 @@ class Processing:
                     if trace[i][3]=='read':
                         event["type"] = "read"
                         event['rf'] = trace[i][7]                       # trace[i][7] gives Read-from (Rf)
+                        event['mo'] = trace[i][4]
+                        event['loc'] = trace[i][5]
                     elif trace[i][3]=='write':
                         event["type"] = "write"
+                        event['mo'] = trace[i][4]
+                        event['loc'] = trace[i][5]
                     exec.append(event)
             fences+=1
             exec.append('F'+str(j)+str(fences))
@@ -158,7 +167,7 @@ class Processing:
             self.fence_sb.append(fence_thread)
 
         self.sb(exec,threads)
-
+        
         return exec
 
     def sb(self, trace, threads):
