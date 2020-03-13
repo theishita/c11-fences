@@ -6,3 +6,11 @@ c11
 test.py
 test-programs/*_fence.cc
 .vscode/
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.pdf
+*.gz
+

@@ -1,0 +1,48 @@
+\documentclass{article}
+
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{afterpage}
+\usepackage{stmaryrd}
+\usepackage{graphicx,lipsum}
+\usepackage{algorithm,algpseudocode}    
+\usepackage{figlatex,wrapfig,xcolor}
+\usepackage{listings,amssymb,mathtools}
+\usepackage{stmaryrd}
+\usepackage{mathrsfs}
+\usepackage{array,multirow}
+\usepackage{pifont}
+\usepackage{caption}
+\usepackage{geometry}
+\usepackage{textcomp}
+\usepackage{tikz}
+\usepackage{galois}
+
+\usepackage{xspace}
+\usepackage[colorlinks]{hyperref}
+\hypersetup{
+	colorlinks = true,
+	citecolor = {violet},
+	linkcolor = {red},
+	urlcolor  = {blue}
+}
+
+
+\newcommand{\mosc}{\texttt{memory\_order\_seq\_cst}\xspace}
+\newcommand{\moacqrel}{\texttt{memory\_order\_acq\_rel}\xspace}
+\newcommand{\morel}{\texttt{memory\_order\_release}\xspace}
+\newcommand{\moacq}{\texttt{memory\_order\_acquire}\xspace}
+\newcommand{\mocon}{\texttt{memory\_order\_consume}\xspace}
+\newcommand{\morlx}{\texttt{memory\_order\_relaxed}\xspace}
+
+\newcommand{\rf}[2]{{#1} {\color{Blue}\rightarrow^{rf}} {#2} }
+
+
+\begin{document}
+\title{Fence synthesis in C/C++11 programs}
+\maketitle 
+
+\section{Introduction} \label{sec:intro}
+\input{section/intro.tex}
+
+\end{document}
