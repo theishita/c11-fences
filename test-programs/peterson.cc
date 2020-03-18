@@ -10,11 +10,11 @@ atomic<int> flag2;
 atomic<int> turn;
 atomic<int> x;
 
-#define LOOP 1
+#define LOOP 5
 
 static void t1(void *arg) {
     int ok1 = 0;
-
+    
     flag1.store(1, memory_order_seq_cst);
     turn.store(2, memory_order_seq_cst);
 
@@ -58,7 +58,7 @@ static void t2(void *arg) {
     flag2.store(0, memory_order_seq_cst);
 }
 
-int user_main(int argc, char **argv)
+int user_main(int argc, char **argv) 
 {
     thrd_t id1, id2;
 

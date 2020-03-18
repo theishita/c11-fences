@@ -27,7 +27,7 @@ parser.add_argument("--file", "-f", type=str, required=True)
 args = parser.parse_args()
 filename = args.file												# gets the input file name
 cds = translate_cds(filename)										# gets the translation from the CDS Checker output and returns a structure containing the traces
-traces = cds.get()
+traces,cds_time = cds.get()
 
 get_p = Processing(traces)
 loc_info = get_p.get()												# runs and returns locations

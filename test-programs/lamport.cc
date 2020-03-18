@@ -15,17 +15,20 @@ atomic<int> X;
 
 static void t1(void *arg)
 {
-    for (int k = 0; k < LOOP; k++) { b1.store(1,memory_order_relaxed);
-	x.store(1,memory_order_relaxed);
-	if (y.load(memory_order_relaxed) != 0) {
-		b1.store(0,memory_order_relaxed);
-		while (y.load(memory_order_relaxed) != 0) {}; continue; }
-	y.store(1,memory_order_relaxed);
-	if(x.load(memory_order_relaxed) != 1) {
-		b1.store(0,memory_order_relaxed);
-		while(b2.load(memory_order_relaxed) >= 1) {};
-
-	}	}
+    for (int k = 0; k < LOOP; k++) {
+      b1.store(1,memory_order_relaxed);
+      x.store(1,memory_order_relaxed);
+      if (y.load(memory_order_relaxed) != 0) {
+        b1.store(0,memory_order_relaxed);
+        while (y.load(memory_order_relaxed) != 0) {};
+        continue;
+      }
+      y.store(1,memory_order_relaxed);
+      if(x.load(memory_order_relaxed) != 1) {
+        b1.store(0,memory_order_relaxed);
+        while(b2.load(memory_order_relaxed) >= 1) {};
+      }
+    }
 }
 
 static void t2(void *arg)
@@ -46,6 +49,6 @@ int user_main(int argc, char **argv)
 
     thrd_join(id1);
     thrd_join(id2);
-  
+
 	return 0;
 }

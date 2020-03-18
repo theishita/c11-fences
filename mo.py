@@ -2,6 +2,7 @@
 
 # --------------------------------------------------------
 
+# IDEA: creating a file with a class is faster than creating a file with a function
 from graph import Graph
 
 class mo:

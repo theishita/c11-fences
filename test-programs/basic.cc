@@ -10,15 +10,13 @@ atomic<int> y;
 atomic<int> a;
 atomic<int> b;
 
-static void t1(void *arg)
-{
+static void t1(void *arg) {
 	x.store(1, memory_order_relaxed);
     int temp = y.load(memory_order_relaxed);
     a.store(temp,memory_order_relaxed);
 }
 
-static void t2(void *arg)
-{
+static void t2(void *arg) {
 	y.store(1, memory_order_relaxed);
     int temp = x.load(memory_order_relaxed);
     b.store(temp,memory_order_relaxed);
@@ -27,7 +25,7 @@ static void t2(void *arg)
 int user_main(int argc, char **argv)
 {
 	thrd_t id1, id2;
-	
+
     atomic_init(&x, 0);
     atomic_init(&y, 0);
 
@@ -38,6 +36,6 @@ int user_main(int argc, char **argv)
     thrd_join(id2);
 
     MODEL_ASSERT (a.load(memory_order_relaxed) != 0 || b.load(memory_order_relaxed) != 0);
-  
+
 	return 0;
 }
