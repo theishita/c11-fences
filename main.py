@@ -32,18 +32,19 @@ traces,cds_time = cds.get()
 get_p = Processing(traces)
 loc_info = get_p.get()												# runs and returns locations
 
-# z3_cmd = 'z3 c11'
-# z3_run = shlex.split(z3_cmd)										# run z3 file
+z3_cmd = 'z3 c11'
+z3_run = shlex.split(z3_cmd)										# run z3 file
 
-# z3_start = time.time()
-# z3 = subprocess.check_output(z3_run,
-# 							stderr=subprocess.PIPE)					# get std output after running z3
-# z3_end = time.time()
-# z3 = z3.decode('utf-8')
+z3_start = time.time()
+z3 = subprocess.check_output(z3_run,
+							stderr=subprocess.PIPE)					# get std output after running z3
+z3_end = time.time()
+z3 = z3.decode('utf-8')
 
-# get_locs = run_z3(loc_info,z3)										# decipher output from z3
-# req_locs = get_locs.get()											# get required locations
+get_locs = run_z3(loc_info,z3)										# decipher output from z3
+req_locs = get_locs.get()											# get required locations
+print("req locs=",req_locs)
 
-# insert(req_locs,filename)											# insert fences into the source file at the requiren locations
+insert(req_locs,filename)											# insert fences into the source file at the requiren locations
 
-# end = time.time()
+end = time.time()

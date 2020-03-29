@@ -19,16 +19,12 @@ static void t1(void *arg) {
 }
 
 static void t2(void *arg) {
-
 	x.store(1, memory_order_relaxed);
 	if (!y.load(memory_order_relaxed)) {
 		c.store(0, memory_order_relaxed);
 		MODEL_ASSERT(c.load(memory_order_relaxed) == 0);
 	}
 }
-
-
-
 
 int user_main(int argc, char **argv) {
 	thrd_t id1, id2;

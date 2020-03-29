@@ -29,7 +29,7 @@ class translate_cds:
 		input_file = input_file[-1]
 
 		input_file = "test/"+input_file[:-2]+'o'
-		cds = './run.sh '+input_file										# run cds checker
+		cds = './run.sh '+input_file										# cmd to run cds checker
 		cds = shlex.split(cds)
 
 		cds_start = time.time()
@@ -75,21 +75,22 @@ class translate_cds:
 
 	# to convert each trace into a structure
 	def create_structure(self,filename):
-		# TODO: add line Number
 
 		# map the variable names from the source code to the memory address used by the variable as shown in the traces
 		get_var = map_var(self.traces_raw[0],filename)
 		file_vars,trace_locs = get_var.get()
 
+		trace_no = 1
 		for trace in self.traces_raw:
 			execution = []
 			for instr in trace:
-				line = create_list(instr,file_vars,trace_locs,filename)
+				line = create_list(trace_no,instr,file_vars,trace_locs,filename)
 				execution.append(line)
 			execution.sort(key = lambda x:x[1])								# sorts the list of instructions by the thread number
 			# IDEA: using key function is faster since it is called exactly once for each input record
+			trace_no += 1
 
 			self.traces.append(execution)
 
-		for i in self.traces[0]:
-			print(i)
+		# for i in self.traces[0]:
+		# 	print(i)

@@ -1,9 +1,12 @@
 # --------------------------------------------------------
 # Creates a structured list
+# --------------------------------------------------------
+
+# TODO: hard code line numbers
 
 from .find_line_no import find_line_no
 
-def create_list(instr,file_vars,trace_locs,filename):
+def create_list(trace_no,instr,file_vars,trace_locs,filename):
 	line = []
 
 	line.append(instr[0])								# 0: serial number of the instruction
@@ -39,7 +42,14 @@ def create_list(instr,file_vars,trace_locs,filename):
 
 	if instr[3] == "read" or instr[3] == "write":
 		line.append(create_instruction(line[7],line[2],line[3],line[5]))	# 8: the instruction as present in the source code
-		line.append(find_line_no(filename,line[1],line[8]))					# 9: line number of the instruction in the source code
+
+		no = find_line_no(filename,line[1],line[8])
+		if no == None:
+			print("Line number cannot be determined for instruction",line[0],":",line[8],"from thread",int(line[1])-1,"from trace",trace_no)
+			print("Please mention it", end=": ")
+			no = input()
+		line.append(str(no))					# 9: line number of the instruction in the source code
+
 	else:
 		line.append("NA")								# 8: instruction = NA in case of non-read or non-write operation
 		line.append("NA")								# 9: line number = NA in case of non-read or non-write operation

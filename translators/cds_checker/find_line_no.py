@@ -23,7 +23,7 @@ def find_line_no(filename,thread,instr):
 				continue
 			thread_contents.append((line_no,l))
 
-		if "static void" in l:
+		if "static void" in l or "user_main" in l:
 			in_thread = 1
 			brackets += 1
 

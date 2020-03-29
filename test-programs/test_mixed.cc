@@ -12,16 +12,14 @@ atomic<int> a;
 atomic<int> b;
 atomic<int> c;
 
-static void t1(void *arg)
-{
+static void t1(void *arg) {
 	z.store(1, memory_order_relaxed);
 	x.store(1, memory_order_relaxed);
     int temp = y.load(memory_order_relaxed);
     a.store(temp,memory_order_relaxed);
 }
 
-static void t2(void *arg)
-{
+static void t2(void *arg) {
 	y.store(1, memory_order_relaxed);
     int temp = x.load(memory_order_relaxed);
     b.store(temp,memory_order_relaxed);
@@ -29,8 +27,7 @@ static void t2(void *arg)
 	c.store(temp2, memory_order_relaxed);
 }
 
-int user_main(int argc, char **argv)
-{
+int user_main(int argc, char **argv) {
 	thrd_t id1, id2;
 
     atomic_init(&x, 0);
