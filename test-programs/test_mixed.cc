@@ -16,7 +16,7 @@ static void t1(void *arg) {
 	z.store(1, memory_order_relaxed);
 	x.store(1, memory_order_relaxed);
     int temp = y.load(memory_order_relaxed);
-    a.store(temp,memory_order_relaxed);
+    a.store(temp, memory_order_relaxed);
 }
 
 static void t2(void *arg) {
@@ -43,7 +43,10 @@ int user_main(int argc, char **argv) {
     thrd_join(id1);
     thrd_join(id2);
 
-    MODEL_ASSERT ((a.load(memory_order_relaxed) != 0 || b.load(memory_order_relaxed) != 0) && ((b.load(memory_order_relaxed) != 1) || (c.load(memory_order_relaxed) == 1)));
+    MODEL_ASSERT ((a.load(memory_order_relaxed) != 0 ||
+					b.load(memory_order_relaxed) != 0) &&
+					((b.load(memory_order_relaxed) != 1) ||
+					(c.load(memory_order_relaxed) == 1)));
 
 	return 0;
 }
