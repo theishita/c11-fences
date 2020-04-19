@@ -18,7 +18,7 @@ from run_z3 import run_z3
 from insert import insert
 from translators.cds_checker.cds_checker import translate_cds
 
-start = time.time()
+start = time.time()													# to calculate total tool time
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--file", "-f", type=str, required=True)
@@ -26,7 +26,8 @@ parser.add_argument("--file", "-f", type=str, required=True)
 
 args = parser.parse_args()
 filename = args.file												# gets the input file name
-cds = translate_cds(filename)										# gets the translation from the CDS Checker output and returns a structure containing the traces
+
+cds = translate_cds(filename)										# translates CDS Checker output & returns a structure containing the traces
 traces,cds_time = cds.get()
 
 get_p = Processing(traces)
@@ -41,8 +42,7 @@ z3 = subprocess.check_output(z3_run,
 z3_end = time.time()
 z3 = z3.decode('utf-8')
 
-get_locs = run_z3(loc_info,z3)										# decipher output from z3
-req_locs = get_locs.get()											# get required locations
+req_locs = run_z3(loc_info,z3)										# decipher output from z3 & get required locations
 print("req locs=",req_locs)
 
 insert(req_locs,filename)											# insert fences into the source file at the requiren locations

@@ -13,13 +13,19 @@ atomic<int> b;
 static void t1(void *arg) {
 	x.store(1, memory_order_relaxed);
     int temp = y.load(memory_order_relaxed);
-    a.store(temp, memory_order_relaxed);
+	if(temp == 1)
+    	a.store(1, memory_order_relaxed);
+	else
+		a.store(0, memory_order_relaxed);
 }
 
 static void t2(void *arg) {
 	y.store(1, memory_order_relaxed);
     int temp = x.load(memory_order_relaxed);
-    b.store(temp, memory_order_relaxed);
+	if(temp == 1)
+    	b.store(1, memory_order_relaxed);
+	else
+		b.store(0, memory_order_relaxed);
 }
 
 int user_main(int argc, char **argv) {
