@@ -1,6 +1,7 @@
 # --------------------------------------------------------
-# Creates constants and assertions for the Z3 sat solver in
-# the SMT programming language.
+# Creates constants and assertions out of the given
+# variables and conditions for the Z3 sat solver in the
+# SMT programming language for Z3.
 # --------------------------------------------------------
 
 class convert_z3:

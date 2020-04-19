@@ -2,110 +2,106 @@
 
 # --------------------------------------------------------
 
+# IDEA: creating a file with a class is faster than creating a file with a function
 from graph import Graph
 
 class mo:
 
-	def __init__(self,mat,vertex_map,instr,size):
+	def __init__(self,trace,mat,size):
 		self.mat = mat
-		self.vertex_map = vertex_map
-		self.vertex_map_swap = dict([(value, key) for key, value in self.vertex_map.items()])			# swap keys with values for easier usage while finding MO's
-		self.instr = instr
 		self.size = size
 
-		self.mo_edges = []                      														# list of mo edges
+		self.mo_edges = []                      								# list of mo edges
 
-		self.rule1()
-		self.rule2()
-		self.rule3()
-		self.rule4()
+		self.rule1(trace)
+		self.rule2(trace)
+		self.rule3(trace)
+		self.rule4(trace)
 		self.mo_edges = list(dict.fromkeys(self.mo_edges))
 		# print("mo edges=",self.mo_edges)
 
 	def get(self):
 		return self.mo_edges
 
-	def rule1(self):
+	def rule1(self,trace):
 		for i in range(self.size):
 			for j in range(self.size):
 				if self.mat.containsEdge(i,j):
-					# print(vertex_map[i],vertex_map[j],1)
-					a = self.vertex_map_swap[i]
-					b = self.vertex_map_swap[j]
-					flag = 0																			# set flag for checking if both are write commands
-
-					for k in self.instr:
-						if k['no'] == a and k['type'] == 'write':
-							a_var = k['loc']															# check if the variable is the same
+					# set flag for checking if both are write commands
+					flag = 0
+					si = str(i)
+					sj = str(j)
+					for k in trace:
+						if k[0] == si and (k[2] == 'write' or k[2] == "init"):
+							a = k[4]											# check if the variable being operated upon is the same
 							flag += 1
-						if k['no'] == b and k['type'] == 'write':
-							b_var = k['loc']
+						if k[0] == sj and k[2] == 'write':
+							b = k[4]
 							flag += 1
 
-					if flag == 2 and a_var == b_var:
-						self.mo_edges.append((a,b))
+					if flag == 2 and a == b:
+						self.mo_edges.append((si,sj))
 
-	def rule2(self):
-		for i in self.instr:
-			if i['type'] == 'read':
-				a_no = i['no']
+	def rule2(self,trace):
+		for i in trace:
+			if i[2] == 'read':
+				a_no = i[0]
 
-				for j in self.instr:
-					if j['type'] == 'read':
-						b_no = j['no']
-						a_var = i['loc']
-						b_var = j['loc']
+				for j in trace:
+					if j[2] == 'read':
+						b_no = j[0]
+						a_var = i[4]
+						b_var = j[4]
 
 						if a_var == b_var:
-							a = self.vertex_map[a_no]
-							b = self.vertex_map[b_no]
+							a = int(a_no)
+							b = int(b_no)
 
 							if self.mat.containsEdge(a,b):
-								x = i['rf']
-								y = j['rf']
+								x = i[6]
+								y = j[6]
 
 								if not x == y:
 									self.mo_edges.append((x,y))
 
-	def rule3(self):
-		# print(self.vertex_map)
-		for i in self.instr:
-			if i['type'] == 'read':
-				a_no = i['no']
+	def rule3(self,trace):
+		for i in trace:
+			if i[2] == 'read':
+				a_no = i[0]
 
-				for j in self.instr:
-					if j['type'] == 'write':
-						b_no = j['no']
+				for j in trace:
+					if j[2] == 'write':				# IDEA: hb's are gonna be more than say write commands, that's why first checking for write cmd and only then checking if hb
+						b_no = j[0]
 
-						a_var = i['loc']
-						b_var = j['loc']
+						a_var = i[4]
+						b_var = j[4]
 
 						if a_var == b_var:
-							a = self.vertex_map[a_no]
-							b = self.vertex_map[b_no]
+							a = int(a_no)
+							b = int(b_no)
 
 							if self.mat.containsEdge(a,b):
-								x = i['rf']
+								x = i[6]
 								self.mo_edges.append((x,b_no))
 
-	def rule4(self):
-		for i in self.instr:
-			if i['type'] == 'write':
-				x_no = i['no']
+	def rule4(self,trace):
+		for i in trace:
+			if i[2] == 'write':
+				x_no = i[0]
 
-				for j in self.instr:
-					if j['type'] == 'read':
-						b_no = j['no']
+				for j in trace:
+					if j[2] == 'read':
+						b_no = j[0]
 
-						x_var = i['loc']
-						b_var = j['loc']
+						x_var = i[4]
+						b_var = j[4]
 
 						if x_var == b_var:
-							x = self.vertex_map[x_no]
-							b = self.vertex_map[b_no]
+							x = int(x_no)
+							b = int(b_no)
 
 							if self.mat.containsEdge(x,b):
-								b_rf = j['rf']
+								b_rf = j[6]
 
 								if not b_rf == x_no:
 									self.mo_edges.append((x_no,b_rf))

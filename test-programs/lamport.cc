@@ -1,3 +1,5 @@
+//extern void __VERIFIER_error() __attribute__ ((__noreturn__));
+
 #include <iostream>
 #include <threads.h>
 #include <atomic>
@@ -5,47 +7,156 @@
 
 using namespace std;
 
+#define LOOP 5
+
 atomic<int> x;
 atomic<int> y;
 atomic<int> b1;
-atomic<int> b2;
-atomic<int> X;
+atomic<int> b2; // N boolean flags
+atomic<int> var; //variable to test mutual exclusion
 
-#define LOOP 5
+static void fn1(void* arg) {
+    int ok = 0;
+    for (int i = 0; i < LOOP; i++) {
+        b1.store(1, memory_order_seq_cst);
+        x.store(1, memory_order_seq_cst);       //DIV: need higher mem order?
 
-static void t1(void *arg)
-{
-    for (int k = 0; k < LOOP; k++) { b1.store(1,memory_order_relaxed);
-	x.store(1,memory_order_relaxed);
-	if (y.load(memory_order_relaxed) != 0) {
-		b1.store(0,memory_order_relaxed);
-		while (y.load(memory_order_relaxed) != 0) {}; continue; }
-	y.store(1,memory_order_relaxed);
-	if(x.load(memory_order_relaxed) != 1) {
-		b1.store(0,memory_order_relaxed);
-		while(b2.load(memory_order_relaxed) >= 1) {};
+        //atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
 
-	}	}
+        if (y.load(memory_order_acquire) != 0) {
+            b1.store(0, memory_order_seq_cst);
+            for (int j = 0; j < LOOP; j++) {
+                if (y.load(memory_order_acquire) == 0) {
+                    goto breaklbl0;
+                }
+            }
+            goto breaklbl;
+            breaklbl0:;
+            continue;
+        }
+
+        y.store(1, memory_order_seq_cst);
+
+        //atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
+
+        if (x.load(memory_order_relaxed) != 1) {
+            b1.store(0, memory_order_seq_cst);
+
+            for (int j = 0; j < LOOP; j++) {
+                if (b2.load(memory_order_acquire) < 1) {
+                    goto breaklbl1;
+                }
+            }
+            goto breaklbl;
+            breaklbl1:;
+
+            if (y.load(memory_order_acquire) != 1) {
+                for (int j = 0; j <LOOP; j++) {
+                    if (y.load(memory_order_acquire) == 0) {
+                        goto breaklbl2;
+                    }
+                }
+                goto breaklbl;
+                breaklbl2:;
+                continue;
+            }
+        }
+        ok = 1;
+        goto breaklbl;
+
+    }
+
+    breaklbl:;
+    if (ok==0) return;
+
+    //begin: critical section
+    var.store(1, memory_order_relaxed);
+    MODEL_ASSERT(var.load(memory_order_relaxed) == 1);//t1
+    //end: critical section
+
+    y.store(0, memory_order_release);
+    b1.store(0, memory_order_seq_cst);
+    return ;
 }
 
-static void t2(void *arg)
-{
-	y.store(1, memory_order_relaxed);
-    int temp = x.load(memory_order_relaxed);
-    b.store(temp,memory_order_relaxed);
-    int temp2 = z.load(memory_order_relaxed);
-	c.store(temp2, memory_order_relaxed);
+static void fn2(void* arg) {
+    int ok = 0;
+
+    for (int i = 0; i < LOOP; i++) {
+        b2.store(1, memory_order_seq_cst);
+        x.store(2, memory_order_seq_cst);       //DIV: need higher mem order?
+
+        //atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
+
+        if (y.load(memory_order_acquire) != 0) {
+            b2.store(0, memory_order_seq_cst);
+            for (int j = 0; j < LOOP; j++) {
+                if (y.load(memory_order_acquire) == 0) {
+                    goto breaklbl0;
+                }
+            }
+            goto breaklbl;
+            breaklbl0:;
+            continue;
+        }
+
+        y.store(2, memory_order_seq_cst);
+
+        //atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
+
+        if (x.load(memory_order_relaxed) != 2) {
+            b2.store(0, memory_order_seq_cst);
+            for (int j = 0; j < LOOP; j++) {
+                if (b1.load(memory_order_acquire) < 1) {
+                    goto breaklbl1;
+                }
+            }
+
+            goto breaklbl;
+            breaklbl1:;
+
+            if (y.load(memory_order_acquire) != 2) {
+                for (int j = 0; j <LOOP; j++) {
+                    if (y.load(memory_order_acquire) == 0) {
+                        goto breaklbl2;
+                    }
+                }
+                goto breaklbl;
+                breaklbl2:;
+                continue;
+            }
+        }
+        ok = 1;
+        goto breaklbl;
+    }
+
+    breaklbl:;
+    if (ok==0) return;
+
+    //begin: critical section
+    var.store(2, memory_order_relaxed);
+    MODEL_ASSERT(var.load(memory_order_relaxed) == 2);
+    //end: critical section
+
+    y.store(0, memory_order_release);
+    b2.store(0, memory_order_seq_cst);
+    return ;
 }
 
-int user_main(int argc, char **argv)
-{
-	thrd_t id1, id2;
+int user_main(int argc, char **argv) {
+    thrd_t id1, id2;
 
-	thrd_create(&id1, (thrd_start_t)&t1, NULL);
-    thrd_create(&id2, (thrd_start_t)&t2, NULL);
+	atomic_init(&x, 0);
+	atomic_init(&y, 0);
+	atomic_init(&b1, 0);
+	atomic_init(&b2, 0);
+	atomic_init(&var, 0);
+
+    thrd_create(&id1, (thrd_start_t)&fn1, NULL);
+    thrd_create(&id2, (thrd_start_t)&fn2, NULL);
 
     thrd_join(id1);
     thrd_join(id2);
-  
-	return 0;
+
+    return 0;
 }

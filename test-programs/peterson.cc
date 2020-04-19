@@ -13,22 +13,48 @@ atomic<int> x;
 #define LOOP 5
 
 static void t1(void *arg) {
-    int ok1 = 0; flag1.store(1, memory_order_seq_cst);
+    int ok1 = 0;
+    
+    flag1.store(1, memory_order_seq_cst);
     turn.store(2, memory_order_seq_cst);
-    for (int k = 0; k < LOOP; k++) { if (not (flag2.load(memory_order_acquire) == 1 &&
-                turn.load(memory_order_relaxed) == 2)) {  ok1 = 1;  break;  }  }  if (ok1 == 0) return;
+
+    for (int k = 0; k < LOOP; k++) {
+        if (not (flag2.load(memory_order_acquire) == 1 &&
+                turn.load(memory_order_relaxed) == 2)) {
+            ok1 = 1;
+            break;
+        }
+    }
+    if (ok1 == 0) return;
+
+    // begin: critical section
     x.store(1, memory_order_relaxed);
     MODEL_ASSERT(x.load(memory_order_relaxed) == 1);
+    // end: critical section
+
     flag1.store(0, memory_order_seq_cst);
 }
 
 static void t2(void *arg) {
-    int ok1 = 0; flag2.store(1, memory_order_seq_cst);
-	turn.store(1, memory_order_seq_cst);
-    for (int k = 0; k < LOOP; k++) {  if (not (flag1.load(memory_order_acquire) == 1 &&
-                turn.load(memory_order_relaxed) == 1)) {  ok1 = 1;    break;     }   }  if (ok1 == 0) return;
+    int ok1 = 0;
+
+    flag2.store(1, memory_order_seq_cst);
+    turn.store(1, memory_order_seq_cst);
+
+    for (int k = 0; k < LOOP; k++) {
+        if (not (flag1.load(memory_order_acquire) == 1 &&
+                turn.load(memory_order_relaxed) == 1)) {
+            ok1 = 1;
+            break;
+        }
+    }
+    if (ok1 == 0) return;
+
+    // begin: critical section
     x.store(2, memory_order_relaxed);
     MODEL_ASSERT(x.load(memory_order_relaxed) == 2);
+    // end: critical section
+
     flag2.store(0, memory_order_seq_cst);
 }
 

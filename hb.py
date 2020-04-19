@@ -7,29 +7,27 @@ from graph import Graph
 class hb:
 
 	mat = Graph(0)
-	vertex_map = None
 
 	def __init__(self,trace):
 
 		self.sb_edges = []									# list of all sb edges between instructions
 		self.sw_edges = []									# list of all sw edges between instructions
 		self.size = 0										# number of instructions in the execution trace
-		self.vertex_map = {}								# instruction numbers mapped to graph indices
-		self.instr = []										# properties of each instruction
 
-		# find out the number of threads in the program
-		threads = 0
-		for a in trace:
-			threads = max(threads,int(a[1]))
+		threads = int(trace[-1][1])							# find out the number of total threads in the program
 
 		self.sb(trace,threads)
 		self.sw(trace,threads)
 
+		self.size += 1
 		self.mat = Graph(self.size)
 		self.matrix()
 
+		# print("sb=",self.sb_edges)
+		# print("sw=",self.sw_edges)
+
 	def get(self):
-		return self.mat,self.vertex_map,self.instr,self.size
+		return self.mat,self.size
 
 	def matrix(self):
 
@@ -37,14 +35,14 @@ class hb:
 
 		# loop for basic sb edges
 		for i in range(len(self.sb_edges)):
-			v1 = self.vertex_map[self.sb_edges[i][0]]
-			v2 = self.vertex_map[self.sb_edges[i][1]]
+			v1 = int(self.sb_edges[i][0])		# IDEA: instructions are exactly the index number and the 0 index in the matrix is ignored
+			v2 = int(self.sb_edges[i][1])
 			self.mat.addEdge(v1,v2)
 
 		# loop for basic sw edges
 		for i in range(len(self.sw_edges)):
-			v1 = self.vertex_map[self.sw_edges[i][0]]
-			v2 = self.vertex_map[self.sw_edges[i][1]]
+			v1 = int(self.sw_edges[i][0])
+			v2 = int(self.sw_edges[i][1])
 			self.mat.addEdge(v1,v2)
 
 		temp = Graph(self.size)
@@ -65,80 +63,54 @@ class hb:
 
 			temp.adjMatrix = self.mat.adjMatrix
 
-
-
 		# print("hb relations=")
 		# self.mat.toString()
 		# self.hb_matrix(self.sb_edges)
 		# print("sb edges=",self.sb_edges)
 		# print("sw edges=",self.sw_edges)
 
-
 	def sb(self,trace,threads):
 
-		key = 0
-		for j in range(threads+1):
-			sb_order = []
-			for i in range(len(trace)):
-				# print(trace[i])
-				if int(trace[i][1]) == j:
-					sb_order.append(trace[i][0])
-					self.size += 1
-					self.vertex_map[trace[i][0]] = key
-					key += 1
-			sb_tuples = []
+		# obtain lists of sb's separated by thread number
+		sb_order = []
+		for i in range(1,threads+1):
+			temp = [t[0] for t in trace if int(t[1])==i]
+			if int(temp[-1]) > self.size:
+				self.size = int(temp[-1])
+			sb_order.append(temp)
 
-			# converting the list of sb into tuples of two
-			for i in range(len(sb_order)):
-				if not i == len(sb_order)-1:
-					sb_tuples.append((sb_order[i],sb_order[i+1]))
-
-			for i in sb_tuples:
-				self.sb_edges.append(i)
+		# converting the list of sb into tuples of two
+		for sb_list in sb_order:
+			for i in range(len(sb_list)):
+				if not i == len(sb_list)-1:
+					self.sb_edges.append((sb_list[i],sb_list[i+1]))
 
 	def sw(self,trace,threads):
-		# print(trace)
+
 		write_models = ["release","seq_cst"]
 		read_models = ["acquire","seq_cst"]
-		for i in range(len(trace)):
-			if trace[i][3] == "create":														# sw's between thread create statements
-				v1 = trace[i][0]
-				v2 = trace[i+1][0]
-				self.sw_edges.append((v1,v2))
-			if trace[i][3] == "finish":														# sw's between thread finish and join statements
-				t = '0x'+trace[i][1]
-				for j in range(i,len(trace)):
-					if trace[j][3] == "join" and trace[j][6] == t:
-						v1 = trace[i][0]
-						v2 = trace[j][0]
-						self.sw_edges.append((v1,v2))
-			if trace[i][3] == "write":
-				inf = {}
-				inf['no'] = trace[i][0]
-				inf['type'] = 'write'
-				inf['model'] = trace[i][4]
-				inf['loc'] = trace[i][5]
-				self.instr.append(inf)
-			if trace[i][3] == "read":
-				inf = {}
-				inf['no'] = trace[i][0]
-				inf['type'] = 'read'
-				inf['model'] = trace[i][4]
-				inf['loc'] = trace[i][5]
-				inf['rf'] = trace[i][7]
-				self.instr.append(inf)
-			if trace[i][2] == "init":
-				inf = {}
-				inf['no'] = trace[i][0]
-				inf['type'] = 'write'
-				inf['model'] = trace[i][4]
-				inf['loc'] = trace[i][5]
-				self.instr.append(inf)
 
-		for i in self.instr:
-			if i['type'] == 'read':
-				rf = i['rf']
-				for j in self.instr:
-					if j['no'] == rf:
-						if j['model'] in write_models and i['model'] in read_models:
-							self.sw_edges.append((j['no'],i['no']))
+		for i in range(len(trace)):
+			# create sw's between thread create statements
+			if trace[i][2] == "create":
+				v1 = trace[i][0]
+				v2 = str(int(v1)+1)
+				self.sw_edges.append((v1,v2))
+
+			# create sw's between thread finish and join statements
+			if trace[i][2] == "join":
+				t = trace[i][5]			# value/number of the thread which is getting joined
+				for j in range(i,len(trace)):
+					if trace[j][2] == "finish" and trace[j][1] == t:
+						v1 = trace[j][0]
+						v2 = trace[i][0]
+						self.sw_edges.append((v1,v2))
+
+		# create sw's between read and write statements
+		for i in trace:
+			if i[2] == 'read':
+				rf = i[6]
+				for j in trace:
+					if j[0] == rf:
+						if j[3] in write_models and i[3] in read_models:
+							self.sw_edges.append((j[0],i[0]))
