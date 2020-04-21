@@ -6,8 +6,6 @@ from graph import Graph
 
 class hb:
 
-	mat = Graph(0)
-
 	def __init__(self,trace):
 
 		self.sb_edges = []									# list of all sb edges between instructions
@@ -23,9 +21,6 @@ class hb:
 		self.mat = Graph(self.size)
 		self.matrix()
 
-		# print("sb=",self.sb_edges)
-		# print("sw=",self.sw_edges)
-
 	def get(self):
 		return self.mat,self.size
 
@@ -35,7 +30,7 @@ class hb:
 
 		# loop for basic sb edges
 		for i in range(len(self.sb_edges)):
-			v1 = int(self.sb_edges[i][0])		# IDEA: instructions are exactly the index number and the 0 index in the matrix is ignored
+			v1 = int(self.sb_edges[i][0])
 			v2 = int(self.sb_edges[i][1])
 			self.mat.addEdge(v1,v2)
 

@@ -71,15 +71,20 @@ Order of events are as follows:
     \item The required locations obtained are then sent to \href{insert.tex}{\textit{insert.py}} where the fences are placed in the source program.
     
 \end{enumerate}
-% TODO: change colour of hyperlinks to dark grey.
-% TODO: create sequence diagram depicting order of files
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{time-flow.png}
+    \caption{Order of operations in the tool}
+\end{figure}
+% TODO: create diagram depicting order of files IN LATEX
 \section{Key}
-\href{#4}{\textit{link}} denotes links to documents.\\
-\fun{function}{params} denotes functions.\\
-\var{variable } denotes variables.\\
-\class{class }denotes class names.\\
-The original program in which fences are to be inserted will be called "source program" and the tool made for this project will be referred to as "program" or "tool".\\
-A buggy execution trace as described by the model checker will be called "trace".\\
-
+\begin{itemize}
+    \item \href{#4}{\textit{link}} denotes links to documents.
+    \item \fun{function}{params} denotes functions.
+    \item \var{variable } denotes variables.
+    \item \class{class }denotes class names.
+    \item The original program in which fences are to be inserted will be called "source program" and the tool made for this project will be referred to as "program" or "tool".
+    \item A buggy execution trace as described by the model checker will be called "trace".
+\end{itemize}
 
 \end{document}

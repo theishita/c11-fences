@@ -1,0 +1,40 @@
+\documentclass{article}
+\setlength{\parindent}{0pt}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks]{hyperref}
+\hypersetup{
+	colorlinks = true,
+	citecolor = {violet},
+	linkcolor = {blue},
+	urlcolor  = {MidnightBlue}
+}
+
+\newcommand{\var}[1]{\color{OliveGreen} \texttt{#1}\color{black}}
+\newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}
+\newcommand{\varinfo}[1]{\scriptsize \texttt{#1} \normalsize}
+\newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
+
+\newcommand{\seqb}[2]{{#1}\color{Blue}\rightarrow^{sb} \color{black}{#2} }
+\newcommand{\sw}[2]{{#1} {\color{Blue}\rightarrow^{sw}} \color{black}{#2} }
+
+\date{}
+\begin{document}
+
+\title{hb.py}
+\maketitle
+
+A Happens-Before relation is defined as the following\\
+A simply happens-before evaluation B if any of the following is true:
+\begin{enumerate}
+    \item A is sequenced-before B
+    \newline
+    \seqb{A}{B}
+    Hi
+    \item A synchronizes-with B
+    \item A simply happens-before X, and X simply happens-before B
+\end{enumerate}
+
+
+
+\end{document}
