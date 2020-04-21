@@ -1,0 +1,120 @@
+\documentclass{article}
+\setlength{\parindent}{0pt}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks]{hyperref}
+\hypersetup{
+	colorlinks = true,
+	citecolor = {violet},
+	linkcolor = {blue},
+	urlcolor  = {MidnightBlue}
+}
+
+\newcommand{\var}[1]{\color{OliveGreen} \texttt{#1}\color{black}}
+\newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}
+\newcommand{\varinfo}[1]{\scriptsize \texttt{#1} \normalsize}
+
+\date{}
+\begin{document}
+
+\title{main.py}
+\maketitle
+
+\par
+This is the starting point of the tool. This file operates and runs all other required files.
+
+This file also times the program and three of its parameters:
+\begin{enumerate}
+    \item Time taken by CDS Checker output
+    \item Time taken by Z3 SMT/SAT Solver
+    \item Total tool time excluding the time taken by the tools above
+\end{enumerate}
+
+\section{Taking file input}
+The argument parser function from the package \textit{"argparse"} helps take input from the user in the terminal in the format
+\begin{center} \texttt{python main.py -f [filename].cc} \end{center}
+This is a required flag.
+\newline \newline
+\var{filename } stores the  name of the file.
+
+\section{Translating the content}
+\par
+The filename and file location taken as input are provided to the translator  function of the model checker. The translator function of any model checker takes the input source file and runs the model checker on it and gets the output. It then translates this output into a data structure which contains all the information regarding the output traces. Currently, there are no options given to the user and the only model checker used is CDS Checker.\\
+
+\href{translate\_cds.tex}{\fun{translate\_cds}{filename}} runs the translator for CDS Checker. It takes the input parameter \var{filename } and runs CDS Checker and gets its output.\\
+
+The output of this function is taken in two variables:
+\begin{itemize}
+    \item \var{traces } contains a list of lists. This is the translated output from CDS Checker into a common readable structure. 
+    \\
+    Each index level denotes something.
+    \\
+    \var{traces[i] } is a single erroneous execution run containing the order of instructions in that execution and their metadata.
+    \\
+    \var{traces[0][i] } gives a single instruction from execution trace 0.
+    \\
+    \textit{Example:}\newline
+    \var{traces } = \varinfo{ [\newline[\newline
+['1', '1', 'start', 'seq\_cst', 'deadbeef', 'NA', 'NA', 'NA', 'NA'], \newline
+['2', '1', 'init', 'relaxed', '0', 'NA', 'x', 'NA', 'NA'], \newline
+['6', '2', 'start', 'seq\_cst', 'deadbeef', 'NA', 'NA', 'NA', 'NA'], \newline
+['7', '2', 'write', 'relaxed', '1', 'NA', 'y', 'y.store(1, memory\_order\_relaxed)', '14'],\newline
+['9', '3', 'start', 'seq\_cst', 'deadbeef', 'NA', 'NA', 'NA', 'NA'], \newline
+['11', '3', 'write', 'relaxed', '1', 'NA', 'x', 'x.store(1, memory\_order\_relaxed)', '22'],\newline
+], \newline
+[\newline
+['1', '1', 'start', 'seq\_cst', 'deadbeef', 'NA', 'NA', 'NA', 'NA'], \newline
+['2', '1', 'init', 'relaxed', '0', 'NA', 'x', 'NA', 'NA'], \newline
+['13', '2', 'write', 'relaxed', '1', 'NA', 'c', 'c.store(1, memory\_order\_relaxed)', '16'], \newline
+['15', '2', 'read', 'relaxed', '0', '16', 'c', 'c.load(memory\_order\_relaxed)', '17'], \newline
+['14', '3', 'read', 'relaxed', '0', '3', 'y', 'y.load(memory\_order\_relaxed)', '23'], \newline
+['16', '3', 'write', 'relaxed', '0', 'NA', 'c', 'c.store(0, memory\_order\_relaxed)', '24']\newline
+]\newline] 
+} \newline
+Elements with values 'NA' are those where the given row type does not apply to that particular instruction. For example, a \texttt{start thread} instruction will not have an \textit{rf} value, hence the index which is supposed to contain the \textit{rf} value is set as blank or 'NA'.
+
+    \item \var{cds\_time } is the time taken by CDS Checker to compute and produce all the output traces.
+\end{itemize}
+
+
+\section{Processing}
+\par
+\href{processing.tex}{\fun{processing}{traces}} takes the \var{traces } as input and does the required computations/processing from the translated traces. It also creates Z3 files for later computation. This function gives an output with the reduced number of possible fence locations.\\
+
+\var{get\_p }runs the class for processing. In case fences cannot be inserted or if there are no buggy executions, the program stops here.\\
+
+\var{loc\_info } contains a list of dictionaries. This contains a list of the possible fence locations, reduced to only the ones forming cycles in the erroneous execution traces.
+\\
+\textit{Example:}\\
+\var{loc\_info }= \varinfo{[\newline
+\{'fence': 'F24', 'line': '19', 'var\_name': 'l19'\}, \newline
+\{'fence': 'F310', 'line': '46', 'var\_name': 'l46'\}, \newline
+\{'fence': 'F311', 'line': '45', 'var\_name': 'l45'\},\newline
+]} \newline
+\textit{'fence'} denotes the name given to the fence in the program. The naming convention is discussed in \href{processing.tex}{\textit{processing.py}}.
+\\
+\textit{'line'} denotes the line number in the source program
+\\
+\textit{'var\_name'} refers the name of variable used in Z3 operations
+\\
+Such a dictionary structure is created for the ease of look-up while translating from Z3 variables.
+
+\section{Z3}
+\par
+The next section runs the Z3 SMT/SAT Solver to obtain the optimum minimized number of fences. It also computes the time taken by Z3.\\
+
+\var{z3\_cmd }\varinfo{= 'z3 c11'} is a string, which denotes the command given in the Linux terminal to run the produced Z3 file. The name of the Z3 file is \textbf{c11}.\\
+
+\var{z3\_run } contains a list version of the above command, separated according to base command, input and flags. This is done in order to produce the acceptable input shell syntax for python package \textit{"subprocess"} when it obtains the output. Python package \textit{"shlex"} is used for this purpose and function \fun{split } transforms the command into the required list syntax.\\
+
+\var{z3 } now contains the output from the terminal after running the Z3 command. It uses function \fun{check\_output }from package \textit{"subprocess"}. It is decoded and turned into a \textit{utf-8} string format for better readability using function \fun{decode}.\\
+
+\href{runz3.tex}{\fun{run\_z3}{loc\_info,z3}} deciphers the output that Z3 gives in the terminal and returns he final fence locations.\\
+
+\var{req\_locs }contains the list of final, minimized, optimum fence locations.\\
+
+\section{Inserting the fences}
+\par
+\href{insert.tex}{\fun{insert}{req\_locs,filename}} takes arguments \var{filename }and \var{req\_locs}. It creates a new file in the same location, naming it \texttt{filename\_fence.cc} with the required added fences.
+
+\end{document}

@@ -1,0 +1,47 @@
+\par
+The objective of this project is to prevent certain behaviour. In relaxed memory models, memory operations such as \textit{reads} and \textit{writes} can be reordered. This reordering can cause certain variables to have different values in different execution runs of the same program. Such unexpected behaviour and unexpected results may cause in issues for the programmer.
+\newline
+
+\par
+To tackle this, the programmer may add \texttt{"assert"} statements in the source code, which will ensure that certain properties remain constant in each run of the program. However, in the case that the \texttt{assert} statement gets violated, the program execution will stop. The object of this project is to insert \textit{fences} in the source code of the program so that these assertions are satisfied and do not go violated.
+\newline
+
+\subsection{Atomic Operations}
+\par
+In the C/C++11 memory order, there are certain atomic memory accesses known collectively as atomic operations. These are load, store, fetch ...
+
+\subsection{Memory Order}
+\par
+The memory order specifies how memory accesses, including regular, non-atomic memory accesses, are to be ordered around an atomic operation. The available memory orders in the C11 library are, briefly:
+\begin{center}
+\begin{small}
+\begin{tabular}{ l | p{11cm} }
+ \morlx & no synchronization or ordering constraints imposed on other reads or writes \\
+ \hline
+ \mocon & no reads or writes in the current thread dependent on the value currently loaded can be reordered before this load \\  
+ \hline
+ \moacq & no reads or writes in the current thread can be reordered before this load \\
+ \hline
+ \morel & no reads or writes in the current thread can be reordered after this store \\
+ \hline
+ \moacqrel & no memory reads or writes in the current thread can be reordered before or after this store. \\
+ \hline
+ \mosc & a load operation performs acquire, a store performs release, and read-modify-write performs both an acquire and a release
+\end{tabular}
+\end{small}
+\end{center}
+
+\subsection{Types of relations}
+\par
+In a program execution, there are certain relations between instructions. Each type of relation has rules or preconditions which dictate the type of relation between any two instructions.
+
+\subsubsection{Sequenced Before}
+\par
+Any instruction \textit{x} in \textit{thread A} 
+\subsubsection{Synchronizes With}
+\subsubsection{Happens Before}
+\subsubsection{Modification Order}
+\subsubsection{Reads From}
+\subsubsection{Total Order}
+\par
+Each instruction in a C/C++11 program is said to be in total order with every other instruction.

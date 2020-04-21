@@ -51,8 +51,8 @@ def create_list(trace_no,instr,file_vars,trace_locs,filename):
 		line.append(str(no))					# 9: line number of the instruction in the source code
 
 	else:
-		line.append("NA")								# 8: instruction = NA in case of non-read or non-write operation
-		line.append("NA")								# 9: line number = NA in case of non-read or non-write operation
+		line.append("NA")								# 8: instruction = NA in case of non-read/write/rmw operation
+		line.append("NA")								# 9: line number = NA in case of non-read/write/rmw operation
 
 	return line
 

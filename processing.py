@@ -57,6 +57,7 @@ class Processing:
 
 			get_cycle = Cycles(self.fences,self.fence_sb_edges,to_edges)
 			cycles = get_cycle.get()
+
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 
 			if len(unique_fences)>0:
@@ -84,8 +85,6 @@ class Processing:
 
 		convert_z3(self.z3vars,self.disjunctions)
 
-		print("z3vars=",self.fences)
-
 
 	def fence(self,trace):
 
@@ -93,36 +92,36 @@ class Processing:
 		threads = int(trace[-1][1])
 
 		exec = []
-		self.fence_thread = []
 
 		for j in range(1,threads+1):
-			fences=0
-			fence_thread = []
+			fence_no = 0
+			fences_in_thread = []
 			for i in range(len(trace)):
 				if int(trace[i][1])==j:
-					fences+=1
-					exec.append('F'+str(j)+'n'+str(fences))
-					fence_thread.append('F'+str(j)+'n'+str(fences))         # fence order in a thread
-					self.fences.append('F'+str(j)+'n'+str(fences))			# total fences in general
+					fence_no+=1
+					exec.append('F'+str(j)+'n'+str(fence_no))
+					fences_in_thread.append('F'+str(j)+'n'+str(fence_no))         # fence order in a thread
+					self.fences.append('F'+str(j)+'n'+str(fence_no))			# total fences in general
 					event = {'no': trace[i][0],                         # trace[i][0] is the event number
 							'thread': j,
-							'line': trace[i][9]							# line number in the original source code
 					}
 					if trace[i][2]=='read':
 						event["type"] = "read"
 						event['rf'] = trace[i][6]                       # trace[i][7] gives Read-from (Rf)
 						event['mo'] = trace[i][3]
 						event['loc'] = trace[i][4]
+						event['line'] = trace[i][9]							# line number in the original source code
 					elif trace[i][2]=='write':
 						event["type"] = "write"
 						event['mo'] = trace[i][3]
 						event['loc'] = trace[i][4]
+						event['line'] = trace[i][9]
 					exec.append(event)
-			fences+=1
-			exec.append('F'+str(j)+'n'+str(fences))
-			fence_thread.append('F'+str(j)+'n'+str(fences))
-			self.fences.append('F'+str(j)+'n'+str(fences))
-			self.fence_thread.append(fence_thread)
+			fence_no+=1
+			exec.append('F'+str(j)+'n'+str(fence_no))
+			fences_in_thread.append('F'+str(j)+'n'+str(fence_no))
+			self.fences.append('F'+str(j)+'n'+str(fence_no))
+			self.fence_thread.append(fences_in_thread)
 
 		self.sb(exec,threads)
 
@@ -130,14 +129,12 @@ class Processing:
 
 	def sb(self, trace, threads):
 
-		self.fence_sb_edges = []										# list to store sb's of an execution
-
 		for i in self.fence_thread:
 			for j in range(len(i)):
 				for k in range(j+1,len(i)):
-					self.fence_sb_edges.append((i[j],i[k]))
+					if not (i[j],i[k]) in self.fence_sb_edges:
+						self.fence_sb_edges.append((i[j],i[k]))
 
-		self.fence_sb_edges = list(dict.fromkeys(self.fence_sb_edges))
 		self.fence_sb_edges.sort(key = lambda x: x[0])
 
 	def get(self):
