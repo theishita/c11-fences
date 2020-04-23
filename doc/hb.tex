@@ -1,6 +1,8 @@
 \documentclass{article}
 \setlength{\parindent}{0pt}
 
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage[dvipsnames]{xcolor}
 \usepackage[colorlinks]{hyperref}
 \hypersetup{
@@ -15,8 +17,10 @@
 \newcommand{\varinfo}[1]{\scriptsize \texttt{#1} \normalsize}
 \newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
 
-\newcommand{\seqb}[2]{{#1}\color{Blue}\rightarrow^{sb} \color{black}{#2} }
-\newcommand{\sw}[2]{{#1} {\color{Blue}\rightarrow^{sw}} \color{black}{#2} }
+\newcommand{\rf}[2]{{#1} {\color{Blue}\rightarrow$^{rf}$} \color{black}{#2}}
+\newcommand{\seqb}[2]{{#1} {\color{Blue}\rightarrow$^{sb}$} \color{black}{#2} }
+\newcommand{\sw}[2]{{#1} {\color{Blue}\rightarrow$^{sw}$} \color{black}{#2} }
+\newcommand{\hb}[2]{{#1} {\color{OliveGreen}\rightarrow$^{hb}$} \color{black}{#2}}
 
 \date{}
 \begin{document}
@@ -24,15 +28,105 @@
 \title{hb.py}
 \maketitle
 
-A Happens-Before relation is defined as the following\\
+% ------------ HB RULES --------------
+A Happens-Before (HB) relation is defined as the following\\
 A simply happens-before evaluation B if any of the following is true:
 \begin{enumerate}
     \item A is sequenced-before B
     \newline
-    \seqb{A}{B}
-    Hi
+    \seqb{A}{B} \implies \hb{A}{B}
     \item A synchronizes-with B
-    \item A simply happens-before X, and X simply happens-before B
+    \newline
+    \sw{A}{B} \implies \hb{A}{B}
+    \item A happens-before X, and X happens-before B
+    \newline
+    \hb{\hb{A}{X}}{B} \implies \hb{A}{B}
+\end{enumerate} 
+%TODO: fix the arrow colours
+
+% ------------- TABLES --------------
+\section{Format}
+Since there are many HB relations between all the instructions, creating a list of tuples would be inefficient. Therefore, an adjacency matrix is created for this purpose.\\
+
+Each instruction in the has a unique serial number. This serial number is used to refer to the instruction and is used as the index values of the matrix.\\
+\textit{Example:}\\
+\input{section/hb_instr_example.tex}
+Instruction \texttt{0} is left blank since indexing of instructions begins from 1 in the case of CDS Checker.
+
+\hb{3}{4} but 4 \color{OliveGreen}\not\to$^{hb}$\color{black} 3
+
+% -------------- INIT --------------
+\section{Initialization}
+A directed graph algorithm is used to create the matrix.\\
+\href{graph.tex}{\class{graph}} is used for this purpose.\\
+
+\var{self.sb\_edges }will be a shortened list of tuples of pairs of instructions that have SB relations between them. This list contains only the immediate SB relations and not the transitively obtained ones.\\
+\textit{Example:}\\
+\var{self.sb\_edges}\varinfo{ = [('1', '2'), ('2', '3'), ('3', '4'), ('4', '5'), ('5', '8'), ('8', '12'), ('6', '7'), ('7', '10'), ('10', '13'), ('13', '15'), ('15', '17'), ('9', '11'), ('11', '14'), ('14', '16'), ('16', '18')]
+}\\
+
+\var{self.sw\_edges }will be a shortened list of tuples of pairs of instructions that have SW relations between them.\\
+\textit{Example:}\\
+\var{self.sw\_edges }\varinfo{ = [('5', '6'), ('8', '9')]}\\
+
+\var{self.size }is the size of the matrix. This is derived by the number of instructions in the trace.\\
+\textit{Example:}\\
+If a trace has 16 instructions, then the size of the matrix will be 17x17 (including the discarded 0 index value), and \var{self.size }\varinfo{= 17}.\\
+
+\var{threads }contains the total number of threads in the program, including the main thread. This is derived from the last instruction of the trace because the trace will have been sorted in ascending order according to thread numbers. The last instruction will have the last thread's last instruction. And the thread number of an instruction will be available in the second index of the list describing the instruction. Hence, \var{threads} = \varinfo{int(trace[-1][1])}\\
+
+\section{Creating the HB relations adjacency matrix}
+% --------- SB -----------
+\subsection{Finding the SB relations}
+SB relations between the instructions in the trace are calculated.\\
+\fun{sb}{trace,threads}\ computes this list.\\
+
+The trace is used for reference and this trace of instructions is sorted in ascending order according to the thread number. Since SB relations are intra-thread relations, the instructions are first separated according to thread number.\\
+\var{sb\_order }contains this list of instructions.\\
+\textit{Example:}\\
+\var{sb\_order}\varinfo{ = [['1', '2', '3', '4', '5', '8', '12'], ['6', '7', '10', '13', '15'], ['9', '11', '14', '16']]}\\
+
+From this list, a short-hand list of immediate SB relations are derived. These are in the form of tuples of instruction pairs. This is added to \var{self.sb\_edges}.\\
+
+Here, the size of the matrix is also calculated. The maximum instruction number is found out of all the instructions and this value is put into \var{self.size}.
+
+% ------------ SW --------------
+\subsection{Finding SW relations}
+There are certain rules for SW's between instructions.
+\begin{enumerate}
+    \item SW relations between thread create and thread start instructions.\\
+    \sw{thread A create}{thread A start}
+    
+    \item SW relations between thread finish and thread join instructions.\\
+    \sw{thread A finish}{thread A join}
+    
+    \item SW relations between read and write instructions.\\
+    \rf{$W_{\geq rel}x$}{$R_{\geq acq}x$} \implies \sw{$W_{\geq rel}x$}{$R_{\geq acq}x$}\\
+    RMW operations are considered as both read and write operations in this case.
+    
+\end{enumerate}
+
+Hence, all three of the above cases are considered while calculating SW relations. A loop runs across the range of the trace of instructions. Each time it finds either a \texttt{thread create} statement, \texttt{thread join} statement or a \textttt{read/rmw} statement, it applies the corresponding rule and finds out the SW relation between the instructions.\\
+\var{self.sw\_edges }is the list that gets appended each time an SW relation is discovered.
+
+\subsection{Creating the matrix}
+The value "number of instructions" is now stored in \var{self.size}. Since the matrix does indexing from 0, \var{self.size }is incremented by 1 so that it is more convenient while accessing instruction numbers as indices.\\
+
+A graph is created with size \var{self.size}.\\
+\var{self.mat }contains this graph. It is currently empty as there are no relations added between the nodes.\\
+
+% TODO: add hyperlinks in rules 1 and 2
+\fun{matrix}{}\ adds the relations in the graph. It first adds the immediate SB and SW relations as defined by rules 1 and 2 mentioned above. For rule 3, it operates in the following manner:
+\begin{enumerate}
+    \item Created a temporary matrix \var{temp } that has exactly the same values and size as the original matrix.
+    \item Initialized a flag variable \var{flag}. This is to ascertain the values later on.
+    \item Added transitive edges in the matrix.\\
+    \hb{\hb{1}{2}}{3} \implies \hb{1}{3}
+    \item Put this new matrix which includes the set of transitive edges into \var{temp}.
+    \item If there were no new transitive edges found, then the previous value of the matrix (now contained in \var{temp}) would be equal to the new value of the matrix. Hence, \var{self.mat }== \var{temp}.
+    \item If \var{self.mat }== \var{temp}, then increment the value of the flag variable. Else, repeat step 3, 4, 5 till such a scenario occurs.
+    \item The main loop runs till all transitive edges are ascertained and the value of the flag variable is 2.
+
 \end{enumerate}
 
 

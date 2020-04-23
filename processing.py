@@ -31,7 +31,6 @@ class Processing:
 		trace_no = 0
 
 		for trace in traces:											# run for each trace
-			self.fences = []                                            # list of all fences
 			self.fence_thread = []										# list of fences separated by threads
 			self.fence_sb_edges = []									# list of all sb edge pairs between fences
 			self.cycles = []                                            # list of all cycles between the fences
@@ -52,11 +51,9 @@ class Processing:
 			# print("to_edges=",to_edges)
 
 			# print("sb fence=",self.fence_sb_edges)
-			# print("list of all fences=",self.fences)
 			# print("fences in sb=",self.fence_thread)
 
-			get_cycle = Cycles(self.fences,self.fence_sb_edges,to_edges)
-			cycles = get_cycle.get()
+			cycles = Cycles(self.fence_sb_edges,to_edges)
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 
@@ -101,7 +98,6 @@ class Processing:
 					fence_no+=1
 					exec.append('F'+str(j)+'n'+str(fence_no))
 					fences_in_thread.append('F'+str(j)+'n'+str(fence_no))         # fence order in a thread
-					self.fences.append('F'+str(j)+'n'+str(fence_no))			# total fences in general
 					event = {'no': trace[i][0],                         # trace[i][0] is the event number
 							'thread': j,
 					}
@@ -120,7 +116,6 @@ class Processing:
 			fence_no+=1
 			exec.append('F'+str(j)+'n'+str(fence_no))
 			fences_in_thread.append('F'+str(j)+'n'+str(fence_no))
-			self.fences.append('F'+str(j)+'n'+str(fence_no))
 			self.fence_thread.append(fences_in_thread)
 
 		self.sb(exec,threads)

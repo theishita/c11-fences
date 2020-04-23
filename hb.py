@@ -26,8 +26,6 @@ class hb:
 
 	def matrix(self):
 
-		flag = 0
-
 		# loop for basic sb edges
 		for i in range(len(self.sb_edges)):
 			v1 = int(self.sb_edges[i][0])
@@ -42,6 +40,7 @@ class hb:
 
 		temp = Graph(self.size)
 		temp.adjMatrix = self.mat.adjMatrix
+		flag = 0
 
 		while flag!=2:
 			for i in range(self.size):
@@ -57,12 +56,6 @@ class hb:
 				flag += 1
 
 			temp.adjMatrix = self.mat.adjMatrix
-
-		# print("hb relations=")
-		# self.mat.toString()
-		# self.hb_matrix(self.sb_edges)
-		# print("sb edges=",self.sb_edges)
-		# print("sw edges=",self.sw_edges)
 
 	def sb(self,trace,threads):
 
@@ -82,8 +75,8 @@ class hb:
 
 	def sw(self,trace,threads):
 
-		write_models = ["release","seq_cst"]
-		read_models = ["acquire","seq_cst"]
+		write_models = ["release",'acq_rel',"seq_cst"]
+		read_models = ["acquire",'acq_rel',"seq_cst"]
 
 		for i in range(len(trace)):
 			# create sw's between thread create statements
@@ -101,11 +94,10 @@ class hb:
 						v2 = trace[i][0]
 						self.sw_edges.append((v1,v2))
 
-		# create sw's between read and write statements
-		for i in trace:
-			if i[2] == 'read':
-				rf = i[6]
+			# create sw's between read/rmw and write/rmw statements
+			if trace[i][2] == 'read' or trace[i][2] == 'rmw':
+				rf = trace[i][6]
 				for j in trace:
 					if j[0] == rf:
-						if j[3] in write_models and i[3] in read_models:
-							self.sw_edges.append((j[0],i[0]))
+						if j[3] in write_models and trace[i][3] in read_models:
+							self.sw_edges.append((j[0],trace[i][0]))

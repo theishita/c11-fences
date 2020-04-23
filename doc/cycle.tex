@@ -1,0 +1,59 @@
+\documentclass[dvipsnames]{article}
+\setlength{\parindent}{0pt}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{smartdiagram}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning}
+
+\usepackage[colorlinks]{hyperref}
+\hypersetup{
+	colorlinks = true,
+	citecolor = {violet},
+	linkcolor = {blue},
+	urlcolor  = {MidnightBlue}
+}
+
+\newcommand{\var}[1]{\color{OliveGreen} \texttt{#1}\color{black}}
+\newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}
+\newcommand{\varinfo}[1]{\scriptsize \texttt{#1} \normalsize}
+\newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
+
+\date{}
+\begin{document}
+
+\title{cycle.py}
+\maketitle
+
+A cycle is formed between the fences when the graph created by the fences contains a cycle in it. This graph consists of nodes which are fences and edges which are relations between the fences - SB relations, SW relations and TO relations.\\
+\begin{center}
+    \input{section/cycle_example.tex}
+    Example showing relations between fences in three threads
+\end{center}
+The above example has three threads with fences in each thread. The intra-thread relations are SB relations and the inter-thread relations are TO relations. SB's are also a type of Total Order relation. \\
+
+This example has 3 cycles. They are:\\
+\begin{enumerate}
+    \item $F_1n_2$ \rightarrow\ $F_2n_2$ \rightarrow\ $F_3n_2$ \rightarrow\ $F_1n_1$ \rightarrow\ $F_1n_2$\\which has 4 fences.
+    
+    \item $F_1n_2$ \rightarrow\ $F_2n_2$ \rightarrow\ $F_2n_3$ \rightarrow\ $F_1n_2$\\which has 3 fences
+    \item $F_2n_2$ \rightarrow\ $F_3n_2$ \rightarrow\ $F_2n_2$\\which has 2 fences
+\end{enumerate}
+
+\section{Detecting cycles in the program}
+To detect a cycle in a graph of fences, the python package \textit{"networkx"} is used.\\
+
+\fun{Cycles}{sb\_edges,to\_edges}\ takes input parameters as the relations between the fences. These relations are just the the SB relations and TO relations between the fences.\\
+
+\var{l} contains the combined edges between the fences.\\
+
+\fun{DiGraph}{edges}\ from package \textit{networkx} creates a graph with the given edges. This graph is put into variable \var{G}.\\
+
+\fun{simple\_cycles}{graph}\ from package \textit{networkx} computes and detects the cycles (if any) in the graph from the given information. This is turned into an array and put into variable \var{cycles}.\\
+
+The next few steps are done in order to sort the fences inside the cycles in ascending order and then sort the cycles according to the first fence in ascending order. This step is undertaken because it will later be helpful while programming in Z3.\\
+
+There might also be some duplicate values in some cases, so these duplicate values are removed using python package \textit{"itertools"}. This module works as a fast, memory-efficient tool.
+
+\end{document}

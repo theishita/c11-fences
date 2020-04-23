@@ -2,7 +2,6 @@
 
 # --------------------------------------------------------
 
-# IDEA: creating a file with a class is faster than creating a file with a function
 from graph import Graph
 
 class mo:
@@ -33,7 +32,7 @@ class mo:
 					sj = str(j)
 					for k in trace:
 						if k[0] == si and (k[2] == 'write' or k[2] == "init"):
-							a = k[4]											# check if the variable being operated upon is the same
+							a = k[4]										# check if the variable being operated upon is the same
 							flag += 1
 						if k[0] == sj and k[2] == 'write':
 							b = k[4]
@@ -70,7 +69,8 @@ class mo:
 				a_no = i[0]
 
 				for j in trace:
-					if j[2] == 'write':				# IDEA: hb's are gonna be more than say write commands, that's why first checking for write cmd and only then checking if hb
+					if j[2] == 'write':
+# IDEA: hb's are gonna be more than say write commands, that's why first checking for write cmd and only then checking if hb
 						b_no = j[0]
 
 						a_var = i[4]

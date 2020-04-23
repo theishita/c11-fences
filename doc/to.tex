@@ -1,0 +1,49 @@
+\documentclass[dvipsnames]{article}
+\setlength{\parindent}{0pt}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{smartdiagram}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning}
+
+\usepackage[colorlinks]{hyperref}
+\hypersetup{
+	colorlinks = true,
+	citecolor = {violet},
+	linkcolor = {blue},
+	urlcolor  = {MidnightBlue}
+}
+
+\newcommand{\var}[1]{\color{OliveGreen} \texttt{#1}\color{black}}
+\newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}
+\newcommand{\varinfo}[1]{\scriptsize \texttt{#1} \normalsize}
+\newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
+
+\newcommand{\rf}[2]{{#1} {\color{Blue}\rightarrow$^{rf}$} \color{black}{#2}}
+\newcommand{\mo}[2]{{#1} {\color{Blue}\rightarrow$^{mo}$} \color{black}{#2}}
+\newcommand{\tor}[2]{{#1} {\color{OliveGreen}\rightarrow$^{to}$} \color{black}{#2}}
+
+\date{}
+\begin{document}
+
+\title{to.py}
+\maketitle
+
+Total order (TO) is a binary relation on some set, which is antisymmetric, transitive, and a connex relation. Formally, a binary relation $\leq$  is a total order on a set X if the following statements hold for all a, b and c in X:
+\begin{enumerate}
+    \item \textbf{Antisymmetry}\\
+        if a $\leq$ b and b $\leq$ a, then a = b
+    \item \textbf{Transitivity}\\
+        if a $\leq$ b and b $\leq$ c then a $\leq$ c
+    \item \textbf{Connexity}\\
+        a $\leq$ b or b $\leq$ a
+\end{enumerate}
+
+For C/C++11, these rules translate to the following:
+\input{section/to_rules.tex}
+
+\section{Finding TO edges between fences}
+Each rule has a function that runs according to it and determines TO relations between fences. After immediate relations are calculated, transitive TO relations between the fences are also calculated in function \fun{all\_to}{}.
+
+\end{document}

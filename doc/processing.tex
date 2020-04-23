@@ -22,7 +22,7 @@
 \maketitle
 
 \par
-This is the class where the root of all the processing takes place. It defines functions imperative to the computation of the program. The order of operations is:
+This is the class where the root of all the processing takes place. It runs functions from classes that are imperative to the computation of the program. Classes are used in files instead of functions since creating a file with a class runs faster than creating a file with a function. The order of operations is:
 \begin{enumerate}
     \item Happens-before (hb)
     \item Modification Order (mo)
@@ -36,21 +36,15 @@ Class \class{processing } takes input parameter \var{traces}, which provides the
 % ------------ INIT -------------
 \section{Initialization}
 \par
-\var{z3vars } is initialized as an empty list. It will later be updated to contain the list of variable names to be used in Z3. This list will later be required while creating the Z3 file and creating Z3 constants.\\
+\var{self.z3vars } is initialized as an empty list. It will later be updated to contain the list of variable names to be used in Z3. This list will later be required while creating the Z3 file and creating Z3 constants.\\
 \textit{Example:}\\
-\var{z3vars }= \varinfo{['l18', 'l19', 'l41', 'l42', 'l23', 'l22', 'l45', 'l46']}\\
+\var{self.z3vars }= \varinfo{['l18', 'l19', 'l41', 'l42', 'l23', 'l22', 'l45', 'l46']}\\
 
-\var{disjunctions }will contain the list of logical operations on the Z3 variables. This list will be required to create assertions in the Z3 file.\\
+\var{self.disjunctions }will contain the list of logical operations on the Z3 variables. This list will be required to create assertions in the Z3 file.\\
 \textit{Example:}\\
-\var{disjunctions }= \varinfo{['(bvand l14 l22)', '(bvand l14 l22)']}\\
+\var{self.disjunctions }= \varinfo{['(bvand l14 l22)', '(bvand l14 l22)']}\\
 
 The two variables described above remain constant throughout an execution of the program. After each trace is checked, the new Z3 variables and disjunctions are added to these lists. However, there are other variables that do not remain constant and differ for each trace. For example, the fence positions, the order of instructions and the detected cycles are different for each erroneous trace. Hence, the next set of variables is re-initialized inside a loop that runs for each erroneous trace.\\
-
-\var{fences } would contain the list of all the fences. The fences are named as \begin{center}
-    \varinfo{'F' + thread number + 'n' + instruction number in thread}.
-\end{center}
-\textit{Example:}\\
-\var{fences }= \varinfo{['F1n1', 'F1n2', 'F1n3', 'F1n4', 'F1n5', 'F1n6', 'F1n7', 'F1n8', 'F1n9', 'F1n10', 'F2n1', 'F2n2', 'F2n3', 'F2n4', 'F2n5', 'F2n6', 'F3n1', 'F3n2', 'F3n3', 'F3n4', 'F3n5']}\\
 
 \var{fence\_thread }will contain lists of fences in a single thread. This will be used later while deciphering pairs of fences that are in sb.\\
 \textit{Example:}\\
@@ -98,15 +92,13 @@ Next, the MO relations are deduced from the HB relations. This is discussed in d
 \subsubsection{Pseudo fences insertion algorithm}
 \fun{fence}{trace}\ forms the structure described by \var{order}, defined in the class \class{processing}.\\
 
-\var{threads }contains the total number of threads in the program, including the main thread. This is derived from the last instruction of the trace because the trace will have been sorted in ascending order according to thread numbers. And the thread number of an instruction will be available in the second index of the list describing the instruction. Hence, \var{threads} = \varinfo{int(trace[-1][1])}\\
+\var{threads }contains the total number of threads in the program, including the main thread. This is derived from the last instruction of the trace because the trace will have been sorted in ascending order according to thread numbers. The last instruction will have the last thread's last instruction. And the thread number of an instruction will be available in the second index of the list describing the instruction. Hence, \var{threads} = \varinfo{int(trace[-1][1])}\\
 
 \var{exec }will contain the list of instructions in order including the added pseudo fences.\\
 
 The first loop runs over the range of the number of threads in the source program, since the fences are named according to the thread they are placed in. For instance, a fence in thread 4 will be named \texttt{F4nx}, where x is the unique number given to fences in a thread. \\
 
 \var{fence\_no }describes the fence number in a particular thread. This number is incremented each time a fence is added in a thread.\\
-
-\var{fences\_in\_thread }contains the list of fences in a particular thread.\\
 
 The second loop runs over the range of the instructions in the traces. The instructions are extracted and fences are placed around them. Firstly, a fence is placed before an instruction.\\
 \var{exec }is the list that contains all the instructions with the fences included, so the fence is added to it.\\
