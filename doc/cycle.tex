@@ -35,10 +35,10 @@ The above example has three threads with fences in each thread. The intra-thread
 
 This example has 3 cycles. They are:\\
 \begin{enumerate}
-    \item $F_1n_2$ \rightarrow\ $F_2n_2$ \rightarrow\ $F_3n_2$ \rightarrow\ $F_1n_1$ \rightarrow\ $F_1n_2$\\which has 4 fences.
+    \item $F_1n_2$ $\rightarrow\ F_2n_2 \rightarrow\ F_3n_2 \rightarrow\ F_1n_1 \rightarrow\ F_1n_2$\\which has 4 fences.
     
-    \item $F_1n_2$ \rightarrow\ $F_2n_2$ \rightarrow\ $F_2n_3$ \rightarrow\ $F_1n_2$\\which has 3 fences
-    \item $F_2n_2$ \rightarrow\ $F_3n_2$ \rightarrow\ $F_2n_2$\\which has 2 fences
+    \item $F_1n_2 \rightarrow\ F_2n_2 \rightarrow\ F_2n_3 \rightarrow\ F_1n_2$\\which has 3 fences
+    \item $F_2n_2 \rightarrow\ F_3n_2 \rightarrow\ F_2n_2$\\which has 2 fences
 \end{enumerate}
 
 \section{Detecting cycles in the program}

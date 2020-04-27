@@ -22,7 +22,7 @@
                 (A) edge node[pos=0.3] {rf} (B);
      
         \end{tikzpicture}\\
-        \rf{A}{B} \implies \tor{X}{Y}
+        \rf{A}{B} $\implies$ \tor{X}{Y}
     
     \item \textit{X, Y are SC fences below and above instructions A, B respectively. M is a previous write operation on variable x.}\\
         \begin{tikzpicture}
@@ -34,7 +34,7 @@
                 edge[-] (Y);
             
         \end{tikzpicture}\\
-        (\rf{M}{B}) \land\ (\mo{M}{A}) \implies \tor{Y}{X}
+        (\rf{M}{B}) $\land$\ (\mo{M}{A}) $\implies$ \tor{Y}{X}
     
     \item \textit{X, Y are SC fences below and above instructions A, B respectively}\\
         \begin{tikzpicture}
@@ -49,6 +49,6 @@
                 (B) edge node[pos=0.3] {mo} (A);
         
         \end{tikzpicture}\\
-        \mo{B}{A} \implies \tor{Y}{X}
+        \mo{B}{A} $\implies$ \tor{Y}{X}
         
 \end{enumerate}

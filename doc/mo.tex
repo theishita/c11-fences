@@ -17,11 +17,11 @@
 \newcommand{\varinfo}[1]{\scriptsize \texttt{#1} \normalsize}
 \newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
 
-\newcommand{\rf}[2]{{#1} {\color{Blue}\rightarrow$^{rf}$} \color{black}{#2}}
-\newcommand{\seqb}[2]{{#1} {\color{Blue}\rightarrow$^{sb}$} \color{black}{#2} }
-\newcommand{\sw}[2]{{#1} {\color{Blue}\rightarrow$^{sw}$} \color{black}{#2} }
-\newcommand{\hb}[2]{{#1} {\color{Blue}\rightarrow$^{hb}$} \color{black}{#2}}
-\newcommand{\mo}[2]{{#1} {\color{OliveGreen}\rightarrow$^{mo}$} \color{black}{#2}}
+\newcommand{\rf}[2]{{#1} {\color{Blue}$\rightarrow^{rf}$} \color{black}{#2}}
+\newcommand{\seqb}[2]{{#1} {\color{Blue}$\rightarrow^{sb}$} \color{black}{#2} }
+\newcommand{\sw}[2]{{#1} {\color{Blue}$\rightarrow^{sw}$} \color{black}{#2} }
+\newcommand{\hb}[2]{{#1} {\color{Blue}$\rightarrow^{hb}$} \color{black}{#2}}
+\newcommand{\mo}[2]{{#1} {\color{OliveGreen}$\rightarrow^{mo}$} \color{black}{#2}}
 
 \date{}
 \begin{document}
@@ -33,19 +33,19 @@ Modification Order (MO) relations take place when modifications to any particula
 %TODO: figure out and fix all the random italics letters
 \begin{enumerate}
     \item Write-write coherence: \\
-    \hb{$A_x$}{$B_x$} \implies \mo{$A_x$}{$B_x$}\\
+    \hb{$A_x$}{$B_x$} $\implies$ \mo{$A_x$}{$B_x$}\\
     \textit{where A, B are write operations modifying variable x}
     
     \item Read-read coherence:\\
-    \hb{\rf{$X_x$}{$A_x$}}{$B_x$} \implies (\rf{$X_x$}{$B_x$}) \lor\ (\rf{\mo{$X_x$}{$Y_x$}}{$B_x$})\\
+    \hb{\rf{$X_x$}{$A_x$}}{$B_x$} $\implies$ (\rf{$X_x$}{$B_x$}) $\lor$\ (\rf{\mo{$X_x$}{$Y_x$}}{$B_x$})\\
     \textit{where X, Y are writes on x\\ and A, B are reads on x}
     
     \item Read-write coherence:\\
-    \hb{$A_x$}{$B_x$} \implies (\rf{$X_x$}{$A_x$}) \land\ (\mo{$X_x$}{$B_x$})\\
+    \hb{$A_x$}{$B_x$} $\implies$ (\rf{$X_x$}{$A_x$}) $\land$\ (\mo{$X_x$}{$B_x$})\\
     \textit{where X, B are writes on variable x\\and A is a read on variable x}
     
     \item Write-read coherence:\\
-    \hb{$X_x$}{$B_x$} \implies (\rf{$X_x$}{$B_x$}) \lor\ (\rf{\mo{$X_x$}{$Y_x$}}{$B_x$})\\
+    \hb{$X_x$}{$B_x$} $\implies$ (\rf{$X_x$}{$B_x$}) $\lor$\ (\rf{\mo{$X_x$}{$Y_x$}}{$B_x$})\\
     \textit{where X, Y are writes on variable x\\and B is a read on variable x}
 \end{enumerate}
 

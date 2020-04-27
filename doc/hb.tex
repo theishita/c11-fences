@@ -12,15 +12,28 @@
 	urlcolor  = {MidnightBlue}
 }
 
+\makeatletter
+\renewenvironment{table}%
+  {\renewcommand{\familydefault}{\ttdefault}\selectfont
+  \@float{table}}
+  {\end@float}
+\makeatother
+
 \newcommand{\var}[1]{\color{OliveGreen} \texttt{#1}\color{black}}
 \newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}
 \newcommand{\varinfo}[1]{\scriptsize \texttt{#1} \normalsize}
 \newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
 
-\newcommand{\rf}[2]{{#1} {\color{Blue}\rightarrow$^{rf}$} \color{black}{#2}}
-\newcommand{\seqb}[2]{{#1} {\color{Blue}\rightarrow$^{sb}$} \color{black}{#2} }
-\newcommand{\sw}[2]{{#1} {\color{Blue}\rightarrow$^{sw}$} \color{black}{#2} }
-\newcommand{\hb}[2]{{#1} {\color{OliveGreen}\rightarrow$^{hb}$} \color{black}{#2}}
+\newcommand{\rf}[2]{{#1} {\color{Blue}$\rightarrow^{rf}$} \color{black}{#2}}
+\newcommand{\seqb}[2]{{#1} {\color{Blue}$\rightarrow^{sb}$} \color{black}{#2} }
+\newcommand{\sw}[2]{{#1} {\color{Blue}$\rightarrow^{sw}$} \color{black}{#2} }
+\newcommand{\hb}[2]{{#1} {\color{OliveGreen}$\rightarrow^{hb}$} \color{black}{#2}}
+
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.75in}
 
 \date{}
 \begin{document}
@@ -34,13 +47,13 @@ A simply happens-before evaluation B if any of the following is true:
 \begin{enumerate}
     \item A is sequenced-before B
     \newline
-    \seqb{A}{B} \implies \hb{A}{B}
+    \seqb{A}{B} $\implies$ \hb{A}{B}
     \item A synchronizes-with B
     \newline
-    \sw{A}{B} \implies \hb{A}{B}
+    \sw{A}{B} $\implies$ \hb{A}{B}
     \item A happens-before X, and X happens-before B
     \newline
-    \hb{\hb{A}{X}}{B} \implies \hb{A}{B}
+    \hb{\hb{A}{X}}{B} $\implies$ \hb{A}{B}
 \end{enumerate} 
 %TODO: fix the arrow colours
 
@@ -53,7 +66,7 @@ Each instruction in the has a unique serial number. This serial number is used t
 \input{section/hb_instr_example.tex}
 Instruction \texttt{0} is left blank since indexing of instructions begins from 1 in the case of CDS Checker.
 
-\hb{3}{4} but 4 \color{OliveGreen}\not\to$^{hb}$\color{black} 3
+\hb{3}{4} but 4 \color{OliveGreen}$\not\to^{hb}$\color{black} 3
 
 % -------------- INIT --------------
 \section{Initialization}
@@ -101,12 +114,12 @@ There are certain rules for SW's between instructions.
     \sw{thread A finish}{thread A join}
     
     \item SW relations between read and write instructions.\\
-    \rf{$W_{\geq rel}x$}{$R_{\geq acq}x$} \implies \sw{$W_{\geq rel}x$}{$R_{\geq acq}x$}\\
+    \rf{$W_{\geq rel}x$}{$R_{\geq acq}x$} $\implies$ \sw{$W_{\geq rel}x$}{$R_{\geq acq}x$}\\
     RMW operations are considered as both read and write operations in this case.
     
 \end{enumerate}
 
-Hence, all three of the above cases are considered while calculating SW relations. A loop runs across the range of the trace of instructions. Each time it finds either a \texttt{thread create} statement, \texttt{thread join} statement or a \textttt{read/rmw} statement, it applies the corresponding rule and finds out the SW relation between the instructions.\\
+Hence, all three of the above cases are considered while calculating SW relations. A loop runs across the range of the trace of instructions. Each time it finds either a \texttt{thread create} statement, \texttt{thread join} statement or a \texttt{read/rmw} statement, it applies the corresponding rule and finds out the SW relation between the instructions.\\
 \var{self.sw\_edges }is the list that gets appended each time an SW relation is discovered.
 
 \subsection{Creating the matrix}
@@ -121,7 +134,7 @@ A graph is created with size \var{self.size}.\\
     \item Created a temporary matrix \var{temp } that has exactly the same values and size as the original matrix.
     \item Initialized a flag variable \var{flag}. This is to ascertain the values later on.
     \item Added transitive edges in the matrix.\\
-    \hb{\hb{1}{2}}{3} \implies \hb{1}{3}
+    \hb{\hb{1}{2}}{3} $\implies$ \hb{1}{3}
     \item Put this new matrix which includes the set of transitive edges into \var{temp}.
     \item If there were no new transitive edges found, then the previous value of the matrix (now contained in \var{temp}) would be equal to the new value of the matrix. Hence, \var{self.mat }== \var{temp}.
     \item If \var{self.mat }== \var{temp}, then increment the value of the flag variable. Else, repeat step 3, 4, 5 till such a scenario occurs.
