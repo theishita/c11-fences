@@ -18,6 +18,10 @@ class to:
 		self.all_to()
 
 		self.to_edges.sort(key = lambda x: x[0])
+
+		for i in self.to_edges:
+			if i[0] == 'F2n3':
+				print(i)
 		# print("to edges=",self.to_edges)
 
 	def get(self):

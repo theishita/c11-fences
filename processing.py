@@ -97,16 +97,16 @@ class Processing:
 				if int(trace[i][1])==j:
 					fence_no+=1
 					exec.append('F'+str(j)+'n'+str(fence_no))
-					fences_in_thread.append('F'+str(j)+'n'+str(fence_no))         # fence order in a thread
-					event = {'no': trace[i][0],                         # trace[i][0] is the event number
+					fences_in_thread.append('F'+str(j)+'n'+str(fence_no))		# fence order in a thread
+					event = {'no': trace[i][0],									# trace[i][0] is the event number
 							'thread': j,
 					}
 					if trace[i][2]=='read':
 						event["type"] = "read"
-						event['rf'] = trace[i][6]                       # trace[i][7] gives Read-from (Rf)
+						event['rf'] = trace[i][6]						# trace[i][7] gives Read-from (Rf)
 						event['mo'] = trace[i][3]
 						event['loc'] = trace[i][4]
-						event['line'] = trace[i][9]							# line number in the original source code
+						event['line'] = trace[i][9]						# line number in the original source code
 					elif trace[i][2]=='write':
 						event["type"] = "write"
 						event['mo'] = trace[i][3]

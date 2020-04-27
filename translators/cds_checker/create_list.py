@@ -29,7 +29,7 @@ def create_list(trace_no,instr,file_vars,trace_locs,filename):
 		new_value = value
 	line.append(new_value)								# 5: value
 
-	if instr[3] == "read":
+	if instr[3] == "read" or instr[3] == 'rmw':
 		line.append(instr[7])							# 6: rf value
 	else:
 		line.append("NA")								# 6: rf value = NA in case of non-read operation
@@ -40,12 +40,12 @@ def create_list(trace_no,instr,file_vars,trace_locs,filename):
 	except:
 		line.append("NA")								# 7: variable name = NA in case of non-atomic operation
 
-	if instr[3] == "read" or instr[3] == "write":
+	if instr[3] == "read" or instr[3] == "write" or instr[3] == "rmw":
 		line.append(create_instruction(line[7],line[2],line[3],line[5]))	# 8: the instruction as present in the source code
 
 		no = find_line_no(filename,line[1],line[8])
 		if no == None:
-			print("Line number cannot be determined for instruction",line[0],":",line[8],"from thread",int(line[1])-1,"from trace",trace_no)
+			print("\nTrace",trace_no,", thread",int(line[1])-1,":\nLine number cannot be determined for instruction",line[0],":",line[8])
 			print("Please mention it", end=": ")
 			no = input()
 		line.append(str(no))					# 9: line number of the instruction in the source code
@@ -62,9 +62,11 @@ def create_instruction(var,instr_type,mem_order,value):
 
 	if instr_type == "read":
 		instruction += "load("
-	elif instr_type == "write":										# IDEA: join makes it faster and more elegant than a+b+c+d
+	elif instr_type == "write":
 		instruction += "store("+value+", "			# add the value of the store operation to the instruction
+	# elif instr_type == "rmw":
 
-	instruction += "memory_order_"+mem_order+")"
+
+	# instruction += "memory_order_"+mem_order+")"
 
 	return instruction

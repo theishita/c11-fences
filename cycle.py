@@ -9,7 +9,6 @@ def Cycles(sb_edges,to_edges):
 		l.append(a)
 	for a in to_edges:
 		l.append(a)
-	# print(l)
 
 	# Create Directed Graph with a lost of all edges
 	G=nx.DiGraph(l)
@@ -24,5 +23,7 @@ def Cycles(sb_edges,to_edges):
 
 	# Remove duplicate values
 	cycles = list(cycles for cycles,_ in itertools.groupby(cycles))
+
+	print("cycles=",cycles)
 
 	return cycles
