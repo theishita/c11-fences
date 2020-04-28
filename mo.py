@@ -31,10 +31,10 @@ class mo:
 					si = str(i)
 					sj = str(j)
 					for k in trace:
-						if k[0] == si and (k[2] == 'write' or k[2] == "init"):
+						if k[0] == si and (k[2] == 'write' or k[2] == "init" or k[2] == 'rmw'):
 							a = k[4]										# check if the variable being operated upon is the same
 							flag += 1
-						if k[0] == sj and k[2] == 'write':
+						if k[0] == sj and (k[2] == 'write' or k[2] == 'rmw'):
 							b = k[4]
 							flag += 1
 
@@ -43,11 +43,11 @@ class mo:
 
 	def rule2(self,trace):
 		for i in trace:
-			if i[2] == 'read':
+			if i[2] == 'read' or i[2] == 'rmw':
 				a_no = i[0]
 
 				for j in trace:
-					if j[2] == 'read':
+					if j[2] == 'read' or j[2] == 'rmw':
 						b_no = j[0]
 						a_var = i[4]
 						b_var = j[4]
@@ -65,11 +65,11 @@ class mo:
 
 	def rule3(self,trace):
 		for i in trace:
-			if i[2] == 'read':
+			if i[2] == 'read' or i[2] == 'rmw':
 				a_no = i[0]
 
 				for j in trace:
-					if j[2] == 'write':
+					if j[2] == 'write' or j[2] == 'rmw':
 # IDEA: hb's are gonna be more than say write commands, that's why first checking for write cmd and only then checking if hb
 						b_no = j[0]
 
@@ -86,11 +86,11 @@ class mo:
 
 	def rule4(self,trace):
 		for i in trace:
-			if i[2] == 'write':
+			if i[2] == 'write' or i[2] == 'rmw':
 				x_no = i[0]
 
 				for j in trace:
-					if j[2] == 'read':
+					if j[2] == 'read' or j[2] == 'rmw':
 						b_no = j[0]
 
 						x_var = i[4]

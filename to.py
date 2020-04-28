@@ -19,9 +19,6 @@ class to:
 
 		self.to_edges.sort(key = lambda x: x[0])
 
-		for i in self.to_edges:
-			if i[0] == 'F2n3':
-				print(i)
 		# print("to edges=",self.to_edges)
 
 	def get(self):
@@ -29,7 +26,7 @@ class to:
 
 	def rule1(self):
 		for i in range(len(self.order)):
-			if "type" in self.order[i] and self.order[i]['type'] == 'read':
+			if "type" in self.order[i] and (self.order[i]['type'] == 'read' or self.order[i]['type'] == 'rmw'):
 				a_no = self.order[i]['rf']
 
 				y = self.order[i+1]
@@ -48,7 +45,7 @@ class to:
 
 			for j in range(len(self.order)):
 				b = self.order[j]
-				if "type" in b and b['type'] == 'read':
+				if "type" in b and (b['type'] == 'read' or b['type'] == 'rmw'):
 					if b['rf'] == m:
 						# print("bma=",b,m,a)
 						y = self.order[j-1]

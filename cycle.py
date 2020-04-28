@@ -24,6 +24,6 @@ def Cycles(sb_edges,to_edges):
 	# Remove duplicate values
 	cycles = list(cycles for cycles,_ in itertools.groupby(cycles))
 
-	print("cycles=",cycles)
+	# print("cycles=",cycles)
 
 	return cycles

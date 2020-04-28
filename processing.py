@@ -45,6 +45,7 @@ class Processing:
 			mo_edges = get_mo.get()
 
 			order=self.fence(trace)
+			print(order)
 
 			get_to = to(order,mo_edges,self.fence_sb_edges)
 			to_edges = get_to.get()
@@ -54,8 +55,10 @@ class Processing:
 			# print("fences in sb=",self.fence_thread)
 
 			cycles = Cycles(self.fence_sb_edges,to_edges)
+			print("cycles=",cycles)
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
+			print("unique_fences=",unique_fences)
 
 			if len(unique_fences)>0:
 				for fence in unique_fences:
@@ -101,17 +104,17 @@ class Processing:
 					event = {'no': trace[i][0],									# trace[i][0] is the event number
 							'thread': j,
 					}
-					if trace[i][2]=='read':
+					if trace[i][2]=='read' or trace[i][2]=="rmw":
 						event["type"] = "read"
 						event['rf'] = trace[i][6]						# trace[i][7] gives Read-from (Rf)
 						event['mo'] = trace[i][3]
 						event['loc'] = trace[i][4]
-						event['line'] = trace[i][9]						# line number in the original source code
+						event['line'] = trace[i][8]						# line number in the original source code
 					elif trace[i][2]=='write':
 						event["type"] = "write"
 						event['mo'] = trace[i][3]
 						event['loc'] = trace[i][4]
-						event['line'] = trace[i][9]
+						event['line'] = trace[i][8]
 					exec.append(event)
 			fence_no+=1
 			exec.append('F'+str(j)+'n'+str(fence_no))
