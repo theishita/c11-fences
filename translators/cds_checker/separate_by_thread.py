@@ -32,7 +32,7 @@ def separate_by_thread(filename):
 	threads_separated.insert(0, threads_separated.pop())
 
 	# print(threads_separated)
-	for i in threads_separated:
-		print(i)
+	# for i in threads_separated:
+	# 	print(i)
 
 	return threads_separated

@@ -16,6 +16,9 @@ class mo:
 		self.rule2(trace)
 		self.rule3(trace)
 		self.rule4(trace)
+
+		self.all_mo()
+
 		self.mo_edges = list(dict.fromkeys(self.mo_edges))
 		# print("mo edges=",self.mo_edges)
 
@@ -105,3 +108,20 @@ class mo:
 
 								if not b_rf == x_no:
 									self.mo_edges.append((x_no,b_rf))
+
+	# to get all the transitive mo relations as well
+	def all_mo(self):
+		flag = 0
+		temp_edges = self.mo_edges
+
+		while flag != 2:
+			for e0 in self.mo_edges:
+				for e1 in self.mo_edges:
+					if e0[1] == e1[0] and (e0[0],e1[1]) not in self.mo_edges:
+						self.mo_edges.append((e0[0],e1[1]))
+
+
+			if self.mo_edges == temp_edges:
+				flag += 1
+			else:
+				temp_edges = self.mo_edges

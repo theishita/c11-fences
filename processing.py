@@ -23,6 +23,8 @@ from stitch_z3 import convert_z3
 
 import sys
 
+# TODO: create sb edge pairs between sc events
+
 class Processing:
 	def __init__(self,traces):
 		self.z3vars = []												# list of all z3 constants
@@ -32,30 +34,35 @@ class Processing:
 
 		for trace in traces:											# run for each trace
 			self.fence_thread = []										# list of fences separated by threads
-			self.fence_sb_edges = []									# list of all sb edge pairs between fences
-			self.cycles = []                                            # list of all cycles between the fences
+			self.fence_sc_event_thread = []								# list of all fences and events separated by threads
+			self.sc_sb_edges = []										# list of sb edge pairs between fences as well as sc events
+			self.cycles = []                                            # list of all cycles between the fences and events
 			self.loc_info = []                                          # information regarding the required fence locations
 
 			trace_no += 1
+			print("trace=",trace_no)
 
 			hb_graph = hb(trace)
 			mat,size = hb_graph.get()
 
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
+			print("mo edges====",mo_edges)
 
-			order=self.fence(trace)
-			print(order)
+			order,order_thread=self.fence(trace)
+			# print("\n\n\nORDER=",order)
+			print("\n\nORDER THREAD=",order_thread)
 
-			get_to = to(order,mo_edges,self.fence_sb_edges)
+			get_to = to(order,mo_edges,self.sc_sb_edges,order_thread)
 			to_edges = get_to.get()
 			# print("to_edges=",to_edges)
 
-			# print("sb fence=",self.fence_sb_edges)
-			# print("fences in sb=",self.fence_thread)
+			print("\nfence_sb_edgse=",self.sc_sb_edges)
+			# print("\nfence_thread=",self.fence_thread)
+			print("\nfence_event_thread min=",self.fence_sc_event_thread)
 
-			cycles = Cycles(self.fence_sb_edges,to_edges)
-			print("cycles=",cycles)
+			"""cycles = Cycles(self.sc_sb_edges,to_edges)
+			# print("cycles=",cycles)
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			print("unique_fences=",unique_fences)
@@ -83,7 +90,7 @@ class Processing:
 				print("No TO cycles can be formed for trace",trace_no,"\nHence this behaviour cannot be stopped using SC fences")
 				sys.exit()
 
-		convert_z3(self.z3vars,self.disjunctions)
+		convert_z3(self.z3vars,self.disjunctions)"""
 
 
 	def fence(self,trace):
@@ -91,49 +98,70 @@ class Processing:
 		# find out the number of threads in the program
 		threads = int(trace[-1][1])
 
-		exec = []
+		order = []
+		exec_order_thread = [] # IDEA: any var with _thread at the end means that it is separated by thread number
 
 		for j in range(1,threads+1):
 			fence_no = 0
 			fences_in_thread = []
+			fences_events_in_thread = []
+			fences_events_in_thread_min = []									# a minimal version of the above in order to find sb's
+
 			for i in range(len(trace)):
 				if int(trace[i][1])==j:
 					fence_no+=1
-					exec.append('F'+str(j)+'n'+str(fence_no))
-					fences_in_thread.append('F'+str(j)+'n'+str(fence_no))		# fence order in a thread
+					fence_name = 'F'+str(j)+'n'+str(fence_no)
+					order.append(fence_name)
+					fences_in_thread.append(fence_name)							# fence order in a thread
+					fences_events_in_thread.append(fence_name)					# fence added to fences+all events order in a thread
+					fences_events_in_thread_min.append(fence_name)				# fence added to fences+sc events order in a thread
+
 					event = {'no': trace[i][0],									# trace[i][0] is the event number
 							'thread': j,
+							'mo': trace[i][3],
+							'type': trace[i][2]
 					}
 					if trace[i][2]=='read' or trace[i][2]=="rmw":
-						event["type"] = "read"
-						event['rf'] = trace[i][6]						# trace[i][7] gives Read-from (Rf)
-						event['mo'] = trace[i][3]
+						event['rf'] = trace[i][6]								# trace[i][7] gives Read-from (Rf)
 						event['loc'] = trace[i][4]
-						event['line'] = trace[i][8]						# line number in the original source code
+						event['line'] = trace[i][8]								# line number in the original source code
 					elif trace[i][2]=='write':
-						event["type"] = "write"
-						event['mo'] = trace[i][3]
 						event['loc'] = trace[i][4]
 						event['line'] = trace[i][8]
-					exec.append(event)
+
+					if event['mo'] == 'seq_cst':
+						fences_events_in_thread_min.append(trace[i][0])			# event added to fences+sc events order in a thread
+
+					order.append(event)
+					fences_events_in_thread.append(event)
+
 			fence_no+=1
-			exec.append('F'+str(j)+'n'+str(fence_no))
-			fences_in_thread.append('F'+str(j)+'n'+str(fence_no))
+			fence_name = 'F'+str(j)+'n'+str(fence_no)
+
+			# IDEA: so many extra vars so that- use only where needed cuz loops increase complexity
+			fences_events_in_thread.append(fence_name)
+			order.append(fence_name)
+			exec_order_thread.append(fences_events_in_thread)
+			fences_in_thread.append(fence_name)
+			fences_events_in_thread_min.append(fence_name)
+
 			self.fence_thread.append(fences_in_thread)
+			self.fence_sc_event_thread.append(fences_events_in_thread_min)
 
-		self.sb(exec,threads)
+		# now find all sb relations between fences and events
+		self.sb()
 
-		return exec
+		return order, exec_order_thread
 
-	def sb(self, trace, threads):
+	def sb(self):
 
-		for i in self.fence_thread:
+		for i in self.fence_sc_event_thread:
 			for j in range(len(i)):
 				for k in range(j+1,len(i)):
-					if not (i[j],i[k]) in self.fence_sb_edges:
-						self.fence_sb_edges.append((i[j],i[k]))
+					if not (i[j],i[k]) in self.sc_sb_edges:
+						self.sc_sb_edges.append((i[j],i[k]))
 
-		self.fence_sb_edges.sort(key = lambda x: x[0])
+		self.sc_sb_edges.sort(key = lambda x: x[0])
 
 	def get(self):
 		return self.loc_info

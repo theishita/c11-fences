@@ -96,7 +96,7 @@ class translate_cds:
 			for i in range(1,len(execution)):
 				line_no = find_line_no(threads_separated,execution[i],execution[i-1])
 				execution[i].append(line_no)
-				print(execution[i])
+				# print(execution[i])
 
 			trace_no += 1
 

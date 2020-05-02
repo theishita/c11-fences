@@ -54,21 +54,21 @@ static void reader(void *arg) {
 		}
 	}
 	if (ok == 1) {
-		rmw_2.store(1, memory_order_seq_cst);
+		rmw_2.store(1, memory_order_relaxed);
 		r.fetch_add(1, memory_order_acq_rel);
 
 		flagr.store(0, memory_order_release);
 
-		dum_x.store(1, memory_order_seq_cst);
+		dum_x.store(1, memory_order_relaxed);
 		l = x.load(memory_order_relaxed);
 
 		y.store(l, memory_order_relaxed);
 
-		dum_x.store(2, memory_order_seq_cst);
+		dum_x.store(2, memory_order_relaxed);
         int temp1 = x.load(memory_order_relaxed);
         int temp2 = y.load(memory_order_relaxed);
         MODEL_ASSERT(temp1 == temp2);
-		rmw_2.store(2, memory_order_seq_cst);
+		rmw_2.store(2, memory_order_relaxed);
 		r.fetch_sub(1, memory_order_acq_rel);
     }
 }

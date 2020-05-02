@@ -13,4 +13,4 @@ test-programs/*_fence.cc
 *.out
 *.pdf
 *.gz
-
+*_test.txt

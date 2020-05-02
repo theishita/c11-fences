@@ -31,7 +31,7 @@ cds = translate_cds(filename)										# translates CDS Checker output & returns
 traces,cds_time = cds.get()
 
 get_p = Processing(traces)
-loc_info = get_p.get()												# runs and returns locations
+"""loc_info = get_p.get()												# runs and returns locations
 
 z3_cmd = 'z3 c11'
 z3_run = shlex.split(z3_cmd)										# run z3 file
@@ -47,4 +47,4 @@ print("req locs=",req_locs)
 
 insert(req_locs,filename)											# insert fences into the source file at the requiren locations
 
-end = time.time()
+end = time.time()"""
