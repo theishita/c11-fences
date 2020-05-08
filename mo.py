@@ -65,8 +65,10 @@ class mo:
 
 								if not x == y:
 									self.mo_edges.append((x,y))
+									# print("(",x,",",y,")")
 
 	def rule3(self,trace):
+		# print("\n\nMO rule 3")
 		for i in trace:
 			if i[2] == 'read' or i[2] == 'rmw':
 				a_no = i[0]
@@ -86,8 +88,10 @@ class mo:
 							if self.mat.containsEdge(a,b):
 								x = i[6]
 								self.mo_edges.append((x,b_no))
+								# # print("(",x,",",b_no,")")
 
 	def rule4(self,trace):
+		# # print("\n\nMO rule 4")
 		for i in trace:
 			if i[2] == 'write' or i[2] == 'rmw':
 				x_no = i[0]
@@ -108,6 +112,7 @@ class mo:
 
 								if not b_rf == x_no:
 									self.mo_edges.append((x_no,b_rf))
+									# # print("(",x_no,",",b_rf,")")
 
 	# to get all the transitive mo relations as well
 	def all_mo(self):

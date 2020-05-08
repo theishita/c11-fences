@@ -20,11 +20,20 @@ class to:
 		self.rule3_1b()
 		self.rule4()
 
-		# self.all_to()
-
+		# sort and remove duplicates
+		self.to_edges = list(set(self.to_edges))
 		self.to_edges.sort(key = lambda x: x[0])
 
-		# # print("to edges=",self.to_edges)
+		self.all_to()
+		self.to_edges = list(set(self.to_edges))
+		self.to_edges.sort(key = lambda x: x[0])
+
+		# print("to edges=",self.to_edges)
+		# print("to edges=")
+		#
+		# for e in self.to_edges:
+		# 	if 'F' not in e[0] and 'F' not in e[1]:
+		# 		print(e)
 
 	def get(self):
 		return self.to_edges
@@ -47,7 +56,6 @@ class to:
 
 						self.to_edges.append((x,y))
 						# print("(",x,",",y,")")
-						# self.to_a_to_b(x,y,x_thread,y_thread)
 
 	def rule1a(self):
 		# print("\n\nTO rule 1a:")
@@ -64,7 +72,6 @@ class to:
 
 						self.to_edges.append((a_no,b_no))
 						# print("(",a_no,",",b_no,")")
-						# self.to_a_to_b(a_no,b_no,a_thread,b_thread)
 
 	def rule2(self):
 		# print("\n\nTO rule 2:")
@@ -85,14 +92,13 @@ class to:
 
 								self.to_edges.append((x,m2_no))
 								# print("(",x,",",m2_no,")")
-								# self.to_a_to_b(x,m2_no,x_thread,m2_thread)
 
 	def rule3_1b(self):
 		for i in self.mo_edges:
 			m_no = str(i[0])
 			a_no = str(i[1])
 			x = 0
-			y = []																# since there might be multiple read instructions with rf m_no
+			y = []														# since there might be multiple read instructions with rf m_no
 			b = []
 			seq = 0
 
@@ -117,15 +123,12 @@ class to:
 				for b_no in b:
 					self.to_edges.append((b_no,a_no))
 					# print("(",b_no,",",a_no,")")
-					# self.to_a_to_b(b_no,a_no,y_thread,x_thread)
 
 			# rule 3
-			# print("\n\nTO rule 3:")
 			if x and y:
 				for fy in y:
 					self.to_edges.append((fy,x))
 					# print("(",fy,",",x,")")
-					# self.to_a_to_b(y,x,y_thread,x_thread)
 
 	def rule4(self):
 		for i in self.mo_edges:
@@ -147,72 +150,43 @@ class to:
 			if b['mo'] == 'seq_cst':
 				self.to_edges.append((b_no,x))
 				# print("(",b_no,",",x,")")
-				# self.to_a_to_b(b_no,x,b_thread,a_thread)
 
 			# rule 4b
 			# print("\n\nTO rule 4b:")
 			if a['mo'] == 'seq_cst':
 				self.to_edges.append((y,a_no))
 				# print("(",y,",",a_no,")")
-				# self.to_a_to_b(y,a_no,b_thread,a_thread)
 
 			# rule 4c
 			# print("\n\nTO rule 4c:")
 			self.to_edges.append((y,x))
 			# print("(",y,",",x,")")
-			# self.to_a_to_b(y,x,b_thread,a_thread)
-
-	def to_a_to_b(self,a,b,a_thread,b_thread):
-
-		# for all instructions below B
-		flag = 0
-		for l in self.order_thread[b_thread]:
-			if flag == 1:
-				if 'mo' in l:
-					if l['mo'] == 'seq_cst':
-						self.to_edges.append((a,l['no']))
-						# print("(",a,",",l['no'],")")
-				else:
-					self.to_edges.append((a,l))
-					# print("(",a,",",l,")")
-
-			if l == b or ('no' in l and l['no'] == b):
-				flag = 1
-
-		# for all instructions above A
-		flag = 1
-		for l in self.order_thread[a_thread]:
-			if flag == 1:
-				if 'mo' in l:
-					if l['mo'] == 'seq_cst':
-						self.to_edges.append((l['no'],b))
-						# print("(",l['no'],",",b,")")
-				else:
-					self.to_edges.append((l,b))
-					# print("(",l,",",b,")")
-
-			if l == a or ('no' in l and l['no'] == a):
-				flag = 0
-				break
 
 	def all_to(self):
-		for edge in self.to_edges:
-			e1 = edge[0]
-			e2 = edge[1]
+		flag = 0
+		temp_edges = self.to_edges
+		while flag != 2:
+			for edge in self.to_edges:
+				e1 = edge[0]
+				e2 = edge[1]
 
-			for sb in self.sb_edges:
-				s1 = sb[0]
-				if e2 == s1:
-					s2 = sb[1]
-					if (e1,s2) not in self.to_edges:
-						self.to_edges.append((e1,s2))
-
-			for sb in self.sb_edges:
-				s2 = sb[1]
-				if e1 == s2:
+				for sb in self.sb_edges:
 					s1 = sb[0]
-					for to in self.to_edges:
-						t1 = to[0]
-						t2 = to[1]
-						if t1 == s2 and (s1,t2) not in self.to_edges:
-							self.to_edges.append((s1,t2))
+					if e2 == s1:
+						s2 = sb[1]
+						if (e1,s2) not in self.to_edges:
+							if ('F' in e1 and 'F' not in s2) or ('F' not in e1 and 'F' in s2):
+								self.to_edges.append((e1,s2))
+
+				for sb in self.sb_edges:
+					s2 = sb[1]
+					if e1 == s2:
+						s1 = sb[0]
+						if (s1,e2) not in self.to_edges:
+							if ('F' in s1 and 'F' not in e2) or ('F' not in s1 and 'F' in e2):
+								self.to_edges.append((s1,e2))
+
+			if self.to_edges == temp_edges:
+				flag += 1
+			else:
+				temp_edges = self.to_edges

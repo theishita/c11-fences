@@ -51,20 +51,20 @@ class Processing:
 
 			order,order_thread=self.fence(trace)
 			# print("\n\n\nORDER=",order)
-			print("\n\nORDER THREAD=",order_thread)
+			# print("\n\nORDER THREAD=",order_thread)
 
 			get_to = to(order,mo_edges,self.sc_sb_edges,order_thread)
 			to_edges = get_to.get()
 			# print("to_edges=",to_edges)
 
-			print("\nfence_sb_edgse=",self.sc_sb_edges)
+			# print("\nfence_sc_sb_edgse=",self.sc_sb_edges)
 			# print("\nfence_thread=",self.fence_thread)
-			print("\nfence_event_thread min=",self.fence_sc_event_thread)
+			# print("\nfence_event_thread min=",self.fence_sc_event_thread)
 
-			"""cycles = Cycles(self.sc_sb_edges,to_edges)
+			cycles = Cycles(self.sc_sb_edges,to_edges)
 			# print("cycles=",cycles)
 
-			unique_fences = list(sorted(set(x for l in cycles for x in l)))
+			"""unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			print("unique_fences=",unique_fences)
 
 			if len(unique_fences)>0:
