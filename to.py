@@ -12,7 +12,9 @@ class to:
 		self.mo_edges = mo_edges
 		self.sb_edges = sb_edges
 
-		self.to_edges = []
+		# print("sb_edges=",sb_edges)
+
+		self.to_edges = sb_edges
 
 		self.rule0()
 		self.rule1a()
@@ -175,16 +177,14 @@ class to:
 					if e2 == s1:
 						s2 = sb[1]
 						if (e1,s2) not in self.to_edges:
-							if ('F' in e1 and 'F' not in s2) or ('F' not in e1 and 'F' in s2):
-								self.to_edges.append((e1,s2))
+							self.to_edges.append((e1,s2))
 
 				for sb in self.sb_edges:
 					s2 = sb[1]
 					if e1 == s2:
 						s1 = sb[0]
 						if (s1,e2) not in self.to_edges:
-							if ('F' in s1 and 'F' not in e2) or ('F' not in s1 and 'F' in e2):
-								self.to_edges.append((s1,e2))
+							self.to_edges.append((s1,e2))
 
 			if self.to_edges == temp_edges:
 				flag += 1

@@ -47,11 +47,11 @@ class Processing:
 
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
-			print("mo edges====",mo_edges)
+			# print("mo edges====",mo_edges)
 
 			order,order_thread=self.fence(trace)
-			# print("\n\n\nORDER=",order)
-			# print("\n\nORDER THREAD=",order_thread)
+			print("\n\n\nORDER=",order)
+			print("\n\nORDER THREAD=",order_thread)
 
 			get_to = to(order,mo_edges,self.sc_sb_edges,order_thread)
 			to_edges = get_to.get()
@@ -62,10 +62,20 @@ class Processing:
 			# print("\nfence_event_thread min=",self.fence_sc_event_thread)
 
 			cycles = Cycles(self.sc_sb_edges,to_edges)
-			# print("cycles=",cycles)
+			# print("cycles=",cycles_all)
 
-			"""unique_fences = list(sorted(set(x for l in cycles for x in l)))
-			print("unique_fences=",unique_fences)
+			# cycles = []
+			# for cycle in cycles_all:
+			# 	temp = []
+			# 	for c in cycle:
+			# 		if 'F' in c:
+			# 			temp.append(c)
+			# 	cycles.append(temp)
+
+			print("cycles=",cycles)
+
+			unique_fences = list(sorted(set(x for l in cycles for x in l)))
+			# print("unique_fences=",unique_fences)
 
 			if len(unique_fences)>0:
 				for fence in unique_fences:
@@ -90,7 +100,7 @@ class Processing:
 				print("No TO cycles can be formed for trace",trace_no,"\nHence this behaviour cannot be stopped using SC fences")
 				sys.exit()
 
-		convert_z3(self.z3vars,self.disjunctions)"""
+		convert_z3(self.z3vars,self.disjunctions)
 
 
 	def fence(self,trace):
