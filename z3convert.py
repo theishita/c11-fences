@@ -4,25 +4,18 @@
 # SMT programming language for Z3.
 # --------------------------------------------------------
 
-class convert_z3:
+class z3convert:
 
 	def __init__(self,consts,disjunctions):
 		file = open("c11","w")
 		contents = ""
 
-		conjunction = ""
-
 		# creating the constants
 		for var in consts:
 			contents+= self.constant(var,'(_ BitVec 1)')
-
-		if len(disjunctions)>1:
-			conjunction = self.conjunct(disjunctions)
-		else:
-			conjunction = disjunctions[0]
-
-		contents += self.fact('=',conjunction,'#b1')
+		
 		contents += self.minimize("bvadd",consts)
+		contents += self.maximize("bvand",disjunctions)
 		contents+="(check-sat)\n(get-model)"
 		file.write(contents)
 
@@ -32,6 +25,7 @@ class convert_z3:
 		return cnst
 
 	# to add assertions/facts
+	# unused
 	def fact(self,operator,left,right):
 		assertion = "(assert ("+operator+" "+left+" "+str(right)+"))\n"
 		return assertion
@@ -52,7 +46,16 @@ class convert_z3:
 		mini += "))\n"
 		return mini
 
+	# to create a maximize function
+	def maximize(self,operator,variables):
+		maxi = "(maximize ("+operator
+		for var in variables:
+			maxi += " "+var
+		maxi += "))\n"
+		return maxi
+
 	# to declare and define a function
+	# unused
 	def function(self,name,inputs,output):
 		fn = "(declare-fun "+name+" ("
 		for val in inputs:

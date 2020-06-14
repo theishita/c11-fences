@@ -3,9 +3,9 @@
 # required fence locations.
 # --------------------------------------------------------
 
-def run_z3(loc_info,output):
+def z3run(output):
 
-	req_locs = []													# list of the final required locations
+	req_locs = []														# list of the final required locations
 
 	output = output.split('\n')
 	in_model = 0														# flag to tell whether the output is describing the model or not

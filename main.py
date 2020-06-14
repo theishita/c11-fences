@@ -2,7 +2,7 @@
 # Inputs a c++ file and outputs fences and fence positions
 # with respect to C++11 version compiler.
 #
-# Runs the entire program.
+# main.py runs the entire program.
 # Usage:
 #   python3 main.py -f [input file]
 # --------------------------------------------------------
@@ -14,7 +14,7 @@ import shlex
 import time
 
 from processing import Processing
-from run_z3 import run_z3
+from z3run import z3run
 from insert import insert
 from translators.cds_checker.cds_checker import translate_cds
 
@@ -42,8 +42,8 @@ z3 = subprocess.check_output(z3_run,
 z3_end = time.time()
 z3 = z3.decode('utf-8')
 
-req_locs = run_z3(loc_info,z3)										# decipher output from z3 & get required locations
-# print("req locs=",req_locs)
+req_locs = z3run(z3)												# decipher output from z3 & get required locations
+print("req locs=",req_locs)
 
 insert(req_locs,filename)											# insert fences into the source file at the requiren locations
 

@@ -17,7 +17,8 @@ def create_list(trace_no,instr,file_vars,trace_locs,threads_separated):
 	line.append(instr[5])								# 4: memory address
 
 	value = instr[6]
-	pos = value.find('x')								# CDS Checker sets non-zero values as 0x1, 0x2 instead of 1,2
+	# CDS Checker sets non-zero values as 0x1, 0x2 instead of 1, 2
+	pos = value.find('x')
 	new_value = ''
 	if not pos == -1:
 		new_value = value[pos+1:len(value)]
