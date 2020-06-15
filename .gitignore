@@ -12,11 +12,9 @@ __pycache__/
 
 # generated files from the tool
 c11
-to_sets_store
-to_edges_store
+*_store
 
 # testing files
-test*.py
 test-programs/*_fence.cc
-*_test.txt
+*test*
 *new*

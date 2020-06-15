@@ -4,6 +4,7 @@
 
 import ast
 from graph import Graph
+import networkx as nx
 
 class to:
 
@@ -20,11 +21,13 @@ class to:
 		self.rule3_1b()
 		self.rule4()
 
-		to_edges_store = open("store/to_edges_store",'w')
-		to_edges_store.write(str(self.to_edges))
-		to_edges_store.close()
+		# write the basic to edges
+		to_edges_basic_store = open("store/to_edges_basic_store",'w')
+		to_edges_basic_store.write(str(self.to_edges))
+		to_edges_basic_store.close()
 
 		self.sort_to_edges()
+		self.create_transitive_edges()
 
 	def rule0(self):
 		for i in range(len(self.order)):
@@ -129,9 +132,9 @@ class to:
 
 	def sort_to_edges(self):
 		# read from the store
-		to_edges_store = open("store/to_edges_store",'r')
-		to_edges = to_edges_store.read()
-		to_edges_store.close()
+		to_edges_basic_store = open("store/to_edges_basic_store",'r')
+		to_edges = to_edges_basic_store.read()
+		to_edges_basic_store.close()
 
 		# convert contents of the file into readable list format
 		to_edges = ast.literal_eval(to_edges)
@@ -141,6 +144,21 @@ class to:
 		to_edges.sort(key = lambda x: x[0])
 
 		# write back into the store
-		to_edges_store = open("store/to_edges_store",'w')
-		to_edges_store.write(str(to_edges))
-		to_edges_store.close()
+		to_edges_basic_store = open("store/to_edges_basic_store",'w')
+		to_edges_basic_store.write(str(to_edges))
+		to_edges_basic_store.close()
+	
+	def create_transitive_edges(self):
+		to_edges_basic_store = open("store/to_edges_basic_store",'r')
+		to_edges = to_edges_basic_store.read()
+		to_edges_basic_store.close()
+
+		to_edges = ast.literal_eval(to_edges)
+
+		# write the transitive to edges included
+		to_edges_G = nx.DiGraph(to_edges)										# create a graph from the basic edges
+		to_edges_Gt = nx.transitive_closure(to_edges_G, reflexive=False)
+		to_edges_all = list(to_edges_Gt.edges)
+		to_edges_transitive_store = open("store/to_edges_transitive_store",'w')
+		to_edges_transitive_store.write(str(to_edges_all))
+		to_edges_transitive_store.close()

@@ -5,9 +5,9 @@ import ast
 
 def Cycles():
 
-	to_edges_store = open("store/to_edges_store",'r')
-	to_edges = to_edges_store.read()
-	to_edges_store.close()
+	to_edges_transitive_store = open("store/to_edges_transitive_store",'r')
+	to_edges = to_edges_transitive_store.read()
+	to_edges_transitive_store.close()
 
 	to_edges = ast.literal_eval(to_edges)
 

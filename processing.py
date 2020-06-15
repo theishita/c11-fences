@@ -50,9 +50,10 @@ class Processing:
 			order=self.fence(trace)
 
 			to(order,mo_edges,self.sc_sb_edges)
-			to_transitive()
 
 			cycles = Cycles()
+
+			to_transitive()
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]

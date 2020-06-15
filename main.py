@@ -48,3 +48,5 @@ print("req locs=",req_locs)
 insert(req_locs,filename)											# insert fences into the source file at the requiren locations
 
 end = time.time()
+print("z3 time = ",z3_end-z3_start)
+print("total time=",end-start)
