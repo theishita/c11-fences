@@ -11,12 +11,24 @@ def Cycles():
 
 	to_edges = ast.literal_eval(to_edges)
 
-	# Create Directed Graph with a lost of all edges
-	G=nx.DiGraph(to_edges)
+	# # Create Directed Graph with a lost of all edges
+	# G=nx.DiGraph(to_edges)
 
 	# Return a list of cycles described as a list o nodes
-	cycles = list(nx.simple_cycles(G))
-	cycles = [c for c in cycles if len(c)>1]
+	cycles = []
+	for edge0 in to_edges:
+		first_edge0 = edge0[0]
+		first_edge1 = edge0[1]
+
+		if first_edge0 != first_edge1:
+			for edge1 in to_edges:
+				last_edge0 = edge1[0]
+				last_edge1 = edge1[1]
+
+				if first_edge1 == last_edge0 and first_edge0 == last_edge1:
+					cycles.append(edge0)
+
+	# cycles = [c for c in cycles if len(c)>1]
 
 	# Sort the list items
 	for i in range(len(cycles)):

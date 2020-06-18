@@ -13,7 +13,11 @@ class to:
 		self.mo_edges = mo_edges
 		self.sb_edges = sb_edges
 
-		self.to_edges = sb_edges
+		to_edges_basic_store = open("store/to_edges_basic_store",'r')
+		to_edges_basic = to_edges_basic_store.read()
+		to_edges_basic_store.close()
+		to_edges_basic = ast.literal_eval(to_edges_basic)
+		self.to_edges = list(set(to_edges_basic) | set(sb_edges))
 
 		self.rule0()
 		self.rule1a()
@@ -41,8 +45,10 @@ class to:
 					a = self.order[j]
 					if 'no' in a and a['no'] == a_no:
 						x = self.order[j-1]
+						
+						if not (x,y) in self.to_edges:
+							self.to_edges.append((x,y))
 
-						self.to_edges.append((x,y))
 
 	def rule1a(self):
 		for b in self.order:
@@ -54,7 +60,8 @@ class to:
 				for a in self.order:
 					if 'no' in a and a['no'] == a_no and a['mo'] == 'seq_cst':
 
-						self.to_edges.append((a_no,b_no))
+						if not (a_no,b_no) in self.to_edges:
+							self.to_edges.append((a_no,b_no))
 
 	def rule2(self):
 		for i in self.mo_edges:
@@ -70,7 +77,8 @@ class to:
 							if 'rf' in b and b['rf'] == m1_no:
 								x = self.order[j-1]
 
-								self.to_edges.append((x,m2_no))
+								if not (x,m2_no) in self.to_edges:
+									self.to_edges.append((x,m2_no))
 
 	def rule3_1b(self):
 		for i in self.mo_edges:
@@ -99,12 +107,14 @@ class to:
 			# rule 1b
 			if seq == 1 and b:
 				for b_no in b:
-					self.to_edges.append((b_no,a_no))
+					if not (b_no,a_no) in self.to_edges:
+						self.to_edges.append((b_no,a_no))
 
 			# rule 3
 			if x and y:
 				for fy in y:
-					self.to_edges.append((fy,x))
+					if not (fy,x) in self.to_edges:
+						self.to_edges.append((fy,x))
 
 	def rule4(self):
 		for i in self.mo_edges:
@@ -121,14 +131,17 @@ class to:
 
 			# rule 4a
 			if b['mo'] == 'seq_cst':
-				self.to_edges.append((b_no,x))
+				if not (b_no,x) in self.to_edges:
+					self.to_edges.append((b_no,x))
 
 			# rule 4b
 			if a['mo'] == 'seq_cst':
-				self.to_edges.append((y,a_no))
+				if not (y,a_no) in self.to_edges:
+					self.to_edges.append((y,a_no))
 
 			# rule 4c
-			self.to_edges.append((y,x))
+			if not (y,x) in self.to_edges:
+				self.to_edges.append((y,x))
 
 	def sort_to_edges(self):
 		# read from the store

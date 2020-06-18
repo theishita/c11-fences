@@ -31,7 +31,7 @@ class Processing:
 
 		trace_no = 0
 
-		for trace in traces[:2]:											# run for each trace
+		for trace in traces:											# run for each trace
 			self.fence_thread = []										# list of fences separated by threads
 			self.fence_sc_event_thread = []								# list of all fences and events separated by threads
 			self.sc_sb_edges = []										# list of sb edge pairs between fences as well as sc events
@@ -46,14 +46,16 @@ class Processing:
 
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
+			print("mo===",mo_edges)
 
 			order=self.fence(trace)
 
 			to(order,mo_edges,self.sc_sb_edges)
 
 			cycles = Cycles()
+			print("cycles=",cycles)
 
-			to_transitive()
+			to_transitive(cycles)
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]
