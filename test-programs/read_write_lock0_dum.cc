@@ -23,8 +23,7 @@ static void writer(void *arg) {
 	if(flagw.load(memory_order_relaxed)) {
 		if(!flagr.load(memory_order_acquire)){
 			for (int k = 0; k < ASSUME_LOOP; k++){
-				if (w.load(memory_order_acquire) == 0 &&
-					r.load(memory_order_acquire) == 0){
+				if (w.load(memory_order_acquire) == 0 && r.load(memory_order_acquire) == 0){
 					ok = 1;
 					break;
 				}

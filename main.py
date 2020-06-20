@@ -43,7 +43,7 @@ z3_end = time.time()
 z3 = z3.decode('utf-8')
 
 req_locs = z3run(z3)												# decipher output from z3 & get required locations
-print("req locs=",req_locs)
+print("req locs=",req_locs, len(req_locs))
 
 insert(req_locs,filename)											# insert fences into the source file at the requiren locations
 

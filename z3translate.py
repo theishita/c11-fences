@@ -9,35 +9,20 @@ class z3translate:
         self.translation = ""
         self.loc_info = var
 
-        to_sets_store = open("store/to_sets_store", 'r')
-        to_sets = to_sets_store.read()
-        to_sets_store.close()
-
-        to_sets = ast.literal_eval(to_sets)
-
         for i in var.keys():
             name = var[i]
             self.constants.append(name)
-
-        for cycle in cycles:
-            cycle_set = []
-            for node_index in range(len(cycle)):
-                node1 = cycle[node_index]
-                node2 = cycle[0] if node_index == (len(cycle) - 1) else cycle[node_index + 1]
-
-                fence_sets = to_sets[(node1,node2)] if (node1,node2) in to_sets.keys() else [[]]
-
-                if [] in fence_sets:
-                    continue
-                
-                cycle_set.append(self.translate_fence_set(fence_sets))
-            
-            conjunctions.append(self.conjunct(cycle_set))
-            
+        
+        cycles_translated_to_var = []
+        for i in range(len(cycles)):
+            cycles_translated_to_var.append([var[x] for x in cycles[i]])
+        
+        for cycle in cycles_translated_to_var:
+            conjunctions.append(self.conjunct(cycle))
 
         self.translation = self.disjunct(conjunctions)
 
-        # print(self.const_declarations, self.conjunctions, self.translation)
+        # print(self.constants, conjunctions, self.translation)
 
     def get(self):
         return self.constants, self.translation
@@ -63,14 +48,3 @@ class z3translate:
             dnf += " "+str(i)
         dnf += ")"
         return dnf
-
-    def translate_fence_set(self,fence_sets):
-        conjunctions = []
-        for a_set in fence_sets:
-            vars = []
-            for fence in a_set:
-                vars.append(self.loc_info[fence])
-            
-            conjunctions.append(self.conjunct(vars))
-        
-        return self.disjunct(conjunctions)

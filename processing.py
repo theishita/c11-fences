@@ -46,16 +46,16 @@ class Processing:
 
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
-			print("mo===",mo_edges)
+			# print("mo===",mo_edges)
 
 			order=self.fence(trace)
 
 			to(order,mo_edges,self.sc_sb_edges)
 
 			cycles = Cycles()
-			print("cycles=",cycles)
+			print("no cycles=",len(cycles))
 
-			to_transitive(cycles)
+			# to_transitive(cycles)
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]

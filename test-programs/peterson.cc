@@ -19,8 +19,7 @@ static void t1(void *arg) {
     turn.store(2, memory_order_seq_cst);
 
     for (int k = 0; k < LOOP; k++) {
-        if (not (flag2.load(memory_order_acquire) == 1 &&
-                turn.load(memory_order_relaxed) == 2)) {
+        if (not (flag2.load(memory_order_acquire) == 1 && turn.load(memory_order_relaxed) == 2)) {
             ok1 = 1;
             break;
         }
@@ -42,8 +41,7 @@ static void t2(void *arg) {
     turn.store(1, memory_order_seq_cst);
 
     for (int k = 0; k < LOOP; k++) {
-        if (not (flag1.load(memory_order_acquire) == 1 &&
-                turn.load(memory_order_relaxed) == 1)) {
+        if (not (flag1.load(memory_order_acquire) == 1 && turn.load(memory_order_relaxed) == 1)) {
             ok1 = 1;
             break;
         }

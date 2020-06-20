@@ -14,8 +14,18 @@ class z3convert:
 		for var in consts:
 			contents+= self.constant(var,'(_ BitVec 1)')
 		
-		contents += self.minimize("bvadd",consts)
+		consts_len = len(consts)
+		bin_len = len(bin(consts_len)) - 2
+		fn_type = "(_ BitVec "+str(bin_len)+")"
+		fn_def = "((_ zero_extend "+str(bin_len - 1)+") x)"
+
+		consts_fn = []
+		for var in consts:
+			consts_fn.append("(ext "+var+")")
+
 		contents += self.maximize("bvand",disjunctions)
+		contents += self.function("ext",["x (_ BitVec 1)"],fn_type,fn_def)
+		contents += self.minimize("bvadd",consts_fn)
 		contents+="(check-sat)\n(get-model)"
 		file.write(contents)
 
@@ -55,10 +65,9 @@ class z3convert:
 		return maxi
 
 	# to declare and define a function
-	# unused
-	def function(self,name,inputs,output):
-		fn = "(declare-fun "+name+" ("
+	def function(self,name,inputs,fn_type,definition):
+		fn = "(define-fun "+name+" ("
 		for val in inputs:
-			fn+=val+" "
-		fn+=") "+output+")\n"
+			fn+="("+val+") "
+		fn += ") "+fn_type+" "+definition+")\n"
 		return fn
