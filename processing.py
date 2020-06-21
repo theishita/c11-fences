@@ -39,7 +39,7 @@ class Processing:
 			self.loc_info = {}                                          # information regarding the required fence locations
 
 			trace_no += 1
-			print("trace=",trace_no)
+			# print("trace=",trace_no)
 
 			hb_graph = hb(trace)
 			mat,size = hb_graph.get()
@@ -53,7 +53,7 @@ class Processing:
 			to(order,mo_edges,self.sc_sb_edges)
 
 			cycles = Cycles()
-			print("no cycles=",len(cycles))
+			# print("no cycles=",len(cycles))
 
 			# to_transitive(cycles)
 
@@ -70,8 +70,6 @@ class Processing:
 							var_name = 'l'+str(o['line'])
 							self.loc_info[fence_name] = var_name
 				
-				print("loc_nfo=",self.loc_info)
-
 				get_translation = z3translate(cycles,self.loc_info)
 				consts, translation = get_translation.get()
 
@@ -81,7 +79,7 @@ class Processing:
 				self.disjunctions.append(translation)
 
 			else:
-				print("No TO cycles can be formed for trace",trace_no,"\nHence this behaviour cannot be stopped using SC fences")
+				print("\nNo TO cycles can be formed for trace",trace_no,"\nHence this behaviour cannot be stopped using SC fences")
 				sys.exit()
 
 		z3convert(self.z3vars,self.disjunctions)

@@ -43,10 +43,16 @@ z3_end = time.time()
 z3 = z3.decode('utf-8')
 
 req_locs = z3run(z3)												# decipher output from z3 & get required locations
-print("req locs=",req_locs, len(req_locs))
-
 insert(req_locs,filename)											# insert fences into the source file at the requiren locations
 
 end = time.time()
-print("z3 time = ",z3_end-z3_start)
-print("total time=",end-start)
+
+print("\nNumber of fences added:\t\t",len(req_locs))
+print("Fences added after lines:\t",req_locs)
+
+tool_time = end-start
+z3_time = z3_end-z3_start
+print("CDS Checker time:\t\t",cds_time)
+print("Z3 time:\t\t\t",z3_time)
+print("Total time:\t\t\t",tool_time)
+print("Tool only time:\t\t\t",tool_time-z3_time-cds_time)

@@ -9,12 +9,14 @@ using namespace std;
 
 atomic<int> i;
 atomic<int> j;
+atomic<int> dum;
 
 static void t1(void *arg) {
     int _i, _j;
     for (int k = 0; k < NUM; k++) {
         _i = i.load(memory_order_acquire);
         _j = j.load(memory_order_acquire);
+        dum.store(1, memory_order_relaxed);
         i.store(_i + _j, memory_order_release);
     }
 }
@@ -24,6 +26,7 @@ static void t2(void *arg) {
     for (int k = 0; k < NUM; k++) {
         _i = i.load(memory_order_acquire);
         _j = j.load(memory_order_acquire);
+        dum.store(2, memory_order_relaxed);
         j.store(_i + _j, memory_order_release);
     }
 }
@@ -33,6 +36,7 @@ int user_main(int argc, char **argv) {
 
     atomic_init(&i, 1);
     atomic_init(&j, 1);
+    atomic_init(&dum, 0);
 
     thrd_create(&a, t1, NULL);
     thrd_create(&b, t2, NULL);
@@ -46,8 +50,7 @@ int user_main(int argc, char **argv) {
 
     int correct = prev;
 
-    MODEL_ASSERT((i.load(memory_order_acquire) > correct ||
-		j.load(memory_order_acquire) > correct) == 1);
+    MODEL_ASSERT((i.load(memory_order_acquire) > correct || j.load(memory_order_acquire) > correct) == 1);
 
     return 0;
 }

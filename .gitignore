@@ -15,6 +15,6 @@ c11
 *_store
 
 # testing files
-test-programs/*_fence.cc
+benchmarks/*_fence.cc
 *test*
 *new*

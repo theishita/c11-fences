@@ -10,14 +10,16 @@ def find_line_no(threads_separated,instr,prev_instr):
 
 	c = 0																		# counter to denote number of occurences
 	line_no = "NA"
-	thread_no = int(instr[1])-1													# thread number of the instruction
-	for i in threads_separated[thread_no]:
-		if src_code in i[1]:
-			c += 1
-			line_no = i[0]
 
-	if c > 1:
-		line_no = int(prev_instr[8])+1
+	if instr_type == "read" or instr_type == "write":
+		thread_no = int(instr[1])-1													# thread number of the instruction
+		for i in threads_separated[thread_no]:
+			if src_code in i[1]:
+				c += 1
+				line_no = i[0]
+
+		if c != 1:
+			line_no = int(prev_instr[8])+1
 
 	return line_no
 

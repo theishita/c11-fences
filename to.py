@@ -167,11 +167,3 @@ class to:
 		to_edges_basic_store.close()
 
 		to_edges = ast.literal_eval(to_edges)
-
-		# write the transitive to edges included
-		to_edges_G = nx.DiGraph(to_edges)										# create a graph from the basic edges
-		to_edges_Gt = nx.transitive_closure(to_edges_G, reflexive=False)
-		to_edges_all = list(to_edges_Gt.edges)
-		to_edges_transitive_store = open("store/to_edges_transitive_store",'w')
-		to_edges_transitive_store.write(str(to_edges_all))
-		to_edges_transitive_store.close()

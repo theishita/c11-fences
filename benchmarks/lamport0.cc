@@ -14,6 +14,7 @@ atomic<int> y;
 atomic<int> b1;
 atomic<int> b2;
 atomic<int> var;
+atomic<int> dum_1;
 
 static void fn1(void* arg) {
     int ok = 0;
@@ -21,9 +22,14 @@ static void fn1(void* arg) {
         b1.store(1, memory_order_seq_cst);
         x.store(1, memory_order_seq_cst);
 
+        dum_1.store(0, memory_order_relaxed);
         if (y.load(memory_order_acquire) != 0) {
+
+            dum_1.store(1, memory_order_relaxed);
             b1.store(0, memory_order_seq_cst);
+
             for (int j = 0; j < LOOP; j++) {
+                dum_1.store(2, memory_order_relaxed);
                 if (y.load(memory_order_acquire) == 0) {
                     goto breaklbl0;
                 }
@@ -36,6 +42,8 @@ static void fn1(void* arg) {
         y.store(1, memory_order_seq_cst);
 
         if (x.load(memory_order_relaxed) != 1) {
+
+            dum_1.store(3, memory_order_relaxed);
             b1.store(0, memory_order_seq_cst);
 
             for (int j = 0; j < LOOP; j++) {
@@ -46,8 +54,11 @@ static void fn1(void* arg) {
             goto breaklbl;
             breaklbl1:;
 
+            dum_1.store(4, memory_order_relaxed);
             if (y.load(memory_order_acquire) != 1) {
                 for (int j = 0; j <LOOP; j++) {
+                    
+                    dum_1.store(5, memory_order_relaxed);
                     if (y.load(memory_order_acquire) == 0) {
                         goto breaklbl2;
                     }
@@ -68,7 +79,10 @@ static void fn1(void* arg) {
     MODEL_ASSERT(var.load(memory_order_relaxed) == 1);
 
     y.store(0, memory_order_release);
+
+    dum_1.store(6, memory_order_relaxed);
     b1.store(0, memory_order_seq_cst);
+
     return ;
 }
 
@@ -79,9 +93,14 @@ static void fn2(void* arg) {
         b2.store(1, memory_order_seq_cst);
         x.store(2, memory_order_seq_cst);
 
+        dum_1.store(0, memory_order_relaxed);
         if (y.load(memory_order_acquire) != 0) {
+            
+            dum_1.store(1, memory_order_relaxed);
             b2.store(0, memory_order_seq_cst);
             for (int j = 0; j < LOOP; j++) {
+                
+                dum_1.store(2, memory_order_relaxed);
                 if (y.load(memory_order_acquire) == 0) {
                     goto breaklbl0;
                 }
@@ -94,6 +113,8 @@ static void fn2(void* arg) {
         y.store(2, memory_order_seq_cst);
 
         if (x.load(memory_order_relaxed) != 2) {
+
+            dum_1.store(3, memory_order_relaxed);
             b2.store(0, memory_order_seq_cst);
             for (int j = 0; j < LOOP; j++) {
                 if (b1.load(memory_order_acquire) < 1) {
@@ -104,8 +125,11 @@ static void fn2(void* arg) {
             goto breaklbl;
             breaklbl1:;
 
+            dum_1.store(4, memory_order_relaxed);
             if (y.load(memory_order_acquire) != 2) {
                 for (int j = 0; j <LOOP; j++) {
+                    
+                    dum_1.store(5, memory_order_relaxed);
                     if (y.load(memory_order_acquire) == 0) {
                         goto breaklbl2;
                     }
@@ -126,6 +150,8 @@ static void fn2(void* arg) {
     MODEL_ASSERT(var.load(memory_order_relaxed) == 2);
 
     y.store(0, memory_order_release);
+    
+    dum_1.store(6, memory_order_relaxed);
     b2.store(0, memory_order_seq_cst);
     return ;
 }
@@ -138,6 +164,7 @@ int user_main(int argc, char **argv) {
 	atomic_init(&b1, 0);
 	atomic_init(&b2, 0);
 	atomic_init(&var, 0);
+	atomic_init(&dum_1, 0);
 
     thrd_create(&id1, (thrd_start_t)&fn1, NULL);
     thrd_create(&id2, (thrd_start_t)&fn2, NULL);
