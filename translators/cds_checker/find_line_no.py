@@ -1,37 +1,39 @@
-def find_line_no(filename,thread,instr):
-	k = 0
-	with open(filename) as f:
-		k += 1
-		lines = f.readlines()
+def find_line_no(threads_separated,instr,prev_instr):
 
-	in_thread = 0
-	brackets = 0
-	thread_contents = []
-	threads_separated = []
-	line_no = 0
-	for l in lines:
-		line_no += 1
-		if in_thread:
-			if '}' in l:
-				brackets -= 1
-			if '{' in l:
-				brackets += 1
-			if brackets == 0:
-				in_thread = 0
-				threads_separated.append(thread_contents)
-				thread_contents = []
-				continue
-			thread_contents.append((line_no,l))
+	instr_type = instr[2]
 
-		if "static void" in l or "user_main" in l:
-			in_thread = 1
-			brackets += 1
+	if instr_type == "rmw":
+		line_no = int(prev_instr[8])+1
+		return line_no
 
-	# print(threads_separated)
-	# for i in threads_separated:
-	# 	print(i)
+	src_code = create_instruction(instr)
 
-	thread_no = int(thread)-2
+	c = 0																		# counter to denote number of occurences
+	line_no = "NA"
+	thread_no = int(instr[1])-1													# thread number of the instruction
 	for i in threads_separated[thread_no]:
-		if instr in i[1]:
-			return i[0]
+		if src_code in i[1]:
+			c += 1
+			line_no = i[0]
+
+	if c > 1:
+		line_no = int(prev_instr[8])+1
+
+	return line_no
+
+def create_instruction(instr):
+	instr_type = instr[2]
+	var = instr[7]
+	value = instr[5]
+	mem_order = instr[3]
+
+	src_code = var+'.'															# each atomic instruction begins with the name of the variable
+
+	if instr_type == "read":
+		src_code += "load("
+	elif instr_type == "write":
+		src_code += "store("+value+", "											# add the value of the store operation to the instruction
+
+	src_code += "memory_order_"+mem_order+")"
+
+	return src_code

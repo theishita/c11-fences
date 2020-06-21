@@ -1,10 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-
-c11
-test.py
-test-programs/*_fence.cc
 .vscode/
 *.aux
 *.bbl
@@ -14,3 +10,11 @@ test-programs/*_fence.cc
 *.pdf
 *.gz
 
+# generated files from the tool
+c11
+*_store
+
+# testing files
+test-programs/*_fence.cc
+*test*
+*new*

@@ -10,6 +10,7 @@ class hb:
 
 		self.sb_edges = []									# list of all sb edges between instructions
 		self.sw_edges = []									# list of all sw edges between instructions
+		self.to_edges = []									# list of to edges between instructions
 		self.size = 0										# number of instructions in the execution trace
 
 		threads = int(trace[-1][1])							# find out the number of total threads in the program
@@ -20,6 +21,10 @@ class hb:
 		self.size += 1
 		self.mat = Graph(self.size)
 		self.matrix()
+
+		to_edges_basic_store = open("store/to_edges_basic_store",'w')
+		to_edges_basic_store.write(str(self.to_edges))
+		to_edges_basic_store.close()
 
 	def get(self):
 		return self.mat,self.size
@@ -84,6 +89,8 @@ class hb:
 				v1 = trace[i][0]
 				v2 = str(int(v1)+1)
 				self.sw_edges.append((v1,v2))
+				self.to_edges.append((v1,v2))
+
 
 			# create sw's between thread finish and join statements
 			if trace[i][2] == "join":
@@ -93,6 +100,7 @@ class hb:
 						v1 = trace[j][0]
 						v2 = trace[i][0]
 						self.sw_edges.append((v1,v2))
+						self.to_edges.append((v1,v2))
 
 			# create sw's between read/rmw and write/rmw statements
 			if trace[i][2] == 'read' or trace[i][2] == 'rmw':
@@ -101,3 +109,5 @@ class hb:
 					if j[0] == rf:
 						if j[3] in write_models and trace[i][3] in read_models:
 							self.sw_edges.append((j[0],trace[i][0]))
+							if j[3] == 'seq_cst' and trace[i][3] == 'seq_cst':
+								self.to_edges.append((j[0],trace[i][0]))

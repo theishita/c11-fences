@@ -14,13 +14,12 @@ atomic<int> x;
 
 static void t1(void *arg) {
     int ok1 = 0;
-    
+
     flag1.store(1, memory_order_seq_cst);
     turn.store(2, memory_order_seq_cst);
 
     for (int k = 0; k < LOOP; k++) {
-        if (not (flag2.load(memory_order_acquire) == 1 &&
-                turn.load(memory_order_relaxed) == 2)) {
+        if (not (flag2.load(memory_order_acquire) == 1 && turn.load(memory_order_relaxed) == 2)) {
             ok1 = 1;
             break;
         }
@@ -42,8 +41,7 @@ static void t2(void *arg) {
     turn.store(1, memory_order_seq_cst);
 
     for (int k = 0; k < LOOP; k++) {
-        if (not (flag1.load(memory_order_acquire) == 1 &&
-                turn.load(memory_order_relaxed) == 1)) {
+        if (not (flag1.load(memory_order_acquire) == 1 && turn.load(memory_order_relaxed) == 1)) {
             ok1 = 1;
             break;
         }
@@ -58,8 +56,7 @@ static void t2(void *arg) {
     flag2.store(0, memory_order_seq_cst);
 }
 
-int user_main(int argc, char **argv) 
-{
+int user_main(int argc, char **argv) {
     thrd_t id1, id2;
 
     atomic_init(&flag1, 0);

@@ -12,16 +12,14 @@ using namespace std;
 atomic<int> x;
 atomic<int> y;
 atomic<int> b1;
-atomic<int> b2; // N boolean flags
-atomic<int> var; //variable to test mutual exclusion
+atomic<int> b2;
+atomic<int> var;
 
 static void fn1(void* arg) {
     int ok = 0;
     for (int i = 0; i < LOOP; i++) {
         b1.store(1, memory_order_seq_cst);
-        x.store(1, memory_order_seq_cst);       //DIV: need higher mem order?
-
-        //atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
+        x.store(1, memory_order_seq_cst);
 
         if (y.load(memory_order_acquire) != 0) {
             b1.store(0, memory_order_seq_cst);
@@ -36,8 +34,6 @@ static void fn1(void* arg) {
         }
 
         y.store(1, memory_order_seq_cst);
-
-        //atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
 
         if (x.load(memory_order_relaxed) != 1) {
             b1.store(0, memory_order_seq_cst);
@@ -68,11 +64,8 @@ static void fn1(void* arg) {
 
     breaklbl:;
     if (ok==0) return;
-
-    //begin: critical section
     var.store(1, memory_order_relaxed);
-    MODEL_ASSERT(var.load(memory_order_relaxed) == 1);//t1
-    //end: critical section
+    MODEL_ASSERT(var.load(memory_order_relaxed) == 1);
 
     y.store(0, memory_order_release);
     b1.store(0, memory_order_seq_cst);
@@ -84,9 +77,7 @@ static void fn2(void* arg) {
 
     for (int i = 0; i < LOOP; i++) {
         b2.store(1, memory_order_seq_cst);
-        x.store(2, memory_order_seq_cst);       //DIV: need higher mem order?
-
-        //atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
+        x.store(2, memory_order_seq_cst);
 
         if (y.load(memory_order_acquire) != 0) {
             b2.store(0, memory_order_seq_cst);
@@ -101,8 +92,6 @@ static void fn2(void* arg) {
         }
 
         y.store(2, memory_order_seq_cst);
-
-        //atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
 
         if (x.load(memory_order_relaxed) != 2) {
             b2.store(0, memory_order_seq_cst);
@@ -133,10 +122,8 @@ static void fn2(void* arg) {
     breaklbl:;
     if (ok==0) return;
 
-    //begin: critical section
     var.store(2, memory_order_relaxed);
     MODEL_ASSERT(var.load(memory_order_relaxed) == 2);
-    //end: critical section
 
     y.store(0, memory_order_release);
     b2.store(0, memory_order_seq_cst);

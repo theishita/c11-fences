@@ -13,15 +13,27 @@ atomic<int> b;
 static void t1(void *arg) {
 	y.store(2, memory_order_relaxed);
 	x.store(1, memory_order_relaxed);
+
 	int temp = y.load(memory_order_relaxed);
-	a.store(temp, memory_order_seq_cst);
+	if (temp == 2)
+    	a.store(2, memory_order_relaxed);
+	else if (temp == 1)
+    	a.store(1, memory_order_relaxed);
+	else if (temp == 0)
+    	a.store(0, memory_order_relaxed);
 }
 
 static void t2(void *arg) {
 	x.store(2, memory_order_relaxed);
 	y.store(1, memory_order_relaxed);
+
 	int temp = x.load(memory_order_relaxed);
-	b.store(temp, memory_order_seq_cst);
+	if (temp == 2)
+		b.store(2, memory_order_seq_cst);
+	else if (temp == 1)
+		b.store(1, memory_order_seq_cst);
+	else if (temp == 0)
+		b.store(0, memory_order_seq_cst);
 }
 
 int user_main(int argc, char **argv) {
