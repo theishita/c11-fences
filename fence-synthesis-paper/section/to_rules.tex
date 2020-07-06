@@ -1,0 +1,80 @@
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    punkt/.style={
+           rectangle,
+           minimum height=2em,
+           text centered},
+}
+
+\begin{enumerate}
+\setcounter{enumi}{-1}
+\item
+	\begin{tikzpicture}[baseline = (current bounding box.north)]
+    \node[punkt] (x) {X:$F_{sc}$};
+    \node[punkt,below=of x] (a) {A:$Wx$}
+        edge[-](x);
+    \node[punkt,right=of x] (b) {B:$Rx$};
+    \node[punkt, below=of b] (y) {Y:$F_{sc}$}
+    	edge[-](b);
+  	\draw [->] (a) -> (b) node[midway,above] {rf};
+    \end{tikzpicture}\\
+    \rf{A}{B} $\implies$ \too{X}{Y}
+
+\item
+	\begin{enumerate}[a.]
+	\item
+		\rf{A:$W_{sc}$}{B:$R_{sc}$}\\
+		\too{A}{B}
+	
+	\item
+		A:$W_{sc}x$, M:$Wx$, B:$R_{sc}x$\\
+		\hb{M}{A} $\land$ \rf{M}{B} $\implies$ \too{B}{A}
+	\end{enumerate}
+
+\item
+	\begin{tikzpicture}[baseline = (current bounding box.north)]
+	\node[punkt](x) {X:$F_{sc}$};
+	\node[punkt, below=of x](b) {B:$Rx$}
+		edge[-](x);
+	\node[punkt, right=of b](m1) {M$_1:Wx$};
+	\node[punkt, below=of m1](m2) {M$_2:W_{sc}$};
+  	\draw [->] (m1) -> (b) node[midway,above] {rf};
+  	\draw [->] (m1) -> (m2) node[midway,right] {mo};
+  	\end{tikzpicture}\\
+  	\too{X}{M$_2$}
+ 
+\item
+	\begin{tikzpicture}[baseline = (current bounding box.north)]
+	\node[punkt](a) {A:$Wx$};
+	\node[punkt, below=of a](x) {X:$F_{sc}$}
+		edge[-](a);
+	\node[punkt, right=of a](y) {Y:$F_{sc}$};
+	\node[punkt, below=of y](b) {B:$Rx$}
+		edge[-](y);
+	\node[punkt, right=of y](m) {M:$Wx$};
+	\end{tikzpicture}\\
+	\rf{M}{B} $\land$ \mo{M}{A} $\implies$ \too{Y}{X}
+
+\item
+	\begin{tikzpicture}[baseline = (current bounding box.north)]
+	\node[punkt](a) {A:$Wx$};
+	\node[punkt, below=of a](x) {X:$F_{sc}$}
+		edge[-](a);
+	\node[punkt, right=of a](y) {Y:$F_{sc}$};
+	\node[punkt, below=of y](b) {B:$Wx$}
+		edge[-](y);
+	\end{tikzpicture}\\
+	\begin{enumerate}[a.]
+	\item if B:$W_{sc}x$\\
+		\mo{B}{A} $\implies$ \too{B}{X}
+	
+	\item if A:$W_{sc}x$\\
+		\mo{B}{A} $\implies$ \too{Y}{A}
+	
+	\item
+		\mo{B}{A} $\implies$ \too{Y}{X}
+	\end{enumerate}
+	
+\end{enumerate}

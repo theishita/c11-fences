@@ -1,0 +1,86 @@
+\documentclass{article}
+
+% enable these lines below while using overleaf, disable for texmaker/latex workshop
+%\usepackage[utf8]{inputenc}
+%\usepackage{stmaryrd}
+%\usepackage{algorithm,algpseudocode} 
+%\usepackage{galois}
+
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{afterpage}
+\usepackage{graphicx,lipsum}   
+\usepackage{figlatex,wrapfig}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{listings,amssymb,mathtools}
+\usepackage{mathrsfs}
+\usepackage{array,multirow}
+\usepackage{pifont}
+\usepackage{caption}
+\usepackage{geometry}
+\usepackage{textcomp}
+
+\usepackage{tikz}
+\usepackage[shortlabels]{enumitem}
+
+% for colours
+\usepackage{xspace}
+\usepackage[colorlinks]{hyperref}
+\hypersetup{
+	colorlinks = true,
+	citecolor = {violet},
+	linkcolor = {blue},
+	urlcolor  = {blue}
+}
+
+% for arrow diagrams
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{smartdiagram}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning}
+
+\usepackage[parfill]{parskip}
+
+% for bib handline
+\usepackage[numbers]{natbib}
+\usepackage{url}
+
+\newcommand{\mosc}{\texttt{memory\_order\_seq\_cst}\xspace}
+\newcommand{\moacqrel}{\texttt{memory\_order\_acq\_rel}\xspace}
+\newcommand{\morel}{\texttt{memory\_order\_release}\xspace}
+\newcommand{\moacq}{\texttt{memory\_order\_acquire}\xspace}
+\newcommand{\mocon}{\texttt{memory\_order\_consume}\xspace}
+\newcommand{\morlx}{\texttt{memory\_order\_relaxed}\xspace}
+
+\newcommand{\seqb}[2]{{#1} {\color{Blue}$\rightarrow^{sb}$} \color{black}{#2} }
+\newcommand{\sw}[2]{{#1} {\color{Blue}$\rightarrow^{sw}$} \color{black}{#2} }
+\newcommand{\hb}[2]{{#1} {\color{Blue}$\rightarrow^{hb}$} \color{black}{#2}}
+\newcommand{\rf}[2]{{#1} {\color{Blue}$\rightarrow^{rf}$} {#2} }
+\newcommand{\too}[2]{{#1} {\color{Blue}$\rightarrow^{to}$} {#2} }
+\newcommand{\mo}[2]{{#1} {\color{Blue}$\rightarrow^{mo}$} {#2} }
+
+\newcommand{\var}[1]{\color{OliveGreen}\texttt{#1}\color{black}}
+\newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}
+\newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
+
+\title{fence-synthesis-paper}
+\date{}
+
+\begin{document}
+
+\maketitle
+\textit{\textbf{Abstract-}}
+
+\section{Introduction} \label{sec:intro}
+\input{section/intro.tex}
+
+\section{Our Approach}
+\input{section/methodology.tex}
+
+\section{Technical Implementation/Tool Description}
+\input{section/tool_desc.tex}
+
+\bibliographystyle{unsrtnat}
+\bibliography{References.bib}
+\end{document}

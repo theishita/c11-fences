@@ -1,0 +1,79 @@
+% ------------ INTRO PARAS ------------------
+\par
+A programmer working with relaxed memory constraints would want all the advantages of the relaxed model - such as speed and concurrency. However, using relaxed memory constraints comes with its own issues. In relaxed memory models, memory operations such as \textit{reads} and \textit{writes} can be reordered in order to achieve these properties. These instruction reorderings can cause certain variables to have different values in different execution runs of the same program, hence resulting in behaviour which is unexpected or surprising. These include not behaving according to sequentially consistent standards, or outputting unexpected values of variables.
+
+\par
+In this project, we suggest an approach to prevent certain unexpected behaviour, such as unexpected outputs due to concurrent instruction re-orderings in the C11 relaxed model.
+
+\par
+To tackle this, the programmer may add \textit{"assert"} statements in the source code, which will check that certain properties remain unchanged in each run of the program, such as the value of a variable in a certain thread. Each program will have several possibilities of runs where instructions will be executed in different orders. In some of these runs, there might be cases where the assertion does not hold and it gets violated. In the case that the \textit{assert} statement gets violated, the program execution will stop. The object of this project is to insert a minimum number of \textbf{C11 fences} in the source code of the program at the right places so that these assertions are satisfied and do not get violated.
+
+% -------------------- C11 MODEL ------------------------
+\subsection{The C11 Model}
+\par
+The C/C++11 memory model is a relaxed model. So, loads (read operations) and stores (write operations) can be re-ordered before they are stored into the memory. This would not affect the actual behaviour of a single-threaded program. However, multi-threaded programs would be affected differently. Due to re-orderings between loads and stores, and other factors such as different methods used by different hardware for cache coherency, threads may end up seeing loads and stores by other threads in an order different than the one intended. As discussed previously, such behaviour can cause undefined behaviour that is unexpected by the programmer. The C/C++11 model introduced two memory consistency primitives into the model which can be used by the programmer to ensure that such scenarios do not take place. These are \textit{atomic operation}s and \textit{memory fences}. 
+
+% ------------- ATOMIC OPS ----------------
+\subsubsection{Atomic Operations}
+In the C/C++11 memory order, there are certain atomic memory accesses known collectively as atomic operations. As the name suggests, atomic operations are indivisible operations which are executed all in one go. Examples of these can be atomic loads, atomic stores, atomic read-modify-writes. These operations are carried out on atomic objects.
+
+\par \textit{\color{red}fix the < t > angular bracket escape char}
+These and more are wrapped in the std::atomic$\langle t \rangle$ template class in the C/C++11 model. These atomic operations have the following properties \cite{web1} :
+\begin{itemize}
+\item All atomic operations can take place concurrently with different threads without resulting in unexpected behaviour.
+\item An atomic load reads a value from a memory location where the value has either been written by the initialization operation or an atomic store operation that took place after the initialization.
+\item Every atomic operation on the same variable by any thread happens either before or after every atomic operation on the same variable by any thread. This means that for a variable, every atomic operation on it has a particular order or sequence and they take place one after the other. This is called a total ordering.
+\item Atomic store operations are ordered in the same way in all threads. In case a thread sees a variable whose value is set by a store operation, then a load operation in it will see either the same value or a value set by a subsequent store operation.
+\item If an atomic operation is performed on a variable by a thread and then another thread performs another atomic operation on it, then the effects of the previous operation will definitely be observed by the second operation.
+\item Atomic rmw operations allow an atomic load and an atomic store to take place simultaneously one after the other without any other operations in between, hence making it truly atomic
+\item Atomic operations also receive a parameter which specifies the memory order (or the memory model) to be implemented in that instruction. These memory orders are defined in the library std::memory\_order. It defines additional properties that are used in reference to other instructions.
+\end{itemize}
+\textit{\color{red} insert examples of atomic ops like a.load(mor) etc}
+
+% --------------- FENCES ----------------
+\subsubsection{C11 Fences}
+\par
+A fence in the C11 model is an instruction which can be inserted between other instructions. These fences prevent memory operations to be ordered or re-ordered past the fence and they also permit the operations to be ordered in-between threads. 
+
+\par
+A fence can have memory order SC, release, acquire. Specifically, a release fence prevents previous load/store operations from being re-ordered and moved after the fence and an acquire fence prevents load/store operations after the fence to be re-ordered and moved before the fence. On the other hand, an SC fence prevents both such behaviours. There are other types of operations on fences as well, but this project focuses only on SC fences.
+
+\textit{\color{red} insert fences diagram}
+
+% ------------------- MEMORY ORDER ---------------
+\subsection{Memory Order}
+\par
+The memory order specifies how memory accesses, including regular, non-atomic memory accesses, are to be ordered around an atomic operation. The available memory orders in the C11 library are, briefly:
+\begin{center}
+\begin{small}
+\begin{tabular}{ l | p{11cm} }
+ \morlx & no synchronization or ordering constraints imposed on other reads or writes \\
+ \hline
+ \mocon & no reads or writes in the current thread dependent on the value currently loaded can be reordered before this load \\  
+ \hline
+ \moacq & no reads or writes in the current thread can be reordered before this load \\
+ \hline
+ \morel & no reads or writes in the current thread can be reordered after this store \\
+ \hline
+ \moacqrel & no memory reads or writes in the current thread can be reordered before or after this store. \\
+ \hline
+ \mosc & a load operation performs acquire, a store performs release, and read-modify-write performs both an acquire and a release
+\end{tabular}
+\end{small}
+\end{center}
+
+% ---------------- TYPES OF RELATIONS -----------
+\subsection{Types of relations}
+\par
+In a program execution, there are certain relations between instructions. Each type of relation has rules or preconditions which dictate the type of relation between any two instructions.
+
+\subsubsection{Sequenced Before}
+\par
+Any instruction \textit{x} in \textit{thread A} 
+\subsubsection{Synchronizes With}
+\subsubsection{Happens Before}
+\subsubsection{Modification Order}
+\subsubsection{Reads From}
+\subsubsection{Total Order}
+\par
+Each instruction in a C/C++11 program is said to be in total order with every other instruction.

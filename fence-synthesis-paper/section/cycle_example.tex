@@ -1,0 +1,37 @@
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    punkt/.style={
+           rectangle,
+           minimum height=2em,
+           text centered},
+}
+
+\begin{tikzpicture}
+    \node[punkt] (f1n1) {$F_1n_1$};
+    \node[punkt,below=of f1n1] (i1n1) {$I_1n_1$}
+        edge[<-](f1n1);
+    \node[punkt,below=of i1n1] (f1n2) {$F_1n_2$}
+        edge[<-](i1n1)
+        edge[<-, bend left=25](f1n1);
+    \node[punkt,below=of f1n2] (i1n2) {$I_1n_2$}
+        edge[<-](f1n2)
+        edge[<-, bend left=50](f1n1)
+        edge[<-, bend left=40](i1n1);
+    \node[punkt,right=of i1n1] (f2n2) {$F_2n_2$}
+        edge[<-](i1n1);
+    \node[punkt,below=of f2n2] (i2n1) {$I_2n_1$}
+        edge[<-](f2n2)
+        edge[->](i1n1);
+    \node[punkt,right=of f2n2] (f3n2) {$F_3n_2$}
+        edge[->,bend left=25](f2n2)
+        edge[<-,bend right=25](f2n2)
+        edge[->,bend right=45](f1n1);
+    \node[punkt,above=of f3n2] (i3n1) {$I_3n_1$}
+    	edge[->](f3n2);
+    \node[punkt,below=of f3n2] (f3n3) {$F_3n_3$}
+        edge[<-](f3n2)
+        edge[<-, bend right=50](i3n1);
+    
+\end{tikzpicture}\\
