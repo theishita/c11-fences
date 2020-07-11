@@ -61,6 +61,8 @@ Since line numbers are required to be extracted from the source program in order
 	
 	\item The above method is also to be used every time there is a repeated instruction in the same thread. For example if the instruction \texttt{b.load(memory\_ order\_ relaxed);} is called twice inside a single thread, pattern-matching this line would not be able to point to the instruction which called it at that point. Therefore, a dummy store operation needs to be inserted above every one of these repeating operations.\\\textit{Note:} only if the exact instruction matches does the dummy method need to be applied. If the memory orders or store values are different, then the instructions become different.
 	
+	% also add dummy variable store operation above a store instruction whose valule is another variable like a.store(temp, mo_relaxed); since "temp" will not be given by CDS Checker and only the value can be matched.
+	
 	\item "thread create" statements inside loops need to be unravelled and their functions need to be re-written as many times as they are called, with different names. This is because if there are multiple thread spawns from the a function using a loop, the number of threads will differ for each trace in the model checker. The model checker will treat them as different thread functions instead of the same one being called. Moreover, there might be cases where fences need to be inserted in the thread in one of the iterations of the loop but not the other.\\
 	\textit{Example:}\\ \texttt{%
 	static void thread1();\\
