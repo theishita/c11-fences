@@ -16,6 +16,7 @@ static void t1(void *arg) {
     for (int k = 0; k < NUM; k++) {
         _i = i.load(memory_order_acquire);
         _j = j.load(memory_order_acquire);
+
         dum.store(1, memory_order_relaxed);
         i.store(_i + _j, memory_order_release);
     }
@@ -26,6 +27,7 @@ static void t2(void *arg) {
     for (int k = 0; k < NUM; k++) {
         _i = i.load(memory_order_acquire);
         _j = j.load(memory_order_acquire);
+        
         dum.store(2, memory_order_relaxed);
         j.store(_i + _j, memory_order_release);
     }

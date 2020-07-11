@@ -16,7 +16,6 @@ from hb import hb
 from graph import Graph
 from mo import mo
 from to import to
-from to_transitive import to_transitive
 from cycle import Cycles
 from insert import insert
 from z3translate import z3translate
@@ -144,7 +143,6 @@ class Processing:
 		return order
 
 	def sb(self):
-		to_sets = {}
 
 		for i in self.fence_sc_event_thread:
 			for j in range(len(i)):
@@ -152,19 +150,6 @@ class Processing:
 					sb_relation = (i[j],i[k])
 					if not sb_relation in self.sc_sb_edges:
 						self.sc_sb_edges.append(sb_relation)
-						fence_list = []
-
-						if ('F' in i[j]):
-							fence_list.append(i[j])
-						if ('F' in i[k]):
-							fence_list.append(i[k])
-						if fence_list:
-							fence_list.sort()
-							to_sets[sb_relation] = [fence_list]
-		
-		to_sets_store = open("store/to_sets_store", 'w')
-		to_sets_store.write(str(to_sets))
-		to_sets_store.close()
 
 		self.sc_sb_edges.sort(key = lambda x: x[0])
 

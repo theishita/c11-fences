@@ -76,10 +76,8 @@ int user_main(int argc, char **argv) {
 	atomic_init(&flagw, 0);
     atomic_init(&flagr, 0);
 
-    for (int i = 0; i < NUM_WRITER; i++)
-        thrd_create(&t_write[i], (thrd_start_t)&writer, NULL);
-    for (int i = 0; i < NUM_READ; i++)
-        thrd_create(&t_read[i], (thrd_start_t)&reader, NULL);
+    thrd_create(&t_write[i], (thrd_start_t)&writer, NULL); // can increase the number of writer threads
+    thrd_create(&t_read[i], (thrd_start_t)&reader, NULL); // can increase the number of reader threads
 
     for (int i = 0; i < NUM_WRITER; i++)
         thrd_join(t_write[i]);

@@ -33,7 +33,7 @@ traces,cds_time = cds.get()
 get_p = Processing(traces)
 loc_info = get_p.get()												# runs and returns locations
 
-z3_cmd = 'z3 c11'
+z3_cmd = 'z3 compute_fences'
 z3_run = shlex.split(z3_cmd)										# run z3 file
 
 z3_start = time.time()
@@ -48,7 +48,7 @@ insert(req_locs,filename)											# insert fences into the source file at the 
 end = time.time()
 
 print("\nNumber of fences added:\t\t",len(req_locs))
-print("Fences added after lines:\t",req_locs)
+# print("Fences added after lines:\t",req_locs)
 
 tool_time = end-start
 z3_time = z3_end-z3_start

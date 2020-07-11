@@ -57,9 +57,9 @@ int user_main(int argc, char **argv) {
 	atomic_init(&flag2, 0);
 	atomic_init(&x, 0);
 
-	thrd_create(&w1, (thrd_start_t)&writer1, NULL);
+	thrd_create(&w1, (thrd_start_t)&writer1, NULL); // writer1, writer2 are the same
     thrd_create(&w2, (thrd_start_t)&writer2, NULL);
-	thrd_create(&w3, (thrd_start_t)&writer3, NULL);
+	thrd_create(&w3, (thrd_start_t)&writer3, NULL); // writer3, writer4 are the same
     thrd_create(&w4, (thrd_start_t)&writer4, NULL);
 	thrd_create(&t3, (thrd_start_t)&reader, NULL);
 

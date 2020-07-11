@@ -103,7 +103,7 @@ Such a dictionary structure is created for the ease of look-up while translating
 \par
 The next section runs the Z3 SMT/SAT Solver to obtain the optimum minimized number of fences. It also computes the time taken by Z3.\\
 
-\var{z3\_cmd }\varinfo{= 'z3 c11'} is a string, which denotes the command given in the Linux terminal to run the produced Z3 file. The name of the Z3 file is \textbf{c11}.\\
+\var{z3\_cmd }\varinfo{= 'z3 compute_fences'} is a string, which denotes the command given in the Linux terminal to run the produced Z3 file. The name of the Z3 file is \textbf{compute_fences}.\\
 
 \var{z3\_run } contains a list version of the above command, separated according to base command, input and flags. This is done in order to produce the acceptable input shell syntax for python package \textit{"subprocess"} when it obtains the output. Python package \textit{"shlex"} is used for this purpose and function \fun{split } transforms the command into the required list syntax.\\
 

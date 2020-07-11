@@ -11,7 +11,6 @@ class insert:
 
 		with open(self.filename) as f:
 			lines = f.readlines()
-			# lines = [line.strip() for line in f]
 
 		self.filename = self.filename[:-3]
 		filename_new = self.filename+'_fence.cc'

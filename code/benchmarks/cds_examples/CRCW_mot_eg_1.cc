@@ -44,7 +44,7 @@ static void e(void *obj) {
 
 
 int user_main(int argc, char **argv) {
-	thrd_t w1,w2,w3,w4,t4, t5;
+	thrd_t w1,w2,w3,w4,t4, t5; // NUM_WRITERS can be changed (so inc no. of w's)
 
 	atomic_init(&x, 0);
 	atomic_init(&z, 0);
@@ -52,9 +52,9 @@ int user_main(int argc, char **argv) {
 	atomic_init(&done2, 0);
 
 	thrd_create(&w1, (thrd_start_t)&a1, NULL);
-	thrd_create(&w2, (thrd_start_t)&a2, NULL);
+	thrd_create(&w2, (thrd_start_t)&a2, NULL); // a1, a2 are the same
 	thrd_create(&w3, (thrd_start_t)&b1, NULL);
-	thrd_create(&w4, (thrd_start_t)&b2, NULL);
+	thrd_create(&w4, (thrd_start_t)&b2, NULL); // b1, b2 are the same
 	thrd_create(&t4, (thrd_start_t)&d, NULL);
 	thrd_create(&t5, (thrd_start_t)&e, NULL);
 

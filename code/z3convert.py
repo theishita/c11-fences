@@ -7,7 +7,7 @@
 class z3convert:
 
 	def __init__(self,consts,disjunctions):
-		file = open("c11","w")
+		file = open("compute_fences","w")
 		contents = ""
 
 		# creating the constants
@@ -15,7 +15,7 @@ class z3convert:
 			contents+= self.constant(var,'(_ BitVec 1)')
 		
 		consts_len = len(consts)
-		bin_len = len(bin(consts_len)) - 2
+		bin_len = len(bin(consts_len)) - 1
 		fn_type = "(_ BitVec "+str(bin_len)+")"
 		fn_def = "((_ zero_extend "+str(bin_len - 1)+") x)"
 

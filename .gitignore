@@ -11,7 +11,7 @@ __pycache__/
 *.gz
 
 # generated files from the tool
-c11
+compute_fences
 *_store
 
 # testing files

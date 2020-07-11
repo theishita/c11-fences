@@ -1,6 +1,4 @@
 import networkx as nx
-import matplotlib.pyplot as plt
-import itertools
 import ast
 
 def Cycles():
@@ -19,16 +17,5 @@ def Cycles():
 
 	for i in range(len(cycles)):
 		cycles[i] = [c for c in cycles[i] if 'F' in c]
-
-	# cycles = [c for c in cycles if len(c)>1]
-
-	# Sort the list items
-	# for i in range(len(cycles)):
-		# cycles[i] = sorted(cycles[i])
-	# cycles.sort()
-
-	# Remove duplicate values and cycles of length 1
-	# cycles = list(cycles for cycles,_ in itertools.groupby(cycles))
-	# cycles = [c for c in cycles if len(c)>1]
 
 	return cycles

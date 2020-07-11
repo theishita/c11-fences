@@ -23,6 +23,7 @@ static void t1(void *arg) {
     ok1 = 0;
     for (int i = 0; i < LOOP; i++) {
         if (flag1.load(memory_order_acquire)) {
+atomic_thread_fence(memory_order_seq_cst);
             if (flag2.load(memory_order_acquire)) {
                 dum_turn.store(1, memory_order_seq_cst);
                 if( turn.load(memory_order_relaxed) != 0) {
@@ -66,6 +67,7 @@ static void t2(void *arg) {
     ok1 = 0;
     for (int i = 0; i < LOOP; i++) {
         if (flag2.load(memory_order_acquire)) {
+atomic_thread_fence(memory_order_seq_cst);
             if (flag1.load(memory_order_acquire)) {
                 dum_turn.store(1, memory_order_seq_cst);
                 if( turn.load(memory_order_relaxed) != 1) {
@@ -102,8 +104,7 @@ static void t2(void *arg) {
     flag2.store(0, memory_order_seq_cst);
 }
 
-int user_main(int argc, char **argv) 
-{
+int user_main(int argc, char **argv) {
     thrd_t id1, id2;
 
     atomic_init(&flag1, 0);
