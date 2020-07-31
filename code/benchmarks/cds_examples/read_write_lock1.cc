@@ -57,7 +57,7 @@ int user_main(int argc, char **argv) {
     atomic_init(&flagw, 0);
 	atomic_init(&flagr, 0);
 
-    thrd_create(&t_write[i], (thrd_start_t)&writer, NULL); // can increase the number of writer threads
+    thrd_create(&t_write[0], (thrd_start_t)&writer, NULL); // can increase the number of writer threads
     thrd_create(&t_read, (thrd_start_t)&reader, NULL);
 
     for (int i = 0; i < NUM; i++)

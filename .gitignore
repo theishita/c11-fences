@@ -15,6 +15,6 @@ compute_fences
 *_store
 
 # testing files
-benchmarks/*_fence.cc
+*_fence.cc
 *test*
 *new*

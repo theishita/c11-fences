@@ -34,7 +34,7 @@ def create_instruction(instr):
 	if instr_type == "read":
 		src_code += "load("
 	elif instr_type == "write":
-		src_code += "store("+value+", "											# add the value of the store operation to the instruction
+		src_code += "store("+str(value)+", "											# add the value of the store operation to the instruction
 
 	src_code += "memory_order_"+mem_order+")"
 

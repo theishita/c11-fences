@@ -24,6 +24,7 @@ def create_list(trace_no,instr,file_vars,trace_locs,threads_separated):
 		new_value = value[pos+1:len(value)]
 	else:
 		new_value = value
+	new_value = int(new_value, 16)
 	line.append(new_value)								# 5: value
 
 	if instr[3] == "read" or instr[3] == "rmw":
