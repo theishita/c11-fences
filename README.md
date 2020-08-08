@@ -1,6 +1,8 @@
 ### Pre-requisites
+* Linux environment
 * Python3.x
 * pip / anaconda installer for python libraries
+* g++ compiler
 
 ## Installation
 * Clone the repository
