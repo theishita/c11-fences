@@ -5,7 +5,7 @@
 * g++ compiler
 
 ## Installation
-* Clone the repository
+* Clone this repository
 ```
 git clone https://github.com/theishita/c11-fences && cd c11-fences
 ```
