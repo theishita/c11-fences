@@ -11,6 +11,7 @@
 \begin{enumerate}
 \setcounter{enumi}{-1}
 \item
+	For a given variable, if there is a read from relation between a read and a write instruction, then the SC instructions above the write are in TO with the SC instructions below the read.\\
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
     \node[punkt] (x) {X:$F_{sc}$};
     \node[punkt,below=of x] (a) {A:$Wx$}
@@ -25,15 +26,18 @@
 \item
 	\begin{enumerate}[a.]
 	\item
+		For a given variable, for an SC read instruction reading from an SC write instruction, there is a TO relation between the read and the write instructions.\\
 		\rf{A:$W_{sc}$}{B:$R_{sc}$}\\
 		\too{A}{B}
 	
 	\item
+		For a given variable,, for an SC read instruction reading from a write instruction \textit{M}, the read instruction is in TO with all SC write instruction which happen after \textit{M}.\\
 		A:$W_{sc}x$, M:$Wx$, B:$R_{sc}x$\\
 		\hb{M}{A} $\land$ \rf{M}{B} $\implies$ \too{B}{A}
 	\end{enumerate}
 
 \item
+	For a given variable, all SC instructions above a read instruction reading from a write instruction \textit{$M_1$} are in TO with all SC write instruction modifying the variable after \textit{$M_1$}.
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
 	\node[punkt](x) {X:$F_{sc}$};
 	\node[punkt, below=of x](b) {B:$Rx$}

@@ -51,7 +51,7 @@ Such a specification may be made in the form of an assertion such as the one des
 In the program described in Fig \ref{fig:dekker2}, inserting an SC (sequentially consistent) fence between the instructions (1) and (2), and an SC fence between (3) and (4) render the program to be sequentially consistent, thereby satisfying the assertion. After adding these fences, the program will never have a case where the output is printed as "00". That is, after the fence insertions, the assertion stating that A, B should not both be 0 at the end of the program will remain satisfied in all possible traces under the C11 model.
 
 \par
-The two fences inserted in the program are the minimum number of fences which can be inserted at strategic positions in order to prevent the unwanted outputs. A user may also add SC fences at all positions - before and after all instructions - in order to make the program sequentially consistent in nature. However, this comes at the cost of forgoing the properties of the relaxed model that the typical user tends to seek. Another point to note is, making the entire program sequentially consistent might not mean that the behaviour required by the user is retained. Even if the entire program is sequential after adding fences everywhere, the program still might fail certain assertions. This simply depends upon the program itself and how it runs. \textit{\color{pink}write a better sentence/explain this better or in more detail} Therefore, our tool can only prevent the assertions from being violated in cases where the behaviour can be stopped using SC fences. The tools also serves to minimize the total number of fences included to the optimal number, thereby retaining the properties of concurrency as much as possible.
+The two fences inserted in the program are the minimum number of fences which can be inserted at strategic positions in order to prevent the unwanted outputs. A user may also add SC fences at all positions - before and after all instructions - in order to make the program sequentially consistent in nature. However, this comes at the cost of forgoing the properties of the relaxed model that the typical user tends to seek. Another point to note is, making the entire program sequentially consistent might not mean that the behaviour required by the user is retained. Even if the entire program is sequential after adding fences everywhere, the program still might fail certain assertions. This simply depends upon the program itself and how it runs. Therefore, our tool can only prevent the assertions from being violated in cases where the behaviour can be stopped using SC fences. The tools also serves to minimize the total number of fences included to the optimal number, thereby retaining the properties of concurrency as much as possible.
 
 \par
 The tool first begins by running the input program through a C11 model checker, which runs all possible executions of the program and gives a list of buggy traces as output. Buggy traces here means the execution runs where an assertion was violated in the program. The model checker provides the exact order of the execution which caused the program to stop mid-way, along with meta data for each instruction, such as read-from values or memory orders. CDS Checker is used for our purposes. It was selected for this project because of the plethora of information that it provides. CDS Checker only considers the atomic operations or thread operations in the program as an instruction.
@@ -108,13 +108,13 @@ RMW operations are considered as both reads and writes in this case.
 These relations, since there are many, are stored as boolean values in an adjacency table, as opposed to the "list of tuples" format used for all other relations in the tool. The adjacency table is indexed based on the instruction number as given by CDS Checker. An example can be seen in \ref{fig:cds_hb}. The 0 index is left out as empty and filled with 0's, while a 1 for row 3 column 4 would mean \hb{3}{4}.
 
 % --------------- FIG 4 --------------
-\begin{figure}
-\begin{center}
-	\input{section/hb_instr_example.tex}
-	\caption{a. Example instruction trace from CDS Checker.\\b. Adjacency table of hb relations as formed by the tool.}
-	\label{fig:cds_hb}
-\end{center}
-\end{figure}
+%\begin{figure}
+%\begin{center}
+%	\input{section/hb_instr_example.tex}
+%	\caption{a. Example instruction trace from CDS Checker.\\b. Adjacency table of hb relations as formed by the tool.}
+%	\label{fig:cds_hb}
+%\end{center}
+%\end{figure}
 
 \par
 The HB relation is computed for all instructions before inserting the pseudo fences in the tool. This is because the HB relation is only required to compute the MO (modification order) relations, which only are only concerned with the write instructions. Therefore, computing HB relations before inserting pseudo fences everywhere makes the tool faster.
@@ -145,7 +145,7 @@ After this step, the pseudo fences are inserted.
 
 % --------------- TO -----------
 \subsubsection{Finding TO relations between SC instructions}
-The final step in finding relations and the only step that is required for fence elimination is to find TO relations. The rules for TO relations in the C11 standard are defined as:
+The final step in finding relations and the main step that is required for fence elimination is to find TO relations. The rules for TO relations in the C11 standard are defined in \ishComment{insert C11 std ref}. These rules can be interpreted as the following:
 \input{section/to_rules.tex}
 
 % --------------- PROPOSED SOLN -------------
