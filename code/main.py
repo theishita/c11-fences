@@ -31,7 +31,7 @@ cds = translate_cds(filename)										# translates CDS Checker output & returns
 traces,cds_time = cds.get()
 
 get_p = Processing(traces)
-loc_info = get_p.get()												# runs and returns locations
+loc_info, fences_present = get_p.get()								# runs and returns locations of fences to be added and the fences already present
 
 z3_cmd = 'z3 compute_fences'
 z3_run = shlex.split(z3_cmd)										# run z3 file
@@ -43,11 +43,11 @@ z3_end = time.time()
 z3 = z3.decode('utf-8')
 
 req_locs = z3run(z3)												# decipher output from z3 & get required locations
-insert(req_locs,filename)											# insert fences into the source file at the requiren locations
+insert(req_locs,filename,fences_present)							# insert fences into the source file at the requiren locations
 
 end = time.time()
 
-print("\nNumber of fences added:\t\t",len(req_locs))
+print("\nNumber of fences added:\t\t",len(req_locs)-len(fences_present))
 # print("Fences added after lines:\t",req_locs)
 
 tool_time = end-start

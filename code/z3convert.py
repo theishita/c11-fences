@@ -6,14 +6,18 @@
 
 class z3convert:
 
-	def __init__(self,consts,disjunctions):
+	def __init__(self,consts,disjunctions,fences_present):
 		file = open("compute_fences","w")
 		contents = ""
 
 		# creating the constants
 		for var in consts:
 			contents+= self.constant(var,'(_ BitVec 1)')
-		
+
+		# creating assertions for fences present
+		for fence in fences_present:
+			contents+= self.fact("=",fence,"#b1")
+
 		consts_len = len(consts)
 		bin_len = len(bin(consts_len)) - 1
 		fn_type = "(_ BitVec "+str(bin_len)+")"
@@ -35,7 +39,6 @@ class z3convert:
 		return cnst
 
 	# to add assertions/facts
-	# unused
 	def fact(self,operator,left,right):
 		assertion = "(assert ("+operator+" "+left+" "+str(right)+"))\n"
 		return assertion

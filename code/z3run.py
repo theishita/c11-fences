@@ -21,7 +21,7 @@ def z3run(output):
 				val = output[i+1][6]									# variable's value (0 or 1)
 
 				if val == '1':											# if value is one, the location is a required location
-					req_locs.append(var[1:])
+					req_locs.append(var)
 
 		if line == '(model ':
 			in_model += 1												# model is starting now
