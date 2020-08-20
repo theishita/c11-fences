@@ -9,9 +9,8 @@
 ```
 git clone https://github.com/theishita/c11-fences && cd c11-fences
 ```
-* Add CDS model checker:
+* Add CDS model checker in the base repo:
 ```
-cd code
 git clone git://demsky.eecs.uci.edu/model-checker.git
 ```
 * Install required python libraries:<br/>
