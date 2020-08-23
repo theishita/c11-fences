@@ -24,21 +24,22 @@ from z3convert import z3convert
 import sys
 
 class Processing:
-	def __init__(self,traces):
+	def __init__(self,traces,no_traces):
 		self.z3vars = []												# list of all z3 constants
 		self.disjunctions = []											# list of disjunctions for the z3 function
 		self.fences_present = []										# list of fences converted to their respective variable names
 
 		trace_no = 0
 
-		for trace in traces:											# run for each trace
+		for t in range(no_traces):										# run for each trace
+			trace = traces[t]
 			self.fence_sc_event_thread = []								# list of all fences and events separated by threads
 			self.sc_sb_edges = []										# list of sb edge pairs between fences as well as sc events
 			self.fences_in_trace = []									# list of fences already present in the program
 			self.cycles = []                                            # list of all cycles between the fences and events
 			self.loc_info = {}                                          # information regarding the required fence locations
 
-			trace_no += 1
+			# trace_no += 1
 			# print("trace=",trace_no)
 
 			hb_graph = hb(trace)
@@ -160,4 +161,4 @@ class Processing:
 		self.sc_sb_edges.sort(key = lambda x: x[0])
 
 	def get(self):
-		return self.loc_info, self.fences_present
+		return self.fences_present

@@ -10,16 +10,17 @@ import time
 import sys
 from operator import itemgetter
 
-from .map_var import map_var
-from .create_list import create_list
-from .separate_by_thread import separate_by_thread
-from .find_line_no import find_line_no
+from map_var import map_var
+from create_list import create_list
+from separate_by_thread import separate_by_thread
+from find_line_no import find_line_no
 
 class translate_cds:
 	def __init__(self,filename):
 
 		self.traces_raw = []											# list of all traces raw
 		self.traces = []												# list of processed traces
+		self.no_buggy_execs = 0											# number of buggy executions for this run
 
 		copy = 'cp '+filename+' ../model-checker/test'
 		make = 'cd ../model-checker && make'
@@ -44,10 +45,14 @@ class translate_cds:
 		self.cds_time = cds_end-cds_start
 
 		self.obtain_traces(p)
-		self.create_structure(filename)
+		self.no_buggy_execs = int(self.no_buggy_execs)
+		print("Buggy executions:\t",self.no_buggy_execs)
+
+		if self.no_buggy_execs != 0:
+			self.create_structure(filename)
 
 	def get(self):
-		return self.traces,self.cds_time
+		return self.traces,self.cds_time,self.no_buggy_execs
 
 	# to differentiate and obtain each trace from the std output in the terminal
 	def obtain_traces(self,p):
@@ -70,10 +75,7 @@ class translate_cds:
 
 			# print number of buggy executions
 			if "Number of buggy executions" in line:
-				print('\n')
-				print(line)
-				if line == "Number of buggy executions: 0":
-					sys.exit()											# in case of zero buggy execs, exit program
+				self.no_buggy_execs = line[28:len(line)]
 
 	# to convert each trace into a structure
 	def create_structure(self,filename):
