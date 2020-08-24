@@ -42,54 +42,69 @@ file = args.file												# gets the input file name
 no_traces = args.no_traces										# gets the input number of traces to be checked
 max_iter = args.max_iter										# gets the input maximum number of iterations
 
-# print("t,n==",no_traces,max_iter)
+cds_total = 0
+z3_total = 0
+fences_added = 0
+total_iter = 0
 
-def fn_main(filename, fences_added = 0, curr_iter = 0):
-	if max_iter and curr_iter == max_iter:
-		return fences_added, curr_iter
+def fn_main(filename):
+	global cds_total
+	global z3_total
+	global fences_added
+	global total_iter
 
-	curr_iter += 1
-	print("\n\n=============== ITERATION",curr_iter,"===============")
+	if max_iter and total_iter == max_iter:
+		return
+
+	total_iter += 1
+	print("\n\n=============== ITERATION",total_iter,"===============")
 
 	cds = translate_cds(filename)								# translates CDS Checker output & returns a structure containing the traces
 	traces,cds_time,no_buggy_execs = cds.get()
 
-	if no_buggy_execs == 0:
-		return fences_added, curr_iter
+	if no_buggy_execs:
+		no = no_traces if no_traces and no_traces < len(traces) else len(traces)
+		get_p = Processing(traces, no)
+		fences_present, error_string = get_p.get()				# creates the required z3 file for our usage
 
-	no = no_traces if no_traces and no_traces < len(traces) else len(traces)
-	get_p = Processing(traces, no)
-	fences_present = get_p.get()								# creates the required z3 file for our usage
+		if error_string:
+			print(error_string)
 
-	z3_cmd = 'z3 compute_fences'
-	z3_run = shlex.split(z3_cmd)								# run z3 file
+		else:
+			z3_cmd = 'z3 compute_fences'
+			z3_run = shlex.split(z3_cmd)								# run z3 file
 
-	z3_start = time.time()
-	z3 = subprocess.check_output(z3_run,
-								stderr=subprocess.PIPE)			# get std output after running z3
-	z3_end = time.time()
-	z3 = z3.decode('utf-8')
+			z3_start = time.time()
+			z3 = subprocess.check_output(z3_run,
+										stderr=subprocess.PIPE)			# get std output after running z3
+			z3_end = time.time()
+			z3 = z3.decode('utf-8')
 
-	req_locs = z3run(z3)										# decipher output from z3 & get required locations
-	new_filename = insert(req_locs,filename,fences_present)		# insert fences into the source file at the requiren locations
+			req_locs = z3run(z3)										# decipher output from z3 & get required locations
+			new_filename = insert(req_locs,filename,fences_present)		# insert fences into the source file at the requiren locations
 
-	fences_added += len(req_locs)-len(fences_present)
+			fences_added += len(req_locs)-len(fences_present)
 
-	z3_time = z3_end-z3_start
-	print("Fences added:\t\t",len(req_locs)-len(fences_present))
+			z3_time = z3_end-z3_start
+
 	print("CDS Checker time:\t",cds_time)
-	print("Z3 time:\t\t",z3_time)
+	cds_total += cds_time
+	if no_buggy_execs and not error_string:
+		print("Z3 time:\t\t",z3_time)
+		z3_total += z3_time
+		print("Fences added:\t\t",len(req_locs)-len(fences_present))
 
-	if no_traces:
-		fences_added, curr_iter = fn_main(new_filename, fences_added, curr_iter)
+	if no_traces and no_buggy_execs and not error_string:
+		fn_main(new_filename)
 
-	return fences_added, curr_iter
+	return
 
 start = time.time()
-fences_added, total_iter = fn_main(file)
+fn_main(file)
 end = time.time()
 print("\n\n\n===========================================")
 print("Total fences added:\t",fences_added)
 print("Total iterations:\t",total_iter)
 print("Total time taken:\t",end-start)
+print("Tool only time taken:\t",end-start-cds_total-z3_total)
 print("Avg time per iteration:\t",(end-start)/total_iter)

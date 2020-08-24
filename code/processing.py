@@ -28,6 +28,7 @@ class Processing:
 		self.z3vars = []												# list of all z3 constants
 		self.disjunctions = []											# list of disjunctions for the z3 function
 		self.fences_present = []										# list of fences converted to their respective variable names
+		self.error_string = ''
 
 		trace_no = 0
 
@@ -85,8 +86,8 @@ class Processing:
 				self.disjunctions.append(translation)
 
 			else:
-				print("\nNo TO cycles can be formed for trace",trace_no,"\nHence this behaviour cannot be stopped using SC fences")
-				sys.exit()
+				self.error_string = "\nNo TO cycles can be formed for trace "+str(trace_no+1)+"\nHence this behaviour cannot be stopped using SC fences"
+				return
 
 		z3convert(self.z3vars,self.disjunctions,self.fences_present)
 
@@ -161,4 +162,4 @@ class Processing:
 		self.sc_sb_edges.sort(key = lambda x: x[0])
 
 	def get(self):
-		return self.fences_present
+		return self.fences_present, self.error_string
