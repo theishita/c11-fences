@@ -22,12 +22,18 @@ from z3translate import z3translate
 from z3convert import z3convert
 
 import sys
+import time
 
 class Processing:
 	def __init__(self,traces):
 		self.z3vars = []												# list of all z3 constants
 		self.disjunctions = []											# list of disjunctions for the z3 function
 		self.error_string = ''
+		self.hb_total = 0
+		self.mo_total = 0
+		self.fences_total = 0
+		self.to_total = 0
+		self.cycles_total = 0
 
 		trace_no = 0
 
@@ -39,22 +45,37 @@ class Processing:
 			self.loc_info = {}                                          # information regarding the required fence locations
 
 			trace_no += 1
-			# print("trace=",trace_no)
+			# print("---------Trace",trace_no,"---------")
 
+			hb_time = time.time()
 			hb_graph = hb(trace)
 			mat,size = hb_graph.get()
+			hb_time = time.time() - hb_time
+			self.hb_total += hb_time
 
+			mo_time = time.time()
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
 			# print("mo===",mo_edges)
-
+			mo_time = time.time() - mo_time
+			self.mo_total += mo_time
+			
+			fences_time = time.time()
 			order=self.fence(trace)
 			# print("order=",order)
+			fences_time = time.time() - fences_time
+			self.fences_total += fences_time
 
+			to_time = time.time()
 			to(order,mo_edges,self.sc_sb_edges)
+			to_time = time.time() - to_time
+			self.to_total += to_time
 
+			cycles_time = time.time()
 			cycles = Cycles()
 			# print("no cycles=",len(cycles))
+			cycles_time = time.time() - cycles_time
+			self.cycles_total += cycles_time
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]
@@ -154,4 +175,4 @@ class Processing:
 		self.sc_sb_edges.sort(key = lambda x: x[0])
 
 	def get(self):
-		return self.loc_info, self.error_string
+		return self.loc_info, self.error_string, [self.hb_total, self.mo_total, self.fences_total, self.to_total, self.cycles_total]
