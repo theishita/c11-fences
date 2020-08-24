@@ -18,6 +18,7 @@ from z3run import z3run
 from insert import insert
 from translators.cds_checker.cds_checker import translate_cds
 
+z3_time = 0
 start = time.time()													# to calculate total tool time
 
 parser = argparse.ArgumentParser()
@@ -28,32 +29,38 @@ args = parser.parse_args()
 filename = args.file												# gets the input file name
 
 cds = translate_cds(filename)										# translates CDS Checker output & returns a structure containing the traces
-traces,cds_time = cds.get()
+traces,cds_time,no_buggy_execs = cds.get()
 # print("traces=",traces)
 
-get_p = Processing(traces)
-loc_info = get_p.get()												# runs and returns locations
+if no_buggy_execs:
+	get_p = Processing(traces)
+	loc_info, error_string = get_p.get()												# runs and returns locations
 
-z3_cmd = 'z3 compute_fences'
-z3_run = shlex.split(z3_cmd)										# run z3 file
+	if not error_string:
+		z3_cmd = 'z3 compute_fences'
+		z3_run = shlex.split(z3_cmd)										# run z3 file
 
-z3_start = time.time()
-z3 = subprocess.check_output(z3_run,
-							stderr=subprocess.PIPE)					# get std output after running z3
-z3_end = time.time()
-z3 = z3.decode('utf-8')
+		z3_start = time.time()
+		z3 = subprocess.check_output(z3_run,
+									stderr=subprocess.PIPE)					# get std output after running z3
+		z3_end = time.time()
+		z3 = z3.decode('utf-8')
+		
+		req_locs = z3run(z3)												# decipher output from z3 & get required locations
+		insert(req_locs,filename)											# insert fences into the source file at the requiren locations
 
-req_locs = z3run(z3)												# decipher output from z3 & get required locations
-insert(req_locs,filename)											# insert fences into the source file at the requiren locations
+		print("Fences added:\t\t",len(req_locs))
+		# print("Fences added after lines:\t",req_locs)
+	
+	else:
+		print(error_string)
 
 end = time.time()
-
-print("\nNumber of fences added:\t\t",len(req_locs))
-# print("Fences added after lines:\t",req_locs)
-
 tool_time = end-start
-z3_time = z3_end-z3_start
-print("CDS Checker time:\t\t",cds_time)
-print("Z3 time:\t\t\t",z3_time)
-print("Total time:\t\t\t",tool_time)
-print("Tool only time:\t\t\t",tool_time-z3_time-cds_time)
+
+print("CDS Checker time:\t",cds_time)
+if no_buggy_execs and not error_string:
+	z3_time = z3_end-z3_start
+	print("Z3 time:\t\t",z3_time)
+print("Total time:\t\t",tool_time)
+print("Tool only time:\t\t",tool_time-z3_time-cds_time)

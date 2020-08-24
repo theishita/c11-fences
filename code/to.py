@@ -19,15 +19,15 @@ class to:
 		to_edges_basic = ast.literal_eval(to_edges_basic)
 		self.to_edges = list(set(to_edges_basic) | set(sb_edges))
 
-		print("rule 0")
+		# print("rule 0")
 		self.rule0()
-		print("rule 1a")
+		# print("rule 1a")
 		self.rule1a()
-		print("rule 2")
+		# print("rule 2")
 		self.rule2()
-		print("rule 3, 1b")
+		# print("rule 3, 1b")
 		self.rule3_1b()
-		print("rule 4")
+		# print("rule 4")
 		self.rule4()
 
 		# write the basic to edges
@@ -53,7 +53,7 @@ class to:
 						
 						if not (x,y) in self.to_edges:
 							self.to_edges.append((x,y))
-							print(self.to_edges[-1])
+							# print(self.to_edges[-1])
 
 
 	def rule1a(self):
@@ -68,7 +68,7 @@ class to:
 
 						if not (a_no,b_no) in self.to_edges:
 							self.to_edges.append((a_no,b_no))
-							print(self.to_edges[-1])
+							# print(self.to_edges[-1])
 
 	def rule2(self):
 		for i in self.mo_edges:
@@ -86,7 +86,7 @@ class to:
 
 								if not (x,m2_no) in self.to_edges:
 									self.to_edges.append((x,m2_no))
-									print(self.to_edges[-1])
+									# print(self.to_edges[-1])
 
 	def rule3_1b(self):
 		for i in self.mo_edges:
@@ -117,14 +117,14 @@ class to:
 				for b_no in b:
 					if not (b_no,a_no) in self.to_edges:
 						self.to_edges.append((b_no,a_no))
-						print(self.to_edges[-1])
+						# print(self.to_edges[-1])
 
 			# rule 3
 			if x and y:
 				for fy in y:
 					if not (fy,x) in self.to_edges:
 						self.to_edges.append((fy,x))
-						print(self.to_edges[-1])
+						# print(self.to_edges[-1])
 
 	def rule4(self):
 		for i in self.mo_edges:
@@ -143,18 +143,18 @@ class to:
 			if b['mo'] == 'seq_cst':
 				if not (b_no,x) in self.to_edges:
 					self.to_edges.append((b_no,x))
-					print(self.to_edges[-1])
+					# print(self.to_edges[-1])
 
 			# rule 4b
 			if a['mo'] == 'seq_cst':
 				if not (y,a_no) in self.to_edges:
 					self.to_edges.append((y,a_no))
-					print(self.to_edges[-1])
+					# print(self.to_edges[-1])
 
 			# rule 4c
 			if not (y,x) in self.to_edges:
 				self.to_edges.append((y,x))
-				print(self.to_edges[-1])
+				# print(self.to_edges[-1])
 
 	def sort_to_edges(self):
 		# read from the store

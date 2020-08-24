@@ -27,6 +27,7 @@ class Processing:
 	def __init__(self,traces):
 		self.z3vars = []												# list of all z3 constants
 		self.disjunctions = []											# list of disjunctions for the z3 function
+		self.error_string = ''
 
 		trace_no = 0
 
@@ -38,14 +39,14 @@ class Processing:
 			self.loc_info = {}                                          # information regarding the required fence locations
 
 			trace_no += 1
-			print("trace=",trace_no)
+			# print("trace=",trace_no)
 
 			hb_graph = hb(trace)
 			mat,size = hb_graph.get()
 
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
-			print("mo===",mo_edges)
+			# print("mo===",mo_edges)
 
 			order=self.fence(trace)
 			# print("order=",order)
@@ -53,7 +54,7 @@ class Processing:
 			to(order,mo_edges,self.sc_sb_edges)
 
 			cycles = Cycles()
-			print("no cycles=",len(cycles))
+			# print("no cycles=",len(cycles))
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]
@@ -77,8 +78,8 @@ class Processing:
 				self.disjunctions.append(translation)
 
 			else:
-				print("\nNo TO cycles can be formed for trace",trace_no,"\nHence this behaviour cannot be stopped using SC fences")
-				sys.exit()
+				self.error_string = "\nNo TO cycles can be formed for trace "+str(trace_no)+"\nHence this behaviour cannot be stopped using SC fences\n"
+				return
 
 		z3convert(self.z3vars,self.disjunctions)
 
@@ -153,4 +154,4 @@ class Processing:
 		self.sc_sb_edges.sort(key = lambda x: x[0])
 
 	def get(self):
-		return self.loc_info
+		return self.loc_info, self.error_string
