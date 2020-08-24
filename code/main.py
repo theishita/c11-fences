@@ -57,7 +57,7 @@ def fn_main(filename, fences_added = 0, curr_iter = 0):
 	if no_buggy_execs == 0:
 		return fences_added, curr_iter
 
-	no = no_traces if no_traces < len(traces) else len(traces)
+	no = no_traces if no_traces and no_traces < len(traces) else len(traces)
 	get_p = Processing(traces, no)
 	fences_present = get_p.get()								# creates the required z3 file for our usage
 
@@ -80,7 +80,8 @@ def fn_main(filename, fences_added = 0, curr_iter = 0):
 	print("CDS Checker time:\t",cds_time)
 	print("Z3 time:\t\t",z3_time)
 
-	fences_added, curr_iter = fn_main(new_filename, fences_added, curr_iter)
+	if no_traces:
+		fences_added, curr_iter = fn_main(new_filename, fences_added, curr_iter)
 
 	return fences_added, curr_iter
 

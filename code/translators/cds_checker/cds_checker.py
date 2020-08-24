@@ -10,10 +10,10 @@ import time
 import sys
 from operator import itemgetter
 
-from map_var import map_var
-from create_list import create_list
-from separate_by_thread import separate_by_thread
-from find_line_no import find_line_no
+from .map_var import map_var
+from .create_list import create_list
+from .separate_by_thread import separate_by_thread
+from .find_line_no import find_line_no
 
 class translate_cds:
 	def __init__(self,filename):
