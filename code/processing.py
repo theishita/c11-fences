@@ -38,23 +38,22 @@ class Processing:
 			self.loc_info = {}                                          # information regarding the required fence locations
 
 			trace_no += 1
-			# print("trace=",trace_no)
+			print("trace=",trace_no)
 
 			hb_graph = hb(trace)
 			mat,size = hb_graph.get()
 
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
-			# print("mo===",mo_edges)
+			print("mo===",mo_edges)
 
 			order=self.fence(trace)
+			# print("order=",order)
 
 			to(order,mo_edges,self.sc_sb_edges)
 
 			cycles = Cycles()
-			# print("no cycles=",len(cycles))
-
-			# to_transitive(cycles)
+			print("no cycles=",len(cycles))
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]

@@ -29,6 +29,7 @@ filename = args.file												# gets the input file name
 
 cds = translate_cds(filename)										# translates CDS Checker output & returns a structure containing the traces
 traces,cds_time = cds.get()
+# print("traces=",traces)
 
 get_p = Processing(traces)
 loc_info = get_p.get()												# runs and returns locations
