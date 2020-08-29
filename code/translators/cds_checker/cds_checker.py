@@ -49,10 +49,13 @@ class translate_cds:
 		print("\n\nBuggy executions:\t",self.buggy_execs)
 
 		if self.buggy_execs != 0:
+			conver_start = time.time()
 			self.create_structure(filename)
+			conver_end = time.time()
+			self.conver_time = conver_end-conver_start
 
 	def get(self):
-		return self.traces,self.cds_time,self.buggy_execs
+		return self.traces,self.cds_time,self.conver_time,self.buggy_execs
 
 	# to differentiate and obtain each trace from the std output in the terminal
 	def obtain_traces(self,p):

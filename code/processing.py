@@ -87,7 +87,7 @@ class Processing:
 						if fence == order[i]:
 							o = order[i-1]
 							fence_name = order[i]
-							var_name = 'l'+str(o['line'])
+							var_name = 'l'+str(o[8])
 							self.loc_info[fence_name] = var_name
 				
 				get_translation = z3translate(cycles,self.loc_info)
@@ -114,48 +114,35 @@ class Processing:
 
 		for j in range(1,threads+1):
 			fence_no = 0
-			fences_in_thread = []
 			fences_events_in_thread = []
 			fences_events_in_thread_min = []									# a minimal version of the above in order to find sb's
 
-			for i in range(len(trace)):
-				if int(trace[i][1])==j:
-					fence_no+=1
-					fence_name = 'F'+str(j)+'n'+str(fence_no)
-					order.append(fence_name)
-					fences_in_thread.append(fence_name)							# fence order in a thread
-					fences_events_in_thread.append(fence_name)					# fence added to fences+all events order in a thread
-					fences_events_in_thread_min.append(fence_name)				# fence added to fences+sc events order in a thread
-
-					event = {'no': trace[i][0],									# trace[i][0] is the event number
-							'thread': j,
-							'mo': trace[i][3],
-							'type': trace[i][2]
-					}
-					if trace[i][2]=='read' or trace[i][2]=="rmw":
-						event['rf'] = trace[i][6]								# trace[i][7] gives Read-from (Rf)
-						event['loc'] = trace[i][4]
-						event['line'] = trace[i][8]								# line number in the original source code
-					elif trace[i][2]=='write':
-						event['loc'] = trace[i][4]
-						event['line'] = trace[i][8]
-
-					if event['mo'] == 'seq_cst':
-						fences_events_in_thread_min.append(trace[i][0])			# event added to fences+sc events order in a thread
-
-					order.append(event)
-					fences_events_in_thread.append(event)
-
 			fence_no+=1
 			fence_name = 'F'+str(j)+'n'+str(fence_no)
-
 			# IDEA: so many extra vars so that- use only where needed cuz loops increase complexity
 			fences_events_in_thread.append(fence_name)
 			order.append(fence_name)
-			fences_in_thread.append(fence_name)
 			fences_events_in_thread_min.append(fence_name)
 
-			self.fence_thread.append(fences_in_thread)
+			for i in range(len(trace)):
+				if int(trace[i][1])==j:
+
+					if trace[i][2] == "fence":
+						self.fences_in_trace.append(fence_name)
+						continue
+					else:
+						if trace[i][3] == 'seq_cst':
+							fences_events_in_thread_min.append(trace[i][0])			# event added to fences+sc events order in a thread
+
+						order.append(trace[i])
+						fences_events_in_thread.append(trace[i])
+
+						fence_no+=1
+						fence_name = 'F'+str(j)+'n'+str(fence_no)
+						order.append(fence_name)
+						fences_events_in_thread.append(fence_name)					# fence added to fences+all events order in a thread
+						fences_events_in_thread_min.append(fence_name)				# fence added to fences+sc events order in a thread
+
 			self.fence_sc_event_thread.append(fences_events_in_thread_min)
 
 		# now find all sb relations between fences and events
