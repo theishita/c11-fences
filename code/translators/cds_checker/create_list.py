@@ -2,7 +2,7 @@
 # Creates a structured list
 # --------------------------------------------------------
 
-def create_list(trace_no,instr,file_vars,trace_locs,threads_separated):
+def create_list(trace_no,instr,file_vars,trace_locs):
 	line = []
 
 	line.append(instr[0])								# 0: serial number of the instruction

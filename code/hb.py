@@ -22,12 +22,8 @@ class hb:
 		self.mat = Graph(self.size)
 		self.matrix()
 
-		to_edges_basic_store = open("store/to_edges_basic_store",'w')
-		to_edges_basic_store.write(str(self.to_edges))
-		to_edges_basic_store.close()
-
 	def get(self):
-		return self.mat,self.size
+		return self.mat,self.size,self.to_edges
 
 	def matrix(self):
 

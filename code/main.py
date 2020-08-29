@@ -19,7 +19,6 @@ from insert import insert
 from translators.cds_checker.cds_checker import translate_cds
 
 z3_time = 0
-start = time.time()													# to calculate total tool time
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--file", "-f", type=str, required=True)
@@ -28,6 +27,7 @@ parser.add_argument("--file", "-f", type=str, required=True)
 args = parser.parse_args()
 filename = args.file												# gets the input file name
 
+start = time.time()													# to calculate total tool time
 cds = translate_cds(filename)										# translates CDS Checker output & returns a structure containing the traces
 traces,cds_time,conver_time,buggy_execs = cds.get()
 # print("traces=",traces)

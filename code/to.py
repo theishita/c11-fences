@@ -8,16 +8,12 @@ import networkx as nx
 
 class to:
 
-	def __init__(self,order,mo_edges,sb_edges):
+	def __init__(self,order,mo_edges,sb_edges,to_edges):
 		self.order = order
 		self.mo_edges = mo_edges
 		self.sb_edges = sb_edges
 
-		to_edges_basic_store = open("store/to_edges_basic_store",'r')
-		to_edges_basic = to_edges_basic_store.read()
-		to_edges_basic_store.close()
-		to_edges_basic = ast.literal_eval(to_edges_basic)
-		self.to_edges = list(set(to_edges_basic) | set(sb_edges))
+		self.to_edges = to_edges + sb_edges
 
 		self.rule0()
 		self.rule1a()
@@ -25,13 +21,18 @@ class to:
 		self.rule3_1b()
 		self.rule4()
 
-		# write the basic to edges
-		to_edges_basic_store = open("store/to_edges_basic_store",'w')
-		to_edges_basic_store.write(str(self.to_edges))
-		to_edges_basic_store.close()
+		self.to_edges = list(set(self.to_edges))		# remove repeats
 
-		self.sort_to_edges()
-		self.create_transitive_edges()
+		# write the basic to edges
+		# to_edges_basic_store = open("store/to_edges_basic_store",'w')
+		# to_edges_basic_store.write(str(self.to_edges))
+		# to_edges_basic_store.close()
+
+		# self.sort_to_edges()
+		# self.create_transitive_edges()
+	
+	def get(self):
+		return self.to_edges
 
 	def rule0(self):
 		for i in range(len(self.order)):
@@ -142,6 +143,7 @@ class to:
 			if not (y,x) in self.to_edges:
 				self.to_edges.append((y,x))
 
+	# unused
 	def sort_to_edges(self):
 		# read from the store
 		to_edges_basic_store = open("store/to_edges_basic_store",'r')
@@ -160,6 +162,7 @@ class to:
 		to_edges_basic_store.write(str(to_edges))
 		to_edges_basic_store.close()
 	
+	# unused
 	def create_transitive_edges(self):
 		to_edges_basic_store = open("store/to_edges_basic_store",'r')
 		to_edges = to_edges_basic_store.read()

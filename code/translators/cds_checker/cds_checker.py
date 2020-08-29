@@ -93,7 +93,7 @@ class translate_cds:
 		for trace in self.traces_raw:
 			execution = []
 			for instr in trace:
-				line = create_list(trace_no,instr,file_vars,trace_locs,threads_separated)
+				line = create_list(trace_no,instr,file_vars,trace_locs)
 				execution.append(line)
 			execution.sort(key = lambda x:x[1])							# sorts the list of instructions by the thread number
 			# IDEA: using key function is faster since it is called exactly once for each input record

@@ -43,16 +43,19 @@ class Processing:
 			self.sc_sb_edges = []										# list of sb edge pairs between fences as well as sc events
 			self.cycles = []                                            # list of all cycles between the fences and events
 			self.loc_info = {}                                          # information regarding the required fence locations
+			self.to_edges = []
 
 			trace_no += 1
 			# print("---------Trace",trace_no,"---------")
 
+			# HB
 			hb_time = time.time()
 			hb_graph = hb(trace)
-			mat,size = hb_graph.get()
+			mat,size,self.to_edges = hb_graph.get()
 			hb_time = time.time() - hb_time
 			self.hb_total += hb_time
-
+			
+			# MO
 			mo_time = time.time()
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
@@ -60,19 +63,23 @@ class Processing:
 			mo_time = time.time() - mo_time
 			self.mo_total += mo_time
 			
+			# ADD FENCES
 			fences_time = time.time()
 			order=self.fence(trace)
 			# print("order=",order)
 			fences_time = time.time() - fences_time
 			self.fences_total += fences_time
 
+			# TO
 			to_time = time.time()
-			to(order,mo_edges,self.sc_sb_edges)
+			calc_to = to(order,mo_edges,self.sc_sb_edges,self.to_edges)
+			self.to_edges = calc_to.get()
 			to_time = time.time() - to_time
 			self.to_total += to_time
-
+			
+			# CYCLES
 			cycles_time = time.time()
-			cycles = Cycles()
+			cycles = Cycles(self.to_edges)
 			# print("no cycles=",len(cycles))
 			cycles_time = time.time() - cycles_time
 			self.cycles_total += cycles_time
