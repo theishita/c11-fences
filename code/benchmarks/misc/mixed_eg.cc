@@ -16,24 +16,15 @@ atomic<int> dum_1;
 static void t1(void *arg) {
 	z.store(1, memory_order_relaxed);
 	x.store(1, memory_order_relaxed);
-
     int temp = y.load(memory_order_relaxed);
-	
-	dum_1.store(0, memory_order_relaxed);
 	a.store(temp,memory_order_relaxed);
 }
 
 static void t2(void *arg) {
 	y.store(1, memory_order_relaxed);
-
     int temp = x.load(memory_order_relaxed);
-
-	dum_1.store(0, memory_order_relaxed);
 	b.store(temp, memory_order_relaxed);
-
     int temp2 = z.load(memory_order_relaxed);
-	
-	dum_1.store(1, memory_order_relaxed);
 	c.store(temp2, memory_order_relaxed);
 }
 

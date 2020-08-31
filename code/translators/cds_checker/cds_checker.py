@@ -21,6 +21,7 @@ class translate_cds:
 		self.traces_raw = []											# list of all traces raw
 		self.traces = []												# list of processed traces
 		self.buggy_execs = 0											# number of buggy executions for this run
+		self.conver_time = 0
 
 		copy = 'cp '+filename+' ../model-checker/test'
 		make = 'cd ../model-checker && make'

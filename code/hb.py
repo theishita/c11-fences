@@ -60,19 +60,13 @@ class hb:
 
 	def sb(self,trace,threads):
 
-		# obtain lists of sb's separated by thread number
-		sb_order = []
-		for i in range(1,threads+1):
-			temp = [t[0] for t in trace if int(t[1])==i]
-			if int(temp[-1]) > self.size:
-				self.size = int(temp[-1])
-			sb_order.append(temp)
-
-		# converting the list of sb into tuples of two
-		for sb_list in sb_order:
-			for i in range(len(sb_list)):
-				if not i == len(sb_list)-1:
-					self.sb_edges.append((sb_list[i],sb_list[i+1]))
+		# getting a list of sb as tuples of two
+		for i in range(len(trace)-1):
+			if trace[i][1] == trace[i+1][1]:
+				self.sb_edges.append((trace[i][0],trace[i+1][0]))
+				
+				if int(trace[i+1][0]) > self.size:
+					self.size = int(trace[i+1][0])
 
 	def sw(self,trace,threads):
 
