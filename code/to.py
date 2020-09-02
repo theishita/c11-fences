@@ -23,14 +23,6 @@ class to:
 
 		self.to_edges = list(set(self.to_edges))		# remove repeats
 
-		# write the basic to edges
-		# to_edges_basic_store = open("store/to_edges_basic_store",'w')
-		# to_edges_basic_store.write(str(self.to_edges))
-		# to_edges_basic_store.close()
-
-		# self.sort_to_edges()
-		# self.create_transitive_edges()
-	
 	def get(self):
 		return self.to_edges
 
@@ -65,8 +57,8 @@ class to:
 
 	def rule2(self):
 		for i in self.mo_edges:
-			m1_no = str(i[0])
-			m2_no = str(i[1])
+			m1_no = i[0]
+			m2_no = i[1]
 
 			for m2 in self.order:
 				if m2[0] == m2_no:
@@ -82,8 +74,8 @@ class to:
 
 	def rule3_1b(self):
 		for i in self.mo_edges:
-			m_no = str(i[0])
-			a_no = str(i[1])
+			m_no = i[0]
+			a_no = i[1]
 			x = 0
 			y = []														# since there might be multiple read instructions with rf m_no
 			b = []

@@ -13,7 +13,7 @@ class hb:
 		self.to_edges = []									# list of to edges between instructions
 		self.size = 0										# number of instructions in the execution trace
 
-		threads = int(trace[-1][1])							# find out the number of total threads in the program
+		threads = trace[-1][1]								# find out the number of total threads in the program
 
 		self.sb(trace,threads)
 		self.sw(trace,threads)
@@ -29,14 +29,14 @@ class hb:
 
 		# loop for basic sb edges
 		for i in range(len(self.sb_edges)):
-			v1 = int(self.sb_edges[i][0])
-			v2 = int(self.sb_edges[i][1])
+			v1 = self.sb_edges[i][0]
+			v2 = self.sb_edges[i][1]
 			self.mat.addEdge(v1,v2)
 
 		# loop for basic sw edges
 		for i in range(len(self.sw_edges)):
-			v1 = int(self.sw_edges[i][0])
-			v2 = int(self.sw_edges[i][1])
+			v1 = self.sw_edges[i][0]
+			v2 = self.sw_edges[i][1]
 			self.mat.addEdge(v1,v2)
 
 		temp = Graph(self.size)
@@ -65,8 +65,8 @@ class hb:
 			if trace[i][1] == trace[i+1][1]:
 				self.sb_edges.append((trace[i][0],trace[i+1][0]))
 				
-				if int(trace[i+1][0]) > self.size:
-					self.size = int(trace[i+1][0])
+				if trace[i+1][0] > self.size:
+					self.size = trace[i+1][0]
 
 	def sw(self,trace,threads):
 
@@ -77,7 +77,7 @@ class hb:
 			# create sw's between thread create statements
 			if trace[i][2] == "create":
 				v1 = trace[i][0]
-				v2 = str(int(v1)+1)
+				v2 = v1+1
 				self.sw_edges.append((v1,v2))
 				self.to_edges.append((v1,v2))
 

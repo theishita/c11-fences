@@ -5,8 +5,8 @@
 def create_list(trace_no,instr,file_vars,trace_locs):
 	line = []
 
-	line.append(instr[0])								# 0: serial number of the instruction
-	line.append(instr[1])								# 1: thread number
+	line.append(int(instr[0]))							# 0: serial number of the instruction
+	line.append(int(instr[1]))							# 1: thread number
 
 	if instr[2] == "init":
 		line.append(instr[2])							# 2: instruction type (if init)
@@ -28,7 +28,7 @@ def create_list(trace_no,instr,file_vars,trace_locs):
 	line.append(new_value)								# 5: value
 
 	if instr[3] == "read" or instr[3] == "rmw":
-		line.append(instr[7])							# 6: rf value
+		line.append(int(instr[7]))						# 6: rf value
 	else:
 		line.append("NA")								# 6: rf value = NA in case of non-read operation
 

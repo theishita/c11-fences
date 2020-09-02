@@ -115,7 +115,7 @@ class Processing:
 	def fence(self,trace):
 
 		# find out the number of threads in the program
-		threads = int(trace[-1][1])
+		threads = trace[-1][1]
 
 		order = [] # IDEA: any var with _thread at the end means that it is separated by thread number
 
@@ -132,23 +132,18 @@ class Processing:
 			fences_events_in_thread_min.append(fence_name)
 
 			for i in range(len(trace)):
-				if int(trace[i][1])==j:
+				if trace[i][1]==j:
+					if trace[i][3] == 'seq_cst':
+						fences_events_in_thread_min.append(trace[i][0])			# event added to fences+sc events order in a thread
 
-					if trace[i][2] == "fence":
-						self.fences_in_trace.append(fence_name)
-						continue
-					else:
-						if trace[i][3] == 'seq_cst':
-							fences_events_in_thread_min.append(trace[i][0])			# event added to fences+sc events order in a thread
+					order.append(trace[i])
+					fences_events_in_thread.append(trace[i])
 
-						order.append(trace[i])
-						fences_events_in_thread.append(trace[i])
-
-						fence_no+=1
-						fence_name = 'F'+str(j)+'n'+str(fence_no)
-						order.append(fence_name)
-						fences_events_in_thread.append(fence_name)					# fence added to fences+all events order in a thread
-						fences_events_in_thread_min.append(fence_name)				# fence added to fences+sc events order in a thread
+					fence_no+=1
+					fence_name = 'F'+str(j)+'n'+str(fence_no)
+					order.append(fence_name)
+					fences_events_in_thread.append(fence_name)					# fence added to fences+all events order in a thread
+					fences_events_in_thread_min.append(fence_name)				# fence added to fences+sc events order in a thread
 
 			self.fence_sc_event_thread.append(fences_events_in_thread_min)
 
@@ -166,7 +161,7 @@ class Processing:
 					if not sb_relation in self.sc_sb_edges:
 						self.sc_sb_edges.append(sb_relation)
 
-		self.sc_sb_edges.sort(key = lambda x: x[0])
+		# self.sc_sb_edges.sort(key = lambda x: x[0])
 
 	def get(self):
 		return self.loc_info, self.error_string, [self.hb_total, self.mo_total, self.fences_total, self.to_total, self.cycles_total]

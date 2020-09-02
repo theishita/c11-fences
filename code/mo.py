@@ -17,8 +17,6 @@ class mo:
 		self.rule3(trace)
 		self.rule4(trace)
 
-		self.all_mo()
-
 		self.mo_edges = list(dict.fromkeys(self.mo_edges))
 		# print("mo edges=",self.mo_edges)
 
@@ -31,18 +29,16 @@ class mo:
 				if self.mat.containsEdge(i,j):
 					# set flag for checking if both are write commands
 					flag = 0
-					si = str(i)
-					sj = str(j)
 					for k in trace:
-						if k[0] == si and (k[2] == 'write' or k[2] == "init" or k[2] == 'rmw'):
+						if k[0] == i and (k[2] == 'write' or k[2] == "init" or k[2] == 'rmw'):
 							a = k[4]										# check if the variable being operated upon is the same
 							flag += 1
-						if k[0] == sj and (k[2] == 'write' or k[2] == 'rmw'):
+						if k[0] == j and (k[2] == 'write' or k[2] == 'rmw'):
 							b = k[4]
 							flag += 1
 
 					if flag == 2 and a == b:
-						self.mo_edges.append((si,sj))
+						self.mo_edges.append((i,j))
 
 	def rule2(self,trace):
 		for i in trace:
@@ -56,10 +52,7 @@ class mo:
 						b_var = j[4]
 
 						if a_var == b_var:
-							a = int(a_no)
-							b = int(b_no)
-
-							if self.mat.containsEdge(a,b):
+							if self.mat.containsEdge(a_no,b_no):
 								x = i[6]
 								y = j[6]
 
@@ -82,10 +75,7 @@ class mo:
 						b_var = j[4]
 
 						if a_var == b_var:
-							a = int(a_no)
-							b = int(b_no)
-
-							if self.mat.containsEdge(a,b):
+							if self.mat.containsEdge(a_no,b_no):
 								x = i[6]
 								self.mo_edges.append((x,b_no))
 								# # print("(",x,",",b_no,")")
@@ -104,16 +94,14 @@ class mo:
 						b_var = j[4]
 
 						if x_var == b_var:
-							x = int(x_no)
-							b = int(b_no)
-
-							if self.mat.containsEdge(x,b):
+							if self.mat.containsEdge(x_no,b_no):
 								b_rf = j[6]
 
 								if not b_rf == x_no:
 									self.mo_edges.append((x_no,b_rf))
 									# # print("(",x_no,",",b_rf,")")
 
+	# unused
 	# to get all the transitive mo relations as well
 	def all_mo(self):
 		flag = 0

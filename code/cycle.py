@@ -10,6 +10,6 @@ def Cycles(to_edges):
 	cycles = list(cycles)
 
 	for i in range(len(cycles)):
-		cycles[i] = [c for c in cycles[i] if 'F' in c]
+		cycles[i] = [c for c in cycles[i] if type(c) is str]
 
 	return cycles
