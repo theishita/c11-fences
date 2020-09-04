@@ -10,12 +10,16 @@ class mo:
 		self.mat = mat
 		self.size = size
 
+		self.writes = []
+		self.reads = []
 		self.mo_edges = []                      								# list of mo edges
 
-		self.rule1(trace)
-		self.rule2(trace)
-		self.rule3(trace)
-		self.rule4(trace)
+		self.preprocessing(trace)
+
+		self.rule1()
+		self.rule2()
+		self.rule3()
+		self.rule4()
 
 		self.mo_edges = list(dict.fromkeys(self.mo_edges))
 		# print("mo edges=",self.mo_edges)
@@ -23,83 +27,40 @@ class mo:
 	def get(self):
 		return self.mo_edges
 
-	def rule1(self,trace):
-		for i in range(self.size):
-			for j in range(self.size):
-				if self.mat.containsEdge(i,j):
-					# set flag for checking if both are write commands
-					flag = 0
-					for k in trace:
-						if k[0] == i and (k[2] == 'write' or k[2] == "init" or k[2] == 'rmw'):
-							a = k[4]										# check if the variable being operated upon is the same
-							flag += 1
-						if k[0] == j and (k[2] == 'write' or k[2] == 'rmw'):
-							b = k[4]
-							flag += 1
+	def preprocessing(self, trace):
+		for t in trace:
+			if t[2] == "write" or t[2] == "init" or t[2] == "rmw":
+				self.writes.append(t)
+			if t[2] == "read" or t[2] == "rmw":
+				self.reads.append(t)
+	
+	def rule1(self):
+		for a in self.writes:
+			for b in self.writes:
+				if a[4] == b[4] and self.mat.containsEdge(a[0],b[0]):		# checking if variable operated upon is same and if there is hb
+					self.mo_edges.append((a[0],b[0]))
+	
+	def rule2(self):
+		for a in self.reads:
+			x = a[6]
+			for b in self.reads:
+				if a[4] == b[4] and b[6] != x and self.mat.containsEdge(a[0],b[0]): 	# checking if variable operated upon is same and if there is hb
+					y = b[6]
+					self.mo_edges.append((x,y))
 
-					if flag == 2 and a == b:
-						self.mo_edges.append((i,j))
-
-	def rule2(self,trace):
-		for i in trace:
-			if i[2] == 'read' or i[2] == 'rmw':
-				a_no = i[0]
-
-				for j in trace:
-					if j[2] == 'read' or j[2] == 'rmw':
-						b_no = j[0]
-						a_var = i[4]
-						b_var = j[4]
-
-						if a_var == b_var:
-							if self.mat.containsEdge(a_no,b_no):
-								x = i[6]
-								y = j[6]
-
-								if not x == y:
-									self.mo_edges.append((x,y))
-									# print("(",x,",",y,")")
-
-	def rule3(self,trace):
-		# print("\n\nMO rule 3")
-		for i in trace:
-			if i[2] == 'read' or i[2] == 'rmw':
-				a_no = i[0]
-
-				for j in trace:
-					if j[2] == 'write' or j[2] == 'rmw':
-# IDEA: hb's are gonna be more than say write commands, that's why first checking for write cmd and only then checking if hb
-						b_no = j[0]
-
-						a_var = i[4]
-						b_var = j[4]
-
-						if a_var == b_var:
-							if self.mat.containsEdge(a_no,b_no):
-								x = i[6]
-								self.mo_edges.append((x,b_no))
-								# # print("(",x,",",b_no,")")
-
-	def rule4(self,trace):
-		# # print("\n\nMO rule 4")
-		for i in trace:
-			if i[2] == 'write' or i[2] == 'rmw':
-				x_no = i[0]
-
-				for j in trace:
-					if j[2] == 'read' or j[2] == 'rmw':
-						b_no = j[0]
-
-						x_var = i[4]
-						b_var = j[4]
-
-						if x_var == b_var:
-							if self.mat.containsEdge(x_no,b_no):
-								b_rf = j[6]
-
-								if not b_rf == x_no:
-									self.mo_edges.append((x_no,b_rf))
-									# # print("(",x_no,",",b_rf,")")
+	def rule3(self):
+		for a in self.reads:
+			x = a[6]
+			for b in self.reads:
+				if b[4] == a[4] and self.mat.containsEdge(a[0],b[0]): 		# checking if variable operated upon is same and if there is hb
+					self.mo_edges.append((x,b[0]))
+	
+	def rule4(self):
+		for x in self.writes:
+			for b in self.reads:
+				if x[4] == b[4] and self.mat.containsEdge(x[0],b[0]) and b[6] != x[0]:
+					y = b[6]
+					self.mo_edges.append((x[0],y))
 
 	# unused
 	# to get all the transitive mo relations as well
