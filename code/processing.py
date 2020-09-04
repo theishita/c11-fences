@@ -30,17 +30,18 @@ class Processing:
 		self.mo_total = 0
 		self.fences_total = 0
 		self.to_total = 0
+		self.sb_total = 0
 		self.cycles_total = 0
 		self.trans_time = 0
 
 		trace_no = 0
 
 		for trace in traces:											# run for each trace
-			self.fence_sc_event_thread = []								# list of all fences and events separated by threads
-			self.sc_sb_edges = []										# list of sb edge pairs between fences as well as sc events
+			self.all_sc_events_thread = []								# list of all sc events separated by threads
+			self.sc_sb_edges = []										# list of sb edge pairs between all sc events
+			self.to_edges = []											# list of all TO edge tuples
 			self.cycles = []                                            # list of all cycles between the fences and events
 			self.loc_info = {}                                          # information regarding the required fence locations
-			self.to_edges = []
 
 			trace_no += 1
 			# print("---------Trace",trace_no,"---------")
@@ -66,6 +67,12 @@ class Processing:
 			fences_time = time.time() - fences_time
 			# print("order=",order)
 			self.fences_total += fences_time
+
+			# transitive SB
+			sb_time = time.time()
+			self.sb()
+			sb_time = time.time() - sb_time
+			self.sb_total += sb_time
 
 			# TO
 			to_time = time.time()
@@ -109,57 +116,48 @@ class Processing:
 		z3convert(self.z3vars,self.disjunctions)
 		print("hb trans time=",self.trans_time)
 
+	def fence(self, trace):
+		order = []								
+		sc_events = []					# IDEA: any var with _thread at the end means that it is separated by thread number
 
-	def fence(self,trace):
+		current_thread = 1				# for fence naming
+		fence_no = 1
 
-		# find out the number of threads in the program
-		threads = trace[-1][1]
+		for i in range(len(trace)):
+			fence_name = 'F'+str(current_thread)+'n'+str(fence_no)
+			fence_no += 1
 
-		order = [] # IDEA: any var with _thread at the end means that it is separated by thread number
-
-		for j in range(1,threads+1):
-			fence_no = 0
-			fences_events_in_thread = []
-			fences_events_in_thread_min = []									# a minimal version of the above in order to find sb's
-
-			fence_no+=1
-			fence_name = 'F'+str(j)+'n'+str(fence_no)
-			# IDEA: so many extra vars so that- use only where needed cuz loops increase complexity
-			fences_events_in_thread.append(fence_name)
 			order.append(fence_name)
-			fences_events_in_thread_min.append(fence_name)
+			sc_events.append(fence_name)
 
-			for i in range(len(trace)):
-				if trace[i][1]==j:
-					if trace[i][3] == 'seq_cst':
-						fences_events_in_thread_min.append(trace[i][0])			# event added to fences+sc events order in a thread
+			if trace[i][1] != current_thread:
+				self.all_sc_events_thread.append(sc_events)
+				sc_events = []
+				current_thread += 1
+				fence_no = 1
+				fence_name = 'F'+str(current_thread)+'n'+str(fence_no)
+				fence_no += 1
+				order.append(fence_name)
+				sc_events.append(fence_name)
 
-					order.append(trace[i])
-					fences_events_in_thread.append(trace[i])
-
-					fence_no+=1
-					fence_name = 'F'+str(j)+'n'+str(fence_no)
-					order.append(fence_name)
-					fences_events_in_thread.append(fence_name)					# fence added to fences+all events order in a thread
-					fences_events_in_thread_min.append(fence_name)				# fence added to fences+sc events order in a thread
-
-			self.fence_sc_event_thread.append(fences_events_in_thread_min)
-
-		# now find all sb relations between fences and events
-		self.sb()
+			order.append(trace[i])
+			if trace[i][3] == "seq_cst":
+				sc_events.append(trace[i][0])
+			
+			if i == (len(trace)-1):
+				fence_name = 'F'+str(current_thread)+'n'+str(fence_no)
+				fence_no += 1
+				order.append(fence_name)
+				sc_events.append(fence_name)
+				self.all_sc_events_thread.append(sc_events)
 
 		return order
 
 	def sb(self):
-
-		for i in self.fence_sc_event_thread:
+		for i in self.all_sc_events_thread:
 			for j in range(len(i)):
-				for k in range(j+1,len(i)):
-					sb_relation = (i[j],i[k])
-					if not sb_relation in self.sc_sb_edges:
-						self.sc_sb_edges.append(sb_relation)
-
-		# self.sc_sb_edges.sort(key = lambda x: x[0])
+				for k in range(j+1, len(i)):
+					self.sc_sb_edges.append((i[j],i[k]))
 
 	def get(self):
-		return self.loc_info, self.error_string, [self.hb_total, self.mo_total, self.fences_total, self.to_total, self.cycles_total]
+		return self.loc_info, self.error_string, [self.hb_total, self.mo_total, self.fences_total, self.sb_total, self.to_total, self.cycles_total]

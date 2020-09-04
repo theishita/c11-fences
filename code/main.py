@@ -71,5 +71,6 @@ if buggy_execs:
 	print("HB :\t\t\t",round(total_time[0], 2),"\t\t",round(total_time[0]/buggy_execs, 2))
 	print("MO :\t\t\t",round(total_time[1], 2),"\t\t",round(total_time[1]/buggy_execs, 2))
 	print("Fences :\t\t",round(total_time[2], 2),"\t\t",round(total_time[2]/buggy_execs, 2))
-	print("TO :\t\t\t",round(total_time[3], 2),"\t\t",round(total_time[3]/buggy_execs, 2))
-	print("Cycles :\t\t",round(total_time[4], 2),"\t\t",round(total_time[4]/buggy_execs, 2))
+	print("SB :\t\t\t",round(total_time[3], 2),"\t\t",round(total_time[3]/buggy_execs, 2))
+	print("TO :\t\t\t",round(total_time[4], 2),"\t\t",round(total_time[4]/buggy_execs, 2))
+	print("Cycles :\t\t",round(total_time[5], 2),"\t\t",round(total_time[5]/buggy_execs, 2))
