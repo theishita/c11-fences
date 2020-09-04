@@ -3,50 +3,40 @@
 # --------------------------------------------------------
 
 from graph import Graph
+import time
 
 class hb:
 
-	def __init__(self,trace):
-
-		self.sb_edges = []									# list of all sb edges between instructions
+	def __init__(self,trace,trans_time):
+		# print(trace)
+		self.trans_time = trans_time
+		# self.sb_edges = []									# list of all sb edges between instructions
 		self.sw_edges = []									# list of all sw edges between instructions
 		self.to_edges = []									# list of to edges between instructions
-		self.size = 0										# number of instructions in the execution trace
-
-		threads = trace[-1][1]								# find out the number of total threads in the program
-
-		self.sb(trace,threads)
-		self.sw(trace,threads)
-
+		self.size = max(map(lambda x: x[0], trace))			# number of instructions in the execution trace
 		self.size += 1
 		self.mat = Graph(self.size)
-		self.matrix()
+
+		self.sb(trace)
+		self.sw(trace)
+
+		self.complete_matrix()
 
 	def get(self):
-		return self.mat,self.size,self.to_edges
+		return self.mat,self.size,self.to_edges,self.trans_time
 
-	def matrix(self):
-
-		# loop for basic sb edges
-		for i in range(len(self.sb_edges)):
-			v1 = self.sb_edges[i][0]
-			v2 = self.sb_edges[i][1]
-			self.mat.addEdge(v1,v2)
-
-		# loop for basic sw edges
-		for i in range(len(self.sw_edges)):
-			v1 = self.sw_edges[i][0]
-			v2 = self.sw_edges[i][1]
-			self.mat.addEdge(v1,v2)
+	def complete_matrix(self):
 
 		temp = Graph(self.size)
 		temp.adjMatrix = self.mat.adjMatrix
 		flag = 0
 
+		# print("t=",temp.adjMatrix)
+
+		start = time.time()
 		while flag!=2:
 			for i in range(self.size):
 				v1 = i
-
 				for j in range(self.size):
 					if(self.mat.containsEdge(v1,j)):
 						for k in range(self.size):
@@ -56,19 +46,18 @@ class hb:
 			if(temp.adjMatrix == self.mat.adjMatrix):
 				flag += 1
 
-			temp.adjMatrix = self.mat.adjMatrix
+		end = time.time()
+		self.trans_time += end-start
 
-	def sb(self,trace,threads):
+	def sb(self,trace):
 
 		# getting a list of sb as tuples of two
 		for i in range(len(trace)-1):
 			if trace[i][1] == trace[i+1][1]:
-				self.sb_edges.append((trace[i][0],trace[i+1][0]))
-				
-				if trace[i+1][0] > self.size:
-					self.size = trace[i+1][0]
+				# self.sb_edges.append((trace[i][0],trace[i+1][0]))
+				self.mat.addEdge(trace[i][0],trace[i+1][0])
 
-	def sw(self,trace,threads):
+	def sw(self,trace):
 
 		write_models = ["release",'acq_rel',"seq_cst"]
 		read_models = ["acquire",'acq_rel',"seq_cst"]
@@ -78,7 +67,8 @@ class hb:
 			if trace[i][2] == "create":
 				v1 = trace[i][0]
 				v2 = v1+1
-				self.sw_edges.append((v1,v2))
+				self.mat.addEdge(v1,v2)
+				# self.sw_edges.append((v1,v2))
 				self.to_edges.append((v1,v2))
 
 
@@ -89,7 +79,8 @@ class hb:
 					if trace[j][2] == "finish" and trace[j][1] == t:
 						v1 = trace[j][0]
 						v2 = trace[i][0]
-						self.sw_edges.append((v1,v2))
+						# self.sw_edges.append((v1,v2))
+						self.mat.addEdge(v1,v2)
 						self.to_edges.append((v1,v2))
 
 			# create sw's between read/rmw and write/rmw statements
@@ -98,6 +89,7 @@ class hb:
 				for j in trace:
 					if j[0] == rf:
 						if j[3] in write_models and trace[i][3] in read_models:
-							self.sw_edges.append((j[0],trace[i][0]))
+							# self.sw_edges.append((j[0],trace[i][0]))
+							self.mat.addEdge(j[0],trace[i][0])
 							if j[3] == 'seq_cst' and trace[i][3] == 'seq_cst':
 								self.to_edges.append((j[0],trace[i][0]))

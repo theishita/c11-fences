@@ -7,9 +7,7 @@
 #   4. Sequenced-before relationships (SB)
 #   5. Total order relationships (TO)
 #
-# Then proceeds on to find out cycles from the TO graph
-# and finally insert the required fences in the input
-# program.
+# Then proceeds on to find out cycles from the TO graph.
 # --------------------------------------------------------
 
 from hb import hb
@@ -17,7 +15,6 @@ from graph import Graph
 from mo import mo
 from to import to
 from cycle import Cycles
-from insert import insert
 from z3translate import z3translate
 from z3convert import z3convert
 
@@ -34,11 +31,11 @@ class Processing:
 		self.fences_total = 0
 		self.to_total = 0
 		self.cycles_total = 0
+		self.trans_time = 0
 
 		trace_no = 0
 
 		for trace in traces:											# run for each trace
-			self.fence_thread = []										# list of fences separated by threads
 			self.fence_sc_event_thread = []								# list of all fences and events separated by threads
 			self.sc_sb_edges = []										# list of sb edge pairs between fences as well as sc events
 			self.cycles = []                                            # list of all cycles between the fences and events
@@ -50,8 +47,8 @@ class Processing:
 
 			# HB
 			hb_time = time.time()
-			hb_graph = hb(trace)
-			mat,size,self.to_edges = hb_graph.get()
+			hb_graph = hb(trace,self.trans_time)
+			mat,size,self.to_edges,self.trans_time = hb_graph.get()
 			hb_time = time.time() - hb_time
 			self.hb_total += hb_time
 			
@@ -59,15 +56,15 @@ class Processing:
 			mo_time = time.time()
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
-			# print("mo===",mo_edges)
 			mo_time = time.time() - mo_time
+			# print("mo===",mo_edges)
 			self.mo_total += mo_time
 			
 			# ADD FENCES
 			fences_time = time.time()
 			order=self.fence(trace)
-			# print("order=",order)
 			fences_time = time.time() - fences_time
+			# print("order=",order)
 			self.fences_total += fences_time
 
 			# TO
@@ -75,6 +72,7 @@ class Processing:
 			calc_to = to(order,mo_edges,self.sc_sb_edges,self.to_edges)
 			self.to_edges = calc_to.get()
 			to_time = time.time() - to_time
+			# print("TO=",self.to_edges)
 			self.to_total += to_time
 			
 			# CYCLES
@@ -87,15 +85,14 @@ class Processing:
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]
 			# print("unique_fences=",unique_fences)
+			# print("order=",order)
 
 			if len(unique_fences)>0:
 				for fence in unique_fences:
-					for i in range(len(order)):
-						if fence == order[i]:
-							o = order[i-1]
-							fence_name = order[i]
-							var_name = 'l'+str(o[8])
-							self.loc_info[fence_name] = var_name
+					i = order.index(fence)
+					fence_name = order[i]
+					var_name = 'l'+str(order[i-1][8])
+					self.loc_info[fence_name] = var_name
 				
 				get_translation = z3translate(cycles,self.loc_info)
 				consts, translation = get_translation.get()
@@ -110,6 +107,7 @@ class Processing:
 				return
 
 		z3convert(self.z3vars,self.disjunctions)
+		print("hb trans time=",self.trans_time)
 
 
 	def fence(self,trace):
