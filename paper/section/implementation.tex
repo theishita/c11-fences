@@ -9,8 +9,11 @@ The tool is created using the python programming language. Extra libraries used:
 	\item os
 \end{itemize}
 
+Since there might be cases where the number of traces are many
+
 \subsection{Translating model checker output}
-The tool begins by translating model checker output that it obtains from the terminal process after running the required command. From CDS Checker output, it extracts the following information for each instruction in the trace:
+The tool begins by translating model checker output that it obtains from the terminal process after running the required command. Any model checker for C11 can be used in this case. For this tool, only CDS Checker is used and its output is translated. One may choose to use a different model checker by creating a custom translator which extracts the following information from each instruction of each trace:
+
 \begin{enumerate}
 	\item thread number of the instruction
 	\item instruction type (thread create, thread start, init, atomic read, atomic write, atomic rmw)
@@ -22,7 +25,8 @@ The tool begins by translating model checker output that it obtains from the ter
 
 \par 
 Other required information is extracted from the C++ source program. These include:
-\begin{enumerate}[7.]
+\begin{enumerate}
+	\setcounter{enumi}{6}
 	\item variable name for each instruction
 	\item line number for each instruction
 \end{enumerate}
@@ -30,7 +34,12 @@ Other required information is extracted from the C++ source program. These inclu
 \par
 For any of the above meta-data, if a field does not apply for a certain instruction, it is given the value "NA".
 
-\subsubsection{Extracting line numbers}
+\subsubsection{Why CDS Checker}
+CDS Checker is used for our purposes. It was selected for this project because of the plethora of information that it provides. CDS Checker only considers the atomic operations or thread operations in the program as an instruction.
+
+Existing model checkers such as RCMC\ishComment{ref}, Tracer\ishComment{ref}, GenMC\ishComment{ref} are based on and created for the repaired sequential consistency model RC11 and not C11. \ishComment{add nidhugg}
+
+\subsubsection{Extracting line numbers from CDS Checker}
 Line numbers are extracted by pattern-matching the instruction meta-data in the above mentioned fields, creating the instruction out of them and matching them to the source thread. For example, the information extracted for a single instruction is: thread number 2, instruction type read, memory order seq\_ cst, memory address \textit{x}. Then the instruction would be created as \texttt{x.load(memory\_ order\_ seq\_ cst)} and be matched inside the function defined for thread 2. There are also contingencies for this procedure, so certain rules need to be followed in the input program.
 
 \par

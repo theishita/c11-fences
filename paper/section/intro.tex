@@ -8,34 +8,47 @@ In this project, we suggest an approach to prevent certain unexpected behaviour,
 \par
 To tackle this, the programmer may add \textit{"assert"} statements in the source code, which will check that certain properties remain unchanged in each run of the program, such as the value of a variable in a certain thread. Each program will have several possibilities of runs where instructions will be executed in different orders. In some of these runs, there might be cases where the assertion does not hold and it gets violated. In the case that the \textit{assert} statement gets violated, the program execution will stop. The object of this project is to insert a minimum number of \textbf{C11 fences} in the source code of the program at the right places so that these assertions are satisfied and do not get violated.
 
-% -------------------- C11 MODEL ------------------------
-\subsection{The C11 Model}
-\par
-Since the C/C++11 memory model is a relaxed model, load/store operations can be re-ordered before they are stored into the memory. In multi-threaded programs due to re-orderings between loads and stores, and other factors such as different methods used by different hardware for cache coherency, threads may end up seeing loads and stores by other threads in an order different than the one intended. As discussed previously, this feature can cause behaviour which is unexpected by the programmer. Two memory consistency primitives introduced into the C/C++11 model can be exploited by us in this scenario - \textit{atomic operations} and \textit{memory fences}. 
+% -------------------- MOTIVATION E.G. ------------------------
+\subsection{Motivation Example}
 
-% ------------- ATOMIC OPS ----------------
-\subsubsection{Atomic Operations}
-Examples of atomic operations in the C/C++11 memory order are atomic loads, atomic stores, atomic read-modify-writes. These operations are carried out on atomic objects/variables.
-
-\ishComment{insert examples of atomic ops like a.load(mo\_rel) etc}
-
-The approach described in this project makes use of these atomic operations within the input program.
-
-% --------------- FENCES ----------------
-\subsubsection{C11 Fences}
-\par
-A fence in the C11 model is also an atomic instruction which can be inserted between other instructions. These fences prevent memory operations to be ordered or re-ordered past the fence and they also permit the operations to be ordered in-between threads. 
-
-\par
-A fence can have memory order SC, release, acquire. Specifically, a release fence prevents previous load/store operations from being re-ordered and moved after the fence and an acquire fence prevents load/store operations after the fence to be re-ordered and moved before the fence. On the other hand, an SC fence prevents both such behaviours. This project focuses only on SC fences and inserting them into the program in order to methodically stop instructions from re-ordering and preventing the unexpected behaviour.
-\ishComment{behaviour spelling}
-
-% ---------------- TYPES OF RELATIONS -----------
-\subsection{Basic relations}
-\par
-In a program execution, there can be certain relations formed between instructions. Each type of relation has rules or preconditions which dictate the type of relation between any two instructions.
+% -------------------- FIG 1: BASIC ------------------------
+\begin{figure}[!htb]
+\begin{center}
+\texttt{
+init y := 0, x := 0;\\
+	\begin{tabular}{c l || c l}
+		(1) & y := 1 & (5) & x := 1\\
+		(2) & if x == 0 & (6) & if y == 0\\
+		(3) & \qquad c := 1 & (7) & \qquad c := 0\\
+		(4) & \qquad t = c \color{olive}//1 & (8) & \qquad t = c \color{olive}//0
+	\end{tabular}
+}
+	\caption{Simple two-thread dekker program}\label{fig:dekker1}
+\end{center}
+\end{figure}
+\ishComment{to use R, W here as well? to show atomic operations? to use brackets for if?}
 
 \par
-Three basic relations which are useful in calculating many other relations are the \textit{sequenced-before}, \textit{synchronizes-with} and \textit{read-from} relations. In basic terms, any instruction in a thread is said to be sequenced before all instructions that are evaluated after it in the same thread. In order to concurrently access shared variables in a synchronized manner to avoid data races, the \textit{synchronizes-with} relation is used among instructions from different threads. Finally, a read instruction is said to be \textit{reading-from} the value of a write instruction.
+In a sequentially consistent model, the multi-threaded program in Fig \ref{fig:dekker1} would execute the instructions in a sequentially consistent order. The final values read by variable \textit{t} would be 1 and 0 for each thread respectively. Therefore it can be said that the ``output'' would always be ``10''. However, in the case of a relaxed model, such as in a C11/C++11 program when all the instructions are relaxed, reading outputs of ``00'', ``01'', ``11'' may even be possible, thereby violating the rules of sequential consistency. Such an output may or may not be unexpected for the programmer, depending upon their requirements.
 
-These relations form the basis for all other relations which are required in the methodology of this paper.
+\par
+For this reason, the programmer needs to provide their requirements about what values are expected at which locations by specifying a local safety property.
+
+% --------------- FIG 2.2 basic + assert -------------
+\begin{figure}[!htb]
+\begin{center}
+\texttt{
+init y := 0, x := 0;\\
+	\begin{tabular}{c l || c l}
+		(1) & W$\mathtt{_{rel}}$y(1) & (5) & W$\mathtt{_{rel}}$x(1)\\
+		(2) & if R$\mathtt{_{rel}x}$ == 0 & (6) & if R$\mathtt{_{rel}y}$ == 0\\
+		(3) & \qquad W$\mathtt{_{rel}}$c(1) & (7) & \qquad W$\mathtt{_{rel}}$c(0)\\
+		(4) & \qquad assert($\mathtt{R_{rel}c}$ == 1) & (8) & \qquad assert($\mathtt{R_{rel}c}$ == 0)
+	\end{tabular}
+}
+	\caption{Simple two-thread dekker program in C11 syntax with assertions}\label{fig:dekker2}
+\end{center}
+\end{figure}
+
+\par
+Such a specification may be made in the form of assertions such as those described in Fig \ref{fig:dekker2} This ``assert'' statement checks that the expression provided to it holds at that point in the program. At the end of the threads, this safety property might not be satisfied. In this case, the program stops or exits, giving an error output. The objective of the tool to be created is to prevent the program from exhibiting behaviour which is unexpected for the programmer, hence preventing the error output as well as ensuring the provided specifications. For the purposes of this paper, we require the safety property to be specified as assertions in the program.

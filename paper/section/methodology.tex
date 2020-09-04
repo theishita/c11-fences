@@ -1,86 +1,43 @@
-% --------------- MAKING ASSERTIONS -------------
-\subsection{Making assertions}
+% --------- INTRO PART -------------
+The tool first begins by running the input program through a C11 model checker or verification tool. This tool runs all possible executions of the program and gives a list of buggy traces as output. A buggy trace here means an execution run where an assertion was violated in the program. The model checker provides the exact order of instructions, which when executed in the order can cause the program to stop mid-way by running into an assertion and not being able to satisfy it. The verification tool also provides the meta data for each instruction, such as read-from values or memory orders.
 
-% ----- FIG 2.1 basic program -----
+In the program described in Fig \ref{fig:dekker2}, inserting an SC fence between the instructions (1) and (2), and an SC fence between (5) and (6) render the program to be sequentially consistent, thereby satisfying the given assertions. After adding these fences, the program will never have a case where the output can be anything other than ``10''.
+
+To obtain the position of these fences, a series of steps is followed. The two fences strategically inserted in the program are the minimum number of fences which can be inserted in order to prevent the unwanted outputs. One can add SC fences at all positions - before and after all instructions - in order to make the program sequentially consistent in nature and hence prevent the buggy outputs, such as in Fig \ref{fig:dekker3}. However, this comes at the cost of forgoing the properties of the relaxed model that the typical user tends to seek. Therefore, in our solution to retain concurrency, after inserting fences at all places, we must now eliminate the ones which are not required and bring the number of fences down to an optimum or minimum. To do this, we need to find relations between all instructions and understand their semantics.
+
+The reason for choosing SC fences is that they are the strongest type of fences, as compared with fences of other memory orders, as seen in Fig \ref{fig:mo_strength}. In the program described in Fig \ref{fig:dekker3}, if the next strongest fence, the acquire-release fence replaces all SC fences, the behaviour where the assertions are violated will not be stopped. The assertions will still get violated.
+
+Another point to note is, making the entire program sequentially consistent might not mean that the behaviour required by the user is retained. Even if the entire program is sequential after adding fences everywhere, the program still might fail certain assertions. This simply depends upon the program itself and how it runs. Therefore, our tool can only prevent the assertions from being violated in cases where the behaviour can be stopped using SC fences. The tool also serves to minimize the total number of fences to be added to the optimal number, thereby retaining the properties of concurrency as much as possible.
+
+% --------------- FIG all pseudo fences -------------
 \begin{figure}[!htb]
 \begin{center}
-init A=0, B=0;\\
-    \begin{tabular}{c l | c l }
-     \multicolumn{2}{c|}{Thread 1} & \multicolumn{2}{c}{Thread 2} \\ 
-     \hline
-     (1) & A = 1 & (3) & B = 1 \\  
-     (2) & print(B) & (4) &  print(A)
-    \end{tabular}
-    \caption{Simple two-thread program}\label{fig:dekker1}
+\texttt{
+init y := 0, x := 0;\\
+	\begin{tabular}{c l || c l}
+		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
+		(1) & W$\mathtt{_{rel}}$y(1) & (5) & W$\mathtt{_{rel}}$x(1)\\
+		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
+		(2) & if R$\mathtt{_{rel}x}$ == 0 & (6) & if R$\mathtt{_{rel}y}$ == 0\\
+		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
+		(3) & \qquad W$\mathtt{_{rel}}$c(1) & (7) & \qquad W$\mathtt{_{rel}}$c(0)\\
+		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
+		(4) & \qquad assert($\mathtt{R_{rel}c}$ == 1) & (8) & \qquad assert($\mathtt{R_{rel}c}$ == 0)\\
+		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
+	\end{tabular}
+}
+	\caption{Simple two-thread dekker program in C11 syntax with fences at each location}\label{fig:dekker3}
 \end{center}
 \end{figure}
-
-\par
-A sequentially consistent model would execute the multi-threaded program in Fig \ref{fig:dekker1} in only the following orders \cite{web2}:\\
-
-(1) → (2) → (3) → (4)  \textbf{output: 01}\\
-(3) → (4) → (1) → (2)  \textbf{output: 01}\\
-(1) → (3) → (2) → (4)  \textbf{output: 11}\\
-(1) → (3) → (4) → (2)  \textbf{output: 11}\\
-
-\par
-However, in the case of a relaxed model, such as TSO (Total Store Ordering) the output may differ. An output of "00" may even be possible, thereby violating the rules of sequential consistency. Such an output may or may not be unexpected for the programmer, depending upon the requirements.
-
-\par
-The objective of the tool to be created is to prevent a program from exhibiting behaviour which is unexpected for the programmer. For this, first the programmer needs to specify things that have to be ensured in the program.
-% --------------- FIG 2.2 basic + assert -------------
-\begin{figure}[!htb]
-\begin{center}
-init A=0, B=0;\\
-    \begin{tabular}{c l | c l }
-     \multicolumn{2}{c|}{Thread 1} & \multicolumn{2}{c}{Thread 2} \\ 
-     \hline
-     (1) & A = 1 & (3) & B = 1 \\  
-     (2) & print(B) & (4) &  print(A)\\
-    \end{tabular}\\
-assert (A!=0 and B!=0)
-    \caption{Simple two-thread program with assertion}\label{fig:dekker2}
-\end{center}
-\end{figure}
-
-\par
-Such a specification may be made in the form of an assertion such as the one described in Fig \ref{fig:dekker2} This "assert" statement checks that the expression provided to it holds at that point in the program. In case the assertion is violated, the program stops or exits, giving an error output. 
 
 % --------- ADDING FENCES -------------
 \subsection{Adding Pseudo Fences}
-In the program described in Fig \ref{fig:dekker2}, inserting an SC (sequentially consistent) fence between the instructions (1) and (2), and an SC fence between (3) and (4) render the program to be sequentially consistent, thereby satisfying the assertion. After adding these fences, the program will never have a case where the output is printed as "00". That is, after the fence insertions, the assertion stating that A, B should not both be 0 at the end of the program will remain satisfied in all possible traces under the C11 model.
-
 \par
-The two fences inserted in the program are the minimum number of fences which can be inserted at strategic positions in order to prevent the unwanted outputs. A user may also add SC fences at all positions - before and after all instructions - in order to make the program sequentially consistent in nature. However, this comes at the cost of forgoing the properties of the relaxed model that the typical user tends to seek. Another point to note is, making the entire program sequentially consistent might not mean that the behaviour required by the user is retained. Even if the entire program is sequential after adding fences everywhere, the program still might fail certain assertions. This simply depends upon the program itself and how it runs. Therefore, our tool can only prevent the assertions from being violated in cases where the behaviour can be stopped using SC fences. The tools also serves to minimize the total number of fences included to the optimal number, thereby retaining the properties of concurrency as much as possible.
-
-\par
-The tool first begins by running the input program through a C11 model checker, which runs all possible executions of the program and gives a list of buggy traces as output. Buggy traces here means the execution runs where an assertion was violated in the program. The model checker provides the exact order of the execution which caused the program to stop mid-way, along with meta data for each instruction, such as read-from values or memory orders. CDS Checker is used for our purposes. It was selected for this project because of the plethora of information that it provides. CDS Checker only considers the atomic operations or thread operations in the program as an instruction.
-
-\par
-CDS Checker provides all the buggy traces to our tool. Each trace is then taken individually and analysed. For each trace, the first step is inserting pseudo fences. SC fences are inserted before/after each instruction in the trace. This can be seen in \ref{fig:dekker3}. The fences are not actually added to the input program, but only for reference purposes as a step in the tool. The maximum number of fences possible are added so that the required ones can be retained and the rest can be eliminated.
-
-% --------------- FIG 3 ------------------
-\begin{figure}[!htb]
-\begin{center}
-init A=0, B=0;\\
-    \begin{tabular}{c l | c l }
-     \multicolumn{2}{c|}{Thread 1} & \multicolumn{2}{c}{Thread 2} \\ 
-     \hline
-     & F1 & & F4 \\
-     (1) & A = 1 & (3) & B = 1 \\  
-     & F2 & & F5 \\
-     (2) & print(B) & (4) &  print(A)\\
-     & F3 & & F6 \\
-    \end{tabular}\\
-assert (A!=0 and B!=0)\\
-F7
-    \caption{Simple two-thread program with SC fences inserted}\label{fig:dekker3}
-\end{center}
-\end{figure}
+CDS Checker provides all the buggy traces to our tool. Each trace is then taken individually and analysed. For each trace, the first step is inserting pseudo fences. SC fences are inserted before/after each instruction in the trace. This can be seen in Fig. \ref{fig:dekker3}. The fences are not actually added to the input program, but only added for reference purposes as a step in the tool. The maximum number of fences possible are added so that the required ones can be retained and the rest can be eliminated.
 
 % --------------- FINDING RELATIONS -----------
 \subsection{Finding relations}
-The basis of our approach lies upon finding relations between the instructions and figuring out how they affect the program in order to reduce the total fences to a minimum. For example, in \ref{fig:dekker2}, if the assert statement is violated, this means that instructions (2) and (4) are reading from the initialized value and not the updated values, forming an rf (reads-from) relation.
+The basis of our approach lies upon finding relations between the instructions and figuring out how they affect the program in order to reduce the total fences to a minimum. For example, in Fig \ref{fig:dekker2}, if the assert statement is violated, this means that instructions (2) and (4) are reading from the initialized value and not the updated values, forming an rf (reads-from) relation.
 
 \par
 The next step after inserting pseudo fences is finding relations between instructions, including fences. These relations will help in figuring out which fences to eliminate from the trace. In particular, we are concerned with the TO (Total Order) relations between all SC instructions and fences. Rules for TO relations for the C11 model are described in the official standard \textit{\color{pink}cite here}. These rules are dependent upon a number of different relations which would have to be computed first, and an order is followed for the same.
@@ -105,7 +62,7 @@ RMW operations are considered as both reads and writes in this case.
 \end{enumerate}
 
 \par
-These relations, since there are many, are stored as boolean values in an adjacency table, as opposed to the "list of tuples" format used for all other relations in the tool. The adjacency table is indexed based on the instruction number as given by CDS Checker. An example can be seen in \ref{fig:cds_hb}. The 0 index is left out as empty and filled with 0's, while a 1 for row 3 column 4 would mean \hb{3}{4}.
+These relations, since there are many, are stored as boolean values in an adjacency table, as opposed to the "list of tuples" format used for all other relations in the tool. The adjacency table is indexed based on the instruction number as given by CDS Checker. An example can be seen in Fig \ref{fig:cds_hb}. The 0 index is left out as empty and filled with 0's, while a 1 for row 3 column 4 would mean \hb{3}{4}.
 
 % --------------- FIG 4 --------------
 %\begin{figure}
@@ -144,18 +101,18 @@ MO (modification order) relations are formed between write instructions when the
 After this step, the pseudo fences are inserted.
 
 % --------------- TO -----------
-\subsubsection{Finding TO relations between SC instructions}
+\subsubsection{Finding TO relations between SC instructions}\label{to_rel}
 The final step in finding relations and the main step that is required for fence elimination is to find TO relations. The rules for TO relations in the C11 standard are defined in \ishComment{insert C11 std ref}. These rules can be interpreted as the following:
 \input{section/to_rules.tex}
 
-% --------------- PROPOSED SOLN -------------
-\subsection{The proposed solution}
-Finally, we take into account the TO relations along with SB's between SC instructions. These relations combined provide us with all direct TO relations between all instructions and fences. Direct relations mean that these are the basic relations that are formed through only the rules. Transitive relations are the other kind of relations which can also be formed. We now get a graph that would look like \ref{fig:cycles}.
+% --------------- SOLN EXPLAINED -------------
+\subsection{Eliminating Fences}
+Finally, we take into account the TO relations along with SB's between SC instructions. These relations combined provide us with all direct TO relations between all instructions and fences. Direct relations mean that these are the basic relations that are formed through only the rules. Transitive relations are the other kind of relations which can also be formed through transitive edges. We now get a graph that would look like Fig \ref{fig:cycles}.
 
 \par
 The purpose of creating a graph this way is to detect if there are any cycles formed in the trace after inserting the fences. In a total order relation, the antisymmetry and connexity properties state that:\\
 Either \too{A}{B} or \too{B}{A} and if (\too{A}{B} $\land$ \too{B}{A}) then A = B.\\
-This property of TO can be exploited to minimize the fences. According to the C/C++11 standard, all SC instruction is in total order with every other SC instruction. This means that for any two SC instructions A and B, either \too{A}{B} or \too{B}{A}. According to TO rules, f both of these relations hold true, then A = B. If A != B and A and B are different entities which satisfy the relation (\too{A}{B} $\land$ \too{B}{A}), then a cycle is formed between instructions A and B. This, in turn, violates the TO property, rendering the execution infeasible. If a certain execution becomes infeasible, then it would never be run. 
+This property of TO can be exploited to minimize the fences. According to the C/C++11 standard, each SC instruction is in total order with every other SC instruction. This means that for any two SC instructions A and B, either \too{A}{B} or \too{B}{A}. According to TO rules, if both of these relations hold true, then A = B. If A != B and A and B are different entities which satisfy the relation (\too{A}{B} $\land$ \too{B}{A}), that means that a cycle is formed between instructions A and B. This, in turn, violates the TO property, rendering the execution infeasible. If a certain execution becomes infeasible, then it would never be run.
 
 % --------------- FIG 5 -------------------
 \begin{figure}
@@ -166,27 +123,34 @@ This property of TO can be exploited to minimize the fences. According to the C/
 \end{center}
 \end{figure}
 
-\par
-Hence, our solution while minimizing the number of fences lies in this graph. We first find out TO relations in only the buggy or erroneous traces which are obtain from CDS Checker. These relations form a graph with the instructions/fences as nodes and the TO relations as edges. In this graph, there might be cycles formed. If a TO cycle is formed, then it violates the properties of a total order relation in C11, rendering the entire execution order infeasible. An infeasible execution will never occur during runtime, which means that the buggy execution which was taken into account will never be executed and hence the assertion which was being violated will remain satisfied. In case there are no cycles forming for one or more of the buggy traces, the behaviour is deemed to be unpreventable using SC fences. 
+\subsubsection{why transitive edges aren't considered}
+The relations which are considered to form the final graph are - all SB edges between SC instructions including transitive SB edges, and directly formed TO edges but not transitively formed TO edges. That is, all SB edges are taken into consideration whether immediate or not, and only those edges formed via the TO rules discussed in section \ref{to_rel} are considered while forming a graph. This is because transitively formed TO relations will be of no use in our case. If there is a transitive TO relation formed between two instructions, then this relation has been caused by fences introduced in the program. Therefore, for this transitive relation, we need not consider the two nodes participating in the transitive edge, instead we need to consider the original nodes which caused this transitive relation to form in the first place. By excluding the original edges, the transitive edges we need will never actually be formed.
+\ishComment{edges/relations - change notation for better understanding}
 
 \par
-In \ref{fig:cycles}, a number of cycles can be noted. Some of them are:
+So even if transitive TO relations are considered as graph edges, they would not be directly used to obtain our final solution. For each transitively formed edge, all original edges which would have possibly caused the transitive edge would be needed to be kept track of. Therefore, using just the original edges serves our purpose in a much more efficient manner.
+
+\subsection{Restricting Buggy Executions}
+\par
+We find out TO relations in only the buggy or erroneous traces which are obtain from CDS Checker. For each erroneous trace, a graph is formed with the instructions/fences as nodes and the TO relations as edges. Fences are introduced at places which form cycles in the graph. When the cycle is introduced, then it violates the properties of a total order relation in C11, rendering the entire execution order infeasible. An infeasible execution will never occur during runtime, which means that the buggy execution in which the TO cycle is introduces using fences will never be executed. Hence the assertion which was being violated will remain satisfied. 
+
+In case there are no cycles forming for one or more of the buggy traces, the behaviour is deemed to be unpreventable using SC fences. 
+
+\par
+In Fig \ref{fig:cycles}, a number of cycles can be noted. Some of them are:
 \begin{itemize}
 \item \textit{$I_1n_1 \rightarrow F_2n_2 \rightarrow I_2n_1 \rightarrow I_1n_1$}
 \item \textit{$F_2n_2 \rightarrow F_3n_2 \rightarrow F_2n_2$}
 \item \textit{$F_1n_1 \rightarrow I_1n_1 \rightarrow F_2n_2 \rightarrow F_3n_2 \rightarrow F_1n_1$}
 \item \textit{$I_1n_1 \rightarrow F_2n_2 \rightarrow F_3n_2 \rightarrow F_2n_2 \rightarrow I_2n_1 \rightarrow I_1n_1$}
 \end{itemize} 
-A single cycle out of the above mentioned or others being formed needs to be implemented in order to prevent this particular execution run from ever taking place. "Implemented" here means inserting the fences in that particular cycle at their required spots mapped in the source input program. From just looking over it once, one can notice that the smallest cycle would be \textit{$F_2n_2 \rightarrow F_3n_2 \rightarrow F_2n_2$} with just two participating nodes. However, the cycle with the least number of fences is \textit{$I_1n_1 \rightarrow F_2n_2 \rightarrow I_2n_1 \rightarrow I_1n_1$} with just one fence (\textit{$F_2n_2$}) being inserted. Hence, if just \textit{$F_2n_2$} is inserted into the program, this particular buggy trace will be stopped. 
-
-\par
-This method is carried out for all such buggy traces and their cycles are calculated and stored. Becuase of things like loops and branch statements, the fence names will differ for each trace while mapping back to the source program. For example \textit{$F_1n_5$} may come after line 12 for trace 3 and line 15 for trace 4, if there is an if-else branch between those lines which might not get accessed in trace 4. Therefore, after each trace, the concerned fences have their names changed into a common nomenclature based on line numbers instead of thread numbers, which matches for all the traces.
-
-\par
-Even though cycles are calculated for each trace, the solution for obtaining a minimized number of fences to be inserted is not so straight-forward as simply choosing the one with the minimum fences involved. For one, there might be multiple cycles containing minimum fences. Another issue is that this would not yield the actual minimized number of fences. 
+A single cycle out of the above mentioned or others being formed needs to be implemented in order to prevent this particular execution run from ever taking place. From just looking over it once, one can notice that the smallest cycle would be \textit{$F_2n_2 \rightarrow F_3n_2 \rightarrow F_2n_2$} with just two participating nodes. However, the cycle with the least number of fences is \textit{$I_1n_1 \rightarrow F_2n_2 \rightarrow I_2n_1 \rightarrow I_1n_1$} with just one fence (\textit{$F_2n_2$}) being inserted. Hence, if just \textit{$F_2n_2$} is inserted into the program, this particular buggy trace will be stopped. This method is carried out for all such buggy traces and their cycles are calculated and stored.
 
 % --------------- FENCE MIN PROBLEM ----------
-\subsubsection{The fence minimization problem}
+\subsection{The fence minimization problem}
+\par
+Even if cycles are calculated for each trace, the solution for obtaining a minimized number of fences to be inserted is not so straight-forward as simply choosing the one with the minimum fences for each trace. For one, there might be multiple cycles containing minimum fences. Another issue is that this would not yield the actual minimized number of fences. 
+
 % --------------- FIG 6 -------------------
 \begin{figure}
 \begin{center}
@@ -195,31 +159,31 @@ Even though cycles are calculated for each trace, the solution for obtaining a m
 	\textit{$F_3 \rightarrow F_4 \rightarrow F_1 \rightarrow F_3$}\\
 	Cycles from trace 2:\\
 	\textit{$F_3 \rightarrow F_4 \rightarrow F_3$}
-	\caption{Exmaple cycles from traces}
+	\caption{Example cycles from traces}
 	\label{fig:fence_min}
 \end{center}
 \end{figure}
 
-\ref{fig:fence_min} shows cycles from two buggy traces from a program. For the purpose of this example, let us assume each fence to be a position in the original source code instead of it being a fence position in a single trace. This way, fence \textit{$F_4$} is the same fence for both the traces with respect to its position in the source code.
+Fig \ref{fig:fence_min} shows cycles from two buggy traces from a program. Because of re-ordering and branching, the fence names might differ for each trace while mapping back to the source program. For example \textit{$F_1n_5$} may come after line 12 for trace 3 and line 15 for trace 4. For the purpose of this example, let us assume each fence to be a position in the original source code instead of it being a fence position in a single trace. This way, fence \textit{$F_4$} is the same fence for both the traces with respect to its position in the source code.
 
 \par
 The original solution to obtain the minimum number of fences was to take the smallest cycle from each trace, that is to take the cycle which contains the least number of fences from each execution trace. In this case, fences \textit{$F_1$}, \textit{$F_2$} would be chosen from trace 1 and fences \textit{$F_3$}, \textit{$F_4$} would be chosen from trace 2. This makes four total fences that to include in the main program to stop the behaviour where any assertion gets violated.
 
 \par
-However, this is not the optimal solution. \ref{fig:fence_form} shows the example explained in \ref{fig:fence_min} converted into its respective formula in propositional logic. For each trace, the cycles are added as disjunctions, with each fence in a cycle being a necessary component, deeming it a conjunction. Since each trace needs to satisfy at least one cycle for the trace to become infeasible, each cycle is a disjunction. All traces need to be prevented, so each trace is part of a conjunction.
+However, this is not the optimal solution. Fig \ref{fig:fence_form} shows the example explained in Fig \ref{fig:fence_min} converted into its respective formula in propositional logic. For each trace, the cycles are added as disjunctions, with each fence in a cycle being a necessary component, deeming it a conjunction. Since each trace needs to satisfy at least one cycle for the trace to become infeasible, each cycle is a disjunction. All traces need to be prevented, so each trace is part of a conjunction.
 
 % --------------- FIG 7 -----------------
 \begin{figure}
 \begin{center}
 	( ( $F_1 \land F_2\ ) \lor\ ( F_3 \land F_4 \land F_1\ )\ ) \land\ (\ (\ F_3 \land F_4$ ) )
-	\caption{Formula for \ref{fig:fence_min}}
+	\caption{Formula for Fig \ref{fig:fence_min}}
 	\label{fig:fence_form}
 \end{center}
 \end{figure}
 
 \par
-\ref{fig:fence_form} can be looked at as a cost function to minimize the cost, with each entity being a fence, having value either 0 or 1. A fence having value 1 would mean that it should be inserted in the program and value 0 would mean that it should not be inserted in the program, according to the minimized cost. From this formula, the solution for \ref{fig:fence_min} comes out to have 3 fences – \textit{$F_3, F_4, F_1$}, unlike the original solution where four fences were sought.
+Fig \ref{fig:fence_form} can be looked at as a cost function to minimize the cost, with each entity being a fence, having value either 0 or 1. A fence having value 1 would mean that it should be inserted in the program and value 0 would mean that it should not be inserted in the program, according to the minimized cost. From this formula, the solution for Fig \ref{fig:fence_min} comes out to have 3 fences – \textit{$F_3, F_4, F_1$}, unlike the original solution where four fences were sought.
 
 \par
-Implementing this formula in python would be very costly and would entail a big time overhead. This is because many programs would have more than 50 execution traces, with each of them having uncountable fences. An SMT/SAT Solver is used for this purpose. Z3 SAT Solver is implemented in our tool. A formula similar to the one in \ref{fig:fence_form} is created for each program and the minimum cost with the maximum satisfying solution is computed. 
+Implementing such a propostional formula for programs with more than 50 execution traces, with each of them having uncountable fences would be quite an overhead. An SMT/SAT Solver is used for this purpose. Z3 SAT Solver is implemented in our tool. A formula similar to the one in Fig \ref{fig:fence_form} is created for each program and the minimum cost with the maximum satisfying solution is computed. 
 
