@@ -17,14 +17,14 @@ Proposed Solution/Our Approach:
 /	3.5 The fence minization problem
 	
 Implemetation:
-	- summary: 
-	we have also provided a flag for ... -t
+/	- summary: 
+/	we have also provided a flag for ... -t
 /	Why CDS? - RCMC, Tracer, GenMC: not for C11, Nidhugg: ??
 /	Translating model checker output: if a different model checker is used ...		
 /	Extracting line numbers
-	Optimizations
-		Data structures- what and why?
-		Algo
+/	Optimizations
+/		Data structures- what and why?
+??		Algo
 	
 Results:
 	System Specs

@@ -1,5 +1,9 @@
 \par
-The tool is created using the python programming language. Extra libraries used:
+The tool is written using python programming. It first receives the location of the input program using the \textit{-f} flag. Since we are using CDS Model Checker, this file is first copied to the CDS Checker test folder. The make function is called and the file is run on CDS Checker. The output from CDS Checker is obtained in the form of buggy executions and converted/translated for our usage. Each of these buggy executions are then run through a series of steps as described in section \ref{sec:approach}- HB, MO, adding pseudo fences, finding cycles, eliminating cycles and timing each step.
+
+For input programs with an enormous number of possibilities, the tool might take some time to complete analysis for each and every trace. Providing an alternative for this, we have also introduced an optional flag \textit{-t} to specify the number of traces to analyze at a time until the solution is found. If the value is specified as \textit{-t 3}, the tool will look at only the first 3 buggy traces from the model checker and base the analysis on them. It will then add fences in the input program according to the first 3 traces and then analyze this new program again. It will keep running the program after adding fences until a conclusion is reached. This would save time on the user's part but it may compromise on the optimality, since there might be more fences added with this method than the original method. There is also an additional optional flag \textit{-m} to specify the maximum number of iterations to be run. On specifying this value, the analysis will stop at the mth iteration if the conclusion is not found till then.
+
+The tool makes use of the following python packages and libraries:
 \begin{itemize}
 	\item networkx - for graphing related queries, such as find cycles
 	\item ast - for evaluating values from store
@@ -8,8 +12,6 @@ The tool is created using the python programming language. Extra libraries used:
 	\item argparse
 	\item os
 \end{itemize}
-
-Since there might be cases where the number of traces are many
 
 \subsection{Translating model checker output}
 The tool begins by translating model checker output that it obtains from the terminal process after running the required command. Any model checker for C11 can be used in this case. For this tool, only CDS Checker is used and its output is translated. One may choose to use a different model checker by creating a custom translator which extracts the following information from each instruction of each trace:
@@ -37,7 +39,7 @@ For any of the above meta-data, if a field does not apply for a certain instruct
 \subsubsection{Why CDS Checker}
 CDS Checker is used for our purposes. It was selected for this project because of the plethora of information that it provides. CDS Checker only considers the atomic operations or thread operations in the program as an instruction.
 
-Existing model checkers such as RCMC\ishComment{ref}, Tracer\ishComment{ref}, GenMC\ishComment{ref} are based on and created for the repaired sequential consistency model RC11 and not C11. \ishComment{add nidhugg}
+Existing model checkers such as RCMC\ishComment{ref}, Tracer\ishComment{ref}, GenMC\ishComment{ref} are based on and created for the repaired sequential consistency model RC11 and not C11. \ishComment{add nidhugg, herd}
 
 \subsubsection{Extracting line numbers from CDS Checker}
 Line numbers are extracted by pattern-matching the instruction meta-data in the above mentioned fields, creating the instruction out of them and matching them to the source thread. For example, the information extracted for a single instruction is: thread number 2, instruction type read, memory order seq\_ cst, memory address \textit{x}. Then the instruction would be created as \texttt{x.load(memory\_ order\_ seq\_ cst)} and be matched inside the function defined for thread 2. There are also contingencies for this procedure, so certain rules need to be followed in the input program.
@@ -93,3 +95,22 @@ Since line numbers are required to be extracted from the source program in order
 	
 	\item 'IF' and 'FOR' statements always need to be bracketed in case there is a fence insertion taking place inside.
 \end{enumerate}
+
+\subsection{Data structures used}
+\begin{itemize}
+	\item adjacency matrix to store HB relations
+	\item list of tuples to store relations - MO, SB, TO
+	\item list of lists to store traces and instruction information
+\end{itemize}
+
+\subsection{Optis}
+used inbuilt python functions for faster processing
+\begin{itemize}
+	\item map function to map the 0th element (instruction number) in HB computation
+	\item lambda function to sort traces according to thread number faster
+	\item enumerate function to make list search faster
+	\item index function to index quicker
+	\item values converted to int at the beginning while translating model checker output for faster lookup
+	\item 
+\end{itemize}
+
