@@ -17,6 +17,7 @@ from to import to
 from cycle import Cycles
 from z3translate import z3translate
 from z3convert import z3convert
+from constants import *
 
 import sys
 import time
@@ -58,14 +59,14 @@ class Processing:
 			get_mo = mo(trace,mat,size)
 			mo_edges = get_mo.get()
 			mo_time = time.time() - mo_time
-			# print("mo===",mo_edges)
+			# print("mo =",mo_edges)
 			self.mo_total += mo_time
 			
 			# ADD FENCES
 			fences_time = time.time()
 			order=self.fence(trace)
 			fences_time = time.time() - fences_time
-			# print("order=",order)
+			# print("order =",order)
 			self.fences_total += fences_time
 
 			# transitive SB
@@ -141,7 +142,7 @@ class Processing:
 				sc_events.append(fence_name)
 
 			order.append(trace[i])
-			if trace[i][3] == "seq_cst":
+			if trace[i][3] == SEQ_CST:
 				sc_events.append(trace[i][0])
 			
 			if i == (len(trace)-1):

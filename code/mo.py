@@ -51,7 +51,7 @@ class mo:
 	def rule3(self):
 		for a in self.reads:
 			x = a[6]
-			for b in self.reads:
+			for b in self.writes:
 				if b[4] == a[4] and self.mat.containsEdge(a[0],b[0]): 		# checking if variable operated upon is same and if there is hb
 					self.mo_edges.append((x,b[0]))
 	

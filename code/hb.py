@@ -4,6 +4,7 @@
 
 from graph import Graph
 import time
+from constants import *
 
 class hb:
 
@@ -59,12 +60,12 @@ class hb:
 
 	def sw(self,trace):
 
-		write_models = ["release",'acq_rel',"seq_cst"]
-		read_models = ["acquire",'acq_rel',"seq_cst"]
+		write_models = [REL, ACQ_REL, SEQ_CST]
+		read_models = [ACQ, ACQ_REL, SEQ_CST]
 
 		for i in range(len(trace)):
 			# create sw's between thread create statements
-			if trace[i][2] == "create":
+			if trace[i][2] == CREATE:
 				v1 = trace[i][0]
 				v2 = v1+1
 				self.mat.addEdge(v1,v2)
@@ -73,10 +74,10 @@ class hb:
 
 
 			# create sw's between thread finish and join statements
-			if trace[i][2] == "join":
+			if trace[i][2] == JOIN:
 				t = trace[i][5]			# value/number of the thread which is getting joined
 				for j in range(i,len(trace)):
-					if trace[j][2] == "finish" and trace[j][1] == t:
+					if trace[j][2] == FINISH and trace[j][1] == t:
 						v1 = trace[j][0]
 						v2 = trace[i][0]
 						# self.sw_edges.append((v1,v2))
@@ -84,12 +85,12 @@ class hb:
 						self.to_edges.append((v1,v2))
 
 			# create sw's between read/rmw and write/rmw statements
-			if trace[i][2] == 'read' or trace[i][2] == 'rmw':
+			if trace[i][2] == READ or trace[i][2] == RMW:
 				rf = trace[i][6]
 				for j in trace:
 					if j[0] == rf:
 						if j[3] in write_models and trace[i][3] in read_models:
 							# self.sw_edges.append((j[0],trace[i][0]))
 							self.mat.addEdge(j[0],trace[i][0])
-							if j[3] == 'seq_cst' and trace[i][3] == 'seq_cst':
+							if j[3] == SEQ_CST and trace[i][3] == SEQ_CST:
 								self.to_edges.append((j[0],trace[i][0]))
