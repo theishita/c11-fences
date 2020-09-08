@@ -9,8 +9,9 @@ from constants import *
 
 class to:
 
-	def __init__(self,order,mo_edges,sb_edges,to_edges):
+	def __init__(self,order,fences_thread,mo_edges,sb_edges,to_edges):
 		self.order = order
+		self.fences_thread = fences_thread
 		self.mo_edges = mo_edges
 		self.sb_edges = sb_edges
 
@@ -49,7 +50,17 @@ class to:
 				a = next(i for i,v in enumerate(self.writes) 
 							if type(v) is list and v[0] == self.reads[b][6]) 	# the write which send the rf value to b
 				x = self.writes[a-1]
-				self.to_edges.append((x,y))
+				# self.to_edges.append((x,y))
+				
+				# adding relations for fences above A and fences below B
+				x_thread = self.writes[a][1] -1
+				y_thread = self.reads[b][1] -1
+				x_index = self.fences_thread[x_thread].index(x)
+				y_index = self.fences_thread[y_thread].index(y)
+
+				for i in range(0, x_index+1):
+					for j in range(y_index, len(self.fences_thread[y_thread])):
+						self.to_edges.append((self.fences_thread[x_thread][i],self.fences_thread[y_thread][j]))
 	
 	def rule1(self):
 		for b in self.reads:
@@ -77,7 +88,16 @@ class to:
 					b = next(i for i,v in enumerate(self.reads) 
 							if type(v) is list and v[6] == m[0])
 					x = self.reads[b-1]
-					self.to_edges.append((x, self.writes[m2][0]))
+					# self.to_edges.append((x, self.writes[m2][0]))
+					m2_no = self.writes[m2][0]
+
+					# adding relations for fences above B
+					x_thread = self.reads[b][1] -1
+					x_index = self.fences_thread[x_thread].index(x)
+
+					for i in range(0, x_index+1):
+						self.to_edges.append((self.fences_thread[x_thread][i], m2_no))
+
 				except:
 					continue
 
@@ -91,7 +111,17 @@ class to:
 						a_index = next(i for i,v in enumerate(self.writes) if type(v) is list and v[0] == a)
 						x = self.writes[a_index+1]
 						y = self.reads[b-1]
-						self.to_edges.append((y,x))
+						# self.to_edges.append((y,x))
+
+						# adding relations for all fences below A and fences above B
+						x_thread = self.writes[a_index][1] -1
+						y_thread = self.reads[b][1] -1
+						x_index = self.fences_thread[x_thread].index(x)
+						y_index = self.fences_thread[y_thread].index(y)
+
+						for i in range(0, y_index+1):
+							for j in range(x_index, len(self.fences_thread[x_thread])):
+								self.to_edges.append((self.fences_thread[y_thread][i],self.fences_thread[x_thread][j]))
 
 	def rule4(self):
 		for m in self.mo_edges:
@@ -101,15 +131,28 @@ class to:
 			a_index = next(i for i,v in enumerate(self.writes) if type(v) is list and v[0] == a)
 			x = self.writes[a_index+1]
 			y = self.writes[b_index-1]
+			
+			# for all fence relations
+			x_thread = self.writes[a_index][1] -1
+			x_index = self.fences_thread[x_thread].index(x)
+			y_thread = self.writes[b_index][1] -1
+			y_index = self.fences_thread[y_thread].index(y)
 
 			# rule 4a
 			if self.writes[b_index][3] == SEQ_CST:
-				self.to_edges.append((b,x))
+				# self.to_edges.append((b,x))
+				for i in range(x_index,len(self.fences_thread[x_thread])):
+					self.to_edges.append((b, self.fences_thread[x_thread][i]))
 			# rule 4b
 			if self.writes[a_index][3] == SEQ_CST:
-				self.to_edges.append((y,a))
+				# self.to_edges.append((y,a))
+				for i in range(0, y_index+1):
+					self.to_edges.append((self.fences_thread[y_thread][i], a))
 			# rule 4c
-			self.to_edges.append((y,x))
+			# self.to_edges.append((y,x))
+			for i in range(0, y_index+1):
+				for j in range(x_index, len(self.fences_thread[x_thread])):
+					self.to_edges.append((self.fences_thread[y_thread][i],self.fences_thread[x_thread][j]))
 
 	# unused
 	def sort_to_edges(self):

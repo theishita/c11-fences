@@ -40,12 +40,13 @@ class Processing:
 		for trace in traces:											# run for each trace
 			self.all_sc_events_thread = []								# list of all sc events separated by threads
 			self.sc_sb_edges = []										# list of sb edge pairs between all sc events
+			self.fences_thread = []										# list of fences in each thread
 			self.to_edges = []											# list of all TO edge tuples
 			self.cycles = []                                            # list of all cycles between the fences and events
 			self.loc_info = {}                                          # information regarding the required fence locations
 
 			trace_no += 1
-			# print("---------Trace",trace_no,"---------")
+			print("---------Trace",trace_no,"---------")
 
 			# HB
 			hb_time = time.time()
@@ -77,16 +78,17 @@ class Processing:
 
 			# TO
 			to_time = time.time()
-			calc_to = to(order,mo_edges,self.sc_sb_edges,self.to_edges)
+			calc_to = to(order,self.fences_thread,mo_edges,self.sc_sb_edges,self.to_edges)
 			self.to_edges = calc_to.get()
 			to_time = time.time() - to_time
-			# print("TO=",self.to_edges)
+			# print("to =",self.to_edges)
 			self.to_total += to_time
 			
 			# CYCLES
 			cycles_time = time.time()
 			cycles = Cycles(self.to_edges)
-			# print("no cycles=",len(cycles))
+			print("no cycles=",len(cycles))
+			# print("cycles =",cycles)
 			cycles_time = time.time() - cycles_time
 			self.cycles_total += cycles_time
 
@@ -101,7 +103,7 @@ class Processing:
 					fence_name = order[i]
 					var_name = 'l'+str(order[i-1][8])
 					self.loc_info[fence_name] = var_name
-				
+
 				get_translation = z3translate(cycles,self.loc_info)
 				consts, translation = get_translation.get()
 
@@ -120,6 +122,7 @@ class Processing:
 	def fence(self, trace):
 		order = []								
 		sc_events = []					# IDEA: any var with _thread at the end means that it is separated by thread number
+		fences_in_thread = []
 
 		current_thread = 1				# for fence naming
 		fence_no = 1
@@ -130,16 +133,20 @@ class Processing:
 
 			order.append(fence_name)
 			sc_events.append(fence_name)
+			fences_in_thread.append(fence_name)
 
 			if trace[i][1] != current_thread:
 				self.all_sc_events_thread.append(sc_events)
+				self.fences_thread.append(fences_in_thread)
 				sc_events = []
+				fences_in_thread = []
 				current_thread += 1
 				fence_no = 1
 				fence_name = 'F'+str(current_thread)+'n'+str(fence_no)
 				fence_no += 1
 				order.append(fence_name)
 				sc_events.append(fence_name)
+				fences_in_thread.append(fence_name)
 
 			order.append(trace[i])
 			if trace[i][3] == SEQ_CST:
@@ -150,7 +157,9 @@ class Processing:
 				fence_no += 1
 				order.append(fence_name)
 				sc_events.append(fence_name)
+				fences_in_thread.append(fence_name)
 				self.all_sc_events_thread.append(sc_events)
+				self.fences_thread.append(fences_in_thread)
 
 		return order
 
