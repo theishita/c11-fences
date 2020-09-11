@@ -16,7 +16,6 @@ from mo import mo
 from to import to
 from cycle import Cycles
 from z3translate import z3translate
-from z3convert import z3convert
 from constants import *
 
 import sys
@@ -46,7 +45,7 @@ class Processing:
 			self.loc_info = {}                                          # information regarding the required fence locations
 
 			trace_no += 1
-			print("---------Trace",trace_no,"---------")
+			# print("---------Trace",trace_no,"---------")
 
 			# HB
 			hb_time = time.time()
@@ -87,7 +86,7 @@ class Processing:
 			# CYCLES
 			cycles_time = time.time()
 			cycles = Cycles(self.to_edges)
-			print("no cycles=",len(cycles))
+			# print("no cycles=",len(cycles))
 			# print("cycles =",cycles)
 			cycles_time = time.time() - cycles_time
 			self.cycles_total += cycles_time
@@ -116,7 +115,6 @@ class Processing:
 				self.error_string = "\nNo TO cycles can be formed for trace "+str(trace_no)+"\nHence this behaviour cannot be stopped using SC fences\n"
 				return
 
-		z3convert(self.z3vars,self.disjunctions)
 		print("hb trans time=",self.trans_time)
 
 	def fence(self, trace):
@@ -170,4 +168,4 @@ class Processing:
 					self.sc_sb_edges.append((i[j],i[k]))
 
 	def get(self):
-		return self.loc_info, self.error_string, [self.hb_total, self.mo_total, self.fences_total, self.sb_total, self.to_total, self.cycles_total]
+		return self.z3vars,self.disjunctions,self.loc_info, self.error_string, [self.hb_total, self.mo_total, self.fences_total, self.sb_total, self.to_total, self.cycles_total]

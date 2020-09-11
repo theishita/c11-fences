@@ -23,7 +23,8 @@ class z3convert:
 		for var in consts:
 			consts_fn.append("(ext "+var+")")
 
-		contents += self.maximize("bvand",disjunctions)
+		# contents += self.maximize("bvand",disjunctions)
+		contents += self.fact("=",self.conjunct(disjunctions),"#b1")
 		contents += self.function("ext",["x (_ BitVec 1)"],fn_type,fn_def)
 		contents += self.minimize("bvadd",consts_fn)
 		contents+="(check-sat)\n(get-model)"
@@ -35,7 +36,6 @@ class z3convert:
 		return cnst
 
 	# to add assertions/facts
-	# unused
 	def fact(self,operator,left,right):
 		assertion = "(assert ("+operator+" "+left+" "+str(right)+"))\n"
 		return assertion
@@ -57,6 +57,7 @@ class z3convert:
 		return mini
 
 	# to create a maximize function
+	# unused
 	def maximize(self,operator,variables):
 		maxi = "(maximize ("+operator
 		for var in variables:

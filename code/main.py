@@ -33,20 +33,11 @@ traces,cds_time,conver_time,buggy_execs = cds.get()
 
 if buggy_execs:
 	get_p = Processing(traces)
-	loc_info, error_string, total_time = get_p.get()				# runs and returns locations
+	z3vars, disjunctions, loc_info, error_string, total_time = get_p.get()				# runs and returns locations
 
 	if not error_string:
-		z3_cmd = 'z3 compute_fences'
-		z3_run = shlex.split(z3_cmd)								# run z3 file
-
-		z3_start = time.time()
-		z3 = subprocess.check_output(z3_run,
-									stderr=subprocess.PIPE)			# get std output after running z3
-		z3_end = time.time()
-		z3 = z3.decode('utf-8')
-		
-		req_locs = z3run(z3)										# decipher output from z3 & get required locations
-		insert(req_locs,filename)									# insert fences into the source file at the requiren locations
+		req_locs, z3_time = z3run(z3vars, disjunctions)									# get output from z3 & get required locations
+		insert(req_locs,filename)									# insert fences into the source file at the required locations
 
 		print("Fences added:\t\t",len(req_locs))
 		# print("Fences added after lines:\t",req_locs)
@@ -59,7 +50,6 @@ tool_time = end-start
 
 print("CDS Checker time:\t",round(cds_time,2))
 if buggy_execs and not error_string:
-	z3_time = z3_end-z3_start
 	print("Z3 time:\t\t",round(z3_time,2))
 print("Total time:\t\t",round(tool_time,2))
 print("Tool only time:\t\t",round(tool_time-z3_time-cds_time,2))

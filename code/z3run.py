@@ -1,9 +1,25 @@
 # --------------------------------------------------------
-# Translates the output from Z3 and maps them to the
-# required fence locations.
+# Creates a file suitable for Z3, gets the output and maps 
+# them to the required fence locations.
 # --------------------------------------------------------
+import shlex
+import subprocess
+import time
 
-def z3run(output):
+from z3convert import z3convert
+
+def z3run(z3vars, disjunctions):
+
+	z3convert(z3vars, disjunctions)										# create the z3 file based on the cycles
+
+	z3_cmd = 'z3 compute_fences'
+	z3_run = shlex.split(z3_cmd)										# run z3 file
+
+	z3_start = time.time()
+	output = subprocess.check_output(z3_run,
+								stderr=subprocess.PIPE)					# get std output after running z3
+	z3_end = time.time()
+	output = output.decode('utf-8')
 
 	req_locs = []														# list of the final required locations
 
@@ -26,7 +42,7 @@ def z3run(output):
 		if line == '(model ':
 			in_model += 1												# model is starting now
 
-	return req_locs
+	return req_locs, (z3_end-z3_start)
 
 # obtains index location where the variable name ends
 def get_var(line):
