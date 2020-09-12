@@ -16,3 +16,6 @@ JOIN = "join"
 CREATE = "create"
 START = "start"
 FINISH = "finish"
+
+# files
+Z3_FILE = "compute_fences"

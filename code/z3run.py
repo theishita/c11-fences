@@ -7,12 +7,13 @@ import subprocess
 import time
 
 from z3convert import z3convert
+from constants import *
 
 def z3run(z3vars, disjunctions):
 
 	z3convert(z3vars, disjunctions)										# create the z3 file based on the cycles
 
-	z3_cmd = 'z3 compute_fences'
+	z3_cmd = "z3 "+ Z3_FILE
 	z3_run = shlex.split(z3_cmd)										# run z3 file
 
 	z3_start = time.time()
