@@ -1,4 +1,5 @@
 import ast
+import z3_functions as z3
 
 class z3translate:
 
@@ -18,33 +19,11 @@ class z3translate:
             cycles_translated_to_var.append([var[x] for x in cycles[i]])
         
         for cycle in cycles_translated_to_var:
-            conjunctions.append(self.conjunct(cycle))
+            conjunctions.append(z3.conjunct(cycle))
 
-        self.translation = self.disjunct(conjunctions)
+        self.translation = z3.disjunct(conjunctions)
 
         # print(self.constants, conjunctions, self.translation)
 
     def get(self):
         return self.constants, self.translation
-
-    # to return a conjunction of given variables
-    def conjunct(self,vars):
-        if len(vars) == 1:
-            return vars[0]
-
-        cnf = "(bvand"
-        for i in vars:
-            cnf += " "+str(i)
-        cnf += ")"
-        return cnf
-
-    # to return a disjunction of given variables
-    def disjunct(self,vars):
-        if len(vars) == 1:
-            return vars[0]
-
-        dnf = "(bvor"
-        for i in vars:
-            dnf += " "+str(i)
-        dnf += ")"
-        return dnf

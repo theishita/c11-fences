@@ -16,6 +16,9 @@ def z3run(z3vars, disjunctions):
 	z3_cmd = "z3 "+ Z3_FILE
 	z3_run = shlex.split(z3_cmd)										# run z3 file
 
+	with open(Z3_FILE,'a') as f:
+		f.write("\n(get-model)")
+
 	z3_start = time.time()
 	output = subprocess.check_output(z3_run,
 								stderr=subprocess.PIPE)					# get std output after running z3
