@@ -3,14 +3,12 @@
 # --------------------------------------------------------
 
 from graph import Graph
-import time
 from constants import *
 
 class hb:
 
-	def __init__(self,trace,trans_time):
+	def __init__(self,trace):
 		# print(trace)
-		self.trans_time = trans_time
 		# self.sb_edges = []									# list of all sb edges between instructions
 		self.sw_edges = []									# list of all sw edges between instructions
 		self.to_edges = []									# list of to edges between instructions
@@ -24,7 +22,7 @@ class hb:
 		self.complete_matrix()
 
 	def get(self):
-		return self.mat,self.size,self.to_edges,self.trans_time
+		return self.mat,self.size,self.to_edges
 
 	def complete_matrix(self):
 
@@ -34,7 +32,6 @@ class hb:
 
 		# print("t=",temp.adjMatrix)
 
-		start = time.time()
 		while flag!=2:
 			for i in range(self.size):
 				v1 = i
@@ -46,9 +43,6 @@ class hb:
 
 			if(temp.adjMatrix == self.mat.adjMatrix):
 				flag += 1
-
-		end = time.time()
-		self.trans_time += end-start
 
 	def sb(self,trace):
 

@@ -8,10 +8,15 @@ def create_list(trace_no,instr,file_vars,trace_locs):
 	line.append(int(instr[0]))							# 0: serial number of the instruction
 	line.append(int(instr[1]))							# 1: thread number
 
-	if instr[2] == "init":
-		line.append(instr[2])							# 2: instruction type (if init)
+	if instr[2] == "fence":
+		line.append(instr[2])							# 2: instruction type (if fence)
+		instr.insert(3,'')
+
 	else:
-		line.append(instr[3])							# 2: instruction type (for the rest operation types)
+		if instr[2] == "init":
+			line.append(instr[2])						# 2: instruction type (if init)
+		else:
+			line.append(instr[3])						# 2: instruction type (for the rest operation types)
 
 	line.append(instr[4])								# 3: memory order
 	line.append(instr[5])								# 4: memory address

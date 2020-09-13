@@ -19,82 +19,62 @@ from z3translate import z3translate
 from constants import *
 
 import sys
-import time
 
+# IDEA: any var with _thread at the end means that it is separated by thread number
 class Processing:
-	def __init__(self,traces):
+	def __init__(self, traces, no_traces):
 		self.z3vars = []												# list of all z3 constants
 		self.disjunctions = []											# list of disjunctions for the z3 function
+		self.fences_present = []										# list of fences converted to their respective variable names
+		self.fences_present_locs = []
 		self.error_string = ''
-		self.hb_total = 0
-		self.mo_total = 0
-		self.fences_total = 0
-		self.to_total = 0
-		self.sb_total = 0
-		self.cycles_total = 0
-		self.trans_time = 0
 
 		trace_no = 0
 
-		for trace in traces:											# run for each trace
+		for t in range(no_traces):										# run for each trace
+			trace = traces[t]
 			self.all_sc_events_thread = []								# list of all sc events separated by threads
 			self.sc_sb_edges = []										# list of sb edge pairs between all sc events
 			self.fences_thread = []										# list of fences in each thread
+			self.fences_in_trace = []									# list of fences already present in the program
 			self.to_edges = []											# list of all TO edge tuples
 			self.cycles = []                                            # list of all cycles between the fences and events
 			self.loc_info = {}                                          # information regarding the required fence locations
 
-			trace_no += 1
+			# trace_no += 1
 			# print("---------Trace",trace_no,"---------")
 
 			# HB
-			hb_time = time.time()
-			hb_graph = hb(trace,self.trans_time)
-			mat,size,self.to_edges,self.trans_time = hb_graph.get()
-			hb_time = time.time() - hb_time
-			self.hb_total += hb_time
-			
+			hb_graph = hb(trace)
+			mat, size, self.to_edges = hb_graph.get()
+
 			# MO
-			mo_time = time.time()
-			get_mo = mo(trace,mat,size)
+			get_mo = mo(trace, mat, size)
 			mo_edges = get_mo.get()
-			mo_time = time.time() - mo_time
 			# print("mo =",mo_edges)
-			self.mo_total += mo_time
-			
+
 			# ADD FENCES
-			fences_time = time.time()
 			order=self.fence(trace)
-			fences_time = time.time() - fences_time
 			# print("order =",order)
-			self.fences_total += fences_time
+			# print("fences_present =", self.fences_in_trace)
+			# print("fences_thread =", self.fences_thread)
 
 			# transitive SB
-			sb_time = time.time()
 			self.sb()
-			sb_time = time.time() - sb_time
-			self.sb_total += sb_time
 
 			# TO
-			to_time = time.time()
 			calc_to = to(order,self.fences_thread,mo_edges,self.sc_sb_edges,self.to_edges)
 			self.to_edges = calc_to.get()
-			to_time = time.time() - to_time
 			# print("to =",self.to_edges)
-			self.to_total += to_time
 			
 			# CYCLES
-			cycles_time = time.time()
 			cycles = Cycles(self.to_edges)
 			# print("no cycles=",len(cycles))
 			# print("cycles =",cycles)
-			cycles_time = time.time() - cycles_time
-			self.cycles_total += cycles_time
 
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]
 			# print("unique_fences=",unique_fences)
-			# print("order=",order)
 
 			if len(unique_fences)>0:
 				for fence in unique_fences:
@@ -102,8 +82,13 @@ class Processing:
 					fence_name = order[i]
 					var_name = 'l'+str(order[i-1][8])
 					self.loc_info[fence_name] = var_name
+					
+					# check for the fences already present in input prgm and replace them with these variables
+					if (fence in self.fences_in_trace) and (var_name not in self.fences_present):
+						self.fences_present.append(var_name)
+						self.fences_present_locs.append(order[i-1][8])
 
-				get_translation = z3translate(cycles,self.loc_info)
+				get_translation = z3translate(cycles, self.loc_info)
 				consts, translation = get_translation.get()
 
 				for con in consts:
@@ -112,30 +97,22 @@ class Processing:
 				self.disjunctions.append(translation)
 
 			else:
-				self.error_string = "\nNo TO cycles can be formed for trace "+str(trace_no)+"\nHence this behaviour cannot be stopped using SC fences\n"
+				self.error_string = "\nNo TO cycles can be formed for trace "+str(trace_no +1)+"\nHence this behaviour cannot be stopped using SC fences\n"
 				return
 
-		print("hb trans time=",self.trans_time)
-
 	def fence(self, trace):
-		order = []								
-		sc_events = []					# IDEA: any var with _thread at the end means that it is separated by thread number
-		fences_in_thread = []
+		order = ['F1n1']								
+		sc_events = ['F1n1']
+		fences_in_thread = ['F1n1']
 
 		current_thread = 1				# for fence naming
-		fence_no = 1
+		fence_no = 2
 
 		for i in range(len(trace)):
-			fence_name = 'F'+str(current_thread)+'n'+str(fence_no)
-			fence_no += 1
-
-			order.append(fence_name)
-			sc_events.append(fence_name)
-			fences_in_thread.append(fence_name)
-
 			if trace[i][1] != current_thread:
 				self.all_sc_events_thread.append(sc_events)
 				self.fences_thread.append(fences_in_thread)
+
 				sc_events = []
 				fences_in_thread = []
 				current_thread += 1
@@ -146,16 +123,25 @@ class Processing:
 				sc_events.append(fence_name)
 				fences_in_thread.append(fence_name)
 
-			order.append(trace[i])
-			if trace[i][3] == SEQ_CST:
-				sc_events.append(trace[i][0])
+			if not trace[i][2] == FENCE:
+				order.append(trace[i])
+				if trace[i][3] == SEQ_CST:
+					sc_events.append(trace[i][0])
+			else:
+				self.fences_in_trace.append(fence_name)
+				if i == (len(trace)-1):
+					self.all_sc_events_thread.append(sc_events)
+					self.fences_thread.append(fences_in_thread)
+				continue
+
+			fence_name = 'F'+str(current_thread)+'n'+str(fence_no)
+			fence_no += 1
+
+			order.append(fence_name)
+			sc_events.append(fence_name)
+			fences_in_thread.append(fence_name)
 			
 			if i == (len(trace)-1):
-				fence_name = 'F'+str(current_thread)+'n'+str(fence_no)
-				fence_no += 1
-				order.append(fence_name)
-				sc_events.append(fence_name)
-				fences_in_thread.append(fence_name)
 				self.all_sc_events_thread.append(sc_events)
 				self.fences_thread.append(fences_in_thread)
 
@@ -168,4 +154,4 @@ class Processing:
 					self.sc_sb_edges.append((i[j],i[k]))
 
 	def get(self):
-		return self.z3vars,self.disjunctions,self.loc_info, self.error_string, [self.hb_total, self.mo_total, self.fences_total, self.sb_total, self.to_total, self.cycles_total]
+		return self.fences_present, self.fences_present_locs, self.z3vars, self.disjunctions, self.error_string

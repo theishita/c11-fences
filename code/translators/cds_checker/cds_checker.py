@@ -20,8 +20,7 @@ class translate_cds:
 
 		self.traces_raw = []											# list of all traces raw
 		self.traces = []												# list of processed traces
-		self.buggy_execs = 0											# number of buggy executions for this run
-		self.conver_time = 0
+		self.no_buggy_execs = 0											# number of buggy executions for this run
 
 		copy = 'cp '+filename+' ../model-checker/test'
 		make = 'cd ../model-checker && make'
@@ -46,17 +45,14 @@ class translate_cds:
 		self.cds_time = cds_end-cds_start
 
 		self.obtain_traces(p)
-		self.buggy_execs = int(self.buggy_execs)
-		print("\n\nBuggy executions:\t",self.buggy_execs)
+		self.no_buggy_execs = int(self.no_buggy_execs)
+		print("\n\nBuggy executions:\t",self.no_buggy_execs)
 
-		if self.buggy_execs != 0:
-			conver_start = time.time()
+		if self.no_buggy_execs != 0:
 			self.create_structure(filename)
-			conver_end = time.time()
-			self.conver_time = conver_end-conver_start
 
 	def get(self):
-		return self.traces,self.cds_time,self.conver_time,self.buggy_execs
+		return self.traces, self.cds_time, self.no_buggy_execs
 
 	# to differentiate and obtain each trace from the std output in the terminal
 	def obtain_traces(self,p):
@@ -79,7 +75,7 @@ class translate_cds:
 
 			# print number of buggy executions
 			if "Number of buggy executions" in line:
-				self.buggy_execs = line[28:len(line)]
+				self.no_buggy_execs = line[28:len(line)]
 
 	# to convert each trace into a structure
 	def create_structure(self,filename):

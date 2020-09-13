@@ -10,6 +10,7 @@ RMW = "rmw"
 WRITE = "write"
 INIT = "init"
 READ = "read"
+FENCE = "fence"
 
 # thread operations
 JOIN = "join"

@@ -5,7 +5,7 @@
 from constants import *
 import z3_functions as z3
 
-def z3convert(consts,disjunctions):
+def z3convert(consts, disjunctions, fences_present):
 	file = open(Z3_FILE,'w')
 	contents = ""
 
@@ -13,6 +13,9 @@ def z3convert(consts,disjunctions):
 	for var in consts:
 		contents+= z3.constant(var,'(_ BitVec 1)')
 	
+	# creating assertions for fences present
+	for fence in fences_present:
+		contents+= z3.fact("=",fence,"#b1")
 	consts_len = len(consts)
 	bin_len = len(bin(consts_len)) - 1
 	fn_type = "(_ BitVec "+str(bin_len)+")"
@@ -26,5 +29,5 @@ def z3convert(consts,disjunctions):
 	contents += z3.fact("=",z3.conjunct(disjunctions),"#b1")
 	contents += z3.function("ext",["x (_ BitVec 1)"],fn_type,fn_def)
 	contents += z3.minimize(z3.operation("bvadd",consts_fn))
-	contents+="(check-sat)"
+	contents+="(check-sat)\n(get-model)"
 	file.write(contents)

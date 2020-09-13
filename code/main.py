@@ -12,55 +12,94 @@ import os
 import subprocess
 import shlex
 import time
+import sys
 
 from processing import Processing
 from z3run import z3run
 from insert import insert
 from translators.cds_checker.cds_checker import translate_cds
 
-z3_time = 0
-
 parser = argparse.ArgumentParser()
-parser.add_argument("--file", "-f", type=str, required=True)
+parser.add_argument("--file", "-f", type=str, required=True, 
+					help="Enter file path and name")
+parser.add_argument("--traces", "-t", type=int, required=False, dest="no_traces",
+					help="For a faster but less optimized output, enter an int value with this flag to check only this number of traces at once")
+parser.add_argument("--max-iter", "-m", type=int, required=False, dest="max_iter",
+					help="After entering traces, you can enter a maximum number of iterations as well to avoid going in an infinite loop for programs. You can only enter this after entering the number of traces")
 
 args = parser.parse_args()
-filename = args.file												# gets the input file name
 
-start = time.time()													# to calculate total tool time
-cds = translate_cds(filename)										# translates CDS Checker output & returns a structure containing the traces
-traces,cds_time,conver_time,buggy_execs = cds.get()
-# print("traces=",traces)
+if args.max_iter is not None and args.no_traces is None:
+	print("Please specify number of traces to be checked as well using flag -t")
+	sys.exit(0)
+elif args.no_traces == 0 or args.max_iter == 0:
+	print("Values cannot be 0")
+	sys.exit(0)
 
-if buggy_execs:
-	get_p = Processing(traces)
-	z3vars, disjunctions, loc_info, error_string, total_time = get_p.get()				# runs and returns locations
+filename = args.file											# gets the input file name
+no_traces = args.no_traces										# gets the input number of traces to be checked
+max_iter = args.max_iter										# gets the input maximum number of iterations
 
-	if not error_string:
-		req_locs, z3_time = z3run(z3vars, disjunctions)									# get output from z3 & get required locations
-		insert(req_locs,filename)									# insert fences into the source file at the required locations
+mc_total = 0
+z3_total = 0
+fences_added = 0
+total_iter = 0
 
-		print("Fences added:\t\t",len(req_locs))
-		# print("Fences added after lines:\t",req_locs)
+def fn_main(filename):
+	global mc_total
+	global z3_total
+	global fences_added
+	global total_iter
+
+	z3_time = 0
+
+	if max_iter and total_iter == max_iter:
+		return
 	
-	else:
-		print(error_string)
+	total_iter += 1
+	if no_traces:
+		print("\n\n=============== ITERATION",total_iter,"===============")
 
+	cds = translate_cds(filename)								# translates CDS Checker output & returns a structure containing the traces
+	traces, mc_time, no_buggy_execs = cds.get()
+
+	if no_buggy_execs:
+		no = no_traces if no_traces and no_traces < len(traces) else len(traces)
+		get_p = Processing(traces, no)
+		fences_present, fences_present_locs, z3vars, disjunctions, error_string = get_p.get()				# runs and returns locations
+
+		if error_string:
+			print(error_string)
+
+		else:
+			req_locs, z3_time = z3run(z3vars, disjunctions, fences_present)									# get output from z3 & get required locations
+			new_filename = insert(req_locs, filename, fences_present_locs)		# insert fences into the source file at the required locations
+
+			fences_added += len(req_locs)-len(fences_present)
+
+	mc_total += mc_time
+	z3_total += z3_time
+	if no_traces:
+		print("CDS Checker time:\t",round(mc_time, 2))
+		if no_buggy_execs and not error_string:
+			print("Z3 time:\t\t",round(z3_time, 2))
+			print("Fences added:\t\t",len(req_locs)-len(fences_present))
+
+	if no_traces and no_buggy_execs and not error_string:
+		fn_main(new_filename)
+
+	return
+
+start = time.time()
+fn_main(filename)
 end = time.time()
-tool_time = end-start
-
-print("CDS Checker time:\t",round(cds_time,2))
-if buggy_execs and not error_string:
-	print("Z3 time:\t\t",round(z3_time,2))
-print("Total time:\t\t",round(tool_time,2))
-print("Tool only time:\t\t",round(tool_time-z3_time-cds_time,2))
-
-if buggy_execs:
-	print("\n\n\n======= CALCULATIONS TIMES =======")
-	print("\t\t\tTotal\t\tAvg per trace")
-	print("Conversion time :\t",round(conver_time, 2),"\t\t",round(conver_time/buggy_execs, 2))
-	print("HB :\t\t\t",round(total_time[0], 2),"\t\t",round(total_time[0]/buggy_execs, 2))
-	print("MO :\t\t\t",round(total_time[1], 2),"\t\t",round(total_time[1]/buggy_execs, 2))
-	print("Fences :\t\t",round(total_time[2], 2),"\t\t",round(total_time[2]/buggy_execs, 2))
-	print("SB :\t\t\t",round(total_time[3], 2),"\t\t",round(total_time[3]/buggy_execs, 2))
-	print("TO :\t\t\t",round(total_time[4], 2),"\t\t",round(total_time[4]/buggy_execs, 2))
-	print("Cycles :\t\t",round(total_time[5], 2),"\t\t",round(total_time[5]/buggy_execs, 2))
+print("\n\n===========================================")
+print("Total fences added:\t",fences_added)
+print("Total CDS time taken:\t",round(mc_total, 2))
+if z3_total > 0:
+	print("Total Z3 time taken:\t",round(z3_total, 2))
+print("Total time taken:\t",round(end-start, 2))
+print("Tool only time taken:\t",round(end-start-mc_total-z3_total, 2))
+if no_traces:
+	print("Total iterations:\t",total_iter)
+	print("Avg time per iteration:\t",round((end-start)/total_iter, 2))

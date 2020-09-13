@@ -1,25 +1,22 @@
 from operator import itemgetter
 
-class insert:
-	def __init__(self,loc,filename):
-		self.loc = loc
-		self.filename = filename
+def insert(loc, filename, fences_present_locs):
+	with open(filename) as f:
+		lines = f.readlines()
+	
+	if "_fence.cc" in filename:
+		filename_new = filename
+	else:
+		filename_new = filename[:-3]+'_fence.cc'
 
-		self.insert_fences()
+	output_file = open(filename_new,'w')
+	fence_instr = 'atomic_thread_fence(memory_order_seq_cst);\n'
 
-	def insert_fences(self):
+	for i in loc:
+		if i not in fences_present_locs:
+			lines[i-1] += fence_instr
 
-		with open(self.filename) as f:
-			lines = f.readlines()
+	for w in lines:
+		output_file.writelines(w)
 
-		self.filename = self.filename[:-3]
-		filename_new = self.filename+'_fence.cc'
-		temp = open(filename_new,'w')
-		fence_instr = 'atomic_thread_fence(memory_order_seq_cst);\n'
-
-		for i in self.loc:
-			l = int(i)
-			lines[l-1] += fence_instr
-
-		for w in lines:
-			temp.writelines(w)
+	return filename_new

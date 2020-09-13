@@ -9,15 +9,11 @@ import time
 from z3convert import z3convert
 from constants import *
 
-def z3run(z3vars, disjunctions):
-
-	z3convert(z3vars, disjunctions)										# create the z3 file based on the cycles
+def z3run(z3vars, disjunctions, fences_present):
+	z3convert(z3vars, disjunctions, fences_present)										# create the z3 file based on the cycles
 
 	z3_cmd = "z3 "+ Z3_FILE
 	z3_run = shlex.split(z3_cmd)										# run z3 file
-
-	with open(Z3_FILE,'a') as f:
-		f.write("\n(get-model)")
 
 	z3_start = time.time()
 	output = subprocess.check_output(z3_run,
@@ -41,7 +37,7 @@ def z3run(z3vars, disjunctions):
 				val = output[i+1][6]									# variable's value (0 or 1)
 
 				if val == '1':											# if value is one, the location is a required location
-					req_locs.append(var[1:])
+					req_locs.append(int(var[1:]))
 
 		if line == '(model ':
 			in_model += 1												# model is starting now
