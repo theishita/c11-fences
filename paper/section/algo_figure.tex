@@ -1,0 +1,30 @@
+\begin{algorithm}
+\caption{Our algorithm}
+\begin{algorithmic}[1]
+
+\Procedure{}{input\_file}
+    \State traces = model\_checker(input\_file)
+    \For{each trace}
+    	\State hb = find\_hb()
+		\State mo = find\_mo(hb)
+		\State updated\_trace = add\_pseudo\_fences()
+		\State sb = find\_sb(updated\_trace)
+		\State to = find\_to(updated\_trace)
+		\State to += sb
+		\State cycles = find\_cycles()
+    	\If{cycles} \Comment{if cycles are formed}
+        	\State z3\_variables = find\_fence\_locations()
+	        \State translate\_cycles\_to\_z3(z3\_variables)
+        \Else
+    	    \State ``This behaviour cannot be stopped using SC fences''
+			\State exit()
+        \EndIf
+    \EndFor
+    
+    \State create\_z3\_file()
+	\State fences\_required = run\_z3\_file()
+	\State insert\_into\_input\_file(fences\_required)
+\EndProcedure
+
+\end{algorithmic}
+\end{algorithm}

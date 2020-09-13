@@ -8,17 +8,17 @@ using namespace std;
 atomic<int> var_y;
 atomic<int> var_x;
 
-static void t0(void *arg){
+static void t0(void *arg) {
   var_x.store(1, memory_order_release);
   var_y.store(2, memory_order_release);
 }
 
-static void t1(void *arg){
+static void t1(void *arg) {
   var_y.store(1, memory_order_release);
   var_x.store(2, memory_order_release);
 }
 
-int user_main(int argc, char **argv){
+int user_main(int argc, char **argv) {
   thrd_t thr0;
   thrd_t thr1;
 

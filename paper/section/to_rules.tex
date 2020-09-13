@@ -11,7 +11,7 @@
 \begin{enumerate}
 \setcounter{enumi}{-1}
 \item
-	For a given variable, if there is a read from relation between a read and a write instruction, then the SC instructions above the write are in TO with the SC instructions below the read.\\
+	For a given variable, if there is a \textit{read-from} relation between a read and a write instruction, then all SC fences \textit{sequenced-before} the write instruction are in TO with the all SC fences \textit{sequenced-after} the read instruction.\\
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
     \node[punkt] (x) {X:$F_{sc}$};
     \node[punkt,below=of x] (a) {A:$Wx$}
@@ -26,18 +26,18 @@
 \item
 	\begin{enumerate}[a.]
 	\item
-		For a given variable, for an SC read instruction reading from an SC write instruction, there is a TO relation between the read and the write instructions.\\
+		For a given variable, for an SC read instruction \textit{B} reading from an SC write instruction \textit{A}, there is a TO relation between the read and the write instructions.\\
 		\rf{A:$W_{sc}$}{B:$R_{sc}$}\\
 		\too{A}{B}
 	
 	\item
-		For a given variable,, for an SC read instruction reading from a write instruction \textit{M}, the read instruction is in TO with all SC write instruction which happen after \textit{M}.\\
+		For a given variable, for an SC read instruction \textit{B} reading from a write instruction \textit{M}, the read instruction is in TO with all SC write instruction which \textit{happen-after} \textit{M}.\\
 		A:$W_{sc}x$, M:$Wx$, B:$R_{sc}x$\\
 		\hb{M}{A} $\land$ \rf{M}{B} $\implies$ \too{B}{A}
 	\end{enumerate}
 
 \item
-	For a given variable, all SC instructions above a read instruction reading from a write instruction \textit{$M_1$} are in TO with all SC write instruction modifying the variable after \textit{$M_1$}.
+	For a given variable, all fences \textit{sequenced-before} a read instruction \textit{B} reading from a write instruction \textit{$M_1$} are in TO with all SC write instruction modifying the variable after \textit{$M_1$}.\\
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
 	\node[punkt](x) {X:$F_{sc}$};
 	\node[punkt, below=of x](b) {B:$Rx$}
@@ -50,6 +50,7 @@
   	\too{X}{M$_2$}
  
 \item
+	For a given variable, if a read instruction \textit{B} \textit{reads-from} a write instruction \textit{M}, and \textit{M} has \textit{modification-order} relations with write instruction \textit{A}, then all the SC fences \textit{sequenced-after} \textit{A} are in TO with all the SC fences \textit{sequenced-before} \textit{B}.\\
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
 	\node[punkt](a) {A:$Wx$};
 	\node[punkt, below=of a](x) {X:$F_{sc}$}
@@ -62,6 +63,7 @@
 	\rf{M}{B} $\land$ \mo{M}{A} $\implies$ \too{Y}{X}
 
 \item
+	Given two write instructions \textit{A} and \textit{B} for some variable, if there is a \textit{modification-order} relation between the two, TO relations will be formed.\\
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
 	\node[punkt](a) {A:$Wx$};
 	\node[punkt, below=of a](x) {X:$F_{sc}$}

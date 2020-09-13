@@ -1,4 +1,7 @@
 % --------- INTRO PART -------------
+We have developed a novel solution to the fence-synthesis problem. We make use of the C11 semantics to create relations between the instructions and exploit the properties of these relations. We make use properties of Total Order relations and introduce ``cycles'' in the program to achieve our goal. We also achieve optimal results through a special process using propositional logic and SMT/SAT Solver Z3.
+\ishComment{^^ rewrite}
+
 The tool first begins by running the input program through a C11 model checker or verification tool. This tool runs all possible executions of the program and gives a list of buggy traces as output. A buggy trace here means an execution run where an assertion was violated in the program. The model checker provides the exact order of instructions, which when executed in the order can cause the program to stop mid-way by running into an assertion and not being able to satisfy it. The verification tool also provides the meta data for each instruction, such as read-from values or memory orders.
 
 In the program described in Fig \ref{fig:dekker2}, inserting an SC fence between the instructions (1) and (2), and an SC fence between (5) and (6) render the program to be sequentially consistent, thereby satisfying the given assertions. After adding these fences, the program will never have a case where the output can be anything other than ``10''.
@@ -40,7 +43,7 @@ CDS Checker provides all the buggy traces to our tool. Each trace is then taken 
 The basis of our approach lies upon finding relations between the instructions and figuring out how they affect the program in order to reduce the total fences to a minimum. For example, in Fig \ref{fig:dekker2}, if the assert statement is violated, this means that instructions (2) and (4) are reading from the initialized value and not the updated values, forming an rf (reads-from) relation.
 
 \par
-The next step after inserting pseudo fences is finding relations between instructions, including fences. These relations will help in figuring out which fences to eliminate from the trace. In particular, we are concerned with the TO (Total Order) relations between all SC instructions and fences. Rules for TO relations for the C11 model are described in the official standard \textit{\color{pink}cite here}. These rules are dependent upon a number of different relations which would have to be computed first, and an order is followed for the same.
+The next step after inserting pseudo fences is finding relations between instructions, including fences. These relations will help in figuring out which fences to eliminate from the trace. In particular, we are concerned with the TO (Total Order) relations between all SC instructions and fences. Rules for TO relations for the C11 model are described in the official standard \ishComment{cite here}. These rules are dependent upon a number of different relations which would have to be computed first, and an order is followed for the same.
 
 % --------------- HB -----------------
 \subsubsection{Finding HB relations}
@@ -64,7 +67,7 @@ RMW operations are considered as both reads and writes in this case.
 \par
 These relations, since there are many, are stored as boolean values in an adjacency table, as opposed to the "list of tuples" format used for all other relations in the tool. The adjacency table is indexed based on the instruction number as given by CDS Checker. An example can be seen in Fig \ref{fig:cds_hb}. The 0 index is left out as empty and filled with 0's, while a 1 for row 3 column 4 would mean \hb{3}{4}.
 
-% --------------- FIG 4 --------------
+% --------------- FIG --------------
 %\begin{figure}
 %\begin{center}
 %	\input{section/hb_instr_example.tex}
@@ -104,6 +107,7 @@ After this step, the pseudo fences are inserted.
 \subsubsection{Finding TO relations between SC instructions}\label{to_rel}
 The final step in finding relations and the main step that is required for fence elimination is to find TO relations. The rules for TO relations in the C11 standard are defined in \ishComment{insert C11 std ref}. These rules can be interpreted as the following:
 \input{section/to_rules.tex}
+\textit{Note: ``the fence above instruction A'' is a comprehensive term for all the fences which are above instruction A.}
 
 % --------------- SOLN EXPLAINED -------------
 \subsection{Eliminating Fences}
@@ -123,9 +127,10 @@ This property of TO can be exploited to minimize the fences. According to the C/
 \end{center}
 \end{figure}
 
-\subsubsection{why transitive edges aren't considered}
-The relations which are considered to form the final graph are - all SB edges between SC instructions including transitive SB edges, and directly formed TO edges but not transitively formed TO edges. That is, all SB edges are taken into consideration whether immediate or not, and only those edges formed via the TO rules discussed in section \ref{to_rel} are considered while forming a graph. This is because transitively formed TO relations will be of no use in our case. If there is a transitive TO relation formed between two instructions, then this relation has been caused by fences introduced in the program. Therefore, for this transitive relation, we need not consider the two nodes participating in the transitive edge, instead we need to consider the original nodes which caused this transitive relation to form in the first place. By excluding the original edges, the transitive edges we need will never actually be formed.
-\ishComment{edges/relations - change notation for better understanding}
+\subsubsection{why transitive TO edges aren't considered}
+The relations which are considered to form the final graph are - all SB edges between only SC instructions including transitive SB edges, and directly formed TO edges but not transitively formed TO edges. That is, all SB edges are taken into consideration whether immediate or not, and only those edges formed via the TO rules discussed in section \ref{to_rel} are considered while forming a graph. This is because transitively formed TO relations will be of no use in our case. If there is a transitive TO relation formed between two instructions, then this relation has been caused by fences introduced in the program. Therefore, for this transitive relation, we need not consider the two nodes participating in the transitive edge, instead we need to consider the original nodes which caused this transitive relation to form in the first place. Transitive edges are formed through transitive relations which will hide the originally formed TO relations. But by excluding the original edges, the transitive edges we need will never actually be formed.
+
+
 
 \par
 So even if transitive TO relations are considered as graph edges, they would not be directly used to obtain our final solution. For each transitively formed edge, all original edges which would have possibly caused the transitive edge would be needed to be kept track of. Therefore, using just the original edges serves our purpose in a much more efficient manner.
@@ -187,3 +192,4 @@ Fig \ref{fig:fence_form} can be looked at as a cost function to minimize the cos
 \par
 Implementing such a propostional formula for programs with more than 50 execution traces, with each of them having uncountable fences would be quite an overhead. An SMT/SAT Solver is used for this purpose. Z3 SAT Solver is implemented in our tool. A formula similar to the one in Fig \ref{fig:fence_form} is created for each program and the minimum cost with the maximum satisfying solution is computed. 
 
+\input{section/algo_figure.tex}
