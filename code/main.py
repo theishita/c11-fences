@@ -80,9 +80,9 @@ def fn_main(filename):
 	mc_total += mc_time
 	z3_total += z3_time
 	if no_traces:
-		print("CDS Checker time:\t",round(mc_time, 2))
+		print("Time- CDS Checker:\t",round(mc_time, 2))
 		if no_buggy_execs and not error_string:
-			print("Z3 time:\t\t",round(z3_time, 2))
+			print("Time- Z3:\t\t",round(z3_time, 2))
 			print("Fences added:\t\t",len(req_locs)-len(fences_present))
 
 	if no_traces and no_buggy_execs and not error_string:
@@ -93,13 +93,13 @@ def fn_main(filename):
 start = time.time()
 fn_main(filename)
 end = time.time()
-print("\n\n===========================================")
+print("\n\n================= OVERALL =================")
 print("Total fences added:\t",fences_added)
-print("Total CDS time taken:\t",round(mc_total, 2))
+print("Time- CDS Checker:\t",round(mc_total, 2))
 if z3_total > 0:
-	print("Total Z3 time taken:\t",round(z3_total, 2))
-print("Total time taken:\t",round(end-start, 2))
-print("Tool only time taken:\t",round(end-start-mc_total-z3_total, 2))
+	print("Time- Z3:\t\t",round(z3_total, 2))
+print("\nTime- Total:\t\t",round(end-start, 2))
+print("Time- Tool only:\t",round(end-start-mc_total-z3_total, 2))
 if no_traces:
-	print("Total iterations:\t",total_iter)
-	print("Avg time per iteration:\t",round((end-start)/total_iter, 2))
+	print("\nTotal iterations:\t",total_iter)
+	print("Time- avg per iter:\t",round((end-start)/total_iter, 2))

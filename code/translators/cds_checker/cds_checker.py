@@ -14,6 +14,7 @@ from .map_var import map_var
 from .create_list import create_list
 from .separate_by_thread import separate_by_thread
 from .find_line_no import find_line_no
+from constants import *
 
 class translate_cds:
 	def __init__(self,filename):
@@ -22,8 +23,8 @@ class translate_cds:
 		self.traces = []												# list of processed traces
 		self.no_buggy_execs = 0											# number of buggy executions for this run
 
-		copy = 'cp '+filename+' ../model-checker/test'
-		make = 'cd ../model-checker && make'
+		copy = "cp " + filename + " " + CDS_TEST_FOLDER
+		make = "cd "+ CDS_FOLDER + " && make"
 
 		os.system(copy)													# copy input file to cds checker directory
 		os.system(make)													# make/compile into object file for CDS Checker
@@ -37,7 +38,7 @@ class translate_cds:
 
 		cds_start = time.time()
 		p = subprocess.check_output(cds,
-									cwd="../model-checker",
+									cwd = CDS_FOLDER,
 									stderr=subprocess.PIPE)				# get std output from CDS Checker
 		cds_end = time.time()
 		p = p.decode('utf-8')											# convert to string
