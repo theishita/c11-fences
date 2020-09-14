@@ -1,4 +1,4 @@
-# Byte-compiled / optimized / DLL files
+# Byte-compiled / optimized / DLL / LaTeX files
 __pycache__/
 *.py[cod]
 .vscode/
@@ -16,5 +16,6 @@ compute_fences
 
 # testing files
 *_fence.cc
+*_fence.o
 *test*
 *new*

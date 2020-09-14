@@ -26,18 +26,17 @@ class translate_cds:
 		copy = "cp " + filename + " " + CDS_TEST_FOLDER
 		make = "cd "+ CDS_FOLDER + " && make"
 
-		os.system(copy)													# copy input file to cds checker directory
-		os.system(make)													# make/compile into object file for CDS Checker
-
 		input_file = filename.split('/')
 		input_file = input_file[-1]
 
 		input_file = "test/"+input_file[:-2]+'o'
-		cds = './run.sh '+input_file									# cmd to run cds checker
-		cds = shlex.split(cds)
+		cds_cmd = './run.sh '+input_file								# cmd to run cds checker
+		cds_cmd = shlex.split(cds_cmd)
 
+		os.system(copy)													# copy input file to cds checker directory
 		cds_start = time.time()
-		p = subprocess.check_output(cds,
+		os.system(make)													# make/compile into object file for CDS Checker
+		p = subprocess.check_output(cds_cmd,
 									cwd = CDS_FOLDER,
 									stderr=subprocess.PIPE)				# get std output from CDS Checker
 		cds_end = time.time()
