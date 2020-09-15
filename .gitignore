@@ -19,3 +19,18 @@ compute_fences
 *_fence.o
 *test*
 *new*
+
+# model checker files:
+# cds checker
+model-checker/cds-checker/*.o
+model-checker/cds-checker/*.swp
+model-checker/cds-checker/*.swo
+model-checker/cds-checker/*.so
+model-checker/cds-checker/*~
+model-checker/cds-checker/*.dot
+model-checker/cds-checker/.*.d
+model-checker/cds-checker/*.pdf
+model-checker/cds-checker/tags
+model-checker/cds-checker/doc/docs
+model-checker/cds-checker/benchmarks
+model-checker/cds-checker/README.html

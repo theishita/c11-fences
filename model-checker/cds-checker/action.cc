@@ -53,6 +53,29 @@ ModelAction::ModelAction(action_type_t type, memory_order order, void *loc,
 	this->tid = t->get_id();
 }
 
+ModelAction::ModelAction(int line_no, action_type_t type, memory_order order, void *loc,
+		uint64_t value, Thread *thread) :
+	type(type),
+	order(order),
+	original_order(order),
+	location(loc),
+	value(value),
+	reads_from(NULL),
+	line_no(line_no),
+	reads_from_promise(NULL),
+	last_fence_release(NULL),
+	node(NULL),
+	seq_number(ACTION_INITIAL_CLOCK),
+	cv(NULL),
+	sleep_flag(false)
+{
+	/* References to NULL atomic variables can end up here */
+	ASSERT(loc || type == ATOMIC_FENCE || type == MODEL_FIXUP_RELSEQ);
+
+	Thread *t = thread ? thread : thread_current();
+	this->tid = t->get_id();
+}
+
 /** @brief ModelAction destructor */
 ModelAction::~ModelAction()
 {
@@ -545,10 +568,10 @@ const char * ModelAction::get_type_str() const
 		case ATOMIC_READ: return "atomic read";
 		case ATOMIC_WRITE: return "atomic write";
 		case ATOMIC_RMW: return "atomic rmw";
-		case ATOMIC_FENCE: return "fence";
-		case ATOMIC_RMWR: return "atomic rmwr";
-		case ATOMIC_RMWC: return "atomic rmwc";
-		case ATOMIC_INIT: return "init atomic";
+		case ATOMIC_FENCE: return "atomic fence";
+		case ATOMIC_RMWR: return "atomic rmw";
+		case ATOMIC_RMWC: return "atomic rmw";
+		case ATOMIC_INIT: return "atomic init";
 		case ATOMIC_LOCK: return "lock";
 		case ATOMIC_UNLOCK: return "unlock";
 		case ATOMIC_TRYLOCK: return "trylock";
@@ -576,6 +599,7 @@ const char * ModelAction::get_mo_str() const
 void ModelAction::print() const
 {
 	const char *type_str = get_type_str(), *mo_str = get_mo_str();
+	int line_no = get_line_no();
 
 	model_print("%-4d %-2d   %-13s   %7s  %14p   %-#18" PRIx64,
 			seq_number, id_to_int(tid), type_str, mo_str, location, get_return_value());
@@ -590,7 +614,10 @@ void ModelAction::print() const
 				model_print("  P? ");
 		} else
 			model_print("  ?  ");
+		model_print("  %d",line_no);
 	}
+	else if (line_no)
+		model_print("       %d",line_no);
 	if (cv) {
 		if (is_read())
 			model_print(" ");
