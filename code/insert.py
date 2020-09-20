@@ -1,16 +1,18 @@
 from operator import itemgetter
+from constants import *
 
 def insert(loc, filename, fences_present_locs):
 	with open(filename) as f:
 		lines = f.readlines()
 	
-	if "_fence.cc" in filename:
+	if OUTPUT_FILE_APPEND_STRING in filename:
 		filename_new = filename
 	else:
-		filename_new = filename[:-3]+'_fence.cc'
+		extension_length = -1*len(FILE_EXTENSION)
+		filename_new = filename[:extension_length]+OUTPUT_FILE_APPEND_STRING
 
 	output_file = open(filename_new,'w')
-	fence_instr = 'atomic_thread_fence(memory_order_seq_cst);\n'
+	fence_instr = FENCE_INSTRUCTION+'\n'
 
 	for i in loc:
 		if i not in fences_present_locs:

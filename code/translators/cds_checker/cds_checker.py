@@ -10,10 +10,7 @@ import time
 import sys
 from operator import itemgetter
 
-from .map_var import map_var
 from .create_list import create_list
-from .separate_by_thread import separate_by_thread
-from .find_line_no import find_line_no
 from constants import *
 
 class translate_cds:
@@ -23,8 +20,8 @@ class translate_cds:
 		self.traces = []												# list of processed traces
 		self.no_buggy_execs = 0											# number of buggy executions for this run
 
-		copy = "cp " + filename + " " + CDS_TEST_FOLDER
-		make = "cd "+ CDS_FOLDER + " && make"
+		copy = "cp " + filename + " " + CDS_TEST_FOLDER_PATH
+		make = "cd "+ CDS_FOLDER_PATH + " && make"
 
 		input_file = filename.split('/')
 		input_file = input_file[-1]
@@ -37,7 +34,7 @@ class translate_cds:
 		cds_start = time.time()
 		os.system(make)													# make/compile into object file for CDS Checker
 		p = subprocess.check_output(cds_cmd,
-									cwd = CDS_FOLDER,
+									cwd = CDS_FOLDER_PATH,
 									stderr=subprocess.PIPE)				# get std output from CDS Checker
 		cds_end = time.time()
 		p = p.decode('utf-8')											# convert to string
@@ -81,28 +78,15 @@ class translate_cds:
 	def create_structure(self,filename):
 
 		# map the variable names from the source code to the memory address used by the variable as shown in the traces
-		get_var = map_var(self.traces_raw[0],filename)
-		file_vars,trace_locs = get_var.get()
-
-		threads_separated = separate_by_thread(filename)
-
-		trace_no = 1
 		for trace in self.traces_raw:
 			execution = []
 			for instr in trace:
-				line = create_list(trace_no,instr,file_vars,trace_locs)
+				line = create_list(instr)
 				execution.append(line)
 			execution.sort(key = lambda x:x[1])							# sorts the list of instructions by the thread number
 			# IDEA: using key function is faster since it is called exactly once for each input record
 
-			for i in range(1,len(execution)):
-				line_no = find_line_no(threads_separated,execution[i],execution[i-1])
-				execution[i].append(line_no)
-				# print(execution[i])
-
-			trace_no += 1
-
 			self.traces.append(execution)
 
-		# for i in self.traces[0]:
+		# for i in self.traces[S_NO]:
 		# 	print(i)

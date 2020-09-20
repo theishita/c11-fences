@@ -14,10 +14,12 @@ import shlex
 import time
 import sys
 
+from constants import output_colours as oc
 from processing import Processing
 from z3run import z3run
 from insert import insert
 from translators.cds_checker.cds_checker import translate_cds
+from translators.cds_checker.delete_generated_file import delete_generated_file
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--file", "-f", type=str, required=True, 
@@ -28,28 +30,32 @@ parser.add_argument("--max-iter", "-m", type=int, required=False, dest="max_iter
 					help="After entering traces, you can enter a maximum number of iterations as well to avoid going in an infinite loop for programs. You can only enter this after entering the number of traces")
 
 args = parser.parse_args()
-
-if args.max_iter is not None and args.no_traces is None:
-	print("Please specify number of traces to be checked as well using flag -t")
-	sys.exit(0)
-elif args.no_traces == 0 or args.max_iter == 0:
-	print("Values cannot be 0")
-	sys.exit(0)
-
 filename = args.file											# gets the input file name
 no_traces = args.no_traces										# gets the input number of traces to be checked
 max_iter = args.max_iter										# gets the input maximum number of iterations
+
+if not os.path.exists(filename):
+	print(oc.BOLD + oc.FAIL + "\nFile does not exist at provided location.\nPlease check the input file path.\n" + oc.ENDC)
+	sys.exit(0)
+if max_iter is not None and no_traces is None:
+	print(oc.BOLD + oc.FAIL + "\nPlease specify number of traces to be checked as well using flag -t.\n" + oc.ENDC)
+	sys.exit(0)
+elif no_traces == 0 or max_iter == 0:
+	print(oc.BOLD + oc.FAIL + "\nFlag values cannot be 0.\n" + oc.ENDC)
+	sys.exit(0)
 
 mc_total = 0
 z3_total = 0
 fences_added = 0
 total_iter = 0
+error_string = ""
 
 def fn_main(filename):
 	global mc_total
 	global z3_total
 	global fences_added
 	global total_iter
+	global error_string
 
 	z3_time = 0
 
@@ -58,7 +64,7 @@ def fn_main(filename):
 	
 	total_iter += 1
 	if no_traces:
-		print("\n\n=============== ITERATION",total_iter,"===============")
+		print(oc.HEADER + oc.BOLD + "\n\n=============== ITERATION",total_iter,"===============" + oc.ENDC)
 
 	cds = translate_cds(filename)								# translates CDS Checker output & returns a structure containing the traces
 	traces, mc_time, no_buggy_execs = cds.get()
@@ -69,7 +75,8 @@ def fn_main(filename):
 		fences_present, fences_present_locs, z3vars, disjunctions, error_string = get_p.get()				# runs and returns locations
 
 		if error_string:
-			print(error_string)
+			print(oc.WARNING + error_string + oc.ENDC)
+			delete_generated_file(filename)
 
 		else:
 			req_locs, z3_time = z3run(z3vars, disjunctions, fences_present)									# get output from z3 & get required locations
@@ -93,8 +100,9 @@ def fn_main(filename):
 start = time.time()
 fn_main(filename)
 end = time.time()
-print("\n\n================= OVERALL =================")
-print("Total fences added:\t",fences_added)
+print(oc.OKBLUE + oc.BOLD + "\n\n================= OVERALL =================" + oc.ENDC)
+if not error_string:
+	print(oc.OKGREEN, oc.BOLD, "Total fences added: \t", fences_added, oc.ENDC)
 print("Time- CDS Checker:\t",round(mc_total, 2))
 if z3_total > 0:
 	print("Time- Z3:\t\t",round(z3_total, 2))

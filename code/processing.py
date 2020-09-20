@@ -41,7 +41,7 @@ class Processing:
 			self.cycles = []                                            # list of all cycles between the fences and events
 			self.loc_info = {}                                          # information regarding the required fence locations
 
-			# trace_no += 1
+			trace_no += 1
 			# print("---------Trace",trace_no,"---------")
 
 			# HB
@@ -75,18 +75,25 @@ class Processing:
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]
 			# print("unique_fences=",unique_fences)
-
+			conver_cycs = []
 			if len(unique_fences)>0:
 				for fence in unique_fences:
 					i = order.index(fence)
 					fence_name = order[i]
-					var_name = 'l'+str(order[i-1][8])
+					var_name = 'l'+str(order[i-1][LINE_NO])
 					self.loc_info[fence_name] = var_name
 					
 					# check for the fences already present in input prgm and replace them with these variables
 					if (fence in self.fences_in_trace) and (var_name not in self.fences_present):
 						self.fences_present.append(var_name)
-						self.fences_present_locs.append(order[i-1][8])
+						self.fences_present_locs.append(order[i-1][LINE_NO])
+			
+				# for cyc in cycles:
+				# 	x = []
+				# 	for c in cyc:
+				# 		x.append(self.loc_info[c])
+				# 	conver_cycs.append(x)
+				# print("cycles =",conver_cycs)
 
 				get_translation = z3translate(cycles, self.loc_info)
 				consts, translation = get_translation.get()
@@ -97,7 +104,7 @@ class Processing:
 				self.disjunctions.append(translation)
 
 			else:
-				self.error_string = "\nNo TO cycles can be formed for trace "+str(trace_no +1)+"\nHence this behaviour cannot be stopped using SC fences\n"
+				self.error_string = "\nNo TO cycles can be formed for trace "+str(trace_no)+"\nHence this behaviour cannot be stopped using SC fences\n"
 				return
 
 	def fence(self, trace):
@@ -109,7 +116,7 @@ class Processing:
 		fence_no = 2
 
 		for i in range(len(trace)):
-			if trace[i][1] != current_thread:
+			if trace[i][T_NO] != current_thread:
 				self.all_sc_events_thread.append(sc_events)
 				self.fences_thread.append(fences_in_thread)
 
@@ -123,10 +130,10 @@ class Processing:
 				sc_events.append(fence_name)
 				fences_in_thread.append(fence_name)
 
-			if not trace[i][2] == FENCE:
+			if not trace[i][TYPE] == FENCE:
 				order.append(trace[i])
-				if trace[i][3] == SEQ_CST:
-					sc_events.append(trace[i][0])
+				if trace[i][MO] == SEQ_CST:
+					sc_events.append(trace[i][S_NO])
 			else:
 				self.fences_in_trace.append(fence_name)
 				if i == (len(trace)-1):

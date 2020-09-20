@@ -3,6 +3,7 @@
 # --------------------------------------------------------
 
 from graph import Graph
+from constants import *
 
 class mo:
 
@@ -29,38 +30,38 @@ class mo:
 
 	def preprocessing(self, trace):
 		for t in trace:
-			if t[2] == "write" or t[2] == "init" or t[2] == "rmw":
+			if t[TYPE] == WRITE or t[TYPE] == INIT or t[TYPE] == RMW:
 				self.writes.append(t)
-			if t[2] == "read" or t[2] == "rmw":
+			if t[TYPE] == READ or t[TYPE] == RMW:
 				self.reads.append(t)
 	
 	def rule1(self):
 		for a in self.writes:
 			for b in self.writes:
-				if a[4] == b[4] and self.mat.containsEdge(a[0],b[0]):		# checking if variable operated upon is same and if there is hb
-					self.mo_edges.append((a[0],b[0]))
+				if a[ADDR] == b[ADDR] and self.mat.containsEdge(a[S_NO],b[S_NO]):		# checking if variable operated upon is same and if there is hb
+					self.mo_edges.append((a[S_NO],b[S_NO]))
 	
 	def rule2(self):
 		for a in self.reads:
-			x = a[6]
+			x = a[RF]
 			for b in self.reads:
-				if a[4] == b[4] and b[6] != x and self.mat.containsEdge(a[0],b[0]): 	# checking if variable operated upon is same and if there is hb
-					y = b[6]
+				if a[ADDR] == b[ADDR] and b[RF] != x and self.mat.containsEdge(a[S_NO],b[S_NO]): 	# checking if variable operated upon is same and if there is hb
+					y = b[RF]
 					self.mo_edges.append((x,y))
 
 	def rule3(self):
 		for a in self.reads:
-			x = a[6]
+			x = a[RF]
 			for b in self.writes:
-				if b[4] == a[4] and self.mat.containsEdge(a[0],b[0]): 		# checking if variable operated upon is same and if there is hb
-					self.mo_edges.append((x,b[0]))
+				if b[ADDR] == a[ADDR] and self.mat.containsEdge(a[S_NO],b[S_NO]): 		# checking if variable operated upon is same and if there is hb
+					self.mo_edges.append((x,b[S_NO]))
 	
 	def rule4(self):
 		for x in self.writes:
 			for b in self.reads:
-				if x[4] == b[4] and self.mat.containsEdge(x[0],b[0]) and b[6] != x[0]:
-					y = b[6]
-					self.mo_edges.append((x[0],y))
+				if x[ADDR] == b[ADDR] and self.mat.containsEdge(x[S_NO],b[S_NO]) and b[RF] != x[S_NO]:
+					y = b[RF]
+					self.mo_edges.append((x[S_NO],y))
 
 	# unused
 	# to get all the transitive mo relations as well

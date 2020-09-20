@@ -34,11 +34,11 @@ class to:
 	
 	def preprocessing(self, order):
 		for i in range(len(order)):
-			if order[i][2] == WRITE or order[i][2] == RMW or order[i][2] == INIT: # TODO: is init to be included here as well???
+			if order[i][TYPE] == WRITE or order[i][TYPE] == RMW or order[i][TYPE] == INIT: # TODO: is init to be included here as well???
 				self.writes.append(order[i-1])
 				self.writes.append(order[i])
 				self.writes.append(order[i+1])
-			if order[i][2] == READ or order[i][2] == RMW:
+			if order[i][TYPE] == READ or order[i][TYPE] == RMW:
 				self.reads.append(order[i-1])
 				self.reads.append(order[i])
 				self.reads.append(order[i+1])
@@ -47,14 +47,16 @@ class to:
 		for b in range(len(self.reads)):
 			if type(self.reads[b]) is list:
 				y = self.reads[b+1]
-				a = next(i for i,v in enumerate(self.writes) 
-							if type(v) is list and v[0] == self.reads[b][6]) 	# the write which send the rf value to b
+				try: a = next(i for i,v in enumerate(self.writes) 
+								if type(v) is list and v[S_NO] == self.reads[b][RF]) 	# the write which send the rf value to b
+				except: continue
+
 				x = self.writes[a-1]
 				# self.to_edges.append((x,y))
 				
 				# adding relations for fences above A and fences below B
-				x_thread = self.writes[a][1] -1
-				y_thread = self.reads[b][1] -1
+				x_thread = self.writes[a][T_NO] -1
+				y_thread = self.reads[b][T_NO] -1
 				x_index = self.fences_thread[x_thread].index(x)
 				y_index = self.fences_thread[y_thread].index(y)
 
@@ -64,58 +66,63 @@ class to:
 	
 	def rule1(self):
 		for b in self.reads:
-			if type(b) is list and b[3] == SEQ_CST:
-				a = next(i for i,v in enumerate(self.writes)
-							if type(v) is list and v[0] == b[6])
-				
+			if type(b) is list and b[MO] == SEQ_CST:
+				try: a = next(i for i,v in enumerate(self.writes)
+								if type(v) is list and v[S_NO] == b[RF])
+				except: continue
+
 				# rule 1a
-				if self.writes[a][3] == SEQ_CST:
-					self.to_edges.append((self.writes[a][0],b[0]))
+				if self.writes[a][MO] == SEQ_CST:
+					self.to_edges.append((self.writes[a][S_NO],b[S_NO]))
 				# rule 1b
 				for m in self.mo_edges:
-					if m[0] == self.writes[a][0]:
-						m1 = next(i for i,v in enumerate(self.writes)
-								if type(v) is list and v[0] == m[1])
-						if self.writes[m1][3] == SEQ_CST:
-							self.to_edges.append((b[0],self.writes[m1][0]))
+					if m[0] == self.writes[a][S_NO]:
+						try: m1 = next(i for i,v in enumerate(self.writes)
+								if type(v) is list and v[S_NO] == m[1])
+						except: continue
+
+						if self.writes[m1][MO] == SEQ_CST:
+							self.to_edges.append((b[S_NO],self.writes[m1][S_NO]))
 	
 	def rule2(self):
 		for m in self.mo_edges:
-			m2 = next(i for i,v in enumerate(self.writes) 
-						if type(v) is list and v[0] == m[1])
-			if self.writes[m2][3] == SEQ_CST:
-				try:
-					b = next(i for i,v in enumerate(self.reads) 
-							if type(v) is list and v[6] == m[0])
-					x = self.reads[b-1]
-					# self.to_edges.append((x, self.writes[m2][0]))
-					m2_no = self.writes[m2][0]
+			try: m2 = next(i for i,v in enumerate(self.writes) 
+						if type(v) is list and v[S_NO] == m[1])
+			except: continue
 
-					# adding relations for fences above B
-					x_thread = self.reads[b][1] -1
-					x_index = self.fences_thread[x_thread].index(x)
+			if self.writes[m2][MO] == SEQ_CST:
+				try: b = next(i for i,v in enumerate(self.reads) 
+							if type(v) is list and v[RF] == m[0])
+				except: continue
 
-					for i in range(0, x_index+1):
-						self.to_edges.append((self.fences_thread[x_thread][i], m2_no))
+				x = self.reads[b-1]
+				# self.to_edges.append((x, self.writes[m2][S_NO]))
+				m2_no = self.writes[m2][S_NO]
 
-				except:
-					continue
+				# adding relations for fences above B
+				x_thread = self.reads[b][T_NO] -1
+				x_index = self.fences_thread[x_thread].index(x)
+
+				for i in range(0, x_index+1):
+					self.to_edges.append((self.fences_thread[x_thread][i], m2_no))
 
 	def rule3(self):
 		for b in range(len(self.reads)):
 			if type(self.reads[b]) is list:
-				b_rf = self.reads[b][6]
+				b_rf = self.reads[b][RF]
 				for m in self.mo_edges:
 					if m[0] == b_rf:
 						a = m[1]
-						a_index = next(i for i,v in enumerate(self.writes) if type(v) is list and v[0] == a)
+						try: a_index = next(i for i,v in enumerate(self.writes) if type(v) is list and v[S_NO] == a)
+						except: continue
+						
 						x = self.writes[a_index+1]
 						y = self.reads[b-1]
 						# self.to_edges.append((y,x))
 
 						# adding relations for all fences below A and fences above B
-						x_thread = self.writes[a_index][1] -1
-						y_thread = self.reads[b][1] -1
+						x_thread = self.writes[a_index][T_NO] -1
+						y_thread = self.reads[b][T_NO] -1
 						x_index = self.fences_thread[x_thread].index(x)
 						y_index = self.fences_thread[y_thread].index(y)
 
@@ -127,24 +134,27 @@ class to:
 		for m in self.mo_edges:
 			b = m[0]
 			a = m[1]
-			b_index = next(i for i,v in enumerate(self.writes) if type(v) is list and v[0] == b)
-			a_index = next(i for i,v in enumerate(self.writes) if type(v) is list and v[0] == a)
+			try:
+				b_index = next(i for i,v in enumerate(self.writes) if type(v) is list and v[S_NO] == b)
+				a_index = next(i for i,v in enumerate(self.writes) if type(v) is list and v[S_NO] == a)
+			except: continue
+			
 			x = self.writes[a_index+1]
 			y = self.writes[b_index-1]
 			
 			# for all fence relations
-			x_thread = self.writes[a_index][1] -1
+			x_thread = self.writes[a_index][T_NO] -1
 			x_index = self.fences_thread[x_thread].index(x)
-			y_thread = self.writes[b_index][1] -1
+			y_thread = self.writes[b_index][T_NO] -1
 			y_index = self.fences_thread[y_thread].index(y)
 
 			# rule 4a
-			if self.writes[b_index][3] == SEQ_CST:
+			if self.writes[b_index][MO] == SEQ_CST:
 				# self.to_edges.append((b,x))
 				for i in range(x_index,len(self.fences_thread[x_thread])):
 					self.to_edges.append((b, self.fences_thread[x_thread][i]))
 			# rule 4b
-			if self.writes[a_index][3] == SEQ_CST:
+			if self.writes[a_index][MO] == SEQ_CST:
 				# self.to_edges.append((y,a))
 				for i in range(0, y_index+1):
 					self.to_edges.append((self.fences_thread[y_thread][i], a))
