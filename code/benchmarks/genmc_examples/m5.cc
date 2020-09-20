@@ -1,3 +1,8 @@
+/**
+ * GenMC - m5
+ * (slightly modified)
+*/
+
 #include <iostream>
 #include <threads.h>
 #include <atomic>
@@ -16,87 +21,87 @@ atomic<int> done_t1;
 atomic<int> done_t2;
 atomic<int> done_t3;
 
+#define LOOP 5
+
 static void t0(void *arg) {
-	var_x.store(1, memory_order_release);
-	var_y.store(1, memory_order_release);
-	done_t0.store(1, memory_order_release);
+	var_x.store(__LINE__, 1, memory_order_release);
+	var_y.store(__LINE__, 1, memory_order_release);
+	done_t0.store(__LINE__, 1, memory_order_release);
 }
 
 static void t1(void *arg) {
-	int v2_r1 = var_y.load(memory_order_acquire);
-	int v4_r2 = var_x.load(memory_order_acquire);
+	int v2_r1 = var_y.load(__LINE__, memory_order_acquire);
+	int v4_r2 = var_x.load(__LINE__, memory_order_acquire);
 	int v64 = (v2_r1 == 1);
-	atom_1_r1_1.store(v64, memory_order_release);
+	atom_1_r1_1.store(__LINE__, v64, memory_order_release);
 	int v65 = (v4_r2 == 0);
-	atom_1_r2_0.store(v65, memory_order_release);
+	atom_1_r2_0.store(__LINE__, v65, memory_order_release);
 	int v66 = (v4_r2 == 2);
-	atom_1_r2_2.store(v66, memory_order_release);
-	done_t1.store(1, memory_order_release);
+	atom_1_r2_2.store(__LINE__, v66, memory_order_release);
+	done_t1.store(__LINE__, 1, memory_order_release);
 }
 
 static void t2(void *arg) {
-	var_x.store(2, memory_order_release);
-	done_t2.store(1, memory_order_release);
+	var_x.store(__LINE__, 2, memory_order_release);
+	done_t2.store(__LINE__, 1, memory_order_release);
 }
 
 static void t3(void *arg) {
-	var_y.store(2, memory_order_release);
-	done_t3.store(1, memory_order_release);
+	var_y.store(__LINE__, 2, memory_order_release);
+	done_t3.store(__LINE__, 1, memory_order_release);
 }
 
 static void check(void *arg) {
-	MODEL_ASSERT((done_t0.load(memory_order_acquire) == 1) && (done_t1.load(memory_order_acquire) == 1) && (done_t2.load(memory_order_acquire) == 1) && (done_t3.load(memory_order_acquire) == 1));
-
-	int v5 = atom_1_r1_1.load(memory_order_acquire);
-	int v6 = atom_1_r2_0.load(memory_order_acquire);
-	int v7 = var_x.load(memory_order_acquire);
+	int v5 = atom_1_r1_1.load(__LINE__, memory_order_acquire);
+	int v6 = atom_1_r2_0.load(__LINE__, memory_order_acquire);
+	int v7 = var_x.load(__LINE__, memory_order_acquire);
 	int v8 = (v7 == 1);
-	int v9 = var_y.load(memory_order_acquire);
+	int v9 = var_y.load(__LINE__, memory_order_acquire);
 	int v10 = (v9 == 1);
 	int v11_conj = v8 & v10;
 	int v12_conj = v6 & v11_conj;
 	int v13_conj = v5 & v12_conj;
-	int v14 = atom_1_r1_1.load(memory_order_acquire);
-	int v15 = atom_1_r2_0.load(memory_order_acquire);
-	int v16 = var_x.load(memory_order_acquire);
+	int v14 = atom_1_r1_1.load(__LINE__, memory_order_acquire);
+	int v15 = atom_1_r2_0.load(__LINE__, memory_order_acquire);
+	int v16 = var_x.load(__LINE__, memory_order_acquire);
 	int v17 = (v16 == 1);
-	int v18 = var_y.load(memory_order_acquire);
+	int v18 = var_y.load(__LINE__, memory_order_acquire);
 	int v19 = (v18 == 2);
 	int v20_conj = v17 & v19;
 	int v21_conj = v15 & v20_conj;
 	int v22_conj = v14 & v21_conj;
-	int v23 = atom_1_r1_1.load(memory_order_acquire);
-	int v24 = atom_1_r2_0.load(memory_order_acquire);
-	int v25 = var_x.load(memory_order_acquire);
+	int v23 = atom_1_r1_1.load(__LINE__, memory_order_acquire);
+	int v24 = atom_1_r2_0.load(__LINE__, memory_order_acquire);
+	int v25 = var_x.load(__LINE__, memory_order_acquire);
 	int v26 = (v25 == 2);
-	int v27 = var_y.load(memory_order_acquire);
+	int v27 = var_y.load(__LINE__, memory_order_acquire);
 	int v28 = (v27 == 1);
 	int v29_conj = v26 & v28;
 	int v30_conj = v24 & v29_conj;
 	int v31_conj = v23 & v30_conj;
-	int v32 = atom_1_r1_1.load(memory_order_acquire);
-	int v33 = atom_1_r2_0.load(memory_order_acquire);
-	int v34 = var_x.load(memory_order_acquire);
+	int v32 = atom_1_r1_1.load(__LINE__, memory_order_acquire);
+	int v33 = atom_1_r2_0.load(__LINE__, memory_order_acquire);
+	int v34 = var_x.load(__LINE__, memory_order_acquire);
 	int v35 = (v34 == 2);
-	int v36 = var_y.load(memory_order_acquire);
+	int v36 = var_y.load(__LINE__, memory_order_acquire);
 	int v37 = (v36 == 2);
 	int v38_conj = v35 & v37;
 	int v39_conj = v33 & v38_conj;
 	int v40_conj = v32 & v39_conj;
-	int v41 = atom_1_r1_1.load(memory_order_acquire);
-	int v42 = atom_1_r2_2.load(memory_order_acquire);
-	int v43 = var_x.load(memory_order_acquire);
+	int v41 = atom_1_r1_1.load(__LINE__, memory_order_acquire);
+	int v42 = atom_1_r2_2.load(__LINE__, memory_order_acquire);
+	int v43 = var_x.load(__LINE__, memory_order_acquire);
 	int v44 = (v43 == 1);
-	int v45 = var_y.load(memory_order_acquire);
+	int v45 = var_y.load(__LINE__, memory_order_acquire);
 	int v46 = (v45 == 1);
 	int v47_conj = v44 & v46;
 	int v48_conj = v42 & v47_conj;
 	int v49_conj = v41 & v48_conj;
-	int v50 = atom_1_r1_1.load(memory_order_acquire);
-	int v51 = atom_1_r2_2.load(memory_order_acquire);
-	int v52 = var_x.load(memory_order_acquire);
+	int v50 = atom_1_r1_1.load(__LINE__, memory_order_acquire);
+	int v51 = atom_1_r2_2.load(__LINE__, memory_order_acquire);
+	int v52 = var_x.load(__LINE__, memory_order_acquire);
 	int v53 = (v52 == 1);
-	int v54 = var_y.load(memory_order_acquire);
+	int v54 = var_y.load(__LINE__, memory_order_acquire);
 	int v55 = (v54 == 2);
 	int v56_conj = v53 & v55;
 	int v57_conj = v51 & v56_conj;

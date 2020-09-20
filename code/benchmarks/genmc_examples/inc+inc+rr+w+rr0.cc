@@ -1,3 +1,7 @@
+/**
+ * GenMC - inc+inc+rr+w+rr0
+*/
+
 #include <iostream>
 #include <threads.h>
 #include <atomic>
@@ -6,41 +10,33 @@
 using namespace std;
 
 atomic<int> x ;
-atomic<int> dum_var ;
 
 int a, b, c, d;
 
 static void thread_1(void *arg) {
-	dum_var.store(0, memory_order_relaxed);
-	atomic_fetch_add_explicit(&x, 1, memory_order_relaxed);
+	atomic_fetch_add_explicit(__LINE__, &x, 1, memory_order_relaxed);
 }
 
 static void thread_2(void *arg) {
-	dum_var.store(0, memory_order_relaxed);
-	atomic_fetch_add_explicit(&x, 1, memory_order_relaxed);
+	atomic_fetch_add_explicit(__LINE__, &x, 1, memory_order_relaxed);
 }
 
 static void thread_3(void *arg) {
-	dum_var.store(0, memory_order_relaxed);
-	a = x.load(memory_order_relaxed);
-	b = x.load(memory_order_relaxed);
+	a = x.load(__LINE__, memory_order_relaxed);
+	b = x.load(__LINE__, memory_order_relaxed);
 }
 
 static void thread_4(void *arg) {
-	x.store(42, memory_order_relaxed);
+	x.store(__LINE__, 42, memory_order_relaxed);
 }
 
 static void thread_5(void *arg) {
-	dum_var.store(0, memory_order_relaxed);
-	c = x.load(memory_order_relaxed);
-	d = x.load(memory_order_relaxed);
+	c = x.load(__LINE__, memory_order_relaxed);
+	d = x.load(__LINE__, memory_order_relaxed);
 }
 
 int user_main(int argc, char **argv) {
     thrd_t t1, t2, t3, t4, t5;
-
-    atomic_init(&x, 0);
-    atomic_init(&dum_var, 0);
 
     thrd_create(&t1, (thrd_start_t)&thread_1, NULL);
     thrd_create(&t2, (thrd_start_t)&thread_2, NULL);
