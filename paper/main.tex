@@ -48,12 +48,12 @@
 \usepackage[numbers]{natbib}
 \usepackage{url}
 
-\newcommand{\mosc}{\texttt{memory\_order\_seq\_cst}\xspace}
-\newcommand{\moacqrel}{\texttt{memory\_order\_acq\_rel}\xspace}
-\newcommand{\morel}{\texttt{memory\_order\_release}\xspace}
-\newcommand{\moacq}{\texttt{memory\_order\_acquire}\xspace}
-\newcommand{\mocon}{\texttt{memory\_order\_consume}\xspace}
-\newcommand{\morlx}{\texttt{memory\_order\_relaxed}\xspace}
+\newcommand{\mosc}{\texttt{seq\_cst}\xspace}
+\newcommand{\moacqrel}{\texttt{acq\_rel}\xspace}
+\newcommand{\morel}{\texttt{release}\xspace}
+\newcommand{\moacq}{\texttt{acquire}\xspace}
+\newcommand{\mocon}{\texttt{consume}\xspace}
+\newcommand{\morlx}{\texttt{relaxed}\xspace}
 
 \newcommand{\seqb}[2]{{#1} {\color{Blue}$\rightarrow^{sb}$} \color{black}{#2} }
 \newcommand{\sw}[2]{{#1} {\color{Blue}$\rightarrow^{sw}$} \color{black}{#2} }
@@ -79,7 +79,10 @@
 \section{Introduction} \label{sec:intro}
 \input{section/intro.tex}
 
-\section{Background/Preliminaries} \label{sec:intro}
+\section{Related Work} \label{sec:related}
+\input{section/related.tex}
+
+\section{Background/Preliminaries} \label{sec:prelim}
 \input{section/background_prelims.tex}
 
 \section{Proposed Solution/Our Approach}\label{sec:approach}
