@@ -95,7 +95,8 @@ modelclock_t ClockVector::getClock(thread_id_t thread) {
 void ClockVector::print() const
 {
 	int i;
-	model_print("(");
-	for (i = 0; i < num_threads; i++)
-		model_print("%2u%s", clock[i], (i == num_threads - 1) ? ")\n" : ", ");
+	// model_print("(");
+	// for (i = 0; i < num_threads; i++)
+	// 	model_print("%2u%s", clock[i], (i == num_threads - 1) ? ")\n" : ", ");
+	model_print("\n");
 }

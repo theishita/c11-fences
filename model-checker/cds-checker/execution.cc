@@ -2692,7 +2692,7 @@ static void print_list(const action_list_t *list)
 	action_list_t::const_iterator it;
 
 	model_print("------------------------------------------------------------------------------------\n");
-	model_print("#    t    Action type     MO       Location         Value               Rf  CV\n");
+	model_print("#    t    Action type     MO       Location         Value               Rf  Line\n");
 	model_print("------------------------------------------------------------------------------------\n");
 
 	unsigned int hash = 0;
@@ -2772,6 +2772,9 @@ void ModelExecution::print_summary() const
 
 	print_list(&action_trace);
 	model_print("\n");
+
+	// add the line here:
+	// if (have_bug_reports()) exit(0);
 
 	if (!promises.empty()) {
 		model_print("Pending promises:\n");

@@ -1,3 +1,7 @@
+/**
+ * GenMC - SB+assert0
+*/
+
 #include <iostream>
 #include <threads.h>
 #include <atomic>
@@ -11,13 +15,13 @@ atomic<int> y ;
 int r_x, r_y;
 
 static void thread_1(void *arg) {
-	x.store(1, memory_order_relaxed);
-	r_y = y.load(memory_order_relaxed);
+	x.store(__LINE__, 1, memory_order_relaxed);
+	r_y = y.load(__LINE__, memory_order_relaxed);
 }
 
 static void thread_2(void *arg) {
-	y.store(1, memory_order_relaxed);
-	r_x = x.load(memory_order_relaxed);
+	y.store(__LINE__, 1, memory_order_relaxed);
+	r_x = x.load(__LINE__, memory_order_relaxed);
 }
 
 int user_main(int argc, char **argv) {
@@ -29,8 +33,8 @@ int user_main(int argc, char **argv) {
     thrd_create(&t1, (thrd_start_t)&thread_1, NULL);
     thrd_create(&t2, (thrd_start_t)&thread_2, NULL);
 
-	thrd_join(t2);
     thrd_join(t1);
+	thrd_join(t2);
 
 	MODEL_ASSERT(!(r_x == 0 && r_y == 0));
 
