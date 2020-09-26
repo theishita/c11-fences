@@ -1,16 +1,64 @@
 % --------- INTRO PART -------------
-We have developed a novel solution to the fence-synthesis problem. We make use of the C11 semantics to create relations between the instructions and exploit the properties of these relations. We make use properties of Total Order relations and introduce ``cycles'' in the program to achieve our goal. We also achieve optimal results through a special process using propositional logic and SMT/SAT Solver Z3.
-\ishComment{^^ rewrite}
+We have developed a novel solution to the fence-synthesis problem. 
+To the best of our knowledge, 
+there are no push-button fence synthesis techniques for C11 
+programs as of now. Although, there are some such techniques for 
+other memory models, all of those heavily depends on the 
+possible set of reorderings allowed under the memory model. 
+Since the possible set of reorderings under C11 is different 
+than other memory models, these techniques cannot be applied 
+to C11 as is. In face, not all C11 behaviors can be justified 
+using reorderings and interleavings. Hence, automatic fence insertion 
+for C11 requires some amount of additional effort.
+We use the C11 semantics to create relations between the 
+instructions and exploit the properties of these relations. 
+The C11 semantics require that there should be a total 
+order among all \mosc operations in the programs. We leverage this to 
+find program locations for candidate \mosc fence placements. We achieve 
+the optimal results by converting the candidate fence placements to 
+SMT formula and querying the Z3 SMT solver.
 
-The tool first begins by running the input program through a C11 model checker or verification tool. This tool runs all possible executions of the program and gives a list of buggy traces as output. A buggy trace here means an execution run where an assertion was violated in the program. The model checker provides the exact order of instructions, which when executed in the order can cause the program to stop mid-way by running into an assertion and not being able to satisfy it. The verification tool also provides the meta data for each instruction, such as read-from values or memory orders.
+The tool first begins by analyzing the input program through a C11 model 
+checker or verification tool. This tool runs all possible executions of 
+the program and gives a list of buggy traces as output. A buggy trace 
+here means an execution run where an assertion was violated in the program. 
+The model checker provides the exact order of instructions, which when 
+executed in the order can cause the program to stop mid-way by running 
+into an assertion and not being able to satisfy it. The verification 
+tool also provides the meta data for each instruction, such as read-from 
+values, memory orders and line number in the actual program.
 
-In the program described in Fig \ref{fig:dekker2}, inserting an SC fence between the instructions (1) and (2), and an SC fence between (5) and (6) render the program to be sequentially consistent, thereby satisfying the given assertions. After adding these fences, the program will never have a case where the output can be anything other than ``10''.
+In the program described in Fig \ref{fig:dekker2}, inserting an SC fence 
+between the instructions (1) and (2), and an SC fence between (5) and (6) 
+render the program non-buggy, thereby satisfying the given assertions. 
+After adding these fences, the program will never have a case where 
+the output can be anything other than ``10''.
 
-To obtain the position of these fences, a series of steps is followed. The two fences strategically inserted in the program are the minimum number of fences which can be inserted in order to prevent the unwanted outputs. One can add SC fences at all positions - before and after all instructions - in order to make the program sequentially consistent in nature and hence prevent the buggy outputs, such as in Fig \ref{fig:dekker3}. However, this comes at the cost of forgoing the properties of the relaxed model that the typical user tends to seek. Therefore, in our solution to retain concurrency, after inserting fences at all places, we must now eliminate the ones which are not required and bring the number of fences down to an optimum or minimum. To do this, we need to find relations between all instructions and understand their semantics.
+To obtain the position of these fences, a series of steps is followed. 
+The two fences strategically inserted in the program are the minimum 
+number of fences which can be inserted in order to prevent the unwanted 
+outputs. One can add \mosc fences at all positions - before and after all 
+instructions - in order to make the program as strict as possible under 
+C11 and hence prevent the buggy outputs if possible, such as in Fig 
+\ref{fig:dekker3}. However, this comes at the cost of making program 
+stricter than required. Therefore, in our solution to retain maximum 
+flexibility, after inserting fences at all places, we must now eliminate 
+the ones which are not required and bring the number of fences down to 
+an optimum or minimum. To do this, we need to find relations between 
+all instructions and understand their semantics.
 
-The reason for choosing SC fences is that they are the strongest type of fences, as compared with fences of other memory orders, as seen in Fig \ref{fig:mo_strength}. In the program described in Fig \ref{fig:dekker3}, if the next strongest fence, the acquire-release fence replaces all SC fences, the behaviour where the assertions are violated will not be stopped. The assertions will still get violated.
+The reason for choosing \mosc fences is that they are the strongest type 
+of fences, as seen in Fig \ref{fig:mo_strength}. In the program described 
+in Fig \ref{fig:dekker3}, the \moacqrel fences cannot stop the buggy behavior.
 
-Another point to note is, making the entire program sequentially consistent might not mean that the behaviour required by the user is retained. Even if the entire program is sequential after adding fences everywhere, the program still might fail certain assertions. This simply depends upon the program itself and how it runs. Therefore, our tool can only prevent the assertions from being violated in cases where the behaviour can be stopped using SC fences. The tool also serves to minimize the total number of fences to be added to the optimal number, thereby retaining the properties of concurrency as much as possible.
+Another point to note is, inserting \mosc fences at all possible program 
+locations might not mean that the buggy behaviors are eliminated. 
+Therefore, our tool can only prevent the assertions from being violated 
+in cases where the behavior can be stopped using \mosc fences. Note that
+if a trace cannot be stopped by \mosc fence, then no C11 fence can stop 
+the trace. The tool also serves to minimize the total number of fences to 
+be added to the optimal number, thereby retaining the program behaviors 
+as relaxed as possible.
 
 % --------------- FIG all pseudo fences -------------
 \begin{figure}[!htb]
@@ -36,7 +84,14 @@ init y := 0, x := 0;\\
 % --------- ADDING FENCES -------------
 \subsection{Adding Pseudo Fences}
 \par
-CDS Checker provides all the buggy traces to our tool. Each trace is then taken individually and analysed. For each trace, the first step is inserting pseudo fences. SC fences are inserted before/after each instruction in the trace. This can be seen in Fig. \ref{fig:dekker3}. The fences are not actually added to the input program, but only added for reference purposes as a step in the tool. The maximum number of fences possible are added so that the required ones can be retained and the rest can be eliminated.
+We use a verification tool to generate a set of all the buggy traces. 
+Each trace is then taken individually and analysed. For each trace, 
+the first step is inserting pseudo fences. \mosc fences are inserted 
+before/after each instruction in the trace. This can be seen in 
+Fig. \ref{fig:dekker3}. The fences are not actually added to the 
+input program, but only added for reference purposes as a step in 
+the tool. The maximum number of fences possible are added so that 
+the required ones can be retained and the rest can be eliminated.
 
 % --------------- FINDING RELATIONS -----------
 \subsection{Finding relations}
