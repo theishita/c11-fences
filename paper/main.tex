@@ -48,6 +48,13 @@
 \usepackage[numbers]{natbib}
 \usepackage{url}
 
+\definecolor{brown}{rgb}{0.59, 0.29, 0.0}
+\definecolor{green}{rgb}{0.0, 0.5, 0.0}
+\definecolor{orange}{rgb}{1.0, 0.62, 0.0}
+\definecolor{purple}{rgb}{0.5, 0.0, 0.5}
+\definecolor{red}{rgb}{1.0, 0.0, 0.0}
+\definecolor{blue}{rgb}{0.0, 0.0, 1.0}
+
 \newcommand{\mosc}{\texttt{seq\_cst}\xspace}
 \newcommand{\moacqrel}{\texttt{acq\_rel}\xspace}
 \newcommand{\morel}{\texttt{release}\xspace}
@@ -55,18 +62,25 @@
 \newcommand{\mocon}{\texttt{consume}\xspace}
 \newcommand{\morlx}{\texttt{relaxed}\xspace}
 
-\newcommand{\seqb}[2]{{#1} {\color{Blue}$\rightarrow^{sb}$} \color{black}{#2} }
-\newcommand{\sw}[2]{{#1} {\color{Blue}$\rightarrow^{sw}$} \color{black}{#2} }
-\newcommand{\hb}[2]{{#1} {\color{Blue}$\rightarrow^{hb}$} \color{black}{#2}}
-\newcommand{\rf}[2]{{#1} {\color{Blue}$\rightarrow^{rf}$} {#2} }
-\newcommand{\too}[2]{{#1} {\color{Blue}$\rightarrow^{to}$} {#2} }
-\newcommand{\mo}[2]{{#1} {\color{Blue}$\rightarrow^{mo}$} {#2} }
+\newcommand{\seqb}[2]{{#1} {\color{brown}$\rightarrow^{sb}$} \color{black}{#2} }
+\newcommand{\sw}[2]{{#1} {\color{purple}$\rightarrow^{sw}$} \color{black}{#2} }
+\newcommand{\hb}[2]{{#1} {\color{orange}$\rightarrow^{hb}$} \color{black}{#2}}
+\newcommand{\rf}[2]{{#1} {\color{blue}$\rightarrow^{rf}$} {#2} }
+\newcommand{\too}[2]{{#1} {\color{green}$\rightarrow^{to}$} {#2} }
+\newcommand{\mo}[2]{{#1} {\color{red}$\rightarrow^{mo}$} {#2} }
+\newcommand{\setSB}{{\color{brown}\tt{sb}}\xspace}
+\newcommand{\setSW}{{\color{purple}\tt{sw}}\xspace}
+\newcommand{\setRF}{{\color{blue}\tt{rf}}\xspace}
+\newcommand{\setHB}{{\color{orange}\tt{hb}}\xspace}
+\newcommand{\setTO}{{\color{green}\tt{to}}\xspace}
+\newcommand{\setMO}{{\color{red}\tt{mo}}\xspace}
 
 \newcommand{\var}[1]{\color{OliveGreen}\texttt{#1}\color{black}}
 \newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}
 \newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
 
 \newcommand{\ishComment}[1]{\textit{\color{red}\tiny{#1}}}
+\newcommand{\divComment}[1]{\textit{\color{green}{#1}}}
 
 \title{fence-synthesis-paper}
 \date{}
