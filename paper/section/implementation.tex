@@ -1,12 +1,11 @@
 \par
-The tool is written using python programming. It first receives the location of the input program using the \textit{-f} flag. Since we are using CDS Checker, this file is first copied to the CDS Checker test folder. The make function is called and the file is run on CDS Checker. The output from CDS Checker is obtained in the form of buggy executions and converted/translated for our usage. Each of these buggy executions are then run through a series of steps as described in section \ref{sec:approach}- HB, MO, adding pseudo fences, finding cycles, eliminating cycles and timing each step.
+The tool is written using the python programming language. It takes the location of the input program using the \textit{-f} flag. The first step is to obtain a list of buggy executions from any C11 model checker. Originally, the tool uses CDSChecker as the model checker. The input file is first copied to the CDSChecker test folder and then executed. The output from CDSChecker is obtained in the form of a list of buggy executions which is then formatted and translated into data structures for our usage. Each of these buggy executions are run through a series of steps as described in section \ref{sec:approach}- finding HB, MO, adding pseudo fences. finding TO, finding cycles, eliminating fences and inserting them back into the program.
 
-For input programs with an enormous number of possibilities, the tool might take some time to complete analysis for each and every trace. Providing an alternative for this, we have also introduced an optional flag \textit{-t} to specify the number of traces to analyze at a time until the solution is found. If the value is specified as \textit{-t 3}, the tool will look at only the first 3 buggy traces from the model checker and base the analysis on them. It will then add fences in the input program according to the first 3 traces and then analyze this new program again. It will keep running the program after adding fences until a conclusion is reached. This would save time on the user's part but it may compromise on the optimality, since there might be more fences added with this method than the original method. There is also an additional optional flag \textit{-m} to specify the maximum number of iterations to be run. On specifying this value, the analysis will stop at the mth iteration if the conclusion is not found till then.
+For input programs with an enormous number of possibilities, the tool might take some time to complete the analysis for each and every trace. Providing an alternative for this, we have also introduced an optional flag \textit{-t} to specify the number of traces to analyze at a time until the solution is found. If the value is specified as \textit{-t 3}, the tool will look at only the first 3 buggy executions from the model checker and base the analysis on them. It will then add fences in the input program according to the first 3 traces and then analyze this new program again. It will keep running the program after adding fences until a conclusion is reached. This would save time on the user's part but it may compromise on the optimality, since there might be more fences added with this method as compared with the original method. There is also an additional optional flag \textit{-m} to specify the maximum number of iterations to be run. On specifying this value, the analysis will stop at the \textit{m}th iteration if the conclusion is not found till then.
 
 The tool makes use of the following python packages and libraries:
 \begin{itemize}
-	\item networkx - for graphing related queries, such as find cycles
-	\item ast - for evaluating values from store
+	\item networkx - for graphing related queries - finding cycles
 	\item operator
 	\item shlex
 	\item argparse
@@ -14,86 +13,39 @@ The tool makes use of the following python packages and libraries:
 \end{itemize}
 
 \subsection{Translating model checker output}
-The tool begins by translating model checker output that it obtains from the terminal process after running the required command. Any model checker for C11 can be used in this case. For this tool, only CDS Checker is used and its output is translated. One may choose to use a different model checker by creating a custom translator which extracts the following information from each instruction of each trace:
+The tool begins by translating model checker output obtained from a terminal subprocess, spawned from the main process running the tool. Any model checker for C11 can be used in this case. Subsequently, one may choose to use any model checker by creating a custom translator for it. For this tool, CDSChecker is the only model checker with a translator created. Any translator would need to run the input program in the model checker, obtain the output containing a list of buggy executions and extract the following important information from each instruction of each trace:
 
 \begin{enumerate}
 	\item thread number of the instruction
-	\item instruction type (thread create, thread start, init, atomic read, atomic write, atomic rmw)
+	\item instruction type (thread create/ thread start/ init/ atomic read/ atomic write/ atomic rmw)
 	\item memory order (relaxed, acquire, release, acq\textunderscore rel, seq\textunderscore cst)
 	\item memory address (variable name in the system)
-	\item value
 	\item rf value (in case of read/rmw instruction)
-\end{enumerate}
-
-\par 
-Other required information is extracted from the C++ source program. These include:
-\begin{enumerate}
-	\setcounter{enumi}{6}
-	\item variable name for each instruction
 	\item line number for each instruction
 \end{enumerate}
 
 \par
 For any of the above meta-data, if a field does not apply for a certain instruction, it is given the value "NA".
 
+\par
+In case any information is missing from the model checker outputs, the model checker should be revised in order to obtain and print that piece of information. For our purposes, we have re-written some of the code in CDSChecker so that it also and prints the line numbers of relevant instructions from the source code. We require the line number in order to know where to position the fences.
+
 \subsubsection{Why CDS Checker}
 CDS Checker is used for our purposes. It was selected for this project because of the plethora of information that it provides. CDS Checker only considers the atomic operations or thread operations in the program as an instruction.
 
-Existing model checkers such as RCMC\ishComment{ref}, Tracer\ishComment{ref}, GenMC\ishComment{ref} are based on and created for the repaired sequential consistency model RC11 and not C11. \ishComment{add nidhugg, herd}
+Existing model checkers such as RCMC\ishComment{ref}, Tracer\ishComment{ref}, GenMC\ishComment{ref} are based on and created for the repaired sequential consistency model RC11 and not C11. Whereas a tool such as Herd\ishComment{ref} is not a robust enough tool which can be used for our purposes. \ishComment{add why not nidhugg}
 
-\subsubsection{Extracting line numbers from CDS Checker}
-Line numbers are extracted by pattern-matching the instruction meta-data in the above mentioned fields, creating the instruction out of them and matching them to the source thread. For example, the information extracted for a single instruction is: thread number 2, instruction type read, memory order seq\_ cst, memory address \textit{x}. Then the instruction would be created as \texttt{x.load(memory\_ order\_ seq\_ cst)} and be matched inside the function defined for thread 2. There are also contingencies for this procedure, so certain rules need to be followed in the input program.
+\subsubsection{Extracting line numbers and tool requirements}
+Line numbers are extracted in CDSChecker by adding an extra parameter to the atomic functions. This extra parameter takes an integer input. Each atomic load, store and rmw function is revised to include an integer parameter at its beginning, which is then printed as part of the buggy execution output. As a result, in the input program each of these instructions is also modified and the first parameter is always given as \tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}.
 
-\par
-Since line numbers are required to be extracted from the source program in order to obtain the locations where the fences need to be inserted, the source program needs to follow a certain structure for the tool to work. The rules are:
+rules:
 \begin{enumerate}
-	\item Each atomic operation needs to be on a separate line.\\
-	\textit{Example:} \texttt{a.store(b.load(memory\_ order\_ relaxed), memory\_ order\_ relaxed));} needs to be re-written as the following snippet:\\
-	\texttt{%
-	int temp = b.load(memory\_ order\_ relaxed);\\
-	a.store(temp, memory\_ order\_ relaxed));%
-	}
-	unless it is an argument inside (say) an if statement with boolean operators like \texttt{if(a.load(memory\_ order\_ relaxed) || b.load(memory\_ order\_ relaxed)) }\\
-	This is because each atomic access is treated as a separate entity in the model checker's output.
-	
-	\item Each atomic variable used in the program needs to be initialized in the main/parent thread. The tool maps the variable name to its memory address through the initialized values.
-	
-	\item While writing a "store" operation, there needs to be a space character after the comma after the value is written.\\
-	\textit{Example:} \texttt{a.store(0, memory\_ order\_ relaxed)} and not \texttt{a.store(0,memory\_ order\_ relaxed)}
-	
-	\item The thread functions need to be defined in the same order as they were called in the main/parent thread before the main thread and there can be no other extra functions apart from the thread functions and the main function.
-	
-	\item The starting bracket for each function definition, loop call, or if-else statement needs to be in the same line as the function name.\\
-	\textit{Example:} \texttt{static void t1() \{} and not\\ \texttt{static void t1()\\ \{}
-	
-	\item \textbf{\textit{Handing RMW instructions:}} since RMW instructions can be of any type (such as fetch\_ add, fetch\_ sub, etc) and still be just referred to as "atomic rmw" in the model checker, it can be hard to pattern-match these lines. Therefore another technique is used for pattern matching here. A "dummy variable" is created and a "store" operation is added to the line right above the RMW instruction. The value that it is storing needs to differ each time it is called in order to maintain uniqueness. Then the tool simply pattern-matches the instruction right above the RMW in the given thread and finds the line by adding "1" to the line number of the dummy variable store operation.\\
-	\textit{Example:}\\ \texttt{[14] dummy.store(2, memory\_ order\_ relaxed);}\\ \texttt{[15] x.fetch\_ xor(1, memory\_ order\_ acq\_ rel);}\\
-	This method also does not hinder the flow of the program since the operation on the dummy variable is a store operation which is never read, hence never forming an rf relation. The memory order will also never be "seq\_ cst", so it will never be considered while calculating TO relations.
-	
-	\item The above method is also to be used every time there is a repeated instruction in the same thread. For example if the instruction \texttt{b.load(memory\_ order\_ relaxed);} is called twice inside a single thread, pattern-matching this line would not be able to point to the instruction which called it at that point. Therefore, a dummy store operation needs to be inserted above every one of these repeating operations.\\\textit{Note:} only if the exact instruction matches does the dummy method need to be applied. If the memory orders or store values are different, then the instructions become different.
-	
-	% also add dummy variable store operation above a store instruction whose valule is another variable like a.store(temp, mo_relaxed); since "temp" will not be given by CDS Checker and only the value can be matched.
-	
-	\item "thread create" statements inside loops need to be unravelled and their functions need to be re-written as many times as they are called, with different names. This is because if there are multiple thread spawns from the a function using a loop, the number of threads will differ for each trace in the model checker. The model checker will treat them as different thread functions instead of the same one being called. Moreover, there might be cases where fences need to be inserted in the thread in one of the iterations of the loop but not the other.\\
-	\textit{Example:}\\ \texttt{%
-	static void thread1();\\
-	int main() \{\\
-	\hspace{10mm} for(3 iterations) \{\\
-	thread\_ create(thread1);\\
-	\}\}%
-	}\\ needs to be re-written as:\\
-	\texttt{%
-	static void thread1();\\
-	static void thread2();\\
-	static void thread3();\\
-	int main() \{\\
-	thread\_ create(thread1);\\
-	thread\_ create(thread2);\\
-	thread\_ create(thread3);\\
-	\}%
-	}
-	
-	\item 'IF' and 'FOR' statements always need to be bracketed in case there is a fence insertion taking place inside.
+	\item atomic load, store, rmw functions need to have ``\tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}'' as the first parameter.
+	\item if statements and loops need to be scoped with brackets always(in case fences are inserted inside them)
+	\item only sc fences are allowed if the input program already contains fences
+	\item no 2 fences can be put together, without any other atomic instructions in between
+	\item filename cannot end with ``\_fence''
+	\item if there are other functions apart from thread functions containing atomic operations, they need to be unrolled inside the thread functions calling them. This is because they might need to have fences in some cases and not in other cases.
 \end{enumerate}
 
 \subsection{Data structures used}
@@ -104,7 +56,7 @@ Since line numbers are required to be extracted from the source program in order
 \end{itemize}
 
 \subsection{Optis}
-used inbuilt python functions for faster processing
+used inbuilt python functions for faster processing:
 \begin{itemize}
 	\item map function to map the 0th element (instruction number) in HB computation
 	\item lambda function to sort traces according to thread number faster
