@@ -10,7 +10,7 @@
 		\State updated\_trace = add\_pseudo\_fences()
 		\State sb = find\_sb(updated\_trace)
 		\State to = find\_to(updated\_trace)
-		\State to += sb
+%		\State to += sb
 		\State cycles = find\_cycles()
     	\If{cycles} \Comment{if cycles are formed}
         	\State z3\_variables = find\_fence\_locations()

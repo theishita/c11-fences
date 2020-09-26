@@ -36,17 +36,28 @@ CDS Checker is used for our purposes. It was selected for this project because o
 Existing model checkers such as RCMC\ishComment{ref}, Tracer\ishComment{ref}, GenMC\ishComment{ref} are based on and created for the repaired sequential consistency model RC11 and not C11. Whereas a tool such as Herd\ishComment{ref} is not a robust enough tool which can be used for our purposes. \ishComment{add why not nidhugg}
 
 \subsubsection{Extracting line numbers and tool requirements}
-Line numbers are extracted in CDSChecker by adding an extra parameter to the atomic functions. This extra parameter takes an integer input. Each atomic load, store and rmw function is revised to include an integer parameter at its beginning, which is then printed as part of the buggy execution output. As a result, in the input program each of these instructions is also modified and the first parameter is always given as \tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}.
+Line numbers are extracted in CDSChecker by adding an extra parameter to the atomic functions. This extra parameter takes an integer input. Each atomic load, store and rmw function is revised to include an integer parameter at its beginning, which is then printed as part of the buggy execution output. As a result, in the input program each of these instructions is also modified and the first parameter is always given as {\tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}}.
 
 rules:
 \begin{enumerate}
-	\item atomic load, store, rmw functions need to have ``\tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}'' as the first parameter.
+	\item atomic load, store, rmw functions need to have ``{\tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}}'' as the first parameter.
 	\item if statements and loops need to be scoped with brackets always(in case fences are inserted inside them)
 	\item only sc fences are allowed if the input program already contains fences
 	\item no 2 fences can be put together, without any other atomic instructions in between
 	\item filename cannot end with ``\_fence''
 	\item if there are other functions apart from thread functions containing atomic operations, they need to be unrolled inside the thread functions calling them. This is because they might need to have fences in some cases and not in other cases.
 \end{enumerate}
+
+\subsubsection{Fence locations in Actual Program}
+Because of re-ordering and branching, the fence names might 
+differ for each trace while mapping back to the source program. 
+For example, in some program \textit{$F_1n_5$} may come after line 12 
+for one trace and line 15 for another trace . For the purpose of this 
+example, let us assume each fence to be a position in the original 
+source code instead of it being a fence position in a single trace. 
+This way, fence \textit{$F_4$} is the same fence for both the traces 
+with respect to its position in the source code, which can be found 
+out using line numbers.
 
 \subsection{Data structures used}
 \setHB relation, since there are many, are stored as boolean values in 
