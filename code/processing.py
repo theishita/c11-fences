@@ -61,9 +61,10 @@ class Processing:
 
 			# transitive SB
 			self.sb()
+			self.to_edges += self.sc_sb_edges
 
 			# TO
-			calc_to = to(order,self.fences_thread,mo_edges,self.sc_sb_edges,self.to_edges)
+			calc_to = to(order,self.fences_thread,mo_edges,self.to_edges)
 			self.to_edges = calc_to.get()
 			# print("to =",self.to_edges)
 			
@@ -75,7 +76,7 @@ class Processing:
 			unique_fences = list(sorted(set(x for l in cycles for x in l)))
 			unique_fences = [uf for uf in unique_fences if 'F' in uf]
 			# print("unique_fences=",unique_fences)
-			conver_cycs = []
+			# converted_cycs = []
 			if len(unique_fences)>0:
 				for fence in unique_fences:
 					i = order.index(fence)
@@ -92,8 +93,8 @@ class Processing:
 				# 	x = []
 				# 	for c in cyc:
 				# 		x.append(self.loc_info[c])
-				# 	conver_cycs.append(x)
-				# print("cycles =",conver_cycs)
+				# 	converted_cycs.append(x)
+				# print("cycles =",converted_cycs)
 
 				get_translation = z3translate(cycles, self.loc_info)
 				consts, translation = get_translation.get()

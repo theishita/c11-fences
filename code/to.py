@@ -9,13 +9,11 @@ from constants import *
 
 class to:
 
-	def __init__(self,order,fences_thread,mo_edges,sb_edges,to_edges):
+	def __init__(self,order,fences_thread,mo_edges,to_edges):
 		self.order = order
 		self.fences_thread = fences_thread
 		self.mo_edges = mo_edges
-		self.sb_edges = sb_edges
-
-		self.to_edges = to_edges + sb_edges
+		self.to_edges = to_edges
 
 		self.writes = []					# writes with their before and after fences
 		self.reads = []						# reads with their before and after fences
