@@ -11,18 +11,18 @@ atomic<int> c;
 
 
 static void t1(void *arg) {
-	y.store(1, memory_order_relaxed);
-	if (!x.load(memory_order_relaxed)) {
-		c.store(1, memory_order_relaxed);
-		MODEL_ASSERT(c.load(memory_order_relaxed) == 1);
+	y.store(__LINE__, 1, memory_order_relaxed);
+	if (!x.load(__LINE__, memory_order_relaxed)) {
+		c.store(__LINE__, 1, memory_order_relaxed);
+		MODEL_ASSERT(c.load(__LINE__, memory_order_relaxed) == 1);
 	}
 }
 
 static void t2(void *arg) {
-	x.store(1, memory_order_relaxed);
-	if (!y.load(memory_order_relaxed)) {
-		c.store(0, memory_order_relaxed);
-		MODEL_ASSERT(c.load(memory_order_relaxed) == 0);
+	x.store(__LINE__, 1, memory_order_relaxed);
+	if (!y.load(__LINE__, memory_order_relaxed)) {
+		c.store(__LINE__, 0, memory_order_relaxed);
+		MODEL_ASSERT(c.load(__LINE__, memory_order_relaxed) == 0);
 	}
 }
 

@@ -17,18 +17,18 @@ static void fn1(void* arg) {
   int k = 0;
 
   for (k = 0; k < NUM; k++) {
-    int temp = j.load(memory_order_acquire);
-    dum_rmw.store(0, memory_order_relaxed);
-    atomic_fetch_add_explicit(&i, temp, memory_order_relaxed);
+    int temp = j.load(__LINE__, memory_order_acquire);
+    dum_rmw.store(__LINE__, 0, memory_order_relaxed);
+    atomic_fetch_add_explicit(__LINE__, &i, temp, memory_order_relaxed);
   }
 }
 
 static void fn2(void* arg) {
   int k = 0;
   for (k = 0; k < NUM; k++) {
-    int temp = i.load(memory_order_acquire);
-    dum_rmw.store(0, memory_order_relaxed);
-    atomic_fetch_add_explicit(&j, temp, memory_order_relaxed);
+    int temp = i.load(__LINE__, memory_order_acquire);
+    dum_rmw.store(__LINE__, 0, memory_order_relaxed);
+    atomic_fetch_add_explicit(__LINE__, &j, temp, memory_order_relaxed);
   }
 }
 
@@ -45,7 +45,7 @@ int user_main(int argc, char **argv) {
   thrd_join(id1);
 	thrd_join(id2);
 
-  if (i.load(memory_order_relaxed) >= 144 || j.load(memory_order_relaxed) >= 144) {
+  if (i.load(__LINE__, memory_order_relaxed) >= 144 || j.load(__LINE__, memory_order_relaxed) >= 144) {
     MODEL_ASSERT(0);
   }
 

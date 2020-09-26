@@ -10,27 +10,27 @@ atomic<int> data2;
 atomic<int> dum_var;
 
 static void thread1(void *arg) {
-  int d1 = data1.load(memory_order_seq_cst);
+  int d1 = data1.load(__LINE__, memory_order_seq_cst);
   d1 += 1;
-  dum_var.store(0, memory_order_relaxed);
-  data1.store(d1, memory_order_relaxed);
+  dum_var.store(__LINE__, 0, memory_order_relaxed);
+  data1.store(__LINE__, d1, memory_order_relaxed);
 
-  int d2 = data2.load(memory_order_seq_cst);
+  int d2 = data2.load(__LINE__, memory_order_seq_cst);
   d2 += 1;
-  dum_var.store(2, memory_order_relaxed);
-  data2.store(d2, memory_order_relaxed);
+  dum_var.store(__LINE__, 2, memory_order_relaxed);
+  data2.store(__LINE__, d2, memory_order_relaxed);
 }
 
 static void thread2(void *arg) {
-  int d1 = data1.load(memory_order_seq_cst);
+  int d1 = data1.load(__LINE__, memory_order_seq_cst);
   d1 += 5;
-  dum_var.store(0, memory_order_relaxed);
-  data1.store(d1, memory_order_relaxed);
+  dum_var.store(__LINE__, 0, memory_order_relaxed);
+  data1.store(__LINE__, d1, memory_order_relaxed);
 
-  int d2 = data2.load(memory_order_seq_cst);
+  int d2 = data2.load(__LINE__, memory_order_seq_cst);
   d2 -= 6;
-  dum_var.store(1, memory_order_relaxed);
-  data2.store(d2, memory_order_relaxed);
+  dum_var.store(__LINE__, 1, memory_order_relaxed);
+  data2.store(__LINE__, d2, memory_order_relaxed);
 }
 
 int user_main(int argc, char **argv) {
@@ -46,7 +46,7 @@ int user_main(int argc, char **argv) {
   thrd_join(t1);
   thrd_join(t2);
 
-  MODEL_ASSERT(!(data1.load(memory_order_relaxed) == 16 && data2.load(memory_order_relaxed) == 5));
+  MODEL_ASSERT(!(data1.load(__LINE__, memory_order_relaxed) == 16 && data2.load(__LINE__, memory_order_relaxed) == 5));
 
   return 0;
 }

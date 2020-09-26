@@ -11,34 +11,34 @@ atomic<int> done1;
 atomic<int> done2;
 
 static void a1(void *obj) {
-	x.store(1, memory_order_seq_cst);
+	x.store(__LINE__, 1, memory_order_seq_cst);
 }
 
 static void a2(void *obj) {
-	x.store(1, memory_order_seq_cst);
+	x.store(__LINE__, 1, memory_order_seq_cst);
 }
 
 static void b1(void *obj) {
-	z.store(1, memory_order_seq_cst);
+	z.store(__LINE__, 1, memory_order_seq_cst);
 }
 
 static void b2(void *obj) {
-	z.store(1, memory_order_seq_cst);
+	z.store(__LINE__, 1, memory_order_seq_cst);
 }
 
 static void d(void *obj) {
-	int a = x.load(memory_order_acquire);
-	int b = z.load(memory_order_acquire);
+	int a = x.load(__LINE__, memory_order_acquire);
+	int b = z.load(__LINE__, memory_order_acquire);
 	if (a==1 && b==0) {
-		done1.store(1, memory_order_relaxed);
+		done1.store(__LINE__, 1, memory_order_relaxed);
 	}
 }
 
 static void e(void *obj) {
-	int a = z.load(memory_order_acquire);
-	int b = x.load(memory_order_acquire);
+	int a = z.load(__LINE__, memory_order_acquire);
+	int b = x.load(__LINE__, memory_order_acquire);
 	if (a==1 && b==0) {
-		done2.store(1, memory_order_relaxed);
+		done2.store(__LINE__, 1, memory_order_relaxed);
 	}
 }
 
@@ -65,8 +65,8 @@ int user_main(int argc, char **argv) {
 	thrd_join(t4);
 	thrd_join(t5);
 
-	int a = done1.load(memory_order_relaxed);
-	int b = done2.load(memory_order_relaxed);
+	int a = done1.load(__LINE__, memory_order_relaxed);
+	int b = done2.load(__LINE__, memory_order_relaxed);
 	MODEL_ASSERT(a!=1 || b!=1);
 
 	return 0;

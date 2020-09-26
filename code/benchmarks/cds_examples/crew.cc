@@ -15,41 +15,41 @@ atomic<int> dum_rmw;
 int x;
 
 static void reader1(void* arg) {
-	int temp = notify.load(memory_order_acquire);
+	int temp = notify.load(__LINE__, memory_order_acquire);
     if (temp == 1)
-        notify.store(2, memory_order_relaxed);
+        notify.store(__LINE__, 2, memory_order_relaxed);
     else if (temp == 2)
         MODEL_ASSERT(x == 1);
 }
 
 static void reader2(void* arg) {
-	int temp = notify.load(memory_order_acquire);
+	int temp = notify.load(__LINE__, memory_order_acquire);
     if (temp == 1)
-        notify.store(2, memory_order_relaxed);
+        notify.store(__LINE__, 2, memory_order_relaxed);
     else if (temp == 2)
         MODEL_ASSERT(x == 1);
 }
 
 static void writer1(void* arg) {
-	flag_w1.store(1, memory_order_seq_cst);
+	flag_w1.store(__LINE__, 1, memory_order_seq_cst);
 	
-	if (flag_w1.load(memory_order_relaxed)) {
-		if (not (flag_w2.load(memory_order_relaxed))) {
+	if (flag_w1.load(__LINE__, memory_order_relaxed)) {
+		if (not (flag_w2.load(__LINE__, memory_order_relaxed))) {
 			x = 1;
-			dum_rmw.store(0, memory_order_relaxed);
-			atomic_fetch_add_explicit(&notify, 1, memory_order_acq_rel);
+			dum_rmw.store(__LINE__, 0, memory_order_relaxed);
+			atomic_fetch_add_explicit(__LINE__, &notify, 1, memory_order_acq_rel);
 		}
 	}
 }
 
 static void writer2(void* arg) {
-	flag_w2.store(1, memory_order_seq_cst);
+	flag_w2.store(__LINE__, 1, memory_order_seq_cst);
 	
-	if (flag_w2.load(memory_order_relaxed)) {
-		if (not (flag_w1.load(memory_order_relaxed))) {
+	if (flag_w2.load(__LINE__, memory_order_relaxed)) {
+		if (not (flag_w1.load(__LINE__, memory_order_relaxed))) {
 			x = 1;
-			dum_rmw.store(0, memory_order_relaxed);
-			atomic_fetch_add_explicit(&notify, 1, memory_order_acq_rel);
+			dum_rmw.store(__LINE__, 0, memory_order_relaxed);
+			atomic_fetch_add_explicit(__LINE__, &notify, 1, memory_order_acq_rel);
 		}
 	}
 }

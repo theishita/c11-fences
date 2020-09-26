@@ -13,28 +13,28 @@ atomic<int> dum_var;
 
 static void t0(void *arg) {
 	for (int i = 0; i < NUM; i++) {
-		int prev_x = x.load(memory_order_acquire);
-		int prev_y = y.load(memory_order_acquire);
+		int prev_x = x.load(__LINE__, memory_order_acquire);
+		int prev_y = y.load(__LINE__, memory_order_acquire);
 
 		int sum = prev_x + prev_y;
-		dum_var.store(0, memory_order_relaxed);
-		x.store(sum, memory_order_release);
+		dum_var.store(__LINE__, 0, memory_order_relaxed);
+		x.store(__LINE__, sum, memory_order_release);
 	}
 }
 
 static void t1(void *arg) {
 	for (int i = 0; i < NUM; i++) {
-		int prev_x = x.load(memory_order_acquire);
-		int prev_y = y.load(memory_order_acquire);
+		int prev_x = x.load(__LINE__, memory_order_acquire);
+		int prev_y = y.load(__LINE__, memory_order_acquire);
 
 		int sum = prev_x + prev_y;
-		dum_var.store(0, memory_order_relaxed);
-		y.store(sum, memory_order_release);
+		dum_var.store(__LINE__, 0, memory_order_relaxed);
+		y.store(__LINE__, sum, memory_order_release);
 	}
 }
 
 static void t2(void *arg) {
-	if(x.load(memory_order_acquire) > 144 || y.load(memory_order_acquire) > 144)
+	if(x.load(__LINE__, memory_order_acquire) > 144 || y.load(__LINE__, memory_order_acquire) > 144)
 		MODEL_ASSERT(0);
 }
 

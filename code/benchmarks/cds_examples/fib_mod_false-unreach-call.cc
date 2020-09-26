@@ -20,13 +20,13 @@ static void fn1(void* arg) {
     int k = 0;
 
     for (k = 0; k < NUM; k++) {
-        int temp_j = j.load(memory_order_relaxed);
-        int temp_i = i.load(memory_order_relaxed);
-        dum_var.store(0, memory_order_relaxed);
-        i.store(temp_i + temp_j, memory_order_relaxed);
+        int temp_j = j.load(__LINE__, memory_order_relaxed);
+        int temp_i = i.load(__LINE__, memory_order_relaxed);
+        dum_var.store(__LINE__, 0, memory_order_relaxed);
+        i.store(__LINE__, temp_i + temp_j, memory_order_relaxed);
         if (temp_j > temp_i){
-            dum_var.store(1, memory_order_relaxed);
-            atomic_fetch_add_explicit(&count_j, 1, memory_order_relaxed);
+            dum_var.store(__LINE__, 1, memory_order_relaxed);
+            atomic_fetch_add_explicit(__LINE__, &count_j, 1, memory_order_relaxed);
         }
     }
 }
@@ -34,22 +34,22 @@ static void fn1(void* arg) {
 static void fn2(void* arg) {
     int k = 0;
     for (k = 0; k < NUM; k++) {
-        int temp_i = i.load(memory_order_relaxed);
-        int temp_j = j.load(memory_order_relaxed);
-        dum_var.store(0, memory_order_relaxed);
-        j.store(temp_j + temp_i, memory_order_relaxed);
+        int temp_i = i.load(__LINE__, memory_order_relaxed);
+        int temp_j = j.load(__LINE__, memory_order_relaxed);
+        dum_var.store(__LINE__, 0, memory_order_relaxed);
+        j.store(__LINE__, temp_j + temp_i, memory_order_relaxed);
         if (temp_i > temp_j){
-            dum_var.store(1, memory_order_relaxed);
-            atomic_fetch_add_explicit(&count_i, 1, memory_order_relaxed);
+            dum_var.store(__LINE__, 1, memory_order_relaxed);
+            atomic_fetch_add_explicit(__LINE__, &count_i, 1, memory_order_relaxed);
         }
     }
 }
 
 static void check_assert(void* arg) {
-    int c_i = count_i.load(memory_order_relaxed);
-    int c_j = count_j.load(memory_order_relaxed);
+    int c_i = count_i.load(__LINE__, memory_order_relaxed);
+    int c_j = count_j.load(__LINE__, memory_order_relaxed);
     if ((c_i == NUM and c_j == NUM-1) or (c_i == NUM-1 and c_j == NUM)) {
-        MODEL_ASSERT(i.load(memory_order_relaxed) == FIB_NUM or j.load(memory_order_relaxed) == FIB_NUM);
+        MODEL_ASSERT(i.load(__LINE__, memory_order_relaxed) == FIB_NUM or j.load(__LINE__, memory_order_relaxed) == FIB_NUM);
     }
 
 }

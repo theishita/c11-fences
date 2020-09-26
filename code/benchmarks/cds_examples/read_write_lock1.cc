@@ -15,26 +15,26 @@ atomic<int> flagr ;
 
 static void writer(void *arg) {
 	int ok = 0;
-	flagw.store(1, memory_order_seq_cst);
-	if(flagw.load(memory_order_relaxed)) {
-		if(!flagr.load(memory_order_acquire)){
+	flagw.store(__LINE__, 1, memory_order_seq_cst);
+	if(flagw.load(__LINE__, memory_order_relaxed)) {
+		if(!flagr.load(__LINE__, memory_order_acquire)){
 					ok = 1;
 		}
 	}
 	if (ok == 1) {
-        x.store(3, memory_order_relaxed);
-        w.store(0, memory_order_relaxed);
+        x.store(__LINE__, 3, memory_order_relaxed);
+        w.store(__LINE__, 0, memory_order_relaxed);
     }
 }
 
 static void reader(void *arg) {
     int l;
 	int ok = 0;
-	flagr.store(1, memory_order_seq_cst);
-	if (flagr.load(memory_order_relaxed)) {
-		if (! flagw.load(memory_order_acquire)) {
+	flagr.store(__LINE__, 1, memory_order_seq_cst);
+	if (flagr.load(__LINE__, memory_order_relaxed)) {
+		if (! flagw.load(__LINE__, memory_order_acquire)) {
 			for (int k = 0; k < ASSUME_LOOP; k++){
-				if (w.load(memory_order_acquire) == 0){
+				if (w.load(__LINE__, memory_order_acquire) == 0){
 					ok = 1;
 					break;
 				}
@@ -42,9 +42,9 @@ static void reader(void *arg) {
 		}
 	}
 	if (ok == 1) {
-		l = x.load(memory_order_relaxed);
+		l = x.load(__LINE__, memory_order_relaxed);
 
-        int temp1 = x.load(memory_order_relaxed);
+        int temp1 = x.load(__LINE__, memory_order_relaxed);
         MODEL_ASSERT(temp1 == l);
     }
 }

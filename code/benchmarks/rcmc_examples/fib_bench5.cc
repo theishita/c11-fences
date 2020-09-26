@@ -12,23 +12,23 @@ atomic<int> y;
 
 static void thread_1(void* arg) {
 	for (int i = 0; i < N; i++) {
-		int prev_x = x.load(memory_order_acquire);
-		int prev_y = y.load(memory_order_acquire);
-		x.store(prev_x + prev_y, memory_order_release);
+		int prev_x = x.load(__LINE__, memory_order_acquire);
+		int prev_y = y.load(__LINE__, memory_order_acquire);
+		x.store(__LINE__, prev_x + prev_y, memory_order_release);
 	}
 }
 
 static void thread_2(void* arg) {
 	for (int i = 0; i < N; i++) {
-		int prev_x = x.load(memory_order_acquire);
-		int prev_y = y.load(memory_order_acquire);
-		y.store(prev_x + prev_y, memory_order_release);
+		int prev_x = x.load(__LINE__, memory_order_acquire);
+		int prev_y = y.load(__LINE__, memory_order_acquire);
+		y.store(__LINE__, prev_x + prev_y, memory_order_release);
 	}
 }
 
 static void thread_3(void *arg) {
-	if (x.load(memory_order_acquire) > 144 ||
-	    y.load(memory_order_acquire) > 144)
+	if (x.load(__LINE__, memory_order_acquire) > 144 ||
+	    y.load(__LINE__, memory_order_acquire) > 144)
 		MODEL_ASSERT(0);
 }
 

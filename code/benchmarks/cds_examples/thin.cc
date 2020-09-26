@@ -11,15 +11,15 @@ atomic<int> x;
 atomic<int> y;
 
 static void a(void *obj) {
-	x.load(memory_order_relaxed);
+	x.load(__LINE__, memory_order_relaxed);
 	for (int i=0; i<LOOP; i++)
-		y.store(1, memory_order_relaxed);
+		y.store(__LINE__, 1, memory_order_relaxed);
 }
 
 static void b(void *obj) {
-	y.load(memory_order_relaxed);
+	y.load(__LINE__, memory_order_relaxed);
 	for (int i=0; i<LOOP; i++)
-		x.store(1, memory_order_relaxed);
+		x.store(__LINE__, 1, memory_order_relaxed);
 }
 
 int user_main(int argc, char **argv) {
@@ -34,7 +34,7 @@ int user_main(int argc, char **argv) {
 	thrd_join(t1);
 	thrd_join(t2);
 
-	MODEL_ASSERT(!(x.load(memory_order_relaxed) == 1 && y.load(memory_order_relaxed) == 1));
+	MODEL_ASSERT(!(x.load(__LINE__, memory_order_relaxed) == 1 && y.load(__LINE__, memory_order_relaxed) == 1));
 
 	return 0;
 }

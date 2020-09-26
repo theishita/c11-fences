@@ -15,11 +15,11 @@ atomic<int> x;
 static void t1(void *arg) {
     int ok1 = 0;
 
-    flag1.store(1, memory_order_seq_cst);
-    turn.store(2, memory_order_seq_cst);
+    flag1.store(__LINE__, 1, memory_order_seq_cst);
+    turn.store(__LINE__, 2, memory_order_seq_cst);
 
     for (int k = 0; k < LOOP; k++) {
-        if (not (flag2.load(memory_order_acquire) == 1 && turn.load(memory_order_relaxed) == 2)) {
+        if (not (flag2.load(__LINE__, memory_order_acquire) == 1 && turn.load(__LINE__, memory_order_relaxed) == 2)) {
             ok1 = 1;
             break;
         }
@@ -27,21 +27,21 @@ static void t1(void *arg) {
     if (ok1 == 0) return;
 
     // begin: critical section
-    x.store(1, memory_order_relaxed);
-    MODEL_ASSERT(x.load(memory_order_relaxed) == 1);
+    x.store(__LINE__, 1, memory_order_relaxed);
+    MODEL_ASSERT(x.load(__LINE__, memory_order_relaxed) == 1);
     // end: critical section
 
-    flag1.store(0, memory_order_seq_cst);
+    flag1.store(__LINE__, 0, memory_order_seq_cst);
 }
 
 static void t2(void *arg) {
     int ok1 = 0;
 
-    flag2.store(1, memory_order_seq_cst);
-    turn.store(1, memory_order_seq_cst);
+    flag2.store(__LINE__, 1, memory_order_seq_cst);
+    turn.store(__LINE__, 1, memory_order_seq_cst);
 
     for (int k = 0; k < LOOP; k++) {
-        if (not (flag1.load(memory_order_acquire) == 1 && turn.load(memory_order_relaxed) == 1)) {
+        if (not (flag1.load(__LINE__, memory_order_acquire) == 1 && turn.load(__LINE__, memory_order_relaxed) == 1)) {
             ok1 = 1;
             break;
         }
@@ -49,11 +49,11 @@ static void t2(void *arg) {
     if (ok1 == 0) return;
 
     // begin: critical section
-    x.store(2, memory_order_relaxed);
-    MODEL_ASSERT(x.load(memory_order_relaxed) == 2);
+    x.store(__LINE__, 2, memory_order_relaxed);
+    MODEL_ASSERT(x.load(__LINE__, memory_order_relaxed) == 2);
     // end: critical section
 
-    flag2.store(0, memory_order_seq_cst);
+    flag2.store(__LINE__, 0, memory_order_seq_cst);
 }
 
 int user_main(int argc, char **argv) {

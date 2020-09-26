@@ -18,11 +18,11 @@ atomic<int> flagr;
 
 static void writer(void *arg) {
 	int ok = 0;
-	flagw.store(1, memory_order_seq_cst);
+	flagw.store(__LINE__, 1, memory_order_seq_cst);
 	for (int k = 0; k < ASSUME_LOOP; k++) {
-		if(!(flagr.load(memory_order_acquire))) {
-			if (w.load(memory_order_acquire) == 0 &&
-			r.load(memory_order_acquire) == 0) {
+		if(!(flagr.load(__LINE__, memory_order_acquire))) {
+			if (w.load(__LINE__, memory_order_acquire) == 0 &&
+			r.load(__LINE__, memory_order_acquire) == 0) {
 				ok = 1;
 				break;
 			}
@@ -30,10 +30,10 @@ static void writer(void *arg) {
 	}
 
 	if (ok == 1) {
-		w.store(1, memory_order_relaxed);
-		flagw.store(0, memory_order_release);
-        x.store(3, memory_order_relaxed);
-        w.store(0, memory_order_release);
+		w.store(__LINE__, 1, memory_order_relaxed);
+		flagw.store(__LINE__, 0, memory_order_release);
+        x.store(__LINE__, 3, memory_order_relaxed);
+        w.store(__LINE__, 0, memory_order_release);
     }
 }
 
@@ -41,10 +41,10 @@ static void reader(void *arg) {
     int l;
 
 	int ok = 0;
-	flagr.store(1, memory_order_seq_cst);
+	flagr.store(__LINE__, 1, memory_order_seq_cst);
 	for(int i=0;i<ASSUME_LOOP;i++) {
-		if (! (flagw.load(memory_order_acquire))) {
-			if (w.load(memory_order_acquire) == 0){
+		if (! (flagw.load(__LINE__, memory_order_acquire))) {
+			if (w.load(__LINE__, memory_order_acquire) == 0){
 				ok = 1;
 				break;
 			}
@@ -52,17 +52,17 @@ static void reader(void *arg) {
 	}
 	if (ok == 1) {
 		r.fetch_add(1, memory_order_acq_rel);
-		flagr.store(0, memory_order_release);
-        l = x.load(memory_order_relaxed);
+		flagr.store(__LINE__, 0, memory_order_release);
+        l = x.load(__LINE__, memory_order_relaxed);
 		if(l == 0)
-        	y.store(0, memory_order_relaxed);
+        	y.store(__LINE__, 0, memory_order_relaxed);
 		else if(l == 3)
-			y.store(3, memory_order_relaxed);
+			y.store(__LINE__, 3, memory_order_relaxed);
 
-        int temp1 = x.load(memory_order_relaxed);
-        int temp2 = y.load(memory_order_relaxed);
+        int temp1 = x.load(__LINE__, memory_order_relaxed);
+        int temp2 = y.load(__LINE__, memory_order_relaxed);
         MODEL_ASSERT(temp1 == temp2);
-		r.fetch_sub(1, memory_order_acq_rel);
+		r.fetch_sub(__LINE__, 1, memory_order_acq_rel);
     }
 }
 

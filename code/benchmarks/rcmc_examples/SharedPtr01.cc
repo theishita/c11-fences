@@ -16,39 +16,39 @@ atomic<int> dum_var;
 static void t0(void *arg) {
 	int c1 = 0;
 
-	int y_val = y.load(memory_order_seq_cst);
-	dum_var.store(0, memory_order_relaxed);
-	p.store(y_val, memory_order_release);
+	int y_val = y.load(__LINE__, memory_order_seq_cst);
+	dum_var.store(__LINE__, 0, memory_order_relaxed);
+	p.store(__LINE__, y_val, memory_order_release);
 
 	for (int i = 0; i < N; i++) {
-		c1 += x.load(memory_order_acquire);
+		c1 += x.load(__LINE__, memory_order_acquire);
 	}
 
-	int temp = p.load(memory_order_acquire);
-	dum_var.store(1, memory_order_relaxed);
-	t.store(temp + 3, memory_order_release);
+	int temp = p.load(__LINE__, memory_order_acquire);
+	dum_var.store(__LINE__, 1, memory_order_relaxed);
+	t.store(__LINE__, temp + 3, memory_order_release);
 
-	MODEL_ASSERT(3 <= x.load(memory_order_relaxed) && x.load(memory_order_relaxed) <= 9);
-	MODEL_ASSERT(3 <= y.load(memory_order_relaxed) && y.load(memory_order_relaxed) <= 9);
+	MODEL_ASSERT(3 <= x.load(__LINE__, memory_order_relaxed) && x.load(__LINE__, memory_order_relaxed) <= 9);
+	MODEL_ASSERT(3 <= y.load(__LINE__, memory_order_relaxed) && y.load(__LINE__, memory_order_relaxed) <= 9);
 }
 
 static void t1(void *arg) {
 	int c2 = 0;
 
-	int x_val = x.load(memory_order_seq_cst);
-	dum_var.store(0, memory_order_relaxed);
-	p.store(x_val, memory_order_release);
+	int x_val = x.load(__LINE__, memory_order_seq_cst);
+	dum_var.store(__LINE__, 0, memory_order_relaxed);
+	p.store(__LINE__, x_val, memory_order_release);
 
 	for (int i = 0; i < N; i++) {
-		c2 += y.load(memory_order_acquire);
+		c2 += y.load(__LINE__, memory_order_acquire);
 	}
 
-	int temp = p.load(memory_order_acquire);
-	dum_var.store(1, memory_order_relaxed);
-	t.store(temp + 3, memory_order_release);
+	int temp = p.load(__LINE__, memory_order_acquire);
+	dum_var.store(__LINE__, 1, memory_order_relaxed);
+	t.store(__LINE__, temp + 3, memory_order_release);
 
-	MODEL_ASSERT(3 <= x.load(memory_order_relaxed) && x.load(memory_order_relaxed) <= 9);
-	MODEL_ASSERT(3 <= y.load(memory_order_relaxed) && y.load(memory_order_relaxed) <= 9);
+	MODEL_ASSERT(3 <= x.load(__LINE__, memory_order_relaxed) && x.load(__LINE__, memory_order_relaxed) <= 9);
+	MODEL_ASSERT(3 <= y.load(__LINE__, memory_order_relaxed) && y.load(__LINE__, memory_order_relaxed) <= 9);
 }
 
 int user_main(int argc, char **argv) {

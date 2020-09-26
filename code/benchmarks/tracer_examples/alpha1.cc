@@ -15,18 +15,18 @@ atomic<int> __fence_var;
 
 static void t0(void *arg){
 label_1:;
-  vars0.store(2, memory_order_release);
+  vars0.store(__LINE__, 2, memory_order_release);
 
 }
 
 static void t1(void *arg){
 label_2:;
-  int v2_r1 = vars0.load(memory_order_acquire);
-  int v4_r2 = vars0.load(memory_order_acquire);
+  int v2_r1 = vars0.load(__LINE__, memory_order_acquire);
+  int v4_r2 = vars0.load(__LINE__, memory_order_acquire);
   int v8 = (v2_r1 == 2);
-  atom_1_r1_2.store(v8, memory_order_release);
+  atom_1_r1_2.store(__LINE__, v8, memory_order_release);
   int v9 = (v4_r2 == 1);
-  atom_1_r2_1.store( v9, memory_order_release);
+  atom_1_r2_1.store(__LINE__,  v9, memory_order_release);
 
 }
 
@@ -45,8 +45,8 @@ int user_main(int argc, char **argv){
   thrd_join(thr0);
   thrd_join(thr1);
 
-  int v5 = atom_1_r1_2.load(memory_order_acquire);
-  int v6 = atom_1_r2_1.load(memory_order_acquire);
+  int v5 = atom_1_r1_2.load(__LINE__, memory_order_acquire);
+  int v6 = atom_1_r2_1.load(__LINE__, memory_order_acquire);
   int v7_conj = v5 & v6;
   if (v7_conj == 1) MODEL_ASSERT(0);
   return 0;

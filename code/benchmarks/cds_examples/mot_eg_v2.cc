@@ -11,43 +11,43 @@ atomic<int> flag2;
 atomic<int> x;
 
 static void writer1(void* arg) {
-	flag1.store(1, memory_order_seq_cst);
+	flag1.store(__LINE__, 1, memory_order_seq_cst);
 
-	if (not (flag2.load(memory_order_relaxed))) {
-		x.store(1, memory_order_release);
-		MODEL_ASSERT(x.load(memory_order_relaxed) == 1);
+	if (not (flag2.load(__LINE__, memory_order_relaxed))) {
+		x.store(__LINE__, 1, memory_order_release);
+		MODEL_ASSERT(x.load(__LINE__, memory_order_relaxed) == 1);
 	}
 }
 
 static void writer2(void* arg) {
-	flag1.store(1, memory_order_seq_cst);
+	flag1.store(__LINE__, 1, memory_order_seq_cst);
 
-	if (not (flag2.load(memory_order_relaxed))) {
-		x.store(1, memory_order_release);
-		MODEL_ASSERT(x.load(memory_order_relaxed) == 1);
+	if (not (flag2.load(__LINE__, memory_order_relaxed))) {
+		x.store(__LINE__, 1, memory_order_release);
+		MODEL_ASSERT(x.load(__LINE__, memory_order_relaxed) == 1);
 	}
 }
 
 static void writer3(void* arg) {
-	flag2.store(1, memory_order_seq_cst);
+	flag2.store(__LINE__, 1, memory_order_seq_cst);
 
-	if (not (flag1.load(memory_order_relaxed))) {
-		x.store(2, memory_order_release);
-		MODEL_ASSERT(x.load(memory_order_relaxed) == 2);
+	if (not (flag1.load(__LINE__, memory_order_relaxed))) {
+		x.store(__LINE__, 2, memory_order_release);
+		MODEL_ASSERT(x.load(__LINE__, memory_order_relaxed) == 2);
 	}
 }
 
 static void writer4(void* arg) {
-	flag2.store(1, memory_order_seq_cst);
+	flag2.store(__LINE__, 1, memory_order_seq_cst);
 
-	if (not (flag1.load(memory_order_relaxed))) {
-		x.store(2, memory_order_release);
-		MODEL_ASSERT(x.load(memory_order_relaxed) == 2);
+	if (not (flag1.load(__LINE__, memory_order_relaxed))) {
+		x.store(__LINE__, 2, memory_order_release);
+		MODEL_ASSERT(x.load(__LINE__, memory_order_relaxed) == 2);
 	}
 }
 
 static void reader(void* arg) {
-	x.load(memory_order_relaxed);
+	x.load(__LINE__, memory_order_relaxed);
 }
 
 int user_main(int argc, char **argv) {

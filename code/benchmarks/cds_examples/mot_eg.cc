@@ -17,46 +17,46 @@ atomic<int> buffer;		// size of buffer can be changed
 atomic<int> value;
 
 static void writer1(void* arg) {
-	flag_w1.store(1, memory_order_seq_cst);
+	flag_w1.store(__LINE__, 1, memory_order_seq_cst);
 
-	if (not (flag_w2.load(memory_order_relaxed))) {
-		int x = value.load(memory_order_relaxed);
-		value.store(x+1, memory_order_relaxed);
+	if (not (flag_w2.load(__LINE__, memory_order_relaxed))) {
+		int x = value.load(__LINE__, memory_order_relaxed);
+		value.store(__LINE__, x+1, memory_order_relaxed);
 		x += 1;
-		buffer.store(x, memory_order_release);
-		notify.store(1, memory_order_release);
+		buffer.store(__LINE__, x, memory_order_release);
+		notify.store(__LINE__, 1, memory_order_release);
 	}
 }
 
 static void writer2(void* arg) {
-	flag_w2.store(1, memory_order_seq_cst);
+	flag_w2.store(__LINE__, 1, memory_order_seq_cst);
 
-	if (not (flag_w1.load(memory_order_relaxed))) {
-		int x = value.load(memory_order_relaxed);
-		value.store(x+1, memory_order_relaxed);
+	if (not (flag_w1.load(__LINE__, memory_order_relaxed))) {
+		int x = value.load(__LINE__, memory_order_relaxed);
+		value.store(__LINE__, x+1, memory_order_relaxed);
 		x += 1;
-		buffer.store(x, memory_order_release);
-		notify.store(1, memory_order_release);
+		buffer.store(__LINE__, x, memory_order_release);
+		notify.store(__LINE__, 1, memory_order_release);
 	}
 }
 
 static void reader1(void* arg) {
-	if (notify.load(memory_order_acquire)){
-		int x = buffer.load(memory_order_acquire);
-		if (value.load(memory_order_relaxed) != 0)
+	if (notify.load(__LINE__, memory_order_acquire)){
+		int x = buffer.load(__LINE__, memory_order_acquire);
+		if (value.load(__LINE__, memory_order_relaxed) != 0)
 			MODEL_ASSERT(x != 0);
 
-        notify.store(1, memory_order_relaxed);
+        notify.store(__LINE__, 1, memory_order_relaxed);
 	}
 }
 
 static void reader2(void* arg) {
-	if (notify.load(memory_order_acquire)){
-		int x = buffer.load(memory_order_acquire);
-		if (value.load(memory_order_relaxed) != 0)
+	if (notify.load(__LINE__, memory_order_acquire)){
+		int x = buffer.load(__LINE__, memory_order_acquire);
+		if (value.load(__LINE__, memory_order_relaxed) != 0)
 			MODEL_ASSERT(x != 0);
 
-        notify.store(1, memory_order_relaxed);
+        notify.store(__LINE__, 1, memory_order_relaxed);
 	}
 }
 

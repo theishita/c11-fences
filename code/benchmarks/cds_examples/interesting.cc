@@ -12,12 +12,12 @@ atomic<int> y;
 atomic<int> z;
 
 static void fn1(void* arg) {
-	z.store(1, memory_order_relaxed);
-	y.store(2, memory_order_release);
+	z.store(__LINE__, 1, memory_order_relaxed);
+	y.store(__LINE__, 2, memory_order_release);
 }
 
 static void fn2(void* arg) {
-    int k = x.load(memory_order_relaxed) + y.load(memory_order_acquire) + z.load(memory_order_relaxed);
+    int k = x.load(__LINE__, memory_order_relaxed) + y.load(__LINE__, memory_order_acquire) + z.load(__LINE__, memory_order_relaxed);
     MODEL_ASSERT(k == 2);
 }
 

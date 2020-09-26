@@ -14,27 +14,27 @@ atomic<int> __fence_var;
 atomic<int> dum_var;
 
 static void t0(void *arg) {
-  vars0.store(1, memory_order_release);
-  __fence_var.store(0, memory_order_acq_rel);
-  vars1.store(1, memory_order_release);
+  vars0.store(__LINE__, 1, memory_order_release);
+  __fence_var.store(__LINE__, 0, memory_order_acq_rel);
+  vars1.store(__LINE__, 1, memory_order_release);
 
 }
 
 static void t1(void *arg) {
-  vars1.store(2, memory_order_release);
-  int v2_r3 = vars2.load(memory_order_acquire);
+  vars1.store(__LINE__, 2, memory_order_release);
+  int v2_r3 = vars2.load(__LINE__, memory_order_acquire);
   int v11 = (v2_r3 == 0);
-  atom_1_r3_0.store(v11, memory_order_release);
+  atom_1_r3_0.store(__LINE__, v11, memory_order_release);
 
 }
 
 static void t2(void *arg) {
-  vars2.store(1, memory_order_release);
-  dum_var.store(0, memory_order_relaxed);
-  atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
-  int v4_r3 = vars0.load(memory_order_acquire);
+  vars2.store(__LINE__, 1, memory_order_release);
+  dum_var.store(__LINE__, 0, memory_order_relaxed);
+  atomic_fetch_add_explicit(__LINE__, &__fence_var, 0, memory_order_acq_rel);
+  int v4_r3 = vars0.load(__LINE__, memory_order_acquire);
   int v12 = (v4_r3 == 0);
-  atom_2_r3_0.store(v12, memory_order_release);
+  atom_2_r3_0.store(__LINE__, v12, memory_order_release);
 
 }
 
@@ -59,10 +59,10 @@ int user_main(int argc, char **argv) {
   thrd_join(thr1);
   thrd_join(thr2);
 
-  int v5 = vars1.load(memory_order_acquire);
+  int v5 = vars1.load(__LINE__, memory_order_acquire);
   int v6 = (v5 == 2);
-  int v7 = atom_1_r3_0.load(memory_order_acquire);
-  int v8 = atom_2_r3_0.load(memory_order_acquire);
+  int v7 = atom_1_r3_0.load(__LINE__, memory_order_acquire);
+  int v8 = atom_2_r3_0.load(__LINE__, memory_order_acquire);
   int v9_conj = v7 & v8;
   int v10_conj = v6 & v9_conj;
   if (v10_conj == 1) MODEL_ASSERT(0);

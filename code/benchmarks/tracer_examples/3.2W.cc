@@ -14,22 +14,22 @@ atomic<int> __fence_var;
 
 static void t0(void *arg){
 label_1:;
-  vars0.store(2, memory_order_release);
-  vars1.store(1, memory_order_release);
+  vars0.store(__LINE__, 2, memory_order_release);
+  vars1.store(__LINE__, 1, memory_order_release);
 
 }
 
 static void t1(void *arg){
 label_2:;
-  vars1.store(2, memory_order_release);
-  vars2.store(1, memory_order_release);
+  vars1.store(__LINE__, 2, memory_order_release);
+  vars2.store(__LINE__, 1, memory_order_release);
 
 }
 
 static void t2(void *arg){
 label_3:;
-  vars2.store(2, memory_order_release);
-  vars0.store(1, memory_order_release);
+  vars2.store(__LINE__, 2, memory_order_release);
+  vars0.store(__LINE__, 1, memory_order_release);
 
 }
 
@@ -51,11 +51,11 @@ int user_main(int argc, char **argv){
   thrd_join(thr1);
   thrd_join(thr2);
 
-  int v1 = vars0.load(memory_order_acquire);
+  int v1 = vars0.load(__LINE__, memory_order_acquire);
   int v2 = (v1 == 2);
-  int v3 = vars1.load(memory_order_acquire);
+  int v3 = vars1.load(__LINE__, memory_order_acquire);
   int v4 = (v3 == 2);
-  int v5 = vars2.load(memory_order_acquire);
+  int v5 = vars2.load(__LINE__, memory_order_acquire);
   int v6 = (v5 == 2);
   int v7_conj = v4 & v6;
   int v8_conj = v2 & v7_conj;

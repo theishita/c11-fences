@@ -15,22 +15,22 @@ atomic<int> __fence_var;
 
 static void t0(void *arg){
 label_1:;
-  vars0.store(1, memory_order_release);
-  int v2_r1 = vars0.load(memory_order_acquire);
-  atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
-  int v4_r2 = vars1.load(memory_order_acquire);
+  vars0.store(__LINE__, 1, memory_order_release);
+  int v2_r1 = vars0.load(__LINE__, memory_order_acquire);
+  atomic_fetch_add_explicit(__LINE__, &__fence_var, 0, memory_order_acq_rel);
+  int v4_r2 = vars1.load(__LINE__, memory_order_acquire);
   int v11 = (v2_r1 == 1);
-  atom_0_r1_1.store(v11, memory_order_release);
+  atom_0_r1_1.store(__LINE__, v11, memory_order_release);
   int v12 = (v4_r2 == 0);
-  atom_0_r2_0.store(v12, memory_order_release);
+  atom_0_r2_0.store(__LINE__, v12, memory_order_release);
 
 }
 
 static void t1(void *arg){
 label_2:;
-  vars1.store(2, memory_order_release);
-  atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
-  vars0.store(2, memory_order_release);
+  vars1.store(__LINE__, 2, memory_order_release);
+  atomic_fetch_add_explicit(__LINE__, &__fence_var, 0, memory_order_acq_rel);
+  vars0.store(__LINE__, 2, memory_order_release);
 
 }
 
@@ -50,10 +50,10 @@ int user_main(int argc, char **argv){
   thrd_join(thr0);
   thrd_join(thr1);
 
-  int v5 = vars0.load(memory_order_acquire);
+  int v5 = vars0.load(__LINE__, memory_order_acquire);
   int v6 = (v5 == 1);
-  int v7 = atom_0_r1_1.load(memory_order_acquire);
-  int v8 = atom_0_r2_0.load(memory_order_acquire);
+  int v7 = atom_0_r1_1.load(__LINE__, memory_order_acquire);
+  int v8 = atom_0_r2_0.load(__LINE__, memory_order_acquire);
   int v9_conj = v7 & v8;
   int v10_conj = v6 & v9_conj;
   if (v10_conj == 1) MODEL_ASSERT(0);

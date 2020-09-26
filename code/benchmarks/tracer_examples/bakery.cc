@@ -32,7 +32,7 @@ atomic<int> __fence_var;
 bool lock(int thread) {
   int ok = 0;
   atomic_store_explicit(&choosing[thread], 1, rel);
-  atomic_fetch_add_explicit(&__fence_var, 0, acq_rel);
+  atomic_fetch_add_explicit(__LINE__, &__fence_var, 0, acq_rel);
   int max_ticket = 0;
   for (int i = 0; i < THREAD_COUNT; ++i) {
     int ticket = atomic_load_explicit(&tickets[i], acq);
@@ -40,7 +40,7 @@ bool lock(int thread) {
   }
   atomic_store_explicit(&tickets[thread], max_ticket + 1, rel);
   atomic_store_explicit(&choosing[thread], 0, rel);
-  atomic_fetch_add_explicit(&__fence_var, 0, acq_rel);
+  atomic_fetch_add_explicit(__LINE__, &__fence_var, 0, acq_rel);
   for (int other = 0; other < THREAD_COUNT; ++other) {
     ok = 0;
     for (int i=0; i<LOOP; i++) {

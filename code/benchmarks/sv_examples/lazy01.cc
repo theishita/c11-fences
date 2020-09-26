@@ -9,21 +9,21 @@ atomic<int> data;
 atomic<int> dum_var;
 
 static void t1(void *arg) {
-	int d = data.load(memory_order_seq_cst);
+	int d = data.load(__LINE__, memory_order_seq_cst);
 	d += 1;
-	dum_var.store(0, memory_order_relaxed);
-	data.store(d, memory_order_seq_cst);
+	dum_var.store(__LINE__, 0, memory_order_relaxed);
+	data.store(__LINE__, d, memory_order_seq_cst);
 }
 
 static void t2(void *arg) {
-	int d = data.load(memory_order_seq_cst);
+	int d = data.load(__LINE__, memory_order_seq_cst);
 	d += 2;
-	dum_var.store(0, memory_order_relaxed);
-	data.store(d, memory_order_seq_cst);
+	dum_var.store(__LINE__, 0, memory_order_relaxed);
+	data.store(__LINE__, d, memory_order_seq_cst);
 }
 
 static void t3(void *arg) {
-	MODEL_ASSERT(data.load(memory_order_seq_cst) < 3);
+	MODEL_ASSERT(data.load(__LINE__, memory_order_seq_cst) < 3);
 }
 
 int user_main(int argc, char **argv) {

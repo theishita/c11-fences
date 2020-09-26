@@ -19,59 +19,59 @@ atomic<int> __fence_var;
 
 static void t0(void *arg){
 label_1:;
-  vars0.store(2, memory_order_release);
-  atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
-  vars1.store(1, memory_order_release);
+  vars0.store(__LINE__, 2, memory_order_release);
+  atomic_fetch_add_explicit(__LINE__, &__fence_var, 0, memory_order_acq_rel);
+  vars1.store(__LINE__, 1, memory_order_release);
 
 }
 
 static void t1(void *arg){
 label_2:;
-  vars1.store(2, memory_order_release);
-  atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
-  vars2.store(1, memory_order_release);
+  vars1.store(__LINE__, 2, memory_order_release);
+  atomic_fetch_add_explicit(__LINE__, &__fence_var, 0, memory_order_acq_rel);
+  vars2.store(__LINE__, 1, memory_order_release);
 
 }
 
 static void t2(void *arg){
 label_3:;
-  int v2_r1 = vars2.load(memory_order_acquire);
-  atomic_fetch_add_explicit(&__fence_var, 0, memory_order_acq_rel);
-  vars3.store(1, memory_order_release);
+  int v2_r1 = vars2.load(__LINE__, memory_order_acquire);
+  atomic_fetch_add_explicit(__LINE__, &__fence_var, 0, memory_order_acq_rel);
+  vars3.store(__LINE__, 1, memory_order_release);
   int v22 = (v2_r1 == 1);
-  atom_2_r1_1.store(v22, memory_order_release);
+  atom_2_r1_1.store(__LINE__, v22, memory_order_release);
 
 }
 
 static void t3(void *arg){
 label_4:;
-  int v4_r1 = vars3.load(memory_order_acquire);
+  int v4_r1 = vars3.load(__LINE__, memory_order_acquire);
   int v5_r3 = v4_r1 ^ v4_r1;
 
   int sum = 4+v5_r3;
   int v8_r4;
   if(sum == 0) {
-    v8_r4 = vars0.load(memory_order_acquire);
+    v8_r4 = vars0.load(__LINE__, memory_order_acquire);
   }
   else if(sum == 1) {
-    v8_r4 = vars1.load(memory_order_acquire);
+    v8_r4 = vars1.load(__LINE__, memory_order_acquire);
   }
   else if(sum == 2) {
-    v8_r4 = vars2.load(memory_order_acquire);
+    v8_r4 = vars2.load(__LINE__, memory_order_acquire);
   }
   else if(sum == 3) {
-    v8_r4 = vars3.load(memory_order_acquire);
+    v8_r4 = vars3.load(__LINE__, memory_order_acquire);
   }
   else if(sum == 4) {
-    v8_r4 = vars4.load(memory_order_acquire);
+    v8_r4 = vars4.load(__LINE__, memory_order_acquire);
   }
 
-  vars0.store(1, memory_order_release);
-  int v10_r8 = vars0.load(memory_order_acquire);
+  vars0.store(__LINE__, 1, memory_order_release);
+  int v10_r8 = vars0.load(__LINE__, memory_order_acquire);
   int v23 = (v4_r1 == 1);
-  atom_3_r1_1.store(v23, memory_order_release);
+  atom_3_r1_1.store(__LINE__, v23, memory_order_release);
   int v24 = (v10_r8 == 1);
-  atom_3_r8_1.store(v24, memory_order_release);
+  atom_3_r8_1.store(__LINE__, v24, memory_order_release);
 
 }
 
@@ -101,13 +101,13 @@ int user_main(int argc, char **argv){
   thrd_join(thr2);
   thrd_join(thr3);
 
-  int v11 = vars0.load(memory_order_acquire);
+  int v11 = vars0.load(__LINE__, memory_order_acquire);
   int v12 = (v11 == 2);
-  int v13 = vars1.load(memory_order_acquire);
+  int v13 = vars1.load(__LINE__, memory_order_acquire);
   int v14 = (v13 == 2);
-  int v15 = atom_2_r1_1.load(memory_order_acquire);
-  int v16 = atom_3_r1_1.load(memory_order_acquire);
-  int v17 = atom_3_r8_1.load(memory_order_acquire);
+  int v15 = atom_2_r1_1.load(__LINE__, memory_order_acquire);
+  int v16 = atom_3_r1_1.load(__LINE__, memory_order_acquire);
+  int v17 = atom_3_r8_1.load(__LINE__, memory_order_acquire);
   int v18_conj = v16 & v17;
   int v19_conj = v15 & v18_conj;
   int v20_conj = v14 & v19_conj;

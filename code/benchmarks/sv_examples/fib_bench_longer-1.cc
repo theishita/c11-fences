@@ -14,20 +14,20 @@ atomic<int> dum_var;
 static void t1(void *arg) {
   int k = 0;
   for (k = 0; k < NUM; k++) {
-    int tj = j.load(memory_order_seq_cst);
-    int ti = i.load(memory_order_seq_cst);
-    dum_var.store(0, memory_order_relaxed);
-    i.store(tj+ti, memory_order_seq_cst);
+    int tj = j.load(__LINE__, memory_order_seq_cst);
+    int ti = i.load(__LINE__, memory_order_seq_cst);
+    dum_var.store(__LINE__, 0, memory_order_relaxed);
+    i.store(__LINE__, tj+ti, memory_order_seq_cst);
   }
 }
 
 static void t2(void *arg) {
   int k = 0;
   for (k = 0; k < NUM; k++) {
-    int tj = j.load(memory_order_seq_cst);
-    int ti = i.load(memory_order_seq_cst);
-    dum_var.store(0, memory_order_relaxed);
-    j.store(tj+ti, memory_order_seq_cst);
+    int tj = j.load(__LINE__, memory_order_seq_cst);
+    int ti = i.load(__LINE__, memory_order_seq_cst);
+    dum_var.store(__LINE__, 0, memory_order_relaxed);
+    j.store(__LINE__, tj+ti, memory_order_seq_cst);
   }
 }
 
@@ -44,8 +44,8 @@ int user_main(int argc, char **argv) {
 	thrd_join(id1);
 	thrd_join(id2);
 
-  int condI = i.load(memory_order_seq_cst);
-  int condJ = j.load(memory_order_seq_cst);
+  int condI = i.load(__LINE__, memory_order_seq_cst);
+  int condJ = j.load(__LINE__, memory_order_seq_cst);
 
   MODEL_ASSERT(!(condI > 376 || condJ > 376));
 
