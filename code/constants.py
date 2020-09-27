@@ -27,12 +27,14 @@ RF = 6						# rf serial no
 LINE_NO = 7					# line number in source code
 
 # files and CDS Checker related constants
-Z3_FILE = "compute_fences"
-FILE_EXTENSION = ".cc"
-OUTPUT_FILE_APPEND_STRING = "_fence"+FILE_EXTENSION
-FENCE_INSTRUCTION = "atomic_thread_fence(memory_order_seq_cst);"
-CDS_FOLDER_PATH = "../model-checker/cds-checker"
-CDS_TEST_FOLDER_PATH = CDS_FOLDER_PATH+"/test"
+class file_info:
+	Z3_FILE = "compute_fences"
+	FILE_EXTENSION = ".cc"
+	CDS_MADE_FILE_EXTENSIONS = [".o", ".o.d"]
+	OUTPUT_FILE_APPEND_STRING = "_fence"+FILE_EXTENSION
+	FENCE_INSTRUCTION = "atomic_thread_fence(memory_order_seq_cst);"
+	CDS_FOLDER_PATH = "../model-checker/cds-checker"
+	CDS_TEST_FOLDER_PATH = CDS_FOLDER_PATH+"/test"
 
 class output_colours:
 	HEADER = '\033[95m'

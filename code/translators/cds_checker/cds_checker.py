@@ -11,7 +11,8 @@ import sys
 from operator import itemgetter
 
 from .create_list import create_list
-from constants import *
+from constants import file_info as fi
+
 
 class translate_cds:
 	def __init__(self,filename):
@@ -20,8 +21,8 @@ class translate_cds:
 		self.traces = []												# list of processed traces
 		self.no_buggy_execs = 0											# number of buggy executions for this run
 
-		copy = "cp " + filename + " " + CDS_TEST_FOLDER_PATH
-		make = "cd "+ CDS_FOLDER_PATH + " && make"
+		copy = "cp " + filename + " " + fi.CDS_TEST_FOLDER_PATH
+		make = "cd "+ fi.CDS_FOLDER_PATH + " && make"
 
 		input_file = filename.split('/')
 		input_file = input_file[-1]
@@ -34,7 +35,7 @@ class translate_cds:
 		cds_start = time.time()
 		os.system(make)													# make/compile into object file for CDS Checker
 		p = subprocess.check_output(cds_cmd,
-									cwd = CDS_FOLDER_PATH,
+									cwd = fi.CDS_FOLDER_PATH,
 									stderr=subprocess.PIPE)				# get std output from CDS Checker
 		cds_end = time.time()
 		p = p.decode('utf-8')											# convert to string

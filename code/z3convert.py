@@ -2,11 +2,11 @@
 # Creates constants and assertions out of the given
 # variables and conditions and writes it into the file.
 # --------------------------------------------------------
-from constants import *
+from constants import file_info as fi
 import z3_functions as z3
 
 def z3convert(consts, disjunctions, fences_present):
-	file = open(Z3_FILE,'w')
+	file = open(fi.Z3_FILE,'w')
 	contents = ""
 
 	# creating the constants

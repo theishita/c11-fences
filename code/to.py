@@ -1,5 +1,5 @@
 # --------------------------------------------------------
-
+#
 # --------------------------------------------------------
 
 import ast
@@ -32,7 +32,7 @@ class to:
 	
 	def preprocessing(self, order):
 		for i in range(len(order)):
-			if order[i][TYPE] == WRITE or order[i][TYPE] == RMW or order[i][TYPE] == INIT: # TODO: is init to be included here as well???
+			if order[i][TYPE] == WRITE or order[i][TYPE] == RMW:
 				self.writes.append(order[i-1])
 				self.writes.append(order[i])
 				self.writes.append(order[i+1])
@@ -50,7 +50,6 @@ class to:
 				except: continue
 
 				x = self.writes[a-1]
-				# self.to_edges.append((x,y))
 				
 				# adding relations for fences above A and fences below B
 				x_thread = self.writes[a][T_NO] -1
@@ -94,7 +93,6 @@ class to:
 				except: continue
 
 				x = self.reads[b-1]
-				# self.to_edges.append((x, self.writes[m2][S_NO]))
 				m2_no = self.writes[m2][S_NO]
 
 				# adding relations for fences above B
@@ -116,7 +114,6 @@ class to:
 						
 						x = self.writes[a_index+1]
 						y = self.reads[b-1]
-						# self.to_edges.append((y,x))
 
 						# adding relations for all fences below A and fences above B
 						x_thread = self.writes[a_index][T_NO] -1
@@ -148,16 +145,13 @@ class to:
 
 			# rule 4a
 			if self.writes[b_index][MO] == SEQ_CST:
-				# self.to_edges.append((b,x))
 				for i in range(x_index,len(self.fences_thread[x_thread])):
 					self.to_edges.append((b, self.fences_thread[x_thread][i]))
 			# rule 4b
 			if self.writes[a_index][MO] == SEQ_CST:
-				# self.to_edges.append((y,a))
 				for i in range(0, y_index+1):
 					self.to_edges.append((self.fences_thread[y_thread][i], a))
 			# rule 4c
-			# self.to_edges.append((y,x))
 			for i in range(0, y_index+1):
 				for j in range(x_index, len(self.fences_thread[x_thread])):
 					self.to_edges.append((self.fences_thread[y_thread][i],self.fences_thread[x_thread][j]))

@@ -19,7 +19,8 @@ from processing import Processing
 from z3run import z3run
 from insert import insert
 from translators.cds_checker.cds_checker import translate_cds
-from translators.cds_checker.delete_generated_file import delete_generated_file
+from translators.cds_checker.delete_file import delete_generated_file
+from translators.cds_checker.delete_file import delete_copied_file
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--file", "-f", type=str, required=True, 
@@ -99,6 +100,7 @@ def fn_main(filename):
 
 start = time.time()
 fn_main(filename)
+delete_copied_file(filename)
 end = time.time()
 print(oc.OKBLUE + oc.BOLD + "\n\n================= OVERALL =================" + oc.ENDC)
 if not error_string:
