@@ -96,7 +96,7 @@ the required ones can be retained and the rest can be eliminated.
 % --------------- FINDING RELATIONS -----------
 \subsection{Finding relations}
 % What is TO?
-The C11 standard \cite{c11} states that in any valid execution 
+The C11 standard \cite{C11} states that in any valid execution 
 all the \mosc instructions should form a total order. Such total order
 has to be consistent with modification order and 
 happens-before relation. This means that for any two \mosc instructions A 
@@ -123,7 +123,7 @@ instructions, including fences.
 These relations will help in figuring out which fences to eliminate from 
 the trace. In particular, we are concerned with the \setTO (total order) 
 relations between all SC instructions and fences. Rules for TO relations 
-for the C11 model are described in the official standard \cite{c11}. 
+for the C11 model are described in the official standard \cite{C11}. 
 These rules are dependent relations \setSB, \setSW, \setHB and \setMO, which 
 would have to be computed first, and an order is followed for the same.
 
@@ -178,7 +178,7 @@ pseudo fences. \divComment{Why can't we compute it after?}
 \subsubsection{Finding \setMO relations}
 \setMO relations are formed between write instructions when the value of a 
 variable is changed at some point in the program. The rules for modification 
-order as described by the standard \cite{c11} are:
+order as described by the standard \cite{C11} are:
 \begin{enumerate}
     \item Write-write coherence: \\
     \hb{$A_x$}{$B_x$} $\implies$ \mo{$A_x$}{$B_x$}\\
@@ -204,7 +204,7 @@ After this step, the pseudo fences are inserted.
 \subsubsection{Finding \setTO relations between SC instructions}\label{to_rel}
 The final step in finding relations and the main step that is required for 
 fence elimination is to find \setTO relations. The rules for \setTO relations 
-in the C11 standard are defined in \cite{c11}. These rules can be interpreted 
+in the C11 standard are defined in \cite{C11}. These rules can be interpreted 
 as the following:
 \input{section/to_rules.tex}
 \textit{Note: ``the fence above instruction A'' is a comprehensive term for all 
@@ -409,8 +409,9 @@ the formula remains same.
 
 \par
 So even if transitive \setTO relations are considered as graph edges, 
-they would not be impact our final solution. For each transitively 
-formed edge, all original edges which would have possibly caused 
-the transitive edge would be needed to be kept track of. 
+they would not impact our final solution. 
+%For each transitively 
+%formed edge, all original edges which would have possibly caused 
+%the transitive edge would be needed to be kept track of. 
 Therefore, using just the original edges serves our purpose 
 in a much more efficient manner.
