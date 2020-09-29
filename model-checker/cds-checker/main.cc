@@ -32,6 +32,7 @@ static void param_defaults(struct model_params *params)
 	params->verbose = !!DBG_ENABLED();
 	params->uninitvalue = 0;
 	params->maxexecutions = 0;
+	params->maxbugexecutions = -1;
 }
 
 static void print_usage(const char *program_name, struct model_params *params)
@@ -87,7 +88,9 @@ static void print_usage(const char *program_name, struct model_params *params)
 "-t, --analysis=NAME         Use Analysis Plugin.\n"
 "-o, --options=NAME          Option for previous analysis plugin.  \n"
 "-x, --maxexec=NUM           Maximum number of executions.\n"
-"                            Default: %u\n"
+"                              Default: %u\n"
+"-c, --maxbugexec=NUM        Maximum number of buggy executions to print. \n"
+"                              Default: show all\n"
 "                            -o help for a list of options\n"
 " --                         Program arguments follow.\n\n",
 		program_name,
@@ -101,8 +104,9 @@ static void print_usage(const char *program_name, struct model_params *params)
 		params->enabledcount,
 		params->bound,
 		params->verbose,
-    params->uninitvalue,
-		params->maxexecutions);
+    	params->uninitvalue,
+		params->maxexecutions,
+		params->maxbugexecutions);
 	model_print("Analysis plugins:\n");
 	for(unsigned int i=0;i<registeredanalysis->size();i++) {
 		TraceAnalysis * analysis=(*registeredanalysis)[i];
@@ -128,7 +132,7 @@ bool install_plugin(char * name) {
 
 static void parse_options(struct model_params *params, int argc, char **argv)
 {
-	const char *shortopts = "hyYt:o:m:M:s:S:f:e:b:u:x:v::";
+	const char *shortopts = "hyYt:o:m:M:s:S:f:e:b:u:x:c:v::";
 	const struct option longopts[] = {
 		{"help", no_argument, NULL, 'h'},
 		{"liveness", required_argument, NULL, 'm'},
@@ -145,6 +149,7 @@ static void parse_options(struct model_params *params, int argc, char **argv)
 		{"analysis", required_argument, NULL, 't'},
 		{"options", required_argument, NULL, 'o'},
 		{"maxexecutions", required_argument, NULL, 'x'},
+		{"maxbugexecutions", required_argument, NULL, 'c'},
 		{0, 0, 0, 0} /* Terminator */
 	};
 	int opt, longindex;
@@ -156,6 +161,9 @@ static void parse_options(struct model_params *params, int argc, char **argv)
 			break;
 		case 'x':
 			params->maxexecutions = atoi(optarg);
+			break;
+		case 'c':
+			params->maxbugexecutions = atoi(optarg);
 			break;
 		case 's':
 			params->maxfuturedelay = atoi(optarg);

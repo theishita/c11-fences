@@ -15,6 +15,7 @@ struct model_params {
 	unsigned int bound;
 	unsigned int uninitvalue;
 	int maxexecutions;
+	int maxbugexecutions;
 
 	/** @brief Maximum number of future values that can be sent to the same
 	 *  read */
