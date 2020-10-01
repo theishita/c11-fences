@@ -15,7 +15,7 @@ from constants import file_info as fi
 
 
 class translate_cds:
-	def __init__(self,filename):
+	def __init__(self, filename, no_traces):
 
 		self.traces_raw = []											# list of all traces raw
 		self.traces = []												# list of processed traces
@@ -29,6 +29,8 @@ class translate_cds:
 
 		input_file = "test/"+input_file[:-2]+'o'
 		cds_cmd = './run.sh '+input_file								# cmd to run cds checker
+		if no_traces:
+			cds_cmd += " -c "+str(no_traces)
 		cds_cmd = shlex.split(cds_cmd)
 
 		os.system(copy)													# copy input file to cds checker directory

@@ -22,7 +22,7 @@ import sys
 
 # IDEA: any var with _thread at the end means that it is separated by thread number
 class Processing:
-	def __init__(self, traces, no_traces):
+	def __init__(self, traces):
 		self.z3vars = []												# list of all z3 constants
 		self.disjunctions = []											# list of disjunctions for the z3 function
 		self.fences_present = []										# list of fences converted to their respective variable names
@@ -31,8 +31,7 @@ class Processing:
 
 		trace_no = 0
 
-		for t in range(no_traces):										# run for each trace
-			trace = traces[t]
+		for trace in traces:										# run for each trace
 			self.all_sc_events_thread = []								# list of all sc events separated by threads
 			self.sc_sb_edges = []										# list of sb edge pairs between all sc events
 			self.fences_thread = []										# list of fences in each thread
