@@ -32,14 +32,16 @@ In the program described in Fig \ref{fig:dekker2}, inserting an SC fence
 between the instructions (1) and (2), and an SC fence between (5) and (6) 
 render the program non-buggy, thereby satisfying the given assertions. 
 After adding these fences, the program will never have a case where 
-the output can be anything other than ``10''.
+the output can be anything other than ``10''. 
+\snj{I don't think this is correct.}
 
 To obtain the position of these fences, a series of steps is followed. 
 The two fences strategically inserted in the program are the minimum 
 number of fences which can be inserted in order to prevent the unwanted 
-outputs. One can add \mosc fences at all positions - before and after all 
+outputs. \snj{Not correct: 
+	One can add \mosc fences at all positions - before and after all 
 instructions - in order to make the program as strict as possible under 
-C11 and hence prevent the buggy outputs if possible, such as in Fig 
+C11} and hence prevent the buggy outputs if possible, such as in Fig 
 \ref{fig:dekker3}. However, this comes at the cost of making program 
 stricter than required. Therefore, in our solution to retain maximum 
 flexibility, after inserting fences at all places, we must now eliminate 
