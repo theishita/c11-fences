@@ -148,7 +148,8 @@ An \setSW relation is formed based on the following rules:
 \rf{$W_{\geq rel}x$}{$R_{\geq acq}x$} $\implies$ \sw{$W_{\geq rel}x$}{$R_{\geq acq}x$}\\
 RMW operations are considered as both reads and writes in this case.
 \end{enumerate}
-
+Note that since we do not consider \moacq, \morel and \moacqrel fences, 
+our \setSW rules do not capture them.
 \par
 
 
@@ -174,6 +175,10 @@ after inserting fences, we will have some \setHB relations that are not in
 the actual execution but will exist in the execution of program with all the 
 pseudo fences. \divComment{Why can't we compute it after?}
 
+\begin{lemma} For any valid execution of a program, the relation \setHB computed 
+	as above is same as \emph{happens-before} of C11.
+\end{lemma}
+
 % --------------- MO ------------
 \subsubsection{Finding \setMO relations}
 \setMO relations are formed between write instructions when the value of a 
@@ -197,6 +202,11 @@ order as described by the standard \cite{C11} are:
     \textit{where X, Y are writes on variable x\\and B is a read on variable x}
 \end{enumerate}
 
+\begin{lemma}
+	For any valid execution of a program, the relation \setMO computed 
+	as above is same as \emph{modification-order} of C11.
+\end{lemma}
+
 \par
 After this step, the pseudo fences are inserted.
 
@@ -209,7 +219,15 @@ as the following:
 \input{section/to_rules.tex}
 \textit{Note: ``the fence above instruction A'' is a comprehensive term for all 
 	the fences which are sequenced-before instruction A.}
+Intuitively, transitive closure of \setTO is \emph{sc} ordering over the 
+given program execution if the program had the pseudo fences to begin with.
+Such an execution may or may not be valid under C11 memory model.
 
+\begin{theorem}
+	For any valid execution of a program, the transitive closure of \setTO 
+	is same as \emph{sc} order of C11 of in the corresponding (possibly 
+	invalid) execution of the same program with pseudo fences.
+\end{theorem}
 
 % --------------- SOLN EXPLAINED -------------
 \subsection{Eliminating Fences}
@@ -301,6 +319,22 @@ cycles (if any) are already present in the input program and are immutable.
 The fences, on the other hand, are the inserted by us and therefore are the only
 entities considered while finding the final result.
 
+
+\begin{lemma}
+	Introducing fences in any cycle of \setTO will stop that cycle 
+	from forming in actual run of the program.
+\end{lemma}
+
+\begin{lemma}
+	If there are no cycles in \setTO of a buggy execution, the behavior 
+	cannot be stopped using any C11 fences.
+\end{lemma}
+
+\begin{theorem}
+	Stopping all cycles of \setTO in any buggy execution will stop that
+	buggy execution in actual run of program.
+\end{theorem}
+
 % --------------- FENCE MIN PROBLEM ----------
 \subsection{The Fence Minimization Problem} \label{sec:fence-min}
 \par
@@ -343,7 +377,10 @@ the cycles are added as disjunctions, with each fence in a cycle
 being a necessary component, deeming it a conjunction. Since each 
 trace needs to satisfy at least one cycle for the trace to become 
 infeasible, each cycle is a disjunction. All traces need to be 
-prevented, so each trace is part of a conjunction.
+prevented, so each trace is part of a conjunction. Let 
+$ \mathcal{B} $ be the set of all buggy execution of a program with 
+at least one cycle. Let $ \mathcal{F}(\mathcal{B}) $ gives the 
+fence minimization formula for set of buggy executions $ \mathcal{B} $.
 
 % --------------- FIG 7 -----------------
 \begin{figure}
@@ -363,6 +400,12 @@ it should not be inserted in the program, according to the
 minimized cost. From this formula, the solution for Fig \ref{fig:fence_min} 
 comes out to have 3 fences – \textit{$F_3, F_4, F_1$}, 
 unlike the original solution where four fences were sought.
+
+\begin{theorem}
+	For any input program $ \mathcal{F}(\mathcal{B}) $ gives optimal
+	number of fences required to stop all the buggy behaviors in 
+	$ \mathcal{B} $.
+\end{theorem}
 
 \par
 Implementing such a propostional formula for programs with 

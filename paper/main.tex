@@ -20,6 +20,7 @@
 \usepackage{geometry}
 \usepackage{textcomp}
 \usepackage{algorithm}
+%\usepackage{proof}
 \usepackage[noend]{algpseudocode}
 
 \usepackage{tikz}
@@ -88,8 +89,13 @@
 \newcommand{\ar}{\\texttt{acq-rel}\xspace}
 \renewcommand{\sc}{\\texttt{sc}\xspace}
 
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+
 \newcommand{\ishComment}[1]{\textit{\color{red}\tiny{#1}}}
 \newcommand{\divComment}[1]{\textit{\color{green}{#1}}}
+
 
 \title{fence-synthesis-paper}
 \date{}
@@ -108,8 +114,8 @@
 \section{Background/Preliminaries} \label{sec:prelim}
 \input{section/background_prelims.tex}
 
-\section{C11 Memory Model} \label{sec:c11 model}
-\input{section/c11_memory_model.tex}
+%\section{C11 Memory Model} \label{sec:c11 model}
+%\input{section/c11_memory_model.tex}
 
 \section{Proposed Solution/Our Approach}\label{sec:approach}
 \input{section/methodology.tex}
