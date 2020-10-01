@@ -79,6 +79,15 @@
 \newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}
 \newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
 
+% memory orders
+\newcommand{\moset}{\mathbb{M}\xspace}
+\newcommand{\na}{\\texttt{na}\xspace}
+\newcommand{\rlx}{\\texttt{rlx}\xspace}
+\newcommand{\rel}{\\texttt{rel}\xspace}
+\newcommand{\acq}{\\texttt{acq}\xspace}
+\newcommand{\ar}{\\texttt{acq-rel}\xspace}
+\newcommand{\sc}{\\texttt{sc}\xspace}
+
 \newcommand{\ishComment}[1]{\textit{\color{red}\tiny{#1}}}
 \newcommand{\divComment}[1]{\textit{\color{green}{#1}}}
 
@@ -98,6 +107,9 @@
 
 \section{Background/Preliminaries} \label{sec:prelim}
 \input{section/background_prelims.tex}
+
+\section{C11 Memory Model} \label{sec:c11 model}
+\input{section/c11_memory_model.tex}
 
 \section{Proposed Solution/Our Approach}\label{sec:approach}
 \input{section/methodology.tex}
