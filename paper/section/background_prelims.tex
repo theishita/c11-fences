@@ -1,7 +1,7 @@
 % -------------------- C11 MODEL ------------------------
 \subsection{The C11 Model}
 \par
-Since the C/C++11 memory model is a relaxed model, load/store operations can be re-ordered before they are stored into the memory. In multi-threaded programs due to re-orderings between loads and stores, and other factors such as different methods used by different hardware for cache coherency, threads may end up seeing loads and stores by other threads in an order different than the one intended. One way of controlling this is through specifying the memory order for each operation in the program.
+Since the C/C++11 \cite{C11} memory model is a relaxed model, load/store operations can be re-ordered before they are stored into the memory. In multi-threaded programs due to re-orderings between loads and stores, and other factors such as different methods used by different hardware for cache coherency, threads may end up seeing loads and stores by other threads in an order different than the one intended. One way of controlling this is through specifying the memory order for each operation in the program.
 
 \begin{figure}
 	\begin{center}

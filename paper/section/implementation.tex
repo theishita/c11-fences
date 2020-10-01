@@ -1,20 +1,56 @@
 \par
-The tool is written using the python programming language. It takes the location of the input program using the \textit{-f} flag. The first step is to obtain a list of buggy executions from any C11 model checker. Originally, the tool uses CDSChecker as the model checker. The input file is first copied to the CDSChecker test folder and then executed. The output from CDSChecker is obtained in the form of a list of buggy executions which is then formatted and translated into data structures for our usage. Each of these buggy executions are run through a series of steps as described in section \ref{sec:approach}- finding HB, MO, adding pseudo fences. finding TO, finding cycles, eliminating fences and inserting them back into the program.
+The tool is written using the python programming language. 
+It takes the location of the input program using the \textit{-f} 
+flag. The first step is to obtain a list of buggy executions 
+from any C11 verification tool. 
+The output from verification tool is obtained 
+in the form of a list of buggy executions which is then formatted 
+and translated into data structures for our usage. Each of these 
+buggy executions are run through a series of steps as described in 
+\textsection \ref{sec:approach} - finding HB, MO, adding pseudo fences. 
+finding TO, finding cycles, eliminating fences and inserting them 
+back into the program.
 
-For input programs with an enormous number of possibilities, the tool might take some time to complete the analysis for each and every trace. Providing an alternative for this, we have also introduced an optional flag \textit{-t} to specify the number of traces to analyze at a time until the solution is found. If the value is specified as \textit{-t 3}, the tool will look at only the first 3 buggy executions from the model checker and base the analysis on them. It will then add fences in the input program according to the first 3 traces and then analyze this new program again. It will keep running the program after adding fences until a conclusion is reached. This would save time on the user's part but it may compromise on the optimality, since there might be more fences added with this method as compared with the original method. There is also an additional optional flag \textit{-m} to specify the maximum number of iterations to be run. On specifying this value, the analysis will stop at the \textit{m}th iteration if the conclusion is not found till then.
+For input programs with an enormous number of possibilities, the 
+tool might take some time to complete the analysis for each and 
+every trace. Providing an alternative for this, we have also 
+introduced an optional flag \texttt{-t} to specify the number 
+of traces to analyze at a time until the solution is found. 
+If the value is specified as \texttt{-t 3}, the tool will look 
+at only the first 3 buggy executions from the model checker and 
+base the analysis on them. It will then add fences in the input 
+program according to the first 3 traces and then analyze this 
+new program again. It will keep running the program after 
+adding fences until a conclusion is reached. This would save 
+time on the user's part but it may compromise on the optimality, 
+since there might be more fences added with this method as compared 
+with the original method. There is also an additional optional 
+flag \textit{-m} to specify the maximum number of iterations to 
+be run. On specifying this value, the analysis will stop at the 
+\textit{m}th iteration if the program is buggy at that point.
+The tool us \texttt{networkx} python library to list cycles in the 
+graph.
 
-The tool makes use of the following python packages and libraries:
-\begin{itemize}
-	\item networkx - for graphing related queries - finding cycles
-	\item operator
-	\item shlex
-	\item argparse
-	\item os
-\end{itemize}
+%The tool makes use of the following python packages and libraries:
+%\divComment{add reference}
+%\begin{itemize}
+%	\item networkx - for graphing related queries - finding cycles
+%	\item operator
+%	\item shlex
+%	\item argparse
+%	\item os
+%\end{itemize}
 
-\subsection{Translating model checker output}
-The tool begins by translating model checker output obtained from a terminal subprocess, spawned from the main process running the tool. Any model checker for C11 can be used in this case. Subsequently, one may choose to use any model checker by creating a custom translator for it. For this tool, CDSChecker is the only model checker with a translator created. Any translator would need to run the input program in the model checker, obtain the output containing a list of buggy executions and extract the following important information from each instruction of each trace:
 
+\subsection{Finding and Pre-processing Buggy Executions}
+The tool begins by translating model checker output obtained from a 
+terminal subprocess, spawned from the main process running the tool. 
+Subsequently, one may choose to use any model checker by creating a 
+custom translator for it. Any translator would need to run the input program in the model checker, 
+obtain the output containing a list of buggy executions and 
+extract the following important information from each instruction 
+of each trace:
+%
 \begin{enumerate}
 	\item thread number of the instruction
 	\item instruction type (thread create/ thread start/ init/ atomic read/ atomic write/ atomic rmw)
@@ -23,45 +59,86 @@ The tool begins by translating model checker output obtained from a terminal sub
 	\item rf value (in case of read/rmw instruction)
 	\item line number for each instruction
 \end{enumerate}
+For any of the above meta-data, if a field does not apply for a certain instruction, 
+it is given the value ``NA''. In case any information is missing from 
+the model checker outputs, the model checker should be revised in order 
+to obtain and print that piece of information. 
+%
+Since we are providing a prototype tool, 
+currently, we provide translator only for CDSChecker. 
+We choose to use CDSChecker for the following reasons- 
+\begin{itemize}
+	\item CDSChecker is an open source tool. Hence we were able 
+	to modify the source code to suite our needs (explained below). 
+	While most of the other tool in domain provide 
+	only binary.
+	
+	\item Most of the alternative tools do not focus C11 in its entirety, 
+	but a subset of similar memory model.
+	
+	\item The output of CDSChecker provides more information 
+	(such as the value read/written) than other tools in the domain.
+\end{itemize}
+Existing model checkers such as \textsc{RCMC}\cite{rcmc-POPL18},  
+\textsc{GenMC}\cite{genmc-OOPSLA19,genmc-PLDI19} are based on and created for the 
+repaired sequential consistency model RC11\cite{LahavVafeiadis-PLDI17}.
+\textsc{Tracer}\cite{tracer2018} is only for RA fragment of C11.
+Whereas a tool such as Herd\cite{herd} is not a 
+robust enough tool which can be used for our purposes. 
+\ishComment{nidhugg does not suppport C11}
 
-\par
-For any of the above meta-data, if a field does not apply for a certain instruction, it is given the value "NA".
+The input file is first copied to the CDSChecker test folder and 
+verified using CDSChecker. 
+For our purposes, we have re-written some of the code in CDSChecker 
+so that it also and prints the line numbers of relevant instructions 
+from the source code. We require the line number in order to know 
+where to position the fences. We have also added flag \texttt{-t} 
+in CDSChecker to specify number of buggy executions to output. In 
+case flag \texttt{-t n} is provided the, CDSChecker stops the execution 
+as soon as it finds \texttt{n} buggy executions.
 
-\par
-In case any information is missing from the model checker outputs, the model checker should be revised in order to obtain and print that piece of information. For our purposes, we have re-written some of the code in CDSChecker so that it also and prints the line numbers of relevant instructions from the source code. We require the line number in order to know where to position the fences.
-
-\subsubsection{Why CDS Checker}
-CDS Checker is used for our purposes. It was selected for this project because of the plethora of information that it provides. CDS Checker only considers the atomic operations or thread operations in the program as an instruction.
-
-Existing model checkers such as RCMC\ishComment{ref}, Tracer\ishComment{ref}, GenMC\ishComment{ref} are based on and created for the repaired sequential consistency model RC11 and not C11. Whereas a tool such as Herd\ishComment{ref} is not a robust enough tool which can be used for our purposes. \ishComment{add why not nidhugg}
 
 \subsubsection{Extracting line numbers and tool requirements}
-Line numbers are extracted in CDSChecker by adding an extra parameter to the atomic functions. This extra parameter takes an integer input. Each atomic load, store and rmw function is revised to include an integer parameter at its beginning, which is then printed as part of the buggy execution output. As a result, in the input program each of these instructions is also modified and the first parameter is always given as {\tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}}.
+Line numbers are extracted in CDSChecker by adding an extra parameter 
+to the atomic functions. This extra parameter takes an integer input. 
+Wecreated wrapped functions of atomic load, store and rmw functions 
+to take this extra parameter, which is then passed and printed in 
+output traces. As a result, in the input program each of these 
+instructions is also modified and the first parameter is always 
+given as {\tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}}.
 
-rules:
+We expect input program to abide by the following rules:
 \begin{enumerate}
-	\item atomic load, store, rmw functions need to have ``{\tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}}'' as the first parameter.
-	\item if statements and loops need to be scoped with brackets always(in case fences are inserted inside them)
-	\item only sc fences are allowed if the input program already contains fences
-	\item no 2 fences can be put together, without any other atomic instructions in between
+	\item atomic load, store, rmw functions need to have 
+	``{\tt{\textunderscore\textunderscore LINE\textunderscore\textunderscore}}'' 
+	as the first parameter.
+	\item if statements and loops need to be scoped with 
+	brackets % always(in case fences are inserted inside them)
+	\item only sc fences are allowed if the input program 
+	already contains fences
+	\item no two consecutive instructions in a program should be fences 
 	\item filename cannot end with ``\_fence''
-	\item if there are other functions apart from thread functions containing atomic operations, they need to be unrolled inside the thread functions calling them. This is because they might need to have fences in some cases and not in other cases.
+	\item if there are other functions apart from thread functions 
+	containing atomic operations, they need to be unrolled inside the 
+	thread functions calling them because a fence maybe required only 
+	in some calls to such functions.
 \end{enumerate}
 
-\subsubsection{Fence locations in Actual Program}
+\subsubsection{Fence locations in Actual Program}\
+\divComment{change this. simply state we found fence using line number}
 Because of re-ordering and branching, the fence names might 
 differ for each trace while mapping back to the source program. 
-For example, in some program \textit{$F_1n_5$} may come after line 12 
-for one trace and line 15 for another trace . For the purpose of this 
+For example, in some program $F_1n_5$ may come after line 12 
+for one trace and line 15 for another trace. For the purpose of this 
 example, let us assume each fence to be a position in the original 
 source code instead of it being a fence position in a single trace. 
-This way, fence \textit{$F_4$} is the same fence for both the traces 
+This way, fence $F_4$ is the same fence for both the traces 
 with respect to its position in the source code, which can be found 
 out using line numbers.
 
 \subsection{Data structures used}
 \setHB relation, since there are many, are stored as boolean values in 
-an adjacency table, as opposed to the ``list of tuples" format used for 
+an adjacency table, as opposed to the ``list of tuples'' format used for 
 all other relations in the tool. The adjacency table is indexed based 
 on the instruction number as given by CDSChecker. 
 %An example can be 
@@ -69,19 +146,26 @@ on the instruction number as given by CDSChecker.
 %filled with 0's, while a 1 for row 3 column 4 would mean \hb{3}{4}.
 
 \begin{itemize}
-	\item adjacency matrix to store HB relations
-	\item list of tuples to store relations - MO, SB, TO
+	\item adjacency matrix to store \setHB relations because the size 
+	of \setHB is usually large
+	\item list of tuples to store relations \setMO, \setSB, \setTO
+	since the size of these relations is small and finding cycle is
+	easier
 	\item list of lists to store traces and instruction information
 \end{itemize}
 
-\subsection{Optis}
-used inbuilt python functions for faster processing:
+\subsection{Optimizations}
+We have used inbuilt python functions for faster processing:
 \begin{itemize}
-	\item map function to map the 0th element (instruction number) in HB computation
 	\item lambda function to sort traces according to thread number faster
-	\item enumerate function to make list search faster
-	\item index function to index quicker
-	\item values converted to int at the beginning while translating model checker output for faster lookup
-	\item 
+	\item \texttt{enumerate} function to make list search faster
+	\item \texttt{index} function to index quicker
+	\item values converted to int at the beginning while translating 
+	model checker output for faster lookup
+	\item no need to compute transitive \setTO edges
+	\item use \texttt{networkx} library that uses Johnson's 
+	algorithm to enumerate all the cycles in a graph
+	\item use of \texttt{-t} flag when for faster termination
+	\item using memoization to store instruction metadata
 \end{itemize}
 
