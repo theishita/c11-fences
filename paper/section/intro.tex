@@ -11,23 +11,6 @@ To tackle this, the programmer may add \textit{"assert"} statements in the sourc
 % -------------------- MOTIVATION E.G. ------------------------
 \subsection{Motivation Example}
 
-% -------------------- FIG 1: BASIC ------------------------
-\begin{figure}[!htb]
-\begin{center}
-\texttt{
-init y := 0, x := 0;\\
-	\begin{tabular}{c l || c l}
-		(1) & y := 1 & (5) & x := 1\\
-		(2) & if x == 0 & (6) & if y == 0\\
-		(3) & \qquad c := 1 & (7) & \qquad c := 0\\
-		(4) & \qquad t = c \color{olive}//1 & (8) & \qquad t = c \color{olive}//0
-	\end{tabular}
-}
-	\caption{Simple two-thread dekker program}\label{fig:dekker1}
-\end{center}
-\end{figure}
-\ishComment{to use R, W here as well? to show atomic operations? to use brackets for if?}
-
 \par
 In a sequentially consistent model, the multi-threaded program in Fig \ref{fig:dekker1} would execute the instructions in a sequentially consistent order. The final values read by variable \textit{t} would be 1 and 0 for each thread respectively. Therefore it can be said that the ``output'' would always be ``10''. However, in the case of a relaxed model, such as in a C11/C++11 program when all the instructions are relaxed, reading outputs of ``00'', ``01'', ``11'' may even be possible, thereby violating the rules of sequential consistency. Such an output may or may not be unexpected for the programmer, depending upon their requirements.
 
@@ -40,15 +23,15 @@ For this reason, the programmer needs to provide their requirements about what v
 \texttt{
 init y := 0, x := 0;\\
 	\begin{tabular}{c l || c l}
-		(1) & W$\mathtt{_{rel}}$y(1) & (5) & W$\mathtt{_{rel}}$x(1)\\
-		(2) & if R$\mathtt{_{rel}x}$ == 0 & (6) & if R$\mathtt{_{rel}y}$ == 0\\
-		(3) & \qquad W$\mathtt{_{rel}}$c(1) & (7) & \qquad W$\mathtt{_{rel}}$c(0)\\
-		(4) & \qquad assert($\mathtt{R_{rel}c}$ == 1) & (8) & \qquad assert($\mathtt{R_{rel}c}$ == 0)
+		(1) & Wy (1) & (5) & Wx (1)\\
+		(2) & if Rx == 0 & (6) & if Ry == 0\\
+		(3) & \qquad Wc (1) & (7) & \qquad Wc (0)\\
+		(4) & \qquad Rc \color{olive}//1 & (8) & \qquad Rc \color{olive}//0
 	\end{tabular}
 }
-	\caption{Simple two-thread dekker program in C11 syntax with assertions}\label{fig:dekker2}
+	\caption{Simple two-thread dekker program in C11 syntax with assertions}\label{fig:dekker1}
 \end{center}
 \end{figure}
 
 \par
-Such a specification may be made in the form of assertions such as those described in Fig \ref{fig:dekker2} This ``assert'' statement checks that the expression provided to it holds at that point in the program. At the end of the threads, this safety property might not be satisfied. In this case, the program stops or exits, giving an error output. The objective of the tool to be created is to prevent the program from exhibiting behaviour which is unexpected for the programmer, hence preventing the error output as well as ensuring the provided specifications. For the purposes of this paper, we require the safety property to be specified as assertions in the program.
+Such a specification may be made in the form of assertions. In Fig \ref{fig:dekker2} the memory orders of all the instructions would be \morlx in the C11 memory model. Now in order to preserve the final output values, the read statements at the end of the threads can be converted into \texttt{assert(R$\mathtt{_{rlx}}$c == 1)} and \texttt{assert(R$\mathtt{_{rlx}}$c == 0)} in each thread respectively. At the end of the threads, this safety property might not be satisfied. In this case, the program stops or exits, giving an error output. The objective of the tool to be created is to prevent the program from exhibiting behaviour which is unexpected for the programmer, hence preventing the error output as well as ensuring the provided specifications. For the purposes of this paper, we require the safety property to be specified as assertions in the program.

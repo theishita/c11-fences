@@ -17,12 +17,12 @@
 	the read instruction.\\
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
     \node[punkt] (x) {X:$F_{sc}$};
-    \node[punkt,below=of x] (a) {A:$Wx$}
-        edge[-](x);
+    \node[punkt,below=of x] (a) {A:$Wx$};
     \node[punkt,right=of x] (b) {B:$Rx$};
-    \node[punkt, below=of b] (y) {Y:$F_{sc}$}
-    	edge[-](b);
+    \node[punkt, below=of b] (y) {Y:$F_{sc}$};
   	\draw [->] (a) -> (b) node[midway,above] {rf};
+  	\draw [->] (x) -> (a) node[midway,left] {sb};
+  	\draw [->] (b) -> (y) node[midway,right] {sb};
     \end{tikzpicture}\\
     \rf{A}{B} $\implies$ \too{X}{Y}
 
@@ -49,10 +49,10 @@
 	all \mosc write instructions modifying the variable after \textit{$M_1$}.\\
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
 	\node[punkt](x) {X:$F_{sc}$};
-	\node[punkt, below=of x](b) {B:$Rx$}
-		edge[->](x);
+	\node[punkt, below=of x](b) {B:$Rx$};
 	\node[punkt, right=of b](m1) {M$_1:Wx$};
 	\node[punkt, below=of m1](m2) {M$_2:W_{sc}$};
+  	\draw [->] (x) -> (b) node[midway,left] {sb};
   	\draw [->] (m1) -> (b) node[midway,above] {rf};
   	\draw [->] (m1) -> (m2) node[midway,right] {mo};
   	\end{tikzpicture}\\
@@ -66,12 +66,12 @@
 	fences \textit{sequenced-before} \textit{B}.\\
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
 	\node[punkt](a) {A:$Wx$};
-	\node[punkt, below=of a](x) {X:$F_{sc}$}
-		edge[-](a);
+	\node[punkt, below=of a](x) {X:$F_{sc}$};
 	\node[punkt, right=of a](y) {Y:$F_{sc}$};
-	\node[punkt, below=of y](b) {B:$Rx$}
-		edge[-](y);
+	\node[punkt, below=of y](b) {B:$Rx$};
 	\node[punkt, right=of y](m) {M:$Wx$};
+  	\draw [->] (a) -> (x) node[midway,left] {sb};
+  	\draw [->] (y) -> (b) node[midway,right] {sb};
 	\end{tikzpicture}\\
 	\rf{M}{B} $\land$ \mo{M}{A} $\implies$ \too{Y}{X}
 
@@ -80,11 +80,11 @@
 	if there is a \setMO relation between the two, \setTO relations will be formed.\\
 	\begin{tikzpicture}[baseline = (current bounding box.north)]
 	\node[punkt](a) {A:$Wx$};
-	\node[punkt, below=of a](x) {X:$F_{sc}$}
-		edge[-](a);
+	\node[punkt, below=of a](x) {X:$F_{sc}$};
 	\node[punkt, right=of a](y) {Y:$F_{sc}$};
-	\node[punkt, below=of y](b) {B:$Wx$}
-		edge[-](y);
+	\node[punkt, below=of y](b) {B:$Wx$};
+  	\draw [->] (a) -> (x) node[midway,left] {sb};
+  	\draw [->] (y) -> (b) node[midway,right] {sb};
 	\end{tikzpicture}\\
 	\begin{enumerate}[a.]
 	\item if B:$W_{sc}x$\\

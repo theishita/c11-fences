@@ -27,11 +27,18 @@
     \node[punkt,right=of f2n2] (f3n2) {$F_3n_2$}
         edge[->,bend left=25](f2n2)
         edge[<-,bend right=25](f2n2)
-        edge[->,bend right=45](f1n1);
+        edge[->,bend right=45](f1n1)
+        edge[->, bend right=35, color=blue](i1n1);
     \node[punkt,above=of f3n2] (i3n1) {$I_3n_1$}
     	edge[->](f3n2);
     \node[punkt,below=of f3n2] (f3n3) {$F_3n_3$}
         edge[<-](f3n2)
         edge[<-, bend right=50](i3n1);
     
+    \matrix [draw,below left] at (current bounding box.south) {
+		\node [shape=circle, draw=black,label=right:direct \setTO edge] {}; \\
+		\node [shape=circle, draw=blue,label=right:transitive \setTO edge] {}; \\
+	};
+    
 \end{tikzpicture}\\
+\ishComment{fix legend,position}

@@ -295,6 +295,12 @@ Hence, if just \textit{$F_2n_2$} is inserted into the program, this particular
 buggy trace will be stopped. This method is carried out for all such 
 buggy traces and their cycles are calculated and stored.
 
+Another point to note is that, for each cycle, only the fences are considered
+while calculating the final result. This is because the instructions present in the
+cycles (if any) are already present in the input program and are immutable.
+The fences, on the other hand, are the inserted by us and therefore are the only
+entities considered while finding the final result.
+
 % --------------- FENCE MIN PROBLEM ----------
 \subsection{The Fence Minimization Problem} \label{sec:fence-min}
 \par
@@ -405,6 +411,29 @@ the formula remains same.
 %hide the originally formed TO relations. But by excluding the 
 %original edges, the transitive edges we need will never actually be formed.
 
+For instance, look at Fig \ref{fig:cycles}. The edge \textit{$F_3n_2$} 
+$\rightarrow$ \textit{$I_1n_1$} is not an edge found through the rules of 
+TO relations. It is a transitive edge. So if we were to consider the cycle 
+\textit{$F_3n_2$} $\rightarrow$ \textit{$I_1n_1$} $\rightarrow$ \textit{$F_2n_2$}
+$\rightarrow$ \textit{$F_3n_2$}, we notice that the edge \textit{$F_3n_2$} 
+$\rightarrow$ \textit{$I_1n_1$} cannot exist on its own. Hence we cannot simply 
+consider the three edges which partake in the formation of this cycle.
+We will need to consider all the possible edges which caused the formation of the 
+transitive edge, which are:
+\begin{enumerate}
+	\item \textit{$F_3n_2$} $\rightarrow$ \textit{$F_2n_2$} $\rightarrow$ 
+\textit{$I_2n_1$} $\rightarrow$ \textit{$I_1n_1$}
+	\item \textit{$F_3n_2$} $\rightarrow$ \textit{$F_1n_1$} $\rightarrow$ \textit{$I_1n_1$}
+\end{enumerate}
+
+Hence the cycle \textit{$F_3n_2$} $\rightarrow$ \textit{$I_1n_1$} $\rightarrow$
+\textit{$F_2n_2$} $\rightarrow$ \textit{$F_3n_2$} translates into the following cycles:
+\begin{enumerate}
+	\item \textit{$F_3n_2$} $\rightarrow$ \textit{$F_2n_2$} $\rightarrow$ \textit{$I_2n_1$} 
+$\rightarrow$ \textit{$I_1n_1$} $\rightarrow$ \textit{$F_2n_2$} $\rightarrow$ \textit{$F_3n_2$}
+	\item \textit{$F_3n_2$} $\rightarrow$ \textit{$F_1n_1$} $\rightarrow$ \textit{$I_1n_1$} $\rightarrow$
+\textit{$F_2n_2$} $\rightarrow$ \textit{$F_3n_2$}
+\end{enumerate}
 
 
 \par
