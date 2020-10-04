@@ -92,9 +92,9 @@ verified using CDSChecker.
 For our purposes, we have re-written some of the code in CDSChecker 
 so that it also and prints the line numbers of relevant instructions 
 from the source code. We require the line number in order to know 
-where to position the fences. We have also added flag \texttt{-t} 
+where to position the fences. We have also added flag \texttt{-c} 
 in CDSChecker to specify number of buggy executions to output. In 
-case flag \texttt{-t n} is provided the, CDSChecker stops the execution 
+case flag \texttt{-c n} is provided the, CDSChecker stops the execution 
 as soon as it finds \texttt{n} buggy executions.
 
 
@@ -155,7 +155,7 @@ on the instruction number as given by CDSChecker.
 	\item list of lists to store traces and instruction information
 \end{itemize}
 
-\subsection{Optimizations}
+\subsection{Optimizations}\label{sec:optis}
 We have used inbuilt python functions for faster processing:
 \begin{itemize}
 	\item lambda function to sort traces according to thread number faster

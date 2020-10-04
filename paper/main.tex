@@ -1,6 +1,6 @@
 \documentclass{article}
 
-% enable these lines below while using overleaf, disable for texmaker/latex workshop
+	% enable these lines below while using overleaf, disable for texmaker/latex workshop
 %\usepackage[utf8]{inputenc}
 %\usepackage{stmaryrd}
 %\usepackage{algorithm,algpseudocode} 
@@ -25,6 +25,7 @@
 
 \usepackage{tikz}
 \usepackage[shortlabels]{enumitem}
+\usepackage{graphics}
 
 % for colours
 \usepackage{xspace}
@@ -57,7 +58,7 @@
 \definecolor{blue}{rgb}{0.0, 0.0, 1.0}
 
 \newcommand{\mosc}{\texttt{seq\_cst}\xspace}
-\newcommand{\moacqrel}{\texttt{acq\_rel}\xspace}
+\newcommand{\moar}{\texttt{acq\_rel}\xspace}
 \newcommand{\morel}{\texttt{release}\xspace}
 \newcommand{\moacq}{\texttt{acquire}\xspace}
 \newcommand{\mocon}{\texttt{consume}\xspace}
@@ -83,11 +84,6 @@
 % memory orders
 \newcommand{\moset}{\mathbb{M}\xspace}
 \newcommand{\na}{\texttt{na}\xspace}
-\newcommand{\rlx}{\texttt{rlx}\xspace}
-\newcommand{\rel}{\texttt{rel}\xspace}
-\newcommand{\acq}{\texttt{acq}\xspace}
-\newcommand{\ar}{\texttt{acq-rel}\xspace}
-\renewcommand{\sc}{\texttt{sc}\xspace}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}{Corollary}[theorem]
@@ -123,12 +119,13 @@
 \input{section/methodology.tex}
 
 \section{Implementation/Tool Description}
-\ishComment{written roughly}
 \input{section/implementation.tex}
 
 \section{Results}
+\input{section/results.tex}
 
 \section{Conclusion and future work}
+\input{section/conclusion.tex}
 
 \bibliographystyle{unsrtnat}
 \bibliography{References.bib}

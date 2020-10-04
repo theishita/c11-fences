@@ -50,7 +50,7 @@ all instructions and understand their semantics.
 
 The reason for choosing \mosc fences is that they are the strongest type 
 of fences, as seen in Fig \ref{fig:mo_strength}. In the program described 
-in Fig \ref{fig:dekker3}, the \moacqrel fences cannot stop the buggy behavior.
+in Fig \ref{fig:dekker3}, the \moar fences cannot stop the buggy behavior.
 
 Another point to note is, inserting \mosc fences at all possible program 
 locations might not mean that the buggy behaviors are eliminated. 
@@ -149,7 +149,7 @@ An \setSW relation is formed based on the following rules:
 \rf{$W_{\geq rel}x$}{$R_{\geq acq}x$} $\implies$ \sw{$W_{\geq rel}x$}{$R_{\geq acq}x$}\\
 RMW operations are considered as both reads and writes in this case.
 \end{enumerate}
-Note that since we do not consider \moacq, \morel and \moacqrel fences, 
+Note that since we do not consider \moacq, \morel and \moar fences, 
 our \setSW rules do not capture them.
 \par
 
@@ -157,7 +157,7 @@ our \setSW rules do not capture them.
 % --------------- FIG --------------
 %\begin{figure}
 %\begin{center}
-%	\input{section/hb_instr_example.tex}
+%	\input{section/figures-tables/hb_instr_example.tex}
 %	\caption{a. Example instruction trace from CDS Checker.\\b. Adjacency table of hb relations as formed by the tool.}
 %	\label{fig:cds_hb}
 %\end{center}
@@ -217,7 +217,7 @@ The final step in finding relations and the main step that is required for
 fence elimination is to find \setTO relations. The rules for \setTO relations 
 in the C11 standard are defined in \cite{C11}. These rules can be interpreted 
 as the following:
-\input{section/to_rules.tex}
+\input{section/figures-tables/to_rules.tex}
 \textit{Note: ``the fence above instruction A'' is a comprehensive term for all 
 	the fences which are sequenced-before instruction A.}
 Intuitively, transitive closure of \setTO is \emph{sc} ordering over the 
@@ -271,7 +271,7 @@ The reason of this is explained in \textsection\ref{sec:no-transitive}.
 % --------------- FIG 5 -------------------
 \begin{figure}
 \begin{center}
-	\input{section/cycle_example.tex}
+	\input{section/figures-tables/cycle_example.tex}
 	\caption{A graph structure created by various relations acting as edges}
 	\label{fig:cycles}
 \end{center}
@@ -417,7 +417,7 @@ of such formulas. A formula similar to the one in Fig \ref{fig:fence_form}
 is created for each program and the minimum cost with the maximum 
 satisfying assignment is computed. 
 
-\input{section/algo_figure.tex}
+\input{section/figures-tables/algo_figure.tex}
 
 
 \subsubsection{why transitive TO edges aren't considered} \label{sec:no-transitive}

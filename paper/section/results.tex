@@ -1,0 +1,51 @@
+(tentative timings)
+\begin{figure}
+	\input{section/figures-tables/results_table_1.tex}
+	\caption{Results table 1}\label{fig:tabl1}
+\end{figure}
+
+Through experiments, it was observed that the two most expensive operations
+in the entire process are - computing transitive relations for \setHB's and
+computing all possible cycles in the graph of \setTO relations. The algorithm 
+to compute all elementary cycles in the directed graph implements
+Johnson's algorithm \ref{networkx-cycles}.
+
+\begin{figure}
+	a. $O(n^3)$, \\
+	\textit{where n is the number of vertices}
+	
+	
+	b. $O((n+e)(c+1))$, \\
+	\textit{for n nodes, e edges and c elementary circuits}
+	\caption{a. complexity of computing transitive \setHB relations\\
+	b. complexity of Johnson's algorithm}
+\end{figure}
+
+Table \ref{fig:tabl1} contains a few of the benchmarks used to test this tool.
+These benchmarks have been taken from different model checking tools and amended
+according to our specifications. At a first glance, it can be noted that
+the major factors directly affecting the tool time are- the number of buggy executions
+and the number of instructions in each execution.
+
+Firstly, the number of buggy executions affects the tool time since each execution
+is being computed and being sent through a series of steps. Hence, more executions means more
+computation time. On the other hand, the number of instructions in each trace 
+determines the number of relations being formed. A greater number of instructions
+results in more \setHB relations. The number of fences to be put between each instruction also
+increases and hence, the number of TO relations increases, since all fences are of the
+\mosc memory order. Finally, a sizeable graph with many TO relations
+results in an exponential number of cycles. 
+
+\begin{figure}
+	\input{section/figures-tables/results_table_2.tex}
+	\caption{Results Table 2}\label{fig:tabl2}
+\end{figure}
+
+To combat this problem of number of cycles or number of buggy executions going out of bounds,
+an optimization had been introduced and discussed in \ref{sec:optis}. Table \ref{fig:tabl2}
+has results of some of the biggest programs in our set with the flag \texttt{-t 1},
+which means it looks at only the first trace at a time. Results state that
+in most cases, the number of fences remains the same as they were with the 
+full optimization. In some of the examples, however, an additional fence or two
+is added. The tool time is always considerably lesser when compared with
+the original optimization.
