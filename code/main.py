@@ -68,9 +68,12 @@ def fn_main(filename):
 		print(oc.HEADER + oc.BOLD + "\n\n=============== ITERATION",total_iter,"===============" + oc.ENDC)
 
 	cds = translate_cds(filename, no_traces)								# translates CDS Checker output & returns a structure containing the traces
-	traces, mc_time, no_buggy_execs = cds.get()
+	traces, mc_time, no_buggy_execs, error_string = cds.get()
 
-	if no_buggy_execs:
+	if error_string == "error":
+		print(oc.BOLD + oc.FAIL + "\nError while model checking.\nPlease check and resolve the error." + oc.ENDC)
+		sys.exit(0)
+	elif no_buggy_execs:
 		get_p = Processing(traces)
 		fences_present, fences_present_locs, z3vars, disjunctions, error_string = get_p.get()				# runs and returns locations
 
@@ -101,6 +104,7 @@ start = time.time()
 fn_main(filename)
 delete_copied_file(filename)
 end = time.time()
+
 print(oc.OKBLUE + oc.BOLD + "\n\n================= OVERALL =================" + oc.ENDC)
 if not error_string:
 	print(oc.OKGREEN, oc.BOLD, "Total fences added: \t", fences_added, oc.ENDC)

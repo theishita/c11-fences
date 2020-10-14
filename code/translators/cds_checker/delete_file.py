@@ -20,8 +20,11 @@ def delete_copied_file(filename):
 	if os.path.exists(file_path_original):
 		os.remove(file_path_original)
 
-	# remove made file
+	# remove made files
 	for ext in fi.CDS_MADE_FILE_EXTENSIONS:
-		made_file_path = fi.CDS_TEST_FOLDER_PATH+"/."+filename[:-1*len(fi.FILE_EXTENSION)] + ext
-		if os.path.exists(made_file_path):
-			os.remove(made_file_path)
+		made_file_path1 = fi.CDS_TEST_FOLDER_PATH+"/."+filename[:-1*len(fi.FILE_EXTENSION)] + ext
+		made_file_path2 = fi.CDS_TEST_FOLDER_PATH+"/"+filename[:-1*len(fi.FILE_EXTENSION)] + ext
+		if os.path.exists(made_file_path1):
+			os.remove(made_file_path1)
+		if os.path.exists(made_file_path2):
+			os.remove(made_file_path2)

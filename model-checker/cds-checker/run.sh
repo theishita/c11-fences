@@ -1,6 +1,7 @@
 #!/bin/sh
 #
-# Runs a simple test (default: ./test/userprog.o)
+# Runs a simple test (default: nothing)
+# (old default = ./test/userprog.o)
 # Syntax:
 #  ./run.sh [test program] [OPTIONS]
 #  ./run.sh [OPTIONS]
@@ -14,7 +15,7 @@
 # Get the directory in which this script and the binaries are located
 BINDIR="${0%/*}"
 
-BIN=${BINDIR}/test/userprog.o
+# BIN=${BINDIR}/test/userprog.o
 PREFIX=
 
 export LD_LIBRARY_PATH=${BINDIR}

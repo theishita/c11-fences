@@ -20,6 +20,8 @@ class translate_cds:
 		self.traces_raw = []											# list of all traces raw
 		self.traces = []												# list of processed traces
 		self.no_buggy_execs = 0											# number of buggy executions for this run
+		self.error_string = ""											# error in CDS Checker
+		self.cds_time = 0
 
 		copy = "cp " + filename + " " + fi.CDS_TEST_FOLDER_PATH
 		make = "cd "+ fi.CDS_FOLDER_PATH + " && make"
@@ -36,23 +38,27 @@ class translate_cds:
 		os.system(copy)													# copy input file to cds checker directory
 		cds_start = time.time()
 		os.system(make)													# make/compile into object file for CDS Checker
-		p = subprocess.check_output(cds_cmd,
-									cwd = fi.CDS_FOLDER_PATH,
-									stderr=subprocess.PIPE)				# get std output from CDS Checker
-		cds_end = time.time()
-		p = p.decode('utf-8')											# convert to string
+		try:
+			p = subprocess.check_output(cds_cmd,
+										cwd = fi.CDS_FOLDER_PATH,
+										stderr=subprocess.PIPE)				# get std output from CDS Checker
+			cds_end = time.time()
+			p = p.decode('utf-8')											# convert to string
+	
+			self.cds_time = cds_end-cds_start
+			self.obtain_traces(p)
+		except:
+			self.error_string = "error"
 
-		self.cds_time = cds_end-cds_start
+		if self.error_string != "error":
+			self.no_buggy_execs = int(self.no_buggy_execs)
+			print("\n\nBuggy executions:\t",self.no_buggy_execs)
 
-		self.obtain_traces(p)
-		self.no_buggy_execs = int(self.no_buggy_execs)
-		print("\n\nBuggy executions:\t",self.no_buggy_execs)
-
-		if self.no_buggy_execs != 0:
-			self.create_structure(filename)
+			if self.no_buggy_execs != 0:
+				self.create_structure(filename)
 
 	def get(self):
-		return self.traces, self.cds_time, self.no_buggy_execs
+		return self.traces, self.cds_time, self.no_buggy_execs, self.error_string
 
 	# to differentiate and obtain each trace from the std output in the terminal
 	def obtain_traces(self,p):
@@ -76,7 +82,10 @@ class translate_cds:
 			# print number of buggy executions
 			if "Number of buggy executions" in line:
 				self.no_buggy_execs = line[28:len(line)]
-
+			
+			if "******* Model-checking complete: *******" in line:
+				self.error_string = ""
+		
 	# to convert each trace into a structure
 	def create_structure(self,filename):
 
