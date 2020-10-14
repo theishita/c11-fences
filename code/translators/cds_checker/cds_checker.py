@@ -12,7 +12,7 @@ from operator import itemgetter
 
 from .create_list import create_list
 from constants import file_info as fi
-
+from .delete_file import delete_copied_file
 
 class translate_cds:
 	def __init__(self, filename, no_traces):
@@ -44,7 +44,8 @@ class translate_cds:
 										stderr=subprocess.PIPE)				# get std output from CDS Checker
 			cds_end = time.time()
 			p = p.decode('utf-8')											# convert to string
-	
+			
+			delete_copied_file(filename)
 			self.cds_time = cds_end-cds_start
 			self.obtain_traces(p)
 		except:
