@@ -45,3 +45,6 @@ class output_colours:
 	ENDC = '\033[0m'
 	BOLD = '\033[1m'
 	UNDERLINE = '\033[4m'
+
+def time_handler(signum, frame):
+	raise RuntimeError

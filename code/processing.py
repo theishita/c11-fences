@@ -30,6 +30,7 @@ class Processing:
 		self.error_string = ''
 
 		trace_no = 0
+		# print("traces=",traces)
 
 		for trace in traces:										# run for each trace
 			self.all_sc_events_thread = []								# list of all sc events separated by threads

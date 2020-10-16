@@ -67,10 +67,10 @@ def fn_main(filename):
 		print(oc.HEADER + oc.BOLD + "\n\n=============== ITERATION",total_iter,"===============" + oc.ENDC)
 
 	cds = translate_cds(filename, no_traces)								# translates CDS Checker output & returns a structure containing the traces
-	traces, mc_time, no_buggy_execs, error_string = cds.get()
+	traces, mc_time, no_buggy_execs, mc_error_string = cds.get()
 
-	if error_string == "error":
-		print(oc.BOLD + oc.FAIL + "\nError while model checking.\nPlease check and resolve the error." + oc.ENDC)
+	if mc_error_string is not None:
+		print(oc.BOLD + oc.FAIL + mc_error_string + oc.ENDC)
 		sys.exit(0)
 	elif no_buggy_execs:
 		get_p = Processing(traces)
@@ -99,9 +99,13 @@ def fn_main(filename):
 
 	return
 
-start = time.time()
-fn_main(filename)
-end = time.time()
+try:
+	start = time.time()
+	fn_main(filename)
+	end = time.time()
+except RuntimeError:
+	print(oc.BOLD + oc.FAIL + "\nTool time exceeded 15 minutes.\n" + oc.ENDC)
+	sys.exit(0)
 
 print(oc.OKBLUE + oc.BOLD + "\n\n================= OVERALL =================" + oc.ENDC)
 if not error_string:
