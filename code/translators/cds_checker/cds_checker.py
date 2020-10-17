@@ -42,7 +42,7 @@ class translate_cds:
 		os.system(make)													# make/compile into object file for CDS Checker
 
 		signal.signal(signal.SIGALRM, time_handler)
-		signal.alarm(420)												# set timer for 7 minutes for CDSChecker
+		signal.alarm(300)												# set timer for 7 minutes for CDSChecker
 		try:
 			p = subprocess.check_output(cds_cmd,
 										cwd = fi.CDS_FOLDER_PATH,
@@ -53,7 +53,7 @@ class translate_cds:
 			self.cds_time = cds_end-cds_start
 			self.obtain_traces(p)
 		except RuntimeError:
-			self.error_string = "\nModel Checking time exceeded 7 minutes."
+			self.error_string = "\nModel Checking time exceeded 5 minutes."
 		except:
 			self.error_string = "\nError while model checking.\nPlease check and resolve the error."
 		else:

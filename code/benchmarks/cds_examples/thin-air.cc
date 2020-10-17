@@ -1,25 +1,30 @@
-#include <iostream>
+/**
+ * CDSChecker - thin-air
+*/
+
+#include <model-assert.h>
 #include <threads.h>
 #include <atomic>
-#include <model-assert.h>
+#include <iostream>
 
 using namespace std;
 #define LOOP 1
-
 
 atomic<int> x;
 atomic<int> y;
 
 static void a(void *obj) {
 	x.load(__LINE__, memory_order_relaxed);
-	for (int i=0; i<LOOP; i++)
+	for (int i = 0; i < LOOP; i++) {
 		y.store(__LINE__, 1, memory_order_relaxed);
+	}
 }
 
 static void b(void *obj) {
 	y.load(__LINE__, memory_order_relaxed);
-	for (int i=0; i<LOOP; i++)
+	for (int i = 0; i < LOOP; i++) {
 		x.store(__LINE__, 1, memory_order_relaxed);
+	}
 }
 
 int user_main(int argc, char **argv) {
