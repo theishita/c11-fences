@@ -31,7 +31,7 @@ class file_info:
 	Z3_FILE = "compute_fences"
 	FILE_EXTENSION = ".cc"
 	CDS_MADE_FILE_EXTENSIONS = [".o", ".o.d"]
-	OUTPUT_FILE_APPEND_STRING = "_fence"+FILE_EXTENSION
+	OUTPUT_FILE_APPEND_STRING = "_fenced"+FILE_EXTENSION
 	FENCE_INSTRUCTION = "atomic_thread_fence(memory_order_seq_cst);"
 	CDS_FOLDER_PATH = "../model-checker/cds-checker"
 	CDS_TEST_FOLDER_PATH = CDS_FOLDER_PATH+"/test"

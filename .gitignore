@@ -18,8 +18,7 @@ compute_fences
 *_store
 
 # testing files
-*_fence.cc
-*_fence.o
+*_fenced.cc
 *testing*
 
 # model checker files:

@@ -1,7 +1,8 @@
 # --------------------------------------------------------
-# Cleans up the generated "_fence" file in case -t 
-# optimization flag is used and the solution cannot be
-# found after a few iterations.
+# Cleans up all generated files:
+# 1. Generated file when -t optimization flag is used and
+# 	the solution cannot be found after a few iterations
+# 2. Copied and generated model checker files
 # --------------------------------------------------------
 
 import os
