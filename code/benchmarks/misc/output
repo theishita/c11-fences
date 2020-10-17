@@ -1,0 +1,81 @@
+
+
+
+===========================
+mixed_eg.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mixed_eg.o.d -o mixed_eg.o mixed_eg.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 4
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 0.33
+Time- Z3:		 0.02
+
+Time- Total:		 0.41
+Time- Tool only:	 0.06
+
+
+
+===========================
+output
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
+
+
+
+===========================
+basic.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.basic.o.d -o basic.o basic.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 1
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.33
+Time- Z3:		 0.01
+
+Time- Total:		 0.35
+Time- Tool only:	 0.01
+
+
+
+===========================
+mo_eg.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mo_eg.o.d -o mo_eg.o mo_eg.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.33
+
+Time- Total:		 0.34
+Time- Tool only:	 0.01
