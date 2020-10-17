@@ -2,10 +2,10 @@
  * CDSChecker - dekker_false-unreach-call
 */
 
-#include <iostream>
+#include <model-assert.h>
 #include <threads.h>
 #include <atomic>
-#include <model-assert.h>
+#include <iostream>
 
 using namespace std;
 
