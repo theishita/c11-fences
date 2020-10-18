@@ -9,6 +9,22 @@ from os import listdir
 from os.path import isfile, join
 
 
+def run_extra_files():
+    files = ["benchmarks/cds_examples/mot_eg_modified.cc"]
+    tempfile = open("benchmarks/cds_examples/output", 'a+')
+    for f in files:
+        print(f)
+        cmd = "python3 main.py -f " + f
+        cmd = shlex.split(cmd)
+
+        output = subprocess.check_output(cmd, stderr=subprocess.PIPE)
+        output = output.decode('utf-8')
+        tempfile.write("\n\n\n===========================\n" + str(f) +
+                       "\n===========================\n" + output)
+
+    tempfile.close()
+
+
 def run_file(dir_name, filename, tempfile):
     f = dir_name + "/" + filename
     print(f)
@@ -41,6 +57,8 @@ directories = [
     "benchmarks/watts_examples"
 ]
 # directories = ["benchmarks/misc"]
+
+run_extra_files()
 
 for dir_name in directories:
     tempfile_path = dir_name + "/output_tflag"
