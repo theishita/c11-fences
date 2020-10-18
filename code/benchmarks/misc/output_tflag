@@ -1,0 +1,216 @@
+
+
+
+===========================
+mixed_eg_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mixed_eg_fenced.o.d -o mixed_eg_fenced.o mixed_eg_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.33
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.33
+
+Time- Total:		 0.34
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 0.34
+
+
+
+===========================
+mixed_eg.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mixed_eg.o.d -o mixed_eg.o mixed_eg.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mixed_eg_fenced.o.d -o mixed_eg_fenced.o mixed_eg_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mixed_eg_fenced.o.d -o mixed_eg_fenced.o mixed_eg_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.33
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.33
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 3 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.33
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 0.99
+Time- Z3:		 0.03
+
+Time- Total:		 1.06
+Time- Tool only:	 0.04
+
+Total iterations:	 3
+Time- avg per iter:	 0.35
+
+
+
+===========================
+output
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
+
+
+
+===========================
+output_tflag
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
+
+
+
+===========================
+basic.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.basic.o.d -o basic.o basic.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.basic_fenced.o.d -o basic_fenced.o basic_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.33
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.33
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.65
+Time- Z3:		 0.01
+
+Time- Total:		 0.68
+Time- Tool only:	 0.01
+
+Total iterations:	 2
+Time- avg per iter:	 0.34
+
+
+
+===========================
+basic_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.basic_fenced.o.d -o basic_fenced.o basic_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.33
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.33
+
+Time- Total:		 0.33
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 0.33
+
+
+
+===========================
+mo_eg.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mo_eg.o.d -o mo_eg.o mo_eg.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+Time- CDS Checker:	 0.33
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.33
+
+Time- Total:		 0.34
+Time- Tool only:	 0.01
+
+Total iterations:	 1
+Time- avg per iter:	 0.34

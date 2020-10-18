@@ -618,3 +618,25 @@ g++ -MMD -MF ./.read_write_lock_3.o.d -o read_write_lock_3.o read_write_lock_3.c
 make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
 [1m[91m
 Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+benchmarks/cds_examples/mot_eg_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_modified.o.d -o mot_eg_modified.o mot_eg_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 292
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 0.73
+Time- Z3:		 0.12
+
+Time- Total:		 4.83
+Time- Tool only:	 3.99
