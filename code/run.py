@@ -12,7 +12,7 @@ from os.path import isfile, join
 def run_file(dir_name, filename, tempfile):
     f = dir_name + "/" + filename
     print(f)
-    cmd = "python3 main.py -f " + f
+    cmd = "python3 main.py -f " + f + " -t 1"
     cmd = shlex.split(cmd)
 
     output = subprocess.check_output(cmd, stderr=subprocess.PIPE)
@@ -43,7 +43,7 @@ directories = [
 # directories = ["benchmarks/misc"]
 
 for dir_name in directories:
-    tempfile_path = dir_name + "/output"
+    tempfile_path = dir_name + "/output_tflag"
     tempfile = open(tempfile_path, 'a+')
     files = [f for f in listdir(dir_name) if isfile(join(dir_name, f))]
     for filename in files:
