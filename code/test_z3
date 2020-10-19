@@ -1,7 +1,0 @@
-(declare-const l14 (_ BitVec 1))
-(declare-const l23 (_ BitVec 1))
-(assert (= (bvand l14 l23) #b1))
-(define-fun ext ((x (_ BitVec 1)) ) (_ BitVec 3) ((_ zero_extend 2) x))
-(minimize (bvadd (ext l14) (ext l23)))
-(check-sat)
-(get-model)
