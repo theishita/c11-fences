@@ -28,7 +28,7 @@ def run_extra_files():
 def run_file(dir_name, filename, tempfile):
     f = dir_name + "/" + filename
     print(f)
-    cmd = "python3 main.py -f " + f + " -t 1"
+    cmd = "python3 main.py -f " + f
     cmd = shlex.split(cmd)
 
     output = subprocess.check_output(cmd, stderr=subprocess.PIPE)
@@ -58,10 +58,10 @@ directories = [
 ]
 # directories = ["benchmarks/misc"]
 
-run_extra_files()
+# run_extra_files()
 
 for dir_name in directories:
-    tempfile_path = dir_name + "/output_tflag"
+    tempfile_path = dir_name + "/output_avg_per_instr"
     tempfile = open(tempfile_path, 'a+')
     files = [f for f in listdir(dir_name) if isfile(join(dir_name, f))]
     for filename in files:
