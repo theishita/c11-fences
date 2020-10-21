@@ -1,51 +1,92 @@
-(tentative timings)
-\begin{figure}
-	\input{section/figures-tables/results_table_1.tex}
-	\caption{Results table 1}\label{fig:tabl1}
-\end{figure}
+\begin{table}
+		\input{section/figures-tables/results_table_1.tex}
+	\caption{Bare bone results}
+	\label{tab:results1}
+\end{table}
 
-Through experiments, it was observed that the two most expensive operations
-in the entire process are - computing transitive relations for \setHB's and
-computing all possible cycles in the graph of \setTO relations. The algorithm 
-to compute all elementary cycles in the directed graph implements
-Johnson's algorithm \ref{networkx-cycles}.
+In order to analyze and evaluate the performance of the algorithm 
+proposed in this paper, we created a tool called ----. 77 benchmarks were
+executed on it, using a computer with \ishComment{specs}.
+Most of these benchmarks have been acquired from verification tool
+repositories, namely CDSChecker \cite{cds}, Tracer \cite{tracer2018},
+GenMC \cite{genmc-PLDI19}, RCMC \cite{rcmc-POPL18}, Watts \cite{watts}.
+
+All benchmarks can be segregated into two base classes. The first set consists of 
+programs whose buggy executions can be stopped by inserting fences. Table \ref{tab:results1}
+summarizes these results. The second category of benchmarks contains programs which
+either do not provide obtainable results using a model checking tool, or
+whose buggy behaviours cannot be stopped simply by using fences. \textit{\{The reason
+for this may be because those programs are semantically created to prove
+a point instead of being stopped using fences.\}} Benchmarks range from
+having a few buggy executions to having thousands of buggy executions. They
+also vary in the number of threads and atomic instructions in each of
+their traces.
+
+For each concurrent program, we provide the following information as criteria for evaluation:
+the number of buggy executions found by the model checker, the number of fences
+inserted in the final program, and the average number of atomic instructions
+in each trace. The tool is assessed by being timed according to different steps
+of the program, including time taken by the model checker, time taken by the
+SAT solver and the remaining computation time taken by the tool itself. Programs
+were run in two modes- the regular mode with all executions
+being taken into account and the \texttt{-t} flag mode, where only the first
+trace was taken into consideration for each iteration of the input program.
+
+From the experimental result obtained, it can be noted that a major factor directly affecting 
+the tool time is the number of buggy executions. This number affects the tool 
+time since each execution is computed individually. Naturally, more executions translates to
+greater computation time. This is the case, for example, with benchamarks
+\texttt{read\_write\_lock\_unreach\_13} and \texttt{mot\_eg\_v2\_2}, which had thousands
+of buggy executions. Computing these were time taking tasks for 
+both CDSChecker and the tool itself.
 
 \begin{figure}
 	a. $O(n^3)$, \\
-	\textit{where n is the number of vertices}
+	\textit{where n is the number of vertices}\\
 	
 	
 	b. $O((n+e)(c+1))$, \\
 	\textit{for n nodes, e edges and c elementary circuits}
 	\caption{a. complexity of computing transitive \setHB relations\\
-	b. complexity of Johnson's algorithm}
+	b. complexity of Johnson's algorithm to compute all elementary cycles in a graph}
 \end{figure}
 
-Table \ref{fig:tabl1} contains a few of the benchmarks used to test this tool.
-These benchmarks have been taken from different model checking tools and amended
-according to our specifications. At a first glance, it can be noted that
-the major factors directly affecting the tool time are- the number of buggy executions
-and the number of instructions in each execution.
+Through experiments, it was also observed that the two most expensive 
+operations in the entire process were computing transitive relations for \setHB 
+relations, and computing all possible elementary cycles in the graph of \setTO
+relations. The metric, ``number of instructions in each trace'' adds
+considerably to the former factor. A large number of instructions in each
+trace produces a greater number of \setHB relations, thereby resulting in
+greater computation time for transitive relations. This is evidenced by the benchmarks
+\texttt{publish-sc0} and \texttt{publish-sc1} where the number of instructions in each
+execution trace is 55 - a greater than average amount for our benchmarks.
+Consequently, the tool takes more time solving them.
 
-Firstly, the number of buggy executions affects the tool time since each execution
-is being computed and being sent through a series of steps. Hence, more executions means more
-computation time. On the other hand, the number of instructions in each trace 
-determines the number of relations being formed. A greater number of instructions
-results in more \setHB relations. The number of fences to be put between each instruction also
-increases and hence, the number of TO relations increases, since all fences are of the
-\mosc memory order. Finally, a sizeable graph with many TO relations
-results in an exponential number of cycles. 
+This metric does not necessarily apply to \setTO relations.
+A greater number of instructions may or may not produce a sizeable \setTO graph.
+This depends upon the semantics of the input program. However, chances are,
+an intricate graph with many \setTO relations will result in an enormous number of cycles, 
+sometimes having exponential numbers, resulting in a much greater
+computation time. This is evidenced by looking at the Z3 computation 
+time column, since the SAT Solver is only concerned with reducing the cycles
+to a minimal required number of fences. For instance, the benchmark \texttt{pgsql0}, though having 
+a very small number of buggy executions, has an execution time of a few minutes. Much
+of this time in spent on SAT Solving, as can be witnessed. This result reveals 
+a very large number of \setTO relations and hence cycles.
 
-\begin{figure}
+\begin{table}
+\begin{center}
 	\input{section/figures-tables/results_table_2.tex}
-	\caption{Results Table 2}\label{fig:tabl2}
-\end{figure}
+	\caption{Optimized results}
+	\label{tab:results2}
+\end{center}
+\end{table}
 
 To combat this problem of number of cycles or number of buggy executions going out of bounds,
-an optimization had been introduced and discussed in \ref{sec:optis}. Table \ref{fig:tabl2}
-has results of some of the biggest programs in our set with the flag \texttt{-t 1},
-which means it looks at only the first trace at a time. Results state that
+the optimization discussed in \ref{sec:optis} was applied.
+Table \ref{tab:results2} contains a few of these results. Results state that
 in most cases, the number of fences remains the same as they were with the 
-full optimization. In some of the examples, however, an additional fence or two
-is added. The tool time is always considerably lesser when compared with
-the original optimization.
+full optimization, but the time is considerably reduced.
+
+The tool performance cannot be compared with any previous approaches since there have been no
+approaches for fence synthesis for the C11 model.
