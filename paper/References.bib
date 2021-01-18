@@ -128,3 +128,21 @@ series = {OOPSLA '13}
 	location = {Phoenix, AZ, USA},
 	series = {PLDI 2019}
 }
+
+@inproceedings{watts,
+author = {Kusano, Markus and Wang, Chao},
+title = {Flow-Sensitive Composition of Thread-Modular Abstract Interpretation},
+year = {2016},
+isbn = {9781450342186},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2950290.2950291},
+doi = {10.1145/2950290.2950291},
+abstract = { We propose a constraint-based flow-sensitive static analysis for concurrent programs by iteratively composing thread-modular abstract interpreters via the use of a system of lightweight constraints. Our method is compositional in that it first applies sequential abstract interpreters to individual threads and then composes their results. It is flow-sensitive in that the causality ordering of interferences (flow of data from global writes to reads) is modeled by a system of constraints. These interference constraints are lightweight since they only refer to the execution order of program statements as opposed to their numerical properties: they can be decided efficiently using an off-the-shelf Datalog engine. Our new method has the advantage of being more accurate than existing, flow-insensitive, static analyzers while remaining scalable and providing the expected soundness and termination guarantees even for programs with unbounded data. We implemented our method and evaluated it on a large number of benchmarks, demonstrating its effectiveness at increasing the accuracy of thread-modular abstract interpretation. },
+booktitle = {Proceedings of the 2016 24th ACM SIGSOFT International Symposium on Foundations of Software Engineering},
+pages = {799–809},
+numpages = {11},
+keywords = {Concurrency, Datalog, Interference, Abstract interpretation, Invariant generation, Threadmodular reasoning},
+location = {Seattle, WA, USA},
+series = {FSE 2016}
+}

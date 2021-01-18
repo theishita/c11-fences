@@ -16,10 +16,8 @@ atomic<int> __fence_var;
 void t0(void *arg){
 label_1:;
   atomic_store_explicit(__LINE__, &vars[0], 1, memory_order_release);
-  int v2_r3 = atomic_load_explicit(__LINE__, &vars[0], memory_order_acquire);
-  int v3_r4 = v2_r3 ^ v2_r3;
-  int v4_r4 = v3_r4 + 1;
-  atomic_store_explicit(__LINE__, &vars[1], v4_r4, memory_order_release);
+  int v2_r3 = atomic_load_explicit(__LINE__, &vars[1], memory_order_acquire);
+  int v4_r5 = atomic_load_explicit(__LINE__, &vars[2], memory_order_acquire);
   atomic_store_explicit(__LINE__, &vars[2], 1, memory_order_release);
 
 }

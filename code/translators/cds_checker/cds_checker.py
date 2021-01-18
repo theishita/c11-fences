@@ -42,7 +42,7 @@ class translate_cds:
 		os.system(make)													# make/compile into object file for CDS Checker
 
 		signal.signal(signal.SIGALRM, time_handler)
-		signal.alarm(300)												# set timer for 7 minutes for CDSChecker
+		signal.alarm(300)												# set timer for 5 minutes for CDSChecker
 		try:
 			p = subprocess.check_output(cds_cmd,
 										cwd = fi.CDS_FOLDER_PATH,
@@ -97,15 +97,12 @@ class translate_cds:
 	# to convert each trace into a structure
 	def create_structure(self,filename):
 
-		# map the variable names from the source code to the memory address used by the variable as shown in the traces
 		for trace in self.traces_raw:
 			execution = []
 			for instr in trace:
 				line = create_list(instr)
 				execution.append(line)
 			execution.sort(key = lambda x:x[1])							# sorts the list of instructions by the thread number
-			# IDEA: using key function is faster since it is called exactly once for each input record
-
 			self.traces.append(execution)
 
 		# for i in self.traces[S_NO]:

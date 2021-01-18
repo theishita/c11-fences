@@ -1,0 +1,1323 @@
+
+
+
+===========================
+mot_eg_v3_modified_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_modified_fenced.o.d -o mot_eg_v3_modified_fenced.o mot_eg_v3_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.27
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.27
+
+Time- Total:		 0.28
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 0.28
+
+
+
+===========================
+mot_eg_v3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3.o.d -o mot_eg_v3.o mot_eg_v3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_fenced.o.d -o mot_eg_v3_fenced.o mot_eg_v3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.3
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.25
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.55
+Time- Z3:		 0.01
+
+Time- Total:		 0.58
+Time- Tool only:	 0.02
+
+Total iterations:	 2
+Time- avg per iter:	 0.29
+
+
+
+===========================
+mot_eg_v3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_fenced.o.d -o mot_eg_v3_fenced.o mot_eg_v3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.24
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.24
+
+Time- Total:		 0.24
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 0.24
+
+
+
+===========================
+peterson.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.peterson.o.d -o peterson.o peterson.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.peterson_fenced.o.d -o peterson_fenced.o peterson_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.peterson_fenced.o.d -o peterson_fenced.o peterson_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.22
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.22
+Time- Z3:		 0.01
+Fences added:		 1
+[95m[1m
+
+=============== ITERATION 3 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.25
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 3 [0m
+Time- CDS Checker:	 0.69
+Time- Z3:		 0.03
+
+Time- Total:		 0.75
+Time- Tool only:	 0.04
+
+Total iterations:	 3
+Time- avg per iter:	 0.25
+
+
+
+===========================
+read_write_lock_unreach_13_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_13_fenced.o.d -o read_write_lock_unreach_13_fenced.o read_write_lock_unreach_13_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 115.83
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 115.83
+
+Time- Total:		 115.83
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 115.83
+
+
+
+===========================
+CRCW_mot_eg_1_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.CRCW_mot_eg_1_modified.o.d -o CRCW_mot_eg_1_modified.o CRCW_mot_eg_1_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+Time- CDS Checker:	 0.25
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.25
+
+Time- Total:		 0.28
+Time- Tool only:	 0.03
+
+Total iterations:	 1
+Time- avg per iter:	 0.28
+
+
+
+===========================
+fib_bench_true-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_bench_true-unreach-call.o.d -o fib_bench_true-unreach-call.o fib_bench_true-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+lamport_true_unreach.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.lamport_true_unreach.o.d -o lamport_true_unreach.o lamport_true_unreach.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+Time- CDS Checker:	 0.35
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.35
+
+Time- Total:		 0.36
+Time- Tool only:	 0.01
+
+Total iterations:	 1
+Time- avg per iter:	 0.36
+
+
+
+===========================
+read_write_lock_unreach_12_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_12_fenced.o.d -o read_write_lock_unreach_12_fenced.o read_write_lock_unreach_12_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.59
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.59
+
+Time- Total:		 0.59
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 0.59
+
+
+
+===========================
+dekker_no_fence.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence.o.d -o dekker_no_fence.o dekker_no_fence.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence_fenced.o.d -o dekker_no_fence_fenced.o dekker_no_fence_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.9
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 1.25
+Time- Z3:		 0.02
+
+Time- Total:		 1.28
+Time- Tool only:	 0.02
+
+Total iterations:	 2
+Time- avg per iter:	 0.64
+
+
+
+===========================
+thin-air.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.thin-air.o.d -o thin-air.o thin-air.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+Time- CDS Checker:	 0.32
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.32
+
+Time- Total:		 0.33
+Time- Tool only:	 0.01
+
+Total iterations:	 1
+Time- avg per iter:	 0.33
+
+
+
+===========================
+fib_mod_false-unreach-call_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_false-unreach-call_fenced.o.d -o fib_mod_false-unreach-call_fenced.o fib_mod_false-unreach-call_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 229.23
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 229.23
+
+Time- Total:		 229.23
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 229.23
+
+
+
+===========================
+peterson_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.peterson_fenced.o.d -o peterson_fenced.o peterson_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.37
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.37
+
+Time- Total:		 0.38
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 0.38
+
+
+
+===========================
+triangular_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.triangular_false-unreach-call.o.d -o triangular_false-unreach-call.o triangular_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+Time- CDS Checker:	 15.94
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 15.94
+
+Time- Total:		 15.96
+Time- Tool only:	 0.02
+
+Total iterations:	 1
+Time- avg per iter:	 15.96
+
+
+
+===========================
+mot_eg_v3_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_modified.o.d -o mot_eg_v3_modified.o mot_eg_v3_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_modified_fenced.o.d -o mot_eg_v3_modified_fenced.o mot_eg_v3_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_modified_fenced.o.d -o mot_eg_v3_modified_fenced.o mot_eg_v3_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 3 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.42
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 1.1
+Time- Z3:		 0.03
+
+Time- Total:		 1.16
+Time- Tool only:	 0.03
+
+Total iterations:	 3
+Time- avg per iter:	 0.39
+
+
+
+===========================
+read_write_lock_unreach_13.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_13.o.d -o read_write_lock_unreach_13.o read_write_lock_unreach_13.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_13_fenced.o.d -o read_write_lock_unreach_13_fenced.o read_write_lock_unreach_13_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 199.95
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 200.29
+Time- Z3:		 0.01
+
+Time- Total:		 200.35
+Time- Tool only:	 0.04
+
+Total iterations:	 2
+Time- avg per iter:	 100.17
+
+
+
+===========================
+crew_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_2.o.d -o crew_2.o crew_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_2_fenced.o.d -o crew_2_fenced.o crew_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+Time- CDS Checker:	 0.34
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.68
+Time- Z3:		 0.02
+
+Time- Total:		 0.72
+Time- Tool only:	 0.03
+
+Total iterations:	 2
+Time- avg per iter:	 0.36
+
+
+
+===========================
+output
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
+
+
+
+===========================
+output_tflag
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
+
+
+
+===========================
+read_write_lock_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_2_fenced.o.d -o read_write_lock_2_fenced.o read_write_lock_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 3.74
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 3.74
+
+Time- Total:		 3.74
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 3.74
+
+
+
+===========================
+fib_mod_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_false-unreach-call.o.d -o fib_mod_false-unreach-call.o fib_mod_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_false-unreach-call_fenced.o.d -o fib_mod_false-unreach-call_fenced.o fib_mod_false-unreach-call_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_false-unreach-call_fenced.o.d -o fib_mod_false-unreach-call_fenced.o fib_mod_false-unreach-call_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.37
+Time- Z3:		 1.55
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 1.5
+Time- Z3:		 0.03
+Fences added:		 1
+[95m[1m
+
+=============== ITERATION 3 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 221.67
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 3 [0m
+Time- CDS Checker:	 223.55
+Time- Z3:		 1.59
+
+Time- Total:		 228.93
+Time- Tool only:	 3.79
+
+Total iterations:	 3
+Time- avg per iter:	 76.31
+
+
+
+===========================
+read_write_lock_unreach_11.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_11.o.d -o read_write_lock_unreach_11.o read_write_lock_unreach_11.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_11_fenced.o.d -o read_write_lock_unreach_11_fenced.o read_write_lock_unreach_11_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.34
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.68
+Time- Z3:		 0.01
+
+Time- Total:		 0.71
+Time- Tool only:	 0.02
+
+Total iterations:	 2
+Time- avg per iter:	 0.35
+
+
+
+===========================
+read_write_lock_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_2.o.d -o read_write_lock_2.o read_write_lock_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_2_fenced.o.d -o read_write_lock_2_fenced.o read_write_lock_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_2_fenced.o.d -o read_write_lock_2_fenced.o read_write_lock_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.35
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 3 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 3.71
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 4.39
+Time- Z3:		 0.03
+
+Time- Total:		 4.53
+Time- Tool only:	 0.1
+
+Total iterations:	 3
+Time- avg per iter:	 1.51
+
+
+
+===========================
+triangular_true-longer-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.triangular_true-longer-unreach-call.o.d -o triangular_true-longer-unreach-call.o triangular_true-longer-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+fib_bench_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_bench_false-unreach-call.o.d -o fib_bench_false-unreach-call.o fib_bench_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+read_write_lock_unreach_11_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_11_fenced.o.d -o read_write_lock_unreach_11_fenced.o read_write_lock_unreach_11_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.34
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.34
+
+Time- Total:		 0.34
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 0.34
+
+
+
+===========================
+mot_eg_v2_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_2.o.d -o mot_eg_v2_2.o mot_eg_v2_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_2_fenced.o.d -o mot_eg_v2_2_fenced.o mot_eg_v2_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.33
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 15.67
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 16.0
+Time- Z3:		 0.01
+
+Time- Total:		 16.03
+Time- Tool only:	 0.02
+
+Total iterations:	 2
+Time- avg per iter:	 8.02
+
+
+
+===========================
+mot_eg_v2_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_3.o.d -o mot_eg_v2_3.o mot_eg_v2_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_3_fenced.o.d -o mot_eg_v2_3_fenced.o mot_eg_v2_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.33
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+mot_eg_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_2.o.d -o mot_eg_2.o mot_eg_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_2_fenced.o.d -o mot_eg_2_fenced.o mot_eg_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_2_fenced.o.d -o mot_eg_2_fenced.o mot_eg_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.22
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.23
+Time- Z3:		 0.08
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 3 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 4.72
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 5.17
+Time- Z3:		 0.1
+
+Time- Total:		 5.76
+Time- Tool only:	 0.5
+
+Total iterations:	 3
+Time- avg per iter:	 1.92
+
+
+
+===========================
+CRCW_mot_eg_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.CRCW_mot_eg_2.o.d -o CRCW_mot_eg_2.o CRCW_mot_eg_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+Time- CDS Checker:	 0.34
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.34
+
+Time- Total:		 0.37
+Time- Tool only:	 0.03
+
+Total iterations:	 1
+Time- avg per iter:	 0.37
+
+
+
+===========================
+mot_eg_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_modified.o.d -o mot_eg_modified.o mot_eg_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_modified_fenced.o.d -o mot_eg_modified_fenced.o mot_eg_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_modified_fenced.o.d -o mot_eg_modified_fenced.o mot_eg_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.37
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.35
+Time- Z3:		 0.02
+Fences added:		 3
+[95m[1m
+
+=============== ITERATION 3 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 1.65
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 5 [0m
+Time- CDS Checker:	 2.37
+Time- Z3:		 0.03
+
+Time- Total:		 2.47
+Time- Tool only:	 0.07
+
+Total iterations:	 3
+Time- avg per iter:	 0.82
+
+
+
+===========================
+dekker_no_fence_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence_modified.o.d -o dekker_no_fence_modified.o dekker_no_fence_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence_modified_fenced.o.d -o dekker_no_fence_modified_fenced.o dekker_no_fence_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+Time- CDS Checker:	 0.34
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.69
+Time- Z3:		 0.02
+
+Time- Total:		 0.73
+Time- Tool only:	 0.02
+
+Total iterations:	 2
+Time- avg per iter:	 0.36
+
+
+
+===========================
+mot_eg_v2_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_2_fenced.o.d -o mot_eg_v2_2_fenced.o mot_eg_v2_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 15.65
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 15.65
+
+Time- Total:		 15.65
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 15.65
+
+
+
+===========================
+crew_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_3.o.d -o crew_3.o crew_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_3_fenced.o.d -o crew_3_fenced.o crew_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.34
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.68
+Time- Z3:		 0.02
+
+Time- Total:		 0.72
+Time- Tool only:	 0.02
+
+Total iterations:	 2
+Time- avg per iter:	 0.36
+
+
+
+===========================
+mot_eg_modified_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_modified_fenced.o.d -o mot_eg_modified_fenced.o mot_eg_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 1.64
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 1.64
+
+Time- Total:		 1.64
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 1.64
+
+
+
+===========================
+read_write_lock_unreach_12.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_12.o.d -o read_write_lock_unreach_12.o read_write_lock_unreach_12.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_12_fenced.o.d -o read_write_lock_unreach_12_fenced.o read_write_lock_unreach_12_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.01
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.59
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.92
+Time- Z3:		 0.01
+
+Time- Total:		 0.97
+Time- Tool only:	 0.03
+
+Total iterations:	 2
+Time- avg per iter:	 0.48
+
+
+
+===========================
+dekker_no_fence_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence_fenced.o.d -o dekker_no_fence_fenced.o dekker_no_fence_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.91
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.91
+
+Time- Total:		 0.92
+Time- Tool only:	 0.0
+
+Total iterations:	 1
+Time- avg per iter:	 0.92
+
+
+
+===========================
+read_write_lock_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_3.o.d -o read_write_lock_3.o read_write_lock_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_3_fenced.o.d -o read_write_lock_3_fenced.o read_write_lock_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_3_fenced.o.d -o read_write_lock_3_fenced.o read_write_lock_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/divyanjali/Programs/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.34
+Time- Z3:		 0.02
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 3 ===============[0m
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
