@@ -21,7 +21,7 @@ instructions can be switched to a \morel/\moacq, \moar, or a \mosc memory order.
 
 The tool can be further worked upon as well. Currently it does not have support
 for locks. Functionality for detecting locks and using their semantics
-in the theory for \setTO relations can be additionally explored. Another optimization
+in the theory for \setSC relations can be additionally explored. Another optimization
 to consider can be the detection of loops in the program. A single fence
 inserted inside the scope of a loop in actuality is not a single fence, since
 the contents of the loop will run multiple times. In this case, inserting extra fences

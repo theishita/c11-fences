@@ -149,7 +149,7 @@ on the instruction number as given by CDSChecker.
 \begin{itemize}
 	\item adjacency matrix to store \setHB relations because the size 
 	of \setHB is usually large
-	\item list of tuples to store relations \setMO, \setSB, \setTO
+	\item list of tuples to store relations \setMO, \setSB, \setSC
 	since the size of these relations is small and finding cycle is
 	easier
 	\item list of lists to store traces and instruction information
@@ -163,7 +163,7 @@ We have used inbuilt python functions for faster processing:
 	\item \texttt{index} function to index quicker
 	\item values converted to int at the beginning while translating 
 	model checker output for faster lookup
-	\item no need to compute transitive \setTO edges
+	\item no need to compute transitive \setSC edges
 	\item use \texttt{networkx} library that uses Johnson's 
 	algorithm to enumerate all the cycles in a graph
 	\item use of \texttt{-t} flag when for faster termination

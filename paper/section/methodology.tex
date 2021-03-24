@@ -104,15 +104,15 @@ happens-before relation. This means that for any two \mosc instructions A
 and B such that A $ \neq B $, either \too{A}{B} or \too{B}{A}. 
 Hence, an execution with both \too{A}{B} and \too{B}{A} is infeasible.
 % Why TO?
-Our technique computes \setTO of buggy execution when pseudo fences are 
-present. If such \setTO has a cycle, then the program with these fences 
+Our technique computes \setSC of buggy execution when pseudo fences are 
+present. If such \setSC has a cycle, then the program with these fences 
 will not have this buggy execution. 
 Hence, by finding these cycles we can work out the required fences.
 % Example
 For example, in Fig \ref{fig:dekker2}, if the assert statement is violated
 if either thread reads the value written to variable $c$ by the other thread.
 % Other relations
-%In order to find \setTO, we first compute the \setSB, \setSW, \setHB and 
+%In order to find \setSC, we first compute the \setSB, \setSW, \setHB and 
 %\setMO relations.
 The basis of our approach lies upon finding relations between the 
 instructions and figuring out how they affect the program in order to 
@@ -122,7 +122,7 @@ reduce the total fences to a minimum.
 The next step after inserting pseudo fences is finding relations between 
 instructions, including fences. 
 These relations will help in figuring out which fences to eliminate from 
-the trace. In particular, we are concerned with the \setTO (total order) 
+the trace. In particular, we are concerned with the \setSC (total order) 
 relations between all SC instructions and fences. Rules for TO relations 
 for the C11 model are described in the official standard \cite{C11}. 
 These rules are dependent relations \setSB, \setSW, \setHB and \setMO, which 
@@ -174,7 +174,8 @@ with the write instructions. Therefore, computing \setHB relations before
 inserting pseudo fences works as an optimization. Second, if we compute \setHB
 after inserting fences, we will have some \setHB relations that are not in 
 the actual execution but will exist in the execution of program with all the 
-pseudo fences. \divComment{Why can't we compute it after?}
+pseudo fences. \divComment{What is the problem with having such hb?}
+\divComment{Rule 1b of computing TO is also using hb, but only over write operations. So the first points still holds.}
 
 \begin{lemma} For any valid execution of a program, the relation \setHB computed 
 	as above is same as \emph{happens-before} of C11.
@@ -212,32 +213,33 @@ order as described by the standard \cite{C11} are:
 After this step, the pseudo fences are inserted.
 
 % --------------- TO -----------
-\subsubsection{Finding \setTO relations between SC instructions}\label{to_rel}
+\subsubsection{Finding \setSC relations between SC instructions}\label{to_rel}
 The final step in finding relations and the main step that is required for 
-fence elimination is to find \setTO relations. The rules for \setTO relations 
+fence elimination is to find \setSC relations. The rules for \setSC relations 
 in the C11 standard are defined in \cite{C11}. These rules can be interpreted 
 as the following:
 \input{section/figures-tables/to_rules.tex}
 \textit{Note: ``the fence above instruction A'' is a comprehensive term for all 
 	the fences which are sequenced-before instruction A.}
-Intuitively, transitive closure of \setTO is \emph{sc} ordering over the 
+Intuitively, transitive closure of \setSC is \emph{sc} ordering over the 
 given program execution if the program had the pseudo fences to begin with.
 Such an execution may or may not be valid under C11 memory model.
 
 \begin{theorem}
-	For any valid execution of a program, the transitive closure of \setTO 
-	is same as \emph{sc} order of C11 of in the corresponding (possibly 
-	invalid) execution of the same program with pseudo fences.
+	For any valid execution of a program, the transitive closure of \setSC 
+	is the same as \emph{to} order of C11 of in the corresponding (possibly 
+	invalid) trace with candidate fences.
 \end{theorem}
+
 
 % --------------- SOLN EXPLAINED -------------
 \subsection{Eliminating Fences}
-The rules in \textsection\ref{to_rel} provides us \setTO relations between all 
+The rules in \textsection\ref{to_rel} provides us \setSC relations between all 
 instructions and fences. We now get a graph that would look 
 like Fig \ref{fig:cycles}. 
 
-%Further, the transitivity of \setTO 
-%relation will give us some additional pair in \setTO. 
+%Further, the transitivity of \setSC 
+%relation will give us some additional pair in \setSC. 
 
 \par
 The purpose of creating a graph this way is to detect if there are any cycles 
@@ -249,21 +251,21 @@ In a total order
 According to the C/C++11 standard, each \mosc instruction is in total order 
 with every other \mosc instruction. This means that for any two \mosc 
 instructions A and B, either \too{A}{B} or \too{B}{A}. According to 
-\setTO rules, if both of these relations hold true, then A = B. 
+\setSC rules, if both of these relations hold true, then A = B. 
 If A $\neq$ B and A and B are different entities which satisfy the 
 relation (\too{A}{B} $\land$ \too{B}{A}), that means that a cycle is 
-formed between instructions A and B. This, in turn, violates the \setTO 
+formed between instructions A and B. This, in turn, violates the \setSC 
 property, rendering the execution infeasible. If a certain execution 
 becomes infeasible, then it would never exhibit during an actual execution 
 of the program.
 
-Note that apart from the rules described above, some \setTO edges 
-will be created due to the transitivity of \setTO.
+Note that apart from the rules described above, some \setSC edges 
+will be created due to the transitivity of \setSC.
 We have not included these edges in our final graph and limited 
 the edges in graphs to the set that was computed using the rules 
 in \textsection\ref{to_rel}. That is, all \setSB edges are taken into 
 consideration whether immediate 
-or not, and only those edges formed via the \setTO rules discussed in 
+or not, and only those edges formed via the \setSC rules discussed in 
 section \textsection\ref{to_rel} are considered while forming a graph. 
 The reason of this is explained in \textsection\ref{sec:no-transitive}.
 
@@ -279,16 +281,16 @@ The reason of this is explained in \textsection\ref{sec:no-transitive}.
 
 \subsection{Restricting Buggy Executions}
 \par
-We find out \setTO relations in only the buggy or erroneous traces which 
+We find out \setSC relations in only the buggy or erroneous traces which 
 are obtain from verification tool. For each erroneous trace, a graph is 
-formed with the instructions/fences as nodes and the \setTO relations as 
+formed with the instructions/fences as nodes and the \setSC relations as 
 edges. 
 Our purpose is to insert fences such that the graph of the buggy exection 
 will contain a cycle 
 When such a cycle is introduced, it violates the properties of a total 
 order relation in C11, rendering the entire execution infeasible. 
 An infeasible execution will never occur during runtime, which means 
-that the buggy execution in which the \setTO cycle is introduces using 
+that the buggy execution in which the \setSC cycle is introduces using 
 fences will never be executed. 
 Hence the assertion which was being violated will remain satisfied. 
 
@@ -322,17 +324,17 @@ entities considered while finding the final result.
 
 
 \begin{lemma}
-	Introducing fences in any cycle of \setTO will stop that cycle 
+	Introducing fences in any cycle of \setSC will stop that cycle 
 	from forming in actual run of the program.
 \end{lemma}
 
 \begin{lemma}
-	If there are no cycles in \setTO of a buggy execution, the behavior 
+	If there are no cycles in \setSC of a buggy execution, the behavior 
 	cannot be stopped using any C11 fences.
 \end{lemma}
 
 \begin{theorem}
-	Stopping all cycles of \setTO in any buggy execution will stop that
+	Stopping all cycles of \setSC in any buggy execution will stop that
 	buggy execution in actual run of program.
 \end{theorem}
 
@@ -423,9 +425,9 @@ satisfying assignment is computed.
 \subsubsection{why transitive TO edges aren't considered} \label{sec:no-transitive}
 The relations which are considered to form the final graph are - 
 all \setSB edges between only \mosc instructions including transitive \setSB edges, 
-and directly formed \setTO edges but not transitively formed \setTO edges.  
-This is because transitively formed \setTO relations will be of 
-no use in our case. If there is a transitive \setTO relation formed 
+and directly formed \setSC edges but not transitively formed \setSC edges.  
+This is because transitively formed \setSC relations will be of 
+no use in our case. If there is a transitive \setSC relation formed 
 between two instructions, then this relation has been caused by 
 some other edges in our graph. 
 Our formula is concerned only with the cycles in the graph 
@@ -433,13 +435,13 @@ Our formula is concerned only with the cycles in the graph
 the new cycles that might come if we were to consider the transitive 
 edges. These cycles might be formed because of two reasons - 
 either the new cycle consists of i) some transitive edges in the 
-actual program that we did not include in \setTO, or ii) some 
+actual program that we did not include in \setSC, or ii) some 
 transitive edges created due to pseudo fences. In case i), the cycle 
 (let $C$) is certainly caused by some pseudo fence inserted in the program 
 since the actual program execution cannot have a cycle. Since the 
-transitive edge is formed due to some edge in our \setTO, there 
+transitive edge is formed due to some edge in our \setSC, there 
 will be a representative cycle $C'$ of the cycle $C$ formed using 
-edges in \setTO. As our formula only concerns the pseudo fences, 
+edges in \setSC. As our formula only concerns the pseudo fences, 
 the formula constructed for $C$ and $C'$ will be the same. 
 Similarly in case ii), since the cycle is created due to transitive 
 edge caused by one or more fences, the formula must consist these 
@@ -481,7 +483,7 @@ $\rightarrow$ \textit{$I_1n_1$} $\rightarrow$ \textit{$F_2n_2$} $\rightarrow$ \t
 
 
 \par
-So even if transitive \setTO relations are considered as graph edges, 
+So even if transitive \setSC relations are considered as graph edges, 
 they would not impact our final solution. 
 %For each transitively 
 %formed edge, all original edges which would have possibly caused 
