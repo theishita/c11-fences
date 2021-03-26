@@ -1,4 +1,5 @@
 \usepackage{xspace}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{amsmath}
 \usepackage{afterpage}  
 \usepackage{figlatex,wrapfig}
@@ -36,14 +37,37 @@
 %\usepackage[numbers]{natbib}
 %\usepackage{url}
 
-%\definecolor{brown}{rgb}{0.59, 0.29, 0.0}
-%\definecolor{green}{rgb}{0.0, 0.5, 0.0}
-%\definecolor{orange}{rgb}{1.0, 0.62, 0.0}
-%\definecolor{purple}{rgb}{0.5, 0.0, 0.5}
-%\definecolor{red}{rgb}{1.0, 0.0, 0.0}
-%\definecolor{blue}{rgb}{0.0, 0.0, 1.0}
+% implies and iff arrows
+\renewcommand{\iff}{\xspace\Leftrightarrow\xspace}
+\renewcommand{\implies}{\xspace\Rightarrow\xspace}
+\newcommand{\onlyif}{\xspace\Leftarrow\xspace}
 
+% commonly used abbreviations and expressions
+\renewcommand{\th}{^{th}\xspace} % superscript th for numbers eg i^{th}
+\newcommand{\definedas}{\triangleq\xspace}
+\newcommand{\ie}{{\em i.e.}\xspace}
+\newcommand{\st}{\ \mbox{s.t.}\ }
+\newcommand{\viz}{\textit{viz}.\@\xspace}
+\newcommand{\wrt}{\textit{wrt}\xspace}
+\newcommand{\wkt}{we know that,\xspace}
+\newcommand{\aka}{a.k.a\xspace}
+\newcommand{\sota}{state-of-the-art\xspace}
+\newcommand{\Sota}{State-of-the-art\xspace}
 
+% common operators
+\renewcommand{\^}{\xspace\wedge\xspace}
+\renewcommand{\v}{\xspace\vee\xspace}
+\newcommand{\xor}{\xspace\veebar\xspace}
+\renewcommand{\|}{\ |\ }
+\newcommand{\intersection}{\xspace\cap\xspace}
+\newcommand{\union}{\xspace\cup\xspace}
+\newcommand{\intersectioneq}{\xspace\cap=\xspace}
+\newcommand{\unioneq}{\ {\cup}{=}\ }
+\newcommand{\nin}{\not\in\xspace}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Document Specific %%%%%%%%%%%%%%%%%%%%%%
+
+% memory orders
 \newcommand{\mosc}{\texttt{seq\_cst}\xspace}
 \newcommand{\moar}{\texttt{acq\_rel}\xspace}
 \newcommand{\morel}{\texttt{release}\xspace}
@@ -51,18 +75,36 @@
 \newcommand{\mocon}{\texttt{consume}\xspace}
 \newcommand{\morlx}{\texttt{relaxed}\xspace}
 
-\newcommand{\seqb}[2]{{#1} {\color{brown}$\rightarrow^{sb}$} \color{black}{#2} }
-\newcommand{\sw}[2]{{#1} {\color{purple}$\rightarrow^{sw}$} \color{black}{#2} }
-\newcommand{\hb}[2]{{#1} {\color{orange}$\rightarrow^{hb}$} \color{black}{#2}}
-\newcommand{\rf}[2]{{#1} {\color{blue}$\rightarrow^{rf}$} {#2} }
-\newcommand{\too}[2]{{#1} {\color{green}$\rightarrow^{to}$} {#2} }
-\newcommand{\mo}[2]{{#1} {\color{red}$\rightarrow^{mo}$} {#2} }
-\newcommand{\setSB}{{\color{brown}\tt{sb}}\xspace}
-\newcommand{\setSW}{{\color{purple}\tt{sw}}\xspace}
-\newcommand{\setRF}{{\color{blue}\tt{rf}}\xspace}
-\newcommand{\setHB}{{\color{orange}\tt{hb}}\xspace}
-\newcommand{\setSC}{{\color{green}\tt{sc}}\xspace}
+% operators
+\newcommand{\molt}{{\sqsubset}\xspace}
+\newcommand{\mole}{{\sqsubseteq}\xspace}
+\newcommand{\mogt}{{\sqsupset}\xspace}
+\newcommand{\moge}{{\sqsupseteq}\xspace}
+
+% relations
+\newcommand{\reln}[4]{#3 {\rightarrow^{#1}_{#2}} #4\xspace} % any relation specified as #1
+\newcommand{\nreln}[4]{#3 \nrightarrow^{#1}_{#2} #4\xspace} % not of any relation specified as #1
+
+\newcommand{\sb}[3]{\reln{\textbf{\textcolor{CarnationPink}{sb}}}{#1}{#2}{#3}\xspace}
+\newcommand{\rf}[3]{\reln{\textbf{\textcolor{PineGreen}{rf}}}{#1}{#2}{#3}\xspace} 
+\newcommand{\dob}[3]{\reln{\textbf{\textcolor{Mulberry}{dob}}}{#1}{#2}{#3}\xspace}
+\newcommand{\sw}[3]{\reln{\textbf{\textcolor{Magenta}{sw}}}{#1}{#2}{#3}\xspace}
+\newcommand{\ithb}[3]{\reln{\textbf{\textcolor{NavyBlue}{ithb}}}{#1}{#2}{#3}\xspace}
+\newcommand{\hb}[3]{\reln{\textbf{\textcolor{Cerulean}{hb}}}{#1}{#2}{#3}\xspace}
+\newcommand{\nhb}[3]{\nreln{\textbf{\textcolor{Cerulean}{hb}}}{#1}{#2}{#3}\xspace}
+\newcommand{\mo}[3]{\reln{\textbf{\textcolor{RedOrange}{mo}}}{#1}{#2}{#3}\xspace}
+\renewcommand{\to}[3]{\reln{\textbf{\textcolor{Brown}{to}}}{#1}{#2}{#3}\xspace}
+\newcommand{\sc}[3]{\reln{[c]{::}\textbf{\textcolor{Mahogany}{sc}}}{#1}{#2}{#3}\xspace} %sc
+
+\newcommand{\setSB}{{\color{CarnationPink}\tt{sb}}\xspace}
+\newcommand{\setRF}{{\color{PineGreen}\tt{rf}}\xspace}
+\newcommand{\setSW}{{\color{Magenta}\tt{sw}}\xspace}
+\newcommand{\setDOB}{{\color{Mulberry}\tt{dob}}\xspace}
+\newcommand{\setITHB}{{\color{NavyBlue}\tt{ithb}}\xspace}
+\newcommand{\setHB}{{\color{Cerulean}\tt{hb}}\xspace}
 \newcommand{\setMO}{{\color{red}\tt{mo}}\xspace}
+\newcommand{\setTO}{{\color{Brown}\tt{to}}\xspace}
+\newcommand{\setSC}{{\color{Mahogany}\tt{sc}}\xspace}
 
 \newcommand{\var}[1]{\color{OliveGreen}\texttt{#1}\color{black}}
 \newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}

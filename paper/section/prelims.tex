@@ -1,0 +1,71 @@
+%% -------------------- C11 MODEL ------------------------
+%\subsection{The C11 Model}
+%\par
+%Since the C/C++11 \cite{C11} memory model is a relaxed model, load/store operations can be re-ordered before they are stored into the memory. In multi-threaded programs due to re-orderings between loads and stores, and other factors such as different methods used by different hardware for cache coherency, threads may end up seeing loads and stores by other threads in an order different than the one intended. One way of controlling this is through specifying the memory order for each operation in the program.
+%
+%\begin{figure}
+%	\begin{center}
+%		\begin{tabular}{|c|}
+%		\hline
+%		non-atomic $<$ relaxed $<$ release = acquire $<$ sequential consistency\\
+%		\hline
+%		\end{tabular}
+%	\caption{Memory orders in increasing order of strength}\label{fig:mo_strength}
+%	\end{center}
+%\end{figure}
+%
+%As discussed previously, this feature can cause behaviour which is unexpected by the programmer. Two memory consistency primitives introduced into the C/C++11 model can be exploited by us in this scenario - \textit{atomic operations} and \textit{memory fences}. 
+%
+%% ------------- ATOMIC OPS ----------------
+%\subsubsection{Atomic Operations}
+%Examples of atomic operations in the C/C++11 memory order are atomic loads, atomic stores, atomic read-modify-writes. These operations are carried out on atomic objects/variables.
+%
+%\ishComment{insert examples of atomic ops like a.load(mo\_rel) etc}
+%
+%The approach described in this project makes use of these atomic operations within the input program.
+%
+%% --------------- FENCES ----------------
+%\subsubsection{C11 Fences}
+%\par
+%A fence in the C11 model is also an atomic instruction which can be inserted between other instructions. These fences prevent memory operations to be ordered or re-ordered past the fence and they also permit the operations to be ordered in-between threads. 
+%
+%\par
+%A fence can have memory order SC, release, acquire. Specifically, a release fence prevents previous load/store operations from being re-ordered and moved after the fence and an acquire fence prevents load/store operations after the fence to be re-ordered and moved before the fence. On the other hand, an SC fence prevents both such behaviours. This project focuses only on SC fences and inserting them into the program in order to methodically stop instructions from re-ordering and preventing the unexpected behaviour.
+%\ishComment{behaviour spelling}
+%
+%% ---------------- TYPES OF RELATIONS -----------
+%\subsection{Basic relations}
+%\par
+%In a program execution, there can be certain relations formed between instructions. Each type of relation has rules or preconditions which dictate the type of relation between any two instructions.
+%
+%\par
+%Three basic relations which are useful in calculating many other relations are the \textit{sequenced-before}, \textit{synchronizes-with} and \textit{read-from} relations. In basic terms, any instruction in a thread is said to be sequenced before all instructions that are evaluated after it in the same thread. In order to concurrently access shared variables in a synchronized manner to avoid data races, the \textit{synchronizes-with} relation is used among instructions from different threads. Finally, a read instruction is said to be \textit{reading-from} the value of a write instruction.
+%
+%These relations form the basis for all other relations which are required in the methodology of this paper. These relations are \textit{happens-before}, \textit{modification order} and \textit{total order}.
+
+% ---------------- NOTATIONS -----------
+\subsection{Notation}
+\begin{itemize}
+	\item F$_{mo}$ \qquad fence with memory order mo
+	\item Rx \qquad read/load or rmw atomic operation on variable x
+	\item Wx(a) \qquad write/store or rmw atomic operation storing value a in variable x
+	\item R$_{mo}$ \qquad memory order mo specified for read operation
+	\item W$_{mo}$ \qquad memory order mo specified for write operation
+	\item $_{\geq rel}$ \qquad memory orders greater than or equal to release according to Fig. \ref{fig:mo_strength}
+	\item := \qquad assignment operator
+	\item == \qquad comparison operator
+	\item \color{olive}//a \color{black} \qquad the value expected to be read in that line is a
+	\item rmw
+	\item sb, sw, rf, hb, mo, to \qquad \too{a}{b} etc 
+	\item seq\_cst, rel, acq, rel\_acq, rlx
+	\item thread A create \qquad spawn a thread A from the current thread
+	\item thread A start \qquad the first/starting instruction of a thread A
+	\item thread A finish \qquad the last/ending instruction of a thread A
+	\item thread A join \qquad when a thread A joins back into the spawning thread
+	\item || separation of threads
+	\item buggy traces / buggy executions
+	\item candidate fences
+	\item original/transformed program or buggy/fixed program
+	\item invalidated traces: counter-examples with inserted fences
+	\item \setSC-order/ \setSC-cycle
+\end{itemize}
