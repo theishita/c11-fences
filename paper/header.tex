@@ -1,31 +1,17 @@
-\documentclass{article}
-
-	% enable these lines below while using overleaf, disable for texmaker/latex workshop
-%\usepackage[utf8]{inputenc}
-%\usepackage{stmaryrd}
-%\usepackage{algorithm,algpseudocode} 
-%\usepackage{galois}
-
 \usepackage{xspace}
 \usepackage{amsmath}
-\usepackage{afterpage}
-\usepackage{graphicx,lipsum}   
+\usepackage{afterpage}  
 \usepackage{figlatex,wrapfig}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{listings,amssymb,mathtools}
 \usepackage{mathrsfs}
 \usepackage{array,multirow}
-\usepackage{pifont}
 \usepackage{caption}
-\usepackage{geometry}
-\usepackage{textcomp}
+%\usepackage{textcomp}
 \usepackage{algorithm}
-%\usepackage{proof}
 \usepackage[noend]{algpseudocode}
 
-\usepackage{tikz}
-\usepackage[shortlabels]{enumitem}
-\usepackage{graphics}
+%\usepackage[shortlabels]{enumitem}
 
 % for colours
 \usepackage{xspace}
@@ -44,18 +30,19 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows,positioning}
 
-\usepackage[parfill]{parskip}
+%\usepackage[parfill]{parskip}
 
 % for bib handline
-\usepackage[numbers]{natbib}
-\usepackage{url}
+%\usepackage[numbers]{natbib}
+%\usepackage{url}
 
-\definecolor{brown}{rgb}{0.59, 0.29, 0.0}
-\definecolor{green}{rgb}{0.0, 0.5, 0.0}
-\definecolor{orange}{rgb}{1.0, 0.62, 0.0}
-\definecolor{purple}{rgb}{0.5, 0.0, 0.5}
-\definecolor{red}{rgb}{1.0, 0.0, 0.0}
-\definecolor{blue}{rgb}{0.0, 0.0, 1.0}
+%\definecolor{brown}{rgb}{0.59, 0.29, 0.0}
+%\definecolor{green}{rgb}{0.0, 0.5, 0.0}
+%\definecolor{orange}{rgb}{1.0, 0.62, 0.0}
+%\definecolor{purple}{rgb}{0.5, 0.0, 0.5}
+%\definecolor{red}{rgb}{1.0, 0.0, 0.0}
+%\definecolor{blue}{rgb}{0.0, 0.0, 1.0}
+
 
 \newcommand{\mosc}{\texttt{seq\_cst}\xspace}
 \newcommand{\moar}{\texttt{acq\_rel}\xspace}
@@ -85,48 +72,12 @@
 \newcommand{\moset}{\mathbb{M}\xspace}
 \newcommand{\na}{\texttt{na}\xspace}
 
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{corollary}{Corollary}[theorem]
-\newtheorem{lemma}[theorem]{Lemma}
+%snj: Have to use the ones in format
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{corollary}{Corollary}[theorem]
+%\newtheorem{lemma}[theorem]{Lemma}
 
 \newcommand{\ishComment}[1]{\textit{\color{red}\tiny{#1}}}
 \newcommand{\divComment}[1]{\textit{\color{green}{#1}}}
 \definecolor{mahogany}{rgb}{0.75, 0.25, 0.0}
 \newcommand{\snj}[1]{\textcolor{mahogany}{#1}}
-
-
-\title{fence-synthesis-paper}
-\date{}
-
-\begin{document}
-
-\maketitle
-\textit{\textbf{Abstract-}}
-
-\section{Introduction} \label{sec:intro}
-\input{section/intro.tex}
-
-\section{Related Work} \label{sec:related}
-\input{section/related.tex}
-
-\section{Background/Preliminaries} \label{sec:prelim}
-\input{section/background_prelims.tex}
-
-\section{C11 Memory Model} \label{sec:c11 model}
-\input{section/c11_memory_model.tex}
-
-\section{Proposed Solution/Our Approach}\label{sec:approach}
-\input{section/methodology.tex}
-
-\section{Implementation/Tool Description}
-\input{section/implementation.tex}
-
-\section{Results}
-\input{section/results.tex}
-
-\section{Conclusion and future work}
-\input{section/conclusion.tex}
-
-\bibliographystyle{unsrtnat}
-\bibliography{References.bib}
-\end{document}
