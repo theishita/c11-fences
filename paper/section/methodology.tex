@@ -101,8 +101,8 @@ The C11 standard \cite{C11} states that in any valid execution
 all the \mosc instructions should form a total order. Such total order
 has to be consistent with modification order and 
 happens-before relation. This means that for any two \mosc instructions A 
-and B such that A $ \neq B $, either \too{A}{B} or \too{B}{A}. 
-Hence, an execution with both \too{A}{B} and \too{B}{A} is infeasible.
+and B such that A $ \neq B $, either $\to{\tau}{A}{B}$ or $\to{\tau}{B}{A}$. 
+Hence, an execution with both $\to{\tau}{A}{B}$ and $\to{\tau}{B}{A}$ is infeasible.
 % Why TO?
 Our technique computes \setSC of buggy execution when pseudo fences are 
 present. If such \setSC has a cycle, then the program with these fences 
@@ -132,7 +132,7 @@ would have to be computed first, and an order is followed for the same.
 \subsubsection{Finding \setHB relations}
 The first and most basic relation is \setHB (happens-before). 
 An instruction A is said to happen-before B if:\\
-(\sw{A}{B}) $\lor$ (\seqb{A}{B}) $\lor$ (\hb{A}{X} $\land$ \hb{X}{B}) $\implies$ \hb{A}{B}
+($\sw{\tau}{A}{B}$) $\lor$ ($\seqb{\tau}{A}{B}$) $\lor$ ($\hb{\tau}{A}{X}$ $\land$ $\hb{\tau}{X}{B}$) $\implies$ $\hb{\tau}{A}{B}$
 
 \par
 Therefore, \setSB (sequenced-before) and \setSW (synchronizes-with) 
@@ -140,13 +140,13 @@ relations are computed first.
 An \setSW relation is formed based on the following rules:
 \begin{enumerate}
 \item \setSW relation between thread create and thread start instructions\\
-\sw{thread A create}{thread A start}
+$\sw{\tau}{thread A create}{thread A start}$
 
 \item \setSW relation between thread finish and thread join instructions\\
-\sw{thread A finish}{thread A join}
+$\sw{\tau}{thread A finish}{thread A join}$
 
 \item \setSW relation between read (R) and write (W) instructions.\\
-\rf{$W_{\geq rel}x$}{$R_{\geq acq}x$} $\implies$ \sw{$W_{\geq rel}x$}{$R_{\geq acq}x$}\\
+$\rf{\tau}{W_{\geq rel}x}{R_{\geq acq}x}$ $\implies$ $\sw{\tau}{W_{\geq rel}x}{R_{\geq acq}x}$\\
 RMW operations are considered as both reads and writes in this case.
 \end{enumerate}
 Note that since we do not consider \moacq, \morel and \moar fences, 
@@ -188,19 +188,19 @@ variable is changed at some point in the program. The rules for modification
 order as described by the standard \cite{C11} are:
 \begin{enumerate}
     \item Write-write coherence: \\
-    \hb{$A_x$}{$B_x$} $\implies$ \mo{$A_x$}{$B_x$}\\
+    $\hb{\tau}{A_x}{B_x}$ $\implies$ $\mo{\tau}{A_x}{B_x}$\\
     \textit{where A, B are write operations modifying variable x}
     
     \item Read-read coherence:\\
-    \hb{\rf{$X_x$}{$A_x$}}{$B_x$} $\implies$ (\rf{$X_x$}{$B_x$}) $\lor$\ (\rf{\mo{$X_x$}{$Y_x$}}{$B_x$})\\
+    $\hb{\tau}{\rf{\tau}{X_x}{A_x}}{B_x}$ $\implies$ ($\rf{\tau}{X_x}{B_x}$) $\lor$\ ($\rf{\tau}{\mo{\tau}{X_x}{Y_x}}{B_x}$)\\
     \textit{where X, Y are writes on x\\ and A, B are reads on x}
     
     \item Read-write coherence:\\
-    \hb{$A_x$}{$B_x$} $\implies$ (\rf{$X_x$}{$A_x$}) $\land$\ (\mo{$X_x$}{$B_x$})\\
+    $\hb{\tau}{A_x}{B_x}$ $\implies$ ($\rf{\tau}{X_x}{A_x}$) $\land$\ ($\mo{\tau}{X_x}{B_x}$)\\
     \textit{where X, B are writes on variable x\\and A is a read on variable x}
     
     \item Write-read coherence:\\
-    \hb{$X_x$}{$B_x$} $\implies$ (\rf{$X_x$}{$B_x$}) $\lor$\ (\rf{\mo{$X_x$}{$Y_x$}}{$B_x$})\\
+    $\hb{\tau}{X_x}{B_x}$ $\implies$ ($\rf{\tau}{X_x}{B_x}$) $\lor$\ ($\rf{\tau}{\mo{\tau}{X_x}{Y_x}}{B_x}$)\\
     \textit{where X, Y are writes on variable x\\and B is a read on variable x}
 \end{enumerate}
 
@@ -218,7 +218,7 @@ The final step in finding relations and the main step that is required for
 fence elimination is to find \setSC relations. The rules for \setSC relations 
 in the C11 standard are defined in \cite{C11}. These rules can be interpreted 
 as the following:
-\input{section/figures-tables/to_rules.tex}
+%\input{section/figures-tables/to_rules.tex}
 \textit{Note: ``the fence above instruction A'' is a comprehensive term for all 
 	the fences which are sequenced-before instruction A.}
 Intuitively, transitive closure of \setSC is \emph{sc} ordering over the 
@@ -250,10 +250,10 @@ In a total order
 %This property of TO can be exploited to minimize the fences. 
 According to the C/C++11 standard, each \mosc instruction is in total order 
 with every other \mosc instruction. This means that for any two \mosc 
-instructions A and B, either \too{A}{B} or \too{B}{A}. According to 
+instructions A and B, either $\to{\tau}{A}{B}$ or $\to{\tau}{B}{A}$. According to 
 \setSC rules, if both of these relations hold true, then A = B. 
 If A $\neq$ B and A and B are different entities which satisfy the 
-relation (\too{A}{B} $\land$ \too{B}{A}), that means that a cycle is 
+relation ($\to{\tau}{A}{B}$ $\land$ $\to{\tau}{B}{A}$), that means that a cycle is 
 formed between instructions A and B. This, in turn, violates the \setSC 
 property, rendering the execution infeasible. If a certain execution 
 becomes infeasible, then it would never exhibit during an actual execution 

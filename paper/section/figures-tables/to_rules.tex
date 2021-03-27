@@ -1,12 +1,12 @@
-\tikzset{
-    %Define standard arrow tip
-    >=stealth',
-    %Define style for boxes
-    punkt/.style={
-           rectangle,
-           minimum height=2em,
-           text centered},
-}
+%\tikzset{
+%    %Define standard arrow tip
+%    >=stealth',
+%    %Define style for boxes
+%    punkt/.style={
+%           rectangle,
+%           minimum height=2em,
+%           text centered},
+%}
 
 \begin{enumerate}
 \setcounter{enumi}{-1}
@@ -24,7 +24,7 @@
   	\draw [->] (x) -> (a) node[midway,left] {sb};
   	\draw [->] (b) -> (y) node[midway,right] {sb};
     \end{tikzpicture}\\
-    \rf{A}{B} $\implies$ \too{X}{Y}
+    \rf{\tau}{A}{B} $\implies$ \to{\tau}{X}{Y}
 
 \item
 	\begin{enumerate}[a.]
@@ -32,15 +32,15 @@
 		For a given variable, for an \mosc read instruction \textit{B} reading 
 		from an \mosc write instruction \textit{A}, there is a \setSC relation 
 		between the read and the write instructions.\\
-		\rf{A:$W_{sc}$}{B:$R_{sc}$}\\
-		\too{A}{B}
+		$\rf{\tau}{A:W_{sc}}{B:R_{sc}}$\\
+		$\to{\tau}{A}{B}$
 	
 	\item
 		For a given variable, for an \mosc read instruction \textit{B} reading 
 		from a write instruction \textit{M}, the read instruction is in \setSC 
 		with all \mosc write instructions which \textit{happen-after} \textit{M}.\\
 		A:$W_{sc}x$, M:$Wx$, B:$R_{sc}x$\\
-		\hb{M}{A} $\land$ \rf{M}{B} $\implies$ \too{B}{A}
+		$\hb{\tau}{M}{A}$ $\land$ $\rf{\tau}{M}{B}$ $\implies$ $\to{\tau}{B}{A}$
 	\end{enumerate}
 
 \item
@@ -88,13 +88,13 @@
 	\end{tikzpicture}\\
 	\begin{enumerate}[a.]
 	\item if B:$W_{sc}x$\\
-		\mo{B}{A} $\implies$ \too{B}{X}
+		\mo{\tau}{B}{A} $\implies$ \to{\tau}{B}{X}
 	
 	\item if A:$W_{sc}x$\\
-		\mo{B}{A} $\implies$ \too{Y}{A}
+		\mo{\tau}{B}{A} $\implies$ \to{\tau}{Y}{A}
 	
 	\item
-		\mo{B}{A} $\implies$ \too{Y}{X}
+		\mo{\tau}{B}{A} $\implies$ \to{\tau}{Y}{X}
 	\end{enumerate}
 
 \item 
@@ -102,7 +102,7 @@
 %	\begin{enumerate}[a.]
 %		\item 
 		Any two \mosc instructions that are in \setSB are also in \setSC \\
-			\seqb{A}{B} $\implies$ \too{A}{B} where A and B are $(R/W)_{sc}x$
+			\seqb{\tau}{A}{B} $\implies$ \to{\tau}{A}{B} where A and B are $(R/W)_{sc}x$
 %		
 %		\item 
 %		\too{A}{B} $ \land $ \seqb{B}{C} $\implies$ \too{A}{C}
