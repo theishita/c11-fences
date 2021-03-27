@@ -2,7 +2,7 @@ The \cc memory model forms an irreflexive and acyclic relation over the events o
 an execution sequence $\tau$ called the {\em happens-before} relation 
 ($\setHB \subseteq \events_\tau {\times} \events_\tau$);
 such that, the execution sequence is {\em coherent} (or valid) under \cc if 
-the $\setHB$ relation does not violate any {\em coherence rules} of \cc.
+the $\setHB$ relation does not violate any {\em coherence rule} of \cc.
 %
 The events of a sequence $\tau$ are related by the $\setHB$ as follows;
 \begin{itemize}
@@ -33,13 +33,12 @@ related \ie
 $\hb{\tau}{e_1}{e_2}$ if $\seqb{\tau}{e_1}{e_2}$ or $\ithb{\tau}{e_1}{e_2}$.
 %
 Additionally, in a sequence $\tau$, all write events of an object $x$ are related by a 
-total order called {\em modification-order} ($\setMO$) and all events with memory
-order \sc are related by a total order called \sc{\em -total-order} ($\setTO$).
+total order called {\em modification-order} ($\setMO$).
 %
-The total orders $\setMO$ and $\setTO$ are constructed in compliance to a set of coherence
-rules defined by \cc based on $\setHB$. 
+The $\setMO$ order is constructed in compliance to a set of coherence
+\lmo-rules defined by \cc based on $\setHB$. 
 %
-We have listed the $\setMO$ coherence rules in Figure~\ref{fig:mo rules} and 
+We have listed the $\setMO$ coherence rules in Figure~\ref{fig:mo-to rules} and 
 described them below.
 
 \begin{figure}[t]
@@ -63,8 +62,8 @@ described them below.
 
 	\begin{tabular}{|l m{0.86\textwidth}|}
 		\hline
-		\hl{tosb} & $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
-					$\seqb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$
+		\hl{tohb} & $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
+					$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ 
 					then $\to{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \\
 		\hl{toWW} & $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
 					$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
@@ -91,7 +90,7 @@ described them below.
 		\hline
 	\end{tabular}
 	\caption{\lmo and \lto coherence rules}
-	\label{fig:mo rules}
+	\label{fig:mo-to rules}
 \end{figure}
 
 \begin{itemize}
@@ -103,4 +102,22 @@ described them below.
 	\item \hlref{moWR}: $\setHB$ order from a write to a read forms $\setMO$ between
 						the write and the source of the read (if the two are
 						different events).
+\end{itemize}
+
+A valid \cc execution must have a total order on all events with memory
+order \sc coherent \wrt $\setHB$ and $\setMO$, called \sc{\em -total-order} 
+($\setTO$).
+%
+The \lto rules, derived from the $\setHB$ and \lmo-rules are formally presented in 
+Figure~\ref{fig:mo-to rules} and discussed below.
+
+\begin{itemize}
+	\item \hlref{tohb}, \hlref{toWW},\hlref{toWR}: events ordered by $\setHB$, $\setMO$
+						and $\setRF$ respectively are also ordered by $\setTO$;
+	\item \hlref{toRW}: if the source write of a \sc read is $\setMO$(and $\setTO$)-ordered 
+						before an \sc write then the read is also $\setTO$-ordered
+						before that write;
+	\item \hlref{toFW}{}
+	\item \href{toFFrf}{}
+	\item \href{toFFnrf}{}
 \end{itemize}
