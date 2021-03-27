@@ -65,6 +65,11 @@
 \newcommand{\unioneq}{\ {\cup}{=}\ }
 \newcommand{\nin}{\not\in\xspace}
 
+% highlighted hyperlinks
+\newcommand{\hl}[1]{\hypertarget{#1}{\textcolor{darkgray}{\texttt{(#1)}}}\xspace} % hyperlink target
+\newcommand{\hlref}[1]{\hyperlink{#1}{\textcolor{Sepia}{\small \texttt{(#1)}}}}
+\newcommand{\tab}{\quad\quad}
+
 %%%%%%%%%%%%%%%%%%%%%%%%% Document Specific %%%%%%%%%%%%%%%%%%%%%%
 
 % names
@@ -91,9 +96,9 @@
 \newcommand{\writes}{\events^\wt{}\xspace}
 \newcommand{\reads}{\events^\rd{}\xspace}
 \newcommand{\fences}{\events^\fn{}\xspace}
-\newcommand{\ordevents}[2]{\events{#1}^{(#2)}\xspace}
-\newcommand{\ordwrites}[2]{\events{#1}^\wt{(#2)}\xspace}
-\newcommand{\ordreads}[2]{\events{#1}^\rd{(#2)}\xspace}
+\newcommand{\ordevents}[1]{\events^{(#1)}\xspace}
+\newcommand{\ordwrites}[1]{\events^\wt{(#1)}\xspace}
+\newcommand{\ordreads}[1]{\events^\rd{(#1)}\xspace}
 \newcommand{\ordfences}[1]{\events^\fn{(#1)}\xspace}
 
 
@@ -115,6 +120,7 @@
 \newcommand{\reln}[4]{#3 {\rightarrow^{#1}_{#2}} #4\xspace} % any relation specified as #1
 \newcommand{\nreln}[4]{#3 \nrightarrow^{#1}_{#2} #4\xspace} % not of any relation specified as #1
 
+% relation with events
 \newcommand{\seqb}[3]{\reln{\textbf{\textcolor{CarnationPink}{sb}}}{#1}{#2}{#3}\xspace}
 \newcommand{\rf}[3]{\reln{\textbf{\textcolor{PineGreen}{rf}}}{#1}{#2}{#3}\xspace} 
 \newcommand{\dob}[3]{\reln{\textbf{\textcolor{Mulberry}{dob}}}{#1}{#2}{#3}\xspace}
@@ -126,15 +132,27 @@
 \renewcommand{\to}[3]{\reln{\textbf{\textcolor{Brown}{to}}}{#1}{#2}{#3}\xspace}
 \newcommand{\scord}[3]{\reln{\textbf{\textcolor{Mahogany}{sc}}}{#1}{#2}{#3}\xspace} %sc
 
-\newcommand{\setSB}{{\color{CarnationPink}\tt{sb}}\xspace}
-\newcommand{\setRF}{{\color{PineGreen}\tt{rf}}\xspace}
-\newcommand{\setSW}{{\color{Magenta}\tt{sw}}\xspace}
-\newcommand{\setDOB}{{\color{Mulberry}\tt{dob}}\xspace}
-\newcommand{\setITHB}{{\color{NavyBlue}\tt{ithb}}\xspace}
-\newcommand{\setHB}{{\color{Cerulean}\tt{hb}}\xspace}
-\newcommand{\setMO}{{\color{red}\tt{mo}}\xspace}
-\newcommand{\setTO}{{\color{Brown}\tt{to}}\xspace}
-\newcommand{\setSC}{{\color{Mahogany}\tt{sc}}\xspace}
+% relation name without events
+\newcommand{\setSB}{\seqb{\tau}{}{}\xspace}
+\newcommand{\setRF}{\rf{\tau}{}{}\xspace}
+\newcommand{\setSW}{\sw{\tau}{}{}\xspace}
+\newcommand{\setDOB}{\dob{\tau}{}{}\xspace}
+\newcommand{\setITHB}{\ithb{\tau}{}{}\xspace}
+\newcommand{\setHB}{\hb{\tau}{}{}\xspace}
+\newcommand{\setMO}{\mo{\tau}{}{}\xspace}
+\newcommand{\setTO}{\to{\tau}{}{}\xspace}
+\newcommand{\setSC}{\scord{\tau}{}{}\xspace}
+
+% relation label 
+\newcommand{\lsb}{\textbf{\textcolor{CarnationPink}{sb}}\xspace}
+\newcommand{\lrf}{\textbf{\textcolor{PineGreen}{rf}}\xspace} 
+\newcommand{\ldob}{\textbf{\textcolor{Mulberry}{dob}}\xspace}
+\newcommand{\lsw}{\textbf{\textcolor{Magenta}{sw}}\xspace}
+\newcommand{\lithb}{\textbf{\textcolor{NavyBlue}{ithb}}\xspace}
+\newcommand{\lhb}{\textbf{\textcolor{Cerulean}{hb}}\xspace}
+\newcommand{\lmo}{\textbf{\textcolor{RedOrange}{mo}}\xspace}
+\newcommand{\lto}{\textbf{\textcolor{Brown}{to}}\xspace}
+\newcommand{\lsc}{\textbf{\textcolor{Mahogany}{sc}}\xspace}
 
 \newcommand{\var}[1]{\color{OliveGreen}\texttt{#1}\color{black}\xspace}
 \newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}\xspace}
