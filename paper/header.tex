@@ -67,6 +67,31 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Document Specific %%%%%%%%%%%%%%%%%%%%%%
 
+% sets and entitites
+\newcommand{\program}{$P$\xspace} %input program
+\newcommand{\programhat}{$\widehat{P}$\xspace} %transformed/fixed program
+\newcommand{\threads}{\mathcal{T}\xspace}
+\newcommand{\states}{\Sigma\xspace}
+\newcommand{\moset}{\mathcal{M}\xspace}
+\newcommand{\actions}{\mathcal{A}\xspace}
+\newcommand{\objects}{\mathcal{O}\xspace}
+\newcommand{\s}[1]{s_{[#1]}\xspace} % state reached after exploring sequence #1
+% events' sets aux
+\newcommand{\wt}[1]{{\mathbb{W}#1}}
+\newcommand{\md}[1]{{\mathbb{M}#1}}
+\newcommand{\rd}[1]{{\mathbb{R}#1}}
+\newcommand{\fn}[1]{{\mathbb{F}#1}}
+% events' sets
+\newcommand{\events}{\mathcal{E}\xspace}
+\newcommand{\writes}{\events^\wt{}\xspace}
+\newcommand{\reads}{\events^\rd{}\xspace}
+\newcommand{\fences}{\events^\fn{}\xspace}
+\newcommand{\ordevents}[2]{\events{#1}^{(#2)}\xspace}
+\newcommand{\ordwrites}[2]{\events{#1}^\wt{(#2)}\xspace}
+\newcommand{\ordreads}[2]{\events{#1}^\rd{(#2)}\xspace}
+\newcommand{\ordfences}[1]{\events^\fn{(#1)}\xspace}
+
+
 % memory orders
 \newcommand{\mosc}{\texttt{seq\_cst}\xspace}
 \newcommand{\moar}{\texttt{acq\_rel}\xspace}
@@ -85,7 +110,7 @@
 \newcommand{\reln}[4]{#3 {\rightarrow^{#1}_{#2}} #4\xspace} % any relation specified as #1
 \newcommand{\nreln}[4]{#3 \nrightarrow^{#1}_{#2} #4\xspace} % not of any relation specified as #1
 
-\newcommand{\sb}[3]{\reln{\textbf{\textcolor{CarnationPink}{sb}}}{#1}{#2}{#3}\xspace}
+\newcommand{\seqb}[3]{\reln{\textbf{\textcolor{CarnationPink}{sb}}}{#1}{#2}{#3}\xspace}
 \newcommand{\rf}[3]{\reln{\textbf{\textcolor{PineGreen}{rf}}}{#1}{#2}{#3}\xspace} 
 \newcommand{\dob}[3]{\reln{\textbf{\textcolor{Mulberry}{dob}}}{#1}{#2}{#3}\xspace}
 \newcommand{\sw}[3]{\reln{\textbf{\textcolor{Magenta}{sw}}}{#1}{#2}{#3}\xspace}
@@ -94,7 +119,7 @@
 \newcommand{\nhb}[3]{\nreln{\textbf{\textcolor{Cerulean}{hb}}}{#1}{#2}{#3}\xspace}
 \newcommand{\mo}[3]{\reln{\textbf{\textcolor{RedOrange}{mo}}}{#1}{#2}{#3}\xspace}
 \renewcommand{\to}[3]{\reln{\textbf{\textcolor{Brown}{to}}}{#1}{#2}{#3}\xspace}
-\newcommand{\sc}[3]{\reln{[c]{::}\textbf{\textcolor{Mahogany}{sc}}}{#1}{#2}{#3}\xspace} %sc
+\newcommand{\scord}[3]{\reln{\textbf{\textcolor{Mahogany}{sc}}}{#1}{#2}{#3}\xspace} %sc
 
 \newcommand{\setSB}{{\color{CarnationPink}\tt{sb}}\xspace}
 \newcommand{\setRF}{{\color{PineGreen}\tt{rf}}\xspace}
@@ -106,13 +131,17 @@
 \newcommand{\setTO}{{\color{Brown}\tt{to}}\xspace}
 \newcommand{\setSC}{{\color{Mahogany}\tt{sc}}\xspace}
 
-\newcommand{\var}[1]{\color{OliveGreen}\texttt{#1}\color{black}}
-\newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}}
-\newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}}
+\newcommand{\var}[1]{\color{OliveGreen}\texttt{#1}\color{black}\xspace}
+\newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}\xspace}
+\newcommand{\class}[1]{\color{DarkOrchid}\texttt{#1}\color{black}\xspace}
 
 % memory orders
-\newcommand{\moset}{\mathbb{M}\xspace}
 \newcommand{\na}{\texttt{na}\xspace}
+\newcommand{\rlx}{\texttt{rlx}\xspace}
+\newcommand{\rel}{\texttt{rel}\xspace}
+\newcommand{\acq}{\texttt{acq}\xspace}
+\newcommand{\acqrel}{\texttt{acq-rel}\xspace}
+\renewcommand{\sc}{\texttt{sc}\xspace}
 
 %snj: Have to use the ones in format
 %\newtheorem{theorem}{Theorem}[section]
@@ -121,5 +150,4 @@
 
 \newcommand{\ishComment}[1]{\textit{\color{red}\tiny{#1}}}
 \newcommand{\divComment}[1]{\textit{\color{green}{#1}}}
-\definecolor{mahogany}{rgb}{0.75, 0.25, 0.0}
-\newcommand{\snj}[1]{\textcolor{mahogany}{#1}}
+\newcommand{\snj}[1]{\textcolor{Mahogany}{#1}}

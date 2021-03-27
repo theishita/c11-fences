@@ -46,23 +46,11 @@
 % ---------------- NOTATIONS -----------
 \subsection{Notation}
 \begin{itemize}
-	\item F$_{mo}$ \qquad fence with memory order mo
-	\item Rx \qquad read/load or rmw atomic operation on variable x
-	\item Wx(a) \qquad write/store or rmw atomic operation storing value a in variable x
-	\item R$_{mo}$ \qquad memory order mo specified for read operation
-	\item W$_{mo}$ \qquad memory order mo specified for write operation
-	\item $_{\geq rel}$ \qquad memory orders greater than or equal to release according to Fig. \ref{fig:mo_strength}
-	\item := \qquad assignment operator
-	\item == \qquad comparison operator
+	\item $\ordfences{mo}_\tau$ \quad fence with memory order mo in sequence $\tau$
+	\item $\ordreads{x}{mo}_\tau$ \quad read/load or rmw atomic operation on variable $x$
+	\item $\ordwrites{x}{mo}$ \qquad write/store or rmw atomic operation in variable x
+	\item $\mole rel$ \qquad memory orders greater than or equal to release
 	\item \color{olive}//a \color{black} \qquad the value expected to be read in that line is a
-	\item rmw
-	\item sb, sw, rf, hb, mo, to \qquad \too{a}{b} etc 
-	\item seq\_cst, rel, acq, rel\_acq, rlx
-	\item thread A create \qquad spawn a thread A from the current thread
-	\item thread A start \qquad the first/starting instruction of a thread A
-	\item thread A finish \qquad the last/ending instruction of a thread A
-	\item thread A join \qquad when a thread A joins back into the spawning thread
-	\item || separation of threads
 	\item buggy traces / buggy executions
 	\item candidate fences
 	\item original/transformed program or buggy/fixed program
