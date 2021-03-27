@@ -117,7 +117,12 @@ Figure~\ref{fig:mo-to rules} and discussed below.
 	\item \hlref{toRW}: if the source write of a \sc read is $\setMO$(and $\setTO$)-ordered 
 						before an \sc write then the read is also $\setTO$-ordered
 						before that write;
-	\item \hlref{toFW}{}
-	\item \href{toFFrf}{}
-	\item \href{toFFnrf}{}
+	\item \hlref{toFW}
+	\item \hlref{toFFrf}
+	\item \hlref{toFFnrf}
 \end{itemize}
+
+In our technique we exploit the $\setTO$ order to build a, possibly cyclic
+$\setSO$ order between program events and the newly inserted fences.
+The cyclicity in the $\setSO$ order would invalidate the buggy sequence
+under \cc as explained in the following section.
