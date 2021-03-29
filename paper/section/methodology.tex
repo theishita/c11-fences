@@ -1,27 +1,75 @@
 % --------- INTRO PART -------------
-We have developed a novel solution to the fence-synthesis problem. 
-To the best of our knowledge, 
-there are no push-button fence synthesis techniques for C11 
-programs as of now. Although, there are some such techniques for 
-other memory models, all of those heavily depends on the 
-possible set of reorderings allowed under the memory model. 
-Since the possible set of reorderings under C11 is different 
-than other memory models, these techniques cannot be applied 
-to C11 as is. In face, not all C11 behaviors can be justified 
-using reorderings and interleavings. Hence, automatic fence insertion 
-for C11 requires some amount of additional effort.
-We use the C11 semantics to create relations between the 
-instructions and exploit the properties of these relations. 
-The C11 semantics require that there should be a total 
-order among all \mosc operations in the programs. We leverage this to 
-find program locations for candidate \mosc fence placements. We achieve 
-the optimal results by converting the candidate fence placements to 
-SMT formula and querying the Z3 SMT solver.
+%\divComment{This para is motivation. Not needed here}
+%We have developed a novel solution to the fence-synthesis problem. 
+%To the best of our knowledge, 
+%there are no push-button fence synthesis techniques for C11 
+%programs as of now. Although, there are some such techniques for 
+%other memory models, all of those heavily depends on the 
+%possible set of reorderings allowed under the memory model. 
+%Since the possible set of reorderings under C11 is different 
+%than other memory models, these techniques cannot be applied 
+%to C11 as is. In face, not all C11 behaviors can be justified 
+%using reorderings and interleavings. Hence, automatic fence insertion 
+%for C11 requires some amount of additional effort.
 
+% Overview:
+%% why only sc fences: if sc fence can't stop none can
+%% brief overview of our approach
+% Sections:
+%% counter example generator and its specifications/requirements
+%% computing relations in counter example
+%% inserting candidate fences and computing SC
+%%% mention a trivial solution here
+%% Fence minimization
+
+\divComment{Add details about \cc fences in \cc section.}
+In this section we discuss our approach of optimal \mosc fence synthesis 
+in \cc programs. 
+Our analysis focuses on \mosc fences since these are the strongest \cc 
+fences. If a behavior cannot be stopped using \mosc fences, no combination 
+of \cc fences can stop this behavior. 
+In such cases, our approach proves that the behavior cannot be 
+stopped using \cc fences.
+Recall that \cc allows memory operations to be annotated with different 
+memory orders. For the programs where buggy behavior cannot be stopped 
+using fences, it is possible to stop the behavior by annotating some 
+memory operations with stronger memory order.
+Hence, we do not claim that if \ourtechnique cannot stop a buggy \cc 
+execution, it cannot be stopped. 
+
+Unlike common fence synthesis approaches \divComment{Need references}, 
+\ourtechnique does not try to \emph{add} fences optimally in a program.
+Rather, it assumes that the input program has \mosc 
+fences at all possible program locations, i.e, before and after every 
+program instruction. We call these fences candidate fences. Our technique 
+tries to \emph{remove} the unnecessary fences from the set of candidate 
+fences based on axiomatic relations of \cc. 
+Our approach grantees that the program resulted after removing the 
+unnecessary fences, has minimal number of \mosc fences required in that 
+program to stop the buggy executions. 
+
+\ourtechnique takes a set of counter examples as input and 
+computes \cc axiomatic relations, such as 
+$ \setSB, \setHB, \setMO, \setSW $, 
+among the events of counter examples.
+Further we compute $ \setSO $-order assuming the existence of candidate fences.
+We prove that the transitive closure of $ \setSO $-order is the same as 
+$ \setTO $ in any valid \cc trace. 
+Since $ \setTO $ is a total order, any valid \cc trace can not have a 
+cycle formed by transitively sequence of ordered pair in $ \setSO $-order. 
+We call such cycles $\setSO$-cycle. 
+We use $ \setSO $-order and $ \setSO $-cycle to generate an SAT formula. 
+Any satisfying assignment of this SAT formula is a possible fence 
+placement to stop the buggy execution. We find the minimal satisfying assignment of this SAT formula to find optimal fence placement.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\divComment{Replace it with counter example generator}
 The tool first begins by analyzing the input program through a C11 model 
 checker or verification tool. This tool runs all possible executions of 
 the program and gives a list of buggy traces as output. A buggy trace 
 here means an execution run where an assertion was violated in the program. 
+\divComment{Mention what is needed in the counter example}
 The model checker provides the exact order of instructions, which when 
 executed in the order can cause the program to stop mid-way by running 
 into an assertion and not being able to satisfy it. The verification 
@@ -104,16 +152,16 @@ happens-before relation. This means that for any two \mosc instructions A
 and B such that A $ \neq B $, either $\to{\tau}{A}{B}$ or $\to{\tau}{B}{A}$. 
 Hence, an execution with both $\to{\tau}{A}{B}$ and $\to{\tau}{B}{A}$ is infeasible.
 % Why TO?
-Our technique computes \setSC of buggy execution when pseudo fences are 
-present. If such \setSC has a cycle, then the program with these fences 
+Our technique computes $\setSO$ of buggy execution when pseudo fences are 
+present. If such $\setSO$ has a cycle, then the program with these fences 
 will not have this buggy execution. 
 Hence, by finding these cycles we can work out the required fences.
 % Example
 For example, in Fig \ref{fig:dekker2}, if the assert statement is violated
 if either thread reads the value written to variable $c$ by the other thread.
 % Other relations
-%In order to find \setSC, we first compute the \setSB, \setSW, \setHB and 
-%\setMO relations.
+%In order to find $\setSO$, we first compute the $\setSB$, $\setSW$, $\setHB$ and 
+%$\setMO$ relations.
 The basis of our approach lies upon finding relations between the 
 instructions and figuring out how they affect the program in order to 
 reduce the total fences to a minimum. 
@@ -122,35 +170,35 @@ reduce the total fences to a minimum.
 The next step after inserting pseudo fences is finding relations between 
 instructions, including fences. 
 These relations will help in figuring out which fences to eliminate from 
-the trace. In particular, we are concerned with the \setSC (total order) 
+the trace. In particular, we are concerned with the $\setSO$ (total order) 
 relations between all SC instructions and fences. Rules for TO relations 
 for the C11 model are described in the official standard \cite{C11}. 
-These rules are dependent relations \setSB, \setSW, \setHB and \setMO, which 
+These rules are dependent relations $\setSO $, $\setSW$, $\setHB$ and $\setMO$, which 
 would have to be computed first, and an order is followed for the same.
 
 % --------------- HB -----------------
-\subsubsection{Finding \setHB relations}
-The first and most basic relation is \setHB (happens-before). 
+\subsubsection{Finding $\setHB$ relations}
+The first and most basic relation is $\setHB$ (happens-before). 
 An instruction A is said to happen-before B if:\\
 ($\sw{\tau}{A}{B}$) $\lor$ ($\seqb{\tau}{A}{B}$) $\lor$ ($\hb{\tau}{A}{X}$ $\land$ $\hb{\tau}{X}{B}$) $\implies$ $\hb{\tau}{A}{B}$
 
 \par
-Therefore, \setSB (sequenced-before) and \setSW (synchronizes-with) 
+Therefore, $\setSB$ (sequenced-before) and $\setSW$ (synchronizes-with) 
 relations are computed first. 
-An \setSW relation is formed based on the following rules:
+An $\setSW$ relation is formed based on the following rules:
 \begin{enumerate}
-\item \setSW relation between thread create and thread start instructions\\
+\item $\setSW$ relation between thread create and thread start instructions\\
 $\sw{\tau}{thread A create}{thread A start}$
 
-\item \setSW relation between thread finish and thread join instructions\\
+\item $\setSW$ relation between thread finish and thread join instructions\\
 $\sw{\tau}{thread A finish}{thread A join}$
 
-\item \setSW relation between read (R) and write (W) instructions.\\
+\item $\setSW$ relation between read (R) and write (W) instructions.\\
 $\rf{\tau}{W_{\geq rel}x}{R_{\geq acq}x}$ $\implies$ $\sw{\tau}{W_{\geq rel}x}{R_{\geq acq}x}$\\
 RMW operations are considered as both reads and writes in this case.
 \end{enumerate}
 Note that since we do not consider \moacq, \morel and \moar fences, 
-our \setSW rules do not capture them.
+our $\setSW$ rules do not capture them.
 \par
 
 
@@ -164,26 +212,26 @@ our \setSW rules do not capture them.
 %\end{figure}
 
 \par
-The \setHB relation is computed for all instructions before inserting the 
+The $\setHB$ relation is computed for all instructions before inserting the 
 pseudo fences in the tool. 
-This way we compute the \setHB for the actual input program rather than a 
+This way we compute the $\setHB$ for the actual input program rather than a 
 modified version of program along with pseudo fences. The advantages of this
-approach are two fold. First, \setHB relation is only required 
-to compute the \setMO (modification order) relations, which is concerned only 
-with the write instructions. Therefore, computing \setHB relations before 
-inserting pseudo fences works as an optimization. Second, if we compute \setHB
-after inserting fences, we will have some \setHB relations that are not in 
+approach are two fold. First, $\setHB$ relation is only required 
+to compute the $\setMO$ (modification order) relations, which is concerned only 
+with the write instructions. Therefore, computing $\setHB$ relations before 
+inserting pseudo fences works as an optimization. Second, if we compute $\setHB$
+after inserting fences, we will have some $\setHB$ relations that are not in 
 the actual execution but will exist in the execution of program with all the 
 pseudo fences. \divComment{What is the problem with having such hb?}
 \divComment{Rule 1b of computing TO is also using hb, but only over write operations. So the first points still holds.}
 
-\begin{lemma} For any valid execution of a program, the relation \setHB computed 
+\begin{lemma} For any valid execution of a program, the relation $\setHB$ computed 
 	as above is same as \emph{happens-before} of C11.
 \end{lemma}
 
 % --------------- MO ------------
-\subsubsection{Finding \setMO relations}
-\setMO relations are formed between write instructions when the value of a 
+\subsubsection{Finding $\setMO$ relations}
+$\setMO$ relations are formed between write instructions when the value of a 
 variable is changed at some point in the program. The rules for modification 
 order as described by the standard \cite{C11} are:
 \begin{enumerate}
@@ -205,7 +253,7 @@ order as described by the standard \cite{C11} are:
 \end{enumerate}
 
 \begin{lemma}
-	For any valid execution of a program, the relation \setMO computed 
+	For any valid execution of a program, the relation $\setMO$ computed 
 	as above is same as \emph{modification-order} of C11.
 \end{lemma}
 
@@ -213,20 +261,20 @@ order as described by the standard \cite{C11} are:
 After this step, the pseudo fences are inserted.
 
 % --------------- TO -----------
-\subsubsection{Finding \setSC relations between SC instructions}\label{to_rel}
+\subsubsection{Finding $\setSO$ relations between SC instructions}\label{to_rel}
 The final step in finding relations and the main step that is required for 
-fence elimination is to find \setSC relations. The rules for \setSC relations 
+fence elimination is to find $\setSO$ relations. The rules for $\setSO$ relations 
 in the C11 standard are defined in \cite{C11}. These rules can be interpreted 
 as the following:
 %\input{section/figures-tables/to_rules.tex}
 \textit{Note: ``the fence above instruction A'' is a comprehensive term for all 
 	the fences which are sequenced-before instruction A.}
-Intuitively, transitive closure of \setSC is \emph{sc} ordering over the 
+Intuitively, transitive closure of $\setSO$ is \emph{sc} ordering over the 
 given program execution if the program had the pseudo fences to begin with.
 Such an execution may or may not be valid under C11 memory model.
 
 \begin{theorem}
-	For any valid execution of a program, the transitive closure of \setSC 
+	For any valid execution of a program, the transitive closure of $\setSO$ 
 	is the same as \emph{to} order of C11 of in the corresponding (possibly 
 	invalid) trace with candidate fences.
 \end{theorem}
@@ -234,12 +282,12 @@ Such an execution may or may not be valid under C11 memory model.
 
 % --------------- SOLN EXPLAINED -------------
 \subsection{Eliminating Fences}
-The rules in \textsection\ref{to_rel} provides us \setSC relations between all 
+The rules in \textsection\ref{to_rel} provides us $\setSO$ relations between all 
 instructions and fences. We now get a graph that would look 
 like Fig \ref{fig:cycles}. 
 
-%Further, the transitivity of \setSC 
-%relation will give us some additional pair in \setSC. 
+%Further, the transitivity of $\setSO$ 
+%relation will give us some additional pair in $\setSO$. 
 
 \par
 The purpose of creating a graph this way is to detect if there are any cycles 
@@ -251,21 +299,21 @@ In a total order
 According to the C/C++11 standard, each \mosc instruction is in total order 
 with every other \mosc instruction. This means that for any two \mosc 
 instructions A and B, either $\to{\tau}{A}{B}$ or $\to{\tau}{B}{A}$. According to 
-\setSC rules, if both of these relations hold true, then A = B. 
+$\setSO$ rules, if both of these relations hold true, then A = B. 
 If A $\neq$ B and A and B are different entities which satisfy the 
 relation ($\to{\tau}{A}{B}$ $\land$ $\to{\tau}{B}{A}$), that means that a cycle is 
-formed between instructions A and B. This, in turn, violates the \setSC 
+formed between instructions A and B. This, in turn, violates the $\setSO$ 
 property, rendering the execution infeasible. If a certain execution 
 becomes infeasible, then it would never exhibit during an actual execution 
 of the program.
 
-Note that apart from the rules described above, some \setSC edges 
-will be created due to the transitivity of \setSC.
+Note that apart from the rules described above, some $\setSO$ edges 
+will be created due to the transitivity of $\setSO$.
 We have not included these edges in our final graph and limited 
 the edges in graphs to the set that was computed using the rules 
-in \textsection\ref{to_rel}. That is, all \setSB edges are taken into 
+in \textsection\ref{to_rel}. That is, all $\setSB$ edges are taken into 
 consideration whether immediate 
-or not, and only those edges formed via the \setSC rules discussed in 
+or not, and only those edges formed via the $\setSO$ rules discussed in 
 section \textsection\ref{to_rel} are considered while forming a graph. 
 The reason of this is explained in \textsection\ref{sec:no-transitive}.
 
@@ -281,16 +329,16 @@ The reason of this is explained in \textsection\ref{sec:no-transitive}.
 
 \subsection{Restricting Buggy Executions}
 \par
-We find out \setSC relations in only the buggy or erroneous traces which 
+We find out $\setSO$ relations in only the buggy or erroneous traces which 
 are obtain from verification tool. For each erroneous trace, a graph is 
-formed with the instructions/fences as nodes and the \setSC relations as 
+formed with the instructions/fences as nodes and the $\setSO$ relations as 
 edges. 
 Our purpose is to insert fences such that the graph of the buggy exection 
 will contain a cycle 
 When such a cycle is introduced, it violates the properties of a total 
 order relation in C11, rendering the entire execution infeasible. 
 An infeasible execution will never occur during runtime, which means 
-that the buggy execution in which the \setSC cycle is introduces using 
+that the buggy execution in which the $\setSO$ cycle is introduces using 
 fences will never be executed. 
 Hence the assertion which was being violated will remain satisfied. 
 
@@ -324,17 +372,17 @@ entities considered while finding the final result.
 
 
 \begin{lemma}
-	Introducing fences in any cycle of \setSC will stop that cycle 
+	Introducing fences in any cycle of $\setSO$ will stop that cycle 
 	from forming in actual run of the program.
 \end{lemma}
 
 \begin{lemma}
-	If there are no cycles in \setSC of a buggy execution, the behavior 
+	If there are no cycles in $\setSO$ of a buggy execution, the behavior 
 	cannot be stopped using any C11 fences.
 \end{lemma}
 
 \begin{theorem}
-	Stopping all cycles of \setSC in any buggy execution will stop that
+	Stopping all cycles of $\setSO$ in any buggy execution will stop that
 	buggy execution in actual run of program.
 \end{theorem}
 
@@ -424,10 +472,10 @@ satisfying assignment is computed.
 
 \subsubsection{why transitive TO edges aren't considered} \label{sec:no-transitive}
 The relations which are considered to form the final graph are - 
-all \setSB edges between only \mosc instructions including transitive \setSB edges, 
-and directly formed \setSC edges but not transitively formed \setSC edges.  
-This is because transitively formed \setSC relations will be of 
-no use in our case. If there is a transitive \setSC relation formed 
+all $\setSB$ edges between only \mosc instructions including transitive $\setSB$ edges, 
+and directly formed $\setSO$ edges but not transitively formed $\setSO$ edges.  
+This is because transitively formed $\setSO$ relations will be of 
+no use in our case. If there is a transitive $\setSO$ relation formed 
 between two instructions, then this relation has been caused by 
 some other edges in our graph. 
 Our formula is concerned only with the cycles in the graph 
@@ -435,13 +483,13 @@ Our formula is concerned only with the cycles in the graph
 the new cycles that might come if we were to consider the transitive 
 edges. These cycles might be formed because of two reasons - 
 either the new cycle consists of i) some transitive edges in the 
-actual program that we did not include in \setSC, or ii) some 
+actual program that we did not include in $\setSO$, or ii) some 
 transitive edges created due to pseudo fences. In case i), the cycle 
 (let $C$) is certainly caused by some pseudo fence inserted in the program 
 since the actual program execution cannot have a cycle. Since the 
-transitive edge is formed due to some edge in our \setSC, there 
+transitive edge is formed due to some edge in our $\setSO$, there 
 will be a representative cycle $C'$ of the cycle $C$ formed using 
-edges in \setSC. As our formula only concerns the pseudo fences, 
+edges in $\setSO$. As our formula only concerns the pseudo fences, 
 the formula constructed for $C$ and $C'$ will be the same. 
 Similarly in case ii), since the cycle is created due to transitive 
 edge caused by one or more fences, the formula must consist these 
@@ -483,7 +531,7 @@ $\rightarrow$ \textit{$I_1n_1$} $\rightarrow$ \textit{$F_2n_2$} $\rightarrow$ \t
 
 
 \par
-So even if transitive \setSC relations are considered as graph edges, 
+So even if transitive $\setSO$ relations are considered as graph edges, 
 they would not impact our final solution. 
 %For each transitively 
 %formed edge, all original edges which would have possibly caused 
