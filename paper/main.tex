@@ -4,7 +4,6 @@
 %
 \documentclass[runningheads]{llncs2e/llncs}
 %
-%\usepackage{graphicx}
 \input{header.tex}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -55,7 +54,8 @@ The abstract should briefly summarize the contents of the paper in
 \section{Background: C11 Memory Model} \label{sec:c11}
 \input{section/c11_memory_model.tex}
 
-\section{title for sc theory} \label{sec:theory}
+\section{Invalidating buggy sequences with fences} \label{sec:so theory}
+\input{section/so_theory.tex}
 
 \section{Methodology} \label{sec:methodology}
 \input{section/methodology.tex}
@@ -65,8 +65,7 @@ The abstract should briefly summarize the contents of the paper in
 \section{Related Work} \label{sec:related}
 \section{Conclusion} \label{sec:conclusion}
 
-%\bibliographystyle{unsrtnat}
-\bibliography{References.bib}
-
+\bibliographystyle{splncs04}
+\bibliography{References}
 
 \end{document}

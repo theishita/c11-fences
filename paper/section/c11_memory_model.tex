@@ -38,91 +38,92 @@ total order called {\em modification-order} ($\setMO$).
 The $\setMO$ order is constructed in compliance to a set of coherence
 \lmo-rules defined by \cc based on $\setHB$. 
 %
-We have listed the $\setMO$ coherence rules in Figure~\ref{fig:mo-to rules} and 
-described them below.
-
-\begin{figure}[t]
-	\begin{tabular}{|l m{0.9\textwidth}|}
-		\hline
-		\hl{moWW} & $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
-					$\mo{\tau}{w_1}{w_2}$ \\
-		\hl{moRR} & $\forall r_1, r_2 \in \reads_\tau$ \st $\hb{\tau}{r_1}{r_2}$
-					and $\exists \rf{\tau}{w_1}{r_1}$
-					then $\rf{\tau}{w_1}{r_2}$ $\v$ $\exists \rf{\tau}{w_2}{r_2}$
-					and $\mo{\tau}{w_1}{w_2}$  \\
-		\hl{moRW} & $\forall r_1 \in \reads_\tau$, $w_1 \in \writes_\tau$ \st
-					$\hb{\tau}{r_1}{w_1}$ then $\exists \rf{\tau}{w_2}{r_1}$ and
-					$\mo{\tau}{w_2}{w_1}$ \\
-		\hl{moWR} & $\forall w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st
-					$\hb{\tau}{w_1}{r_1}$ then $\rf{\tau}{w_1}{r_1}$ $\v$
-					$\exists \rf{\tau}{w_2}{r_1}$ and $\mo{\tau}{w_1}{w_2}$ \\
-		
-		\hline
-	\end{tabular}
-
-	\begin{tabular}{|l m{0.86\textwidth}|}
-		\hline
-		\hl{tohb} & $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
-					$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ 
-					then $\to{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \\
-		\hl{toWW} & $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
-					$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
-					then $\to{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \\
-		\hl{toWR} & $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
-					\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
-					$\to{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \\
-		\hl{toRW} & $\forall w_1 \in \writes_\tau$, $r^{\sc}_1 \in \ordreads{sc}_\tau$ \st 
-					$\rf{\tau}{w_1}{r^{\sc}_1}$ if $\exists w^{\sc}_2 \in \ordwrites{\sc}_\tau$
-					\st $\mo{\tau}{w_1}{w^{\sc}_2}$ then $\to{\tau}{r^{\sc}_1}{w^{\sc}_2}$ \\
-		\hl{toFW} & $\forall f^{\sc} \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
-					\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
-					\reads_\tau$ \st $\seqb{\tau}{f^{\sc}}{r_1}$, $\seqb{\tau}{w_2}{w^{\sc}_1}$ 
-					and $\rf{\tau}{w_2}{r_1}$ then $\to{\tau}{f^{\sc}}{w^{\sc}_1}$ \\
-		\hl{toFFrf} & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
-					if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
-					$\seqb{\tau}{f^{\sc}_1}{w_1}$, $\seqb{\tau}{r_1}{f^{\sc}_2}$ 
-					and $\rf{\tau}{w_1}{r_1}$ then $\to{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \\
-		\hl{toFFnrf} & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
-					if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
-					$\seqb{\tau}{w_1}{f^{\sc}_1}$, $\seqb{\tau}{f^{\sc}_2}{r_1}$ and
-					$\exists w_2 \in \writes_\tau$ \st $\mo{\tau}{w_2}{w_1}$,
-					$\rf{\tau}{w_2}{r_1}$ then $\to{\tau}{f^{\sc}_2}{f^{\sc}_1}$ \\
-		\hline
-	\end{tabular}
-	\caption{\lmo and \lto coherence rules}
-	\label{fig:mo-to rules}
-\end{figure}
-
-\begin{itemize}
-	\item \hlref{moWW}: $\setHB$-ordered writes are ordered by $\setMO$;
-	\item \hlref{moRR}: $\setHB$ between reads forms $\setMO$ between their source
-						writes (if they are different events);
-	\item \hlref{moRW}: $\setHB$ order from a read to a write forms $\setMO$ between the
-						source of the read and the hb-after write;
-	\item \hlref{moWR}: $\setHB$ order from a write to a read forms $\setMO$ between
+The set of $\setMO$ rules are,
+\begin{itemize}[label=moWW,align=left,leftmargin=*]
+	\item [\hl{moWW}:] $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
+						$\mo{\tau}{w_1}{w_2}$\newline
+						($\setHB$-ordered writes are ordered by $\setMO$);
+	\item [\hl{moRR}:] $\forall r_1, r_2 \in \reads_\tau$ \st $\hb{\tau}{r_1}{r_2}$
+						and $\exists \rf{\tau}{w_1}{r_1}$
+						then $\rf{\tau}{w_1}{r_2}$ $\v$ $\exists \rf{\tau}{w_2}{r_2}$
+						and $\mo{\tau}{w_1}{w_2}$\newline
+						($\setHB$ between reads forms $\setMO$ between their source
+						writes (if they are different events));
+	\item [\hl{moRW}:] $\forall r_1 \in \reads_\tau$, $w_1 \in \writes_\tau$ \st
+						$\hb{\tau}{r_1}{w_1}$ then $\exists \rf{\tau}{w_2}{r_1}$ and
+						$\mo{\tau}{w_2}{w_1}$\newline
+						($\setHB$ order from a read to a write forms $\setMO$ between the
+						source of the read and the hb-after write);
+	\item [\hl{moWR}:] $\forall w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st
+						$\hb{\tau}{w_1}{r_1}$ then $\rf{\tau}{w_1}{r_1}$ $\v$
+						$\exists \rf{\tau}{w_2}{r_1}$ and $\mo{\tau}{w_1}{w_2}$\newline
+						($\setHB$ order from a write to a read forms $\setMO$ between
 						the write and the source of the read (if the two are
-						different events).
+						different events)).
 \end{itemize}
 
-A valid \cc execution must have a total order on all events with memory
+%\begin{figure}[t]
+	%	\begin{tabular}{|l m{0.9\textwidth}|}
+	%		\hline
+	%		\hl{moWW} & $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
+	%					$\mo{\tau}{w_1}{w_2}$ \\
+	%		\hl{moRR} & $\forall r_1, r_2 \in \reads_\tau$ \st $\hb{\tau}{r_1}{r_2}$
+	%					and $\exists \rf{\tau}{w_1}{r_1}$
+	%					then $\rf{\tau}{w_1}{r_2}$ $\v$ $\exists \rf{\tau}{w_2}{r_2}$
+	%					and $\mo{\tau}{w_1}{w_2}$  \\
+	%		\hl{moRW} & $\forall r_1 \in \reads_\tau$, $w_1 \in \writes_\tau$ \st
+	%					$\hb{\tau}{r_1}{w_1}$ then $\exists \rf{\tau}{w_2}{r_1}$ and
+	%					$\mo{\tau}{w_2}{w_1}$ \\
+	%		\hl{moWR} & $\forall w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st
+	%					$\hb{\tau}{w_1}{r_1}$ then $\rf{\tau}{w_1}{r_1}$ $\v$
+	%					$\exists \rf{\tau}{w_2}{r_1}$ and $\mo{\tau}{w_1}{w_2}$ \\
+	%		
+	%		\hline
+	%	\end{tabular}
+	
+%	\begin{tabular}{|l m{0.86\textwidth}|}
+%		\hline
+%		\hl{tohb} & $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
+%		$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ 
+%		then $\to{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \\
+%		\hl{toWW} & $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
+%		$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
+%		then $\to{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \\
+%		\hl{toWR} & $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
+%		\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
+%		$\to{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \\
+%		\hl{toRW} & $\forall w_1 \in \writes_\tau$, $r^{\sc}_1 \in \ordreads{sc}_\tau$ \st 
+%		$\rf{\tau}{w_1}{r^{\sc}_1}$ if $\exists w^{\sc}_2 \in \ordwrites{\sc}_\tau$
+%		\st $\mo{\tau}{w_1}{w^{\sc}_2}$ then $\to{\tau}{r^{\sc}_1}{w^{\sc}_2}$ \\
+%		\hl{toFW} & $\forall f^{\sc} \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
+%		\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
+%		\reads_\tau$ \st $\seqb{\tau}{f^{\sc}}{r_1}$, $\seqb{\tau}{w_2}{w^{\sc}_1}$ 
+%		and $\rf{\tau}{w_2}{r_1}$ then $\to{\tau}{f^{\sc}}{w^{\sc}_1}$ \\
+%		\hl{toFFrf} & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
+%		if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
+%		$\seqb{\tau}{f^{\sc}_1}{w_1}$, $\seqb{\tau}{r_1}{f^{\sc}_2}$ 
+%		and $\rf{\tau}{w_1}{r_1}$ then $\to{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \\
+%		\hl{toFFnrf} & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
+%		if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
+%		$\seqb{\tau}{w_1}{f^{\sc}_1}$, $\seqb{\tau}{f^{\sc}_2}{r_1}$ and
+%		$\exists w_2 \in \writes_\tau$ \st $\mo{\tau}{w_2}{w_1}$,
+%		$\rf{\tau}{w_2}{r_1}$ then $\to{\tau}{f^{\sc}_2}{f^{\sc}_1}$ \\
+%		\hline
+%	\end{tabular}
+%	\caption{\lmo and \lto coherence rules}
+%	\label{fig:mo-to rules}
+%\end{figure}
+
+
+A valid \cc execution must also form a total order on all events with memory
 order \sc coherent \wrt $\setHB$ and $\setMO$, called \sc{\em -total-order} 
 ($\setTO$).
 %
-The \lto rules, derived from the $\setHB$ and \lmo-rules are formally presented in 
-Figure~\ref{fig:mo-to rules} and discussed below.
+\begin{definition}[\lto-rule]
+	$\setTO$ $\implies$ $\nsetHB$ $\^$ $\nsetMO$.
+\end{definition}
 
-\begin{itemize}
-	\item \hlref{tohb}, \hlref{toWW},\hlref{toWR}: events ordered by $\setHB$, $\setMO$
-						and $\setRF$ respectively are also ordered by $\setTO$;
-	\item \hlref{toRW}: if the source write of a \sc read is $\setMO$(and $\setTO$)-ordered 
-						before an \sc write then the read is also $\setTO$-ordered
-						before that write;
-	\item \hlref{toFW}
-	\item \hlref{toFFrf}
-	\item \hlref{toFFnrf}
-\end{itemize}
-
-In our technique we exploit the $\setTO$ order to build a, possibly cyclic
+In our technique we use the \lto-rule to build a possibly cyclic
 $\setSO$ order between program events and the newly inserted fences.
-The cyclicity in the $\setSO$ order would invalidate the buggy sequence
-under \cc as explained in the following section.
+The cyclicity in the $\setSO$ order invalidates the buggy sequence
+under \cc, explained in Section~\ref{sec:so theory}.
