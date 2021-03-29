@@ -34,19 +34,20 @@ the $\setMO$ and $\setHB$ orders.
 			$\exists w^{\sc}_2 \in \ordwrites{\sc}_\tau$ \st 
 			$\mo{\tau}{w_1}{w^{\sc}_2}$ then $\so{\tau}{r^{\sc}_1}{w^{\sc}_2}$ 
 			\newline
-			()
+			(\sc writes $\setMO$ ordered after another write are also $\setSO$
+			ordered after all \sc reads that read from the second write)
 			
 	\item [\hl{soFW}:] $\forall f^{\sc} \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
 			\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
 			\reads_\tau$ \st $\seqb{\tau}{f^{\sc}}{r_1}$, $\seqb{\tau}{w_2}{w^{\sc}_1}$ 
 			and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}}{w^{\sc}_1}$ \newline
-			()
+			(transitive $\setSB$ $\union$ $\setRF$ implies $\setSO$ order)
 			
 	\item [\hl{soFFrf}:]  $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
 			if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
 			$\seqb{\tau}{f^{\sc}_1}{w_1}$, $\seqb{\tau}{r_1}{f^{\sc}_2}$ 
 			and $\rf{\tau}{w_1}{r_1}$ then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \newline
-			()
+			($\setSW$ between fences \cite{C11} implies $\setSO$ order)
 			
 	\item [\hl{soFFnrf}:] $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
 			if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
@@ -55,6 +56,7 @@ the $\setMO$ and $\setHB$ orders.
 			$\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_2}{f^{\sc}_1}$ \newline
 			()
 \end{itemize}
+\snj{Why is soWF not in list? similarly why not WFnrf FWnrf?}
 
 Consider a \cc execution sequence $\tau$ and a transformation
 $\fixed{\tau}$ of $\tau$ \st $\events_{\fixed{\tau}}$ = $\events_\tau$
