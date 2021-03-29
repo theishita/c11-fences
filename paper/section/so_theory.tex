@@ -1,0 +1,71 @@
+As discussed in Section~\ref{sec:c11} in a valid \cc execution 
+sequence, the \sc ordered events form a total order ($\setTO$).
+%
+Contrarily, if we synthesize \sc ordered fences in the input program 
+such that the total order requirement is violated then we can
+invalidate the sequence and stop the program behavior.
+This concept forms the base of our synthesis technique.
+
+We introduce an irreflexive and possibly cyclic relation
+on \sc ordered events called \sc-order ($\setSO$).
+%
+To construct the $\setSO$ order, we introduce the following \lso-rules.
+The \lso-rules are an interpretation of the \lto-rule derived from
+the $\setMO$ and $\setHB$ orders.
+
+\begin{itemize}[label=soFFnrf,align=left,leftmargin=*]
+	\item [\hl{sohb}:] $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
+			$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ then 
+			$\so{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \newline
+			($\setHB$ order implies $\setSO$ order)
+	
+	\item [\hl{soWW}:] $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
+			$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
+			then $\so{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \newline
+			($\setMO$ order implies $\setSO$ order)
+			
+	\item [\hl{soWR}:] $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
+			\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
+			$\so{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \newline
+			($\setRF$ order implies $\setSO$ order)
+			
+	\item [\hl{soRW}:] $\forall w_1 \in \writes_\tau$, $r^{\sc}_1 \in 
+			\ordreads{sc}_\tau$ \st $\rf{\tau}{w_1}{r^{\sc}_1}$ if 
+			$\exists w^{\sc}_2 \in \ordwrites{\sc}_\tau$ \st 
+			$\mo{\tau}{w_1}{w^{\sc}_2}$ then $\so{\tau}{r^{\sc}_1}{w^{\sc}_2}$ 
+			\newline
+			()
+			
+	\item [\hl{soFW}:] $\forall f^{\sc} \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
+			\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
+			\reads_\tau$ \st $\seqb{\tau}{f^{\sc}}{r_1}$, $\seqb{\tau}{w_2}{w^{\sc}_1}$ 
+			and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}}{w^{\sc}_1}$ \newline
+			()
+			
+	\item [\hl{soFFrf}:]  $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
+			if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
+			$\seqb{\tau}{f^{\sc}_1}{w_1}$, $\seqb{\tau}{r_1}{f^{\sc}_2}$ 
+			and $\rf{\tau}{w_1}{r_1}$ then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \newline
+			()
+			
+	\item [\hl{soFFnrf}:] $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
+			if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
+			$\seqb{\tau}{w_1}{f^{\sc}_1}$, $\seqb{\tau}{f^{\sc}_2}{r_1}$ and
+			$\exists w_2 \in \writes_\tau$ \st $\mo{\tau}{w_2}{w_1}$,
+			$\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_2}{f^{\sc}_1}$ \newline
+			()
+\end{itemize}
+
+Consider a \cc execution sequence $\tau$ and a transformation
+$\fixed{\tau}$ of $\tau$ \st $\events_{\fixed{\tau}}$ = $\events_\tau$
+$\union$ set of synthesized fences and $\to{\tau}{}{}$ $\subseteq$
+$\so{\fixed{\tau}}{}{}$.
+%
+Cyclic $\so{\fixed{\tau}}{}{}$ implies that there does not exist a 
+total order on \sc ordered events of $\fixed{\tau}$. The sequence $\fixed{\tau}$, 
+then, is not a valid \cc execution and the buggy sequence $\tau$ 
+has been invalidated.
+
+Thus, the aim of this work is to synthesis fences in the input program 
+at appropriate locations and force a cyclic $\setSO$ order in the \sc 
+ordered events of the transformed program $\fixed{\tau}$.

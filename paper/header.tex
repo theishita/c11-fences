@@ -11,8 +11,7 @@
 %\usepackage{textcomp}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
-
-%\usepackage[shortlabels]{enumitem}
+\usepackage{framed,enumitem}
 
 % for colours
 \usepackage{xspace}
@@ -66,7 +65,7 @@
 \newcommand{\nin}{\not\in\xspace}
 
 % highlighted hyperlinks
-\newcommand{\hl}[1]{\hypertarget{#1}{\textcolor{darkgray}{\texttt{(#1)}}}\xspace} % hyperlink target
+\newcommand{\hl}[1]{{\textcolor{darkgray}{\texttt{(#1)}}}\xspace} % hyperlink target
 \newcommand{\hlref}[1]{\hyperlink{#1}{\textcolor{Sepia}{\small \texttt{(#1)}}}}
 \newcommand{\tab}{\quad\quad}
 
@@ -80,6 +79,7 @@
 % sets and entitites
 \newcommand{\program}{$P$\xspace} %input program
 \newcommand{\programhat}{$\widehat{P}$\xspace} %transformed/fixed program
+\newcommand{\fixed}[1]{\widehat{#1}\xspace}
 \newcommand{\threads}{\mathcal{T}\xspace}
 \newcommand{\states}{\Sigma\xspace}
 \newcommand{\moset}{\mathcal{M}\xspace}
@@ -129,6 +129,7 @@
 \newcommand{\hb}[3]{\reln{\textbf{\textcolor{Cerulean}{hb}}}{#1}{#2}{#3}\xspace}
 \newcommand{\nhb}[3]{\nreln{\textbf{\textcolor{Cerulean}{hb}}}{#1}{#2}{#3}\xspace}
 \newcommand{\mo}[3]{\reln{\textbf{\textcolor{RedOrange}{mo}}}{#1}{#2}{#3}\xspace}
+\newcommand{\nmo}[3]{\nreln{\textbf{\textcolor{RedOrange}{mo}}}{#1}{#2}{#3}\xspace}
 \renewcommand{\to}[3]{\reln{\textbf{\textcolor{Brown}{to}}}{#1}{#2}{#3}\xspace}
 \newcommand{\so}[3]{\reln{\textbf{\textcolor{Mahogany}{so}}}{#1}{#2}{#3}\xspace} %sc
 
@@ -142,6 +143,8 @@
 \newcommand{\setMO}{\mo{\tau}{}{}\xspace}
 \newcommand{\setTO}{\to{\tau}{}{}\xspace}
 \newcommand{\setSO}{\so{\tau}{}{}\xspace}
+\newcommand{\nsetHB}{\nhb{\tau}{}{}\xspace}
+\newcommand{\nsetMO}{\nmo{\tau}{}{}\xspace}
 
 % relation label 
 \newcommand{\lsb}{\textbf{\textcolor{CarnationPink}{sb}}\xspace}
