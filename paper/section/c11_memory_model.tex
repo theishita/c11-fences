@@ -114,16 +114,29 @@ The set of $\setMO$ rules are,
 %	\label{fig:mo-to rules}
 %\end{figure}
 
+We introduce an irreflexive relation \sc{\em -from-read} ($\setFR$) to relate  
+\sc reads with \sc writes ordered {\em after} it.
 
-A valid \cc execution must also form a total order on all events with memory
-order \sc coherent \wrt $\setHB$ and $\setMO$, called \sc{\em -total-order} 
-($\setTO$).
-%
-\begin{definition}[\lto-rule]
-	$\setTO$ $\implies$ $\nsetHB$ $\^$ $\nsetMO$.
+\begin{definition}[\sc{\em -from-read} $\setFR$]\newline
+	$\forall$ $r^\sc \in \ordreads{\sc}_\tau$, $w^\sc \in \ordwrites{\sc}_\tau$
+	if $(r^\sc,w^\sc)$ $\in$ $\setRF^{-1};\setMO$ then $\fr{\tau}{r^\sc}{w^\sc}$.
 \end{definition}
 
+A valid \cc execution must also form a total order on all events with memory
+order \sc, called \sc{\em -total-order} ($\setTO$) \st
+\begin{itemize}[label=to,align=left,leftmargin=*]
+	\item [\hl{toHbMo}:] $\setTO$ $\implies$ $\nsetHB$ $\^$ $\nsetMO$
+			(\sc-total-order is coherent \wrt $\setHB$ and $\setMO$)
+	\item [\hl{toFr}:] $\fr{\tau}{r^\sc}{w^\sc}$ $\implies$ $\to{\tau}{r^\sc}{w^\sc}$
+			(\sc-total-order is coherent \wrt $\setFR$)
+	\item [\hl{toRf}:] if $\exists r^\sc \in \ordreads{\sc}_\tau$ \st
+			$\rf{\tau}{w_1}{r^\sc}$ then $\nexists$ $w^\sc \in \ordwrites{\sc}_\tau$
+			\st $\to{\tau}{\mo{\tau}{w_1}{w^\sc}}{r^\sc}$.
+			(an \sc read must read from its immediate \lmo before write)
+\end{itemize}
+%
+
 In our technique we use the \lto-rule to build a possibly cyclic
-$\setSO$ order between program events and the newly inserted fences.
+$\setSO$ order between \sc program events and the newly inserted \sc fences.
 The cyclicity in the $\setSO$ order invalidates the buggy sequence
 under \cc, explained in Section~\ref{sec:so theory}.
