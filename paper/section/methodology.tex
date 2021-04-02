@@ -17,7 +17,6 @@
 %% brief overview of our approach
 % Sections:
 %% counter example generator and its specifications/requirements
-%% computing relations in counter example
 %% inserting candidate fences and computing SC
 %%% mention a trivial solution here
 %% Fence minimization
@@ -47,33 +46,75 @@ Our approach grantees that the program resulted after removing the
 unnecessary fences, has minimal number of \mosc fences required in that 
 program to stop the buggy executions. 
 
-\ourtechnique takes a set of counter examples as input and 
-computes \cc axiomatic relations, such as 
-$ \setSB, \setHB, \setMO, \setSW $, 
-among the events of counter examples.
-Further we compute $ \setSO $-order assuming the existence of candidate fences.
+\ourtechnique takes a set of counter examples as input.
+We use \cc 's $ \setSB, \setHB, \setMO, \setRF $ relations to compute 
+$ \setSO $-order assuming the existence of candidate fences.
 We prove that the transitive closure of $ \setSO $-order is the same as 
 $ \setTO $ in any valid \cc trace. 
 Since $ \setTO $ is a total order, any valid \cc trace can not have a 
-cycle formed by transitively sequence of ordered pair in $ \setSO $-order. 
+cycle formed by transitive sequence of ordered pair in $ \setSO $-order. 
 We call such cycles $\setSO$-cycle. 
 We use $ \setSO $-order and $ \setSO $-cycle to generate an SAT formula. 
 Any satisfying assignment of this SAT formula is a possible fence 
-placement to stop the buggy execution. We find the minimal satisfying assignment of this SAT formula to find optimal fence placement.
+placement to stop the buggy execution. We find the minimal satisfying assignment of this SAT formula to find optimal fence placement. 
 
+\begin{algorithm}
+	\caption{\ourtechnique}
+	\begin{algorithmic}[1]	
+		\Procedure{\ourtechnique}{$ P $}
+		\State $\phi := \top$
+		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)
+		\For{$ \tau \in \mathcal{CE} $}
+			\State $ \events_\tau^f := \events_\tau\ \union $ candidate fences
+			\State $ \seqb{\tau'}{}{} := $ computeSB($\events_\tau^f$) \State $ \setSO := $ computeSO($\events_\tau^f, \setHB, \setMO, \setRF, \seqb{\tau'}{}{}$)
+			\State cycles := computeCycles($ \setSO $)
+			\If {cycles == $ \emptyset $}
+				\State ``This behavior can't be stopped using \cc fences.''
+				\State \Return
+			\EndIf
+			\State $\phi := \phi\ \^ $ genFormula(cycles)
+%			\State $ \phi := \phi_\tau $
+		\EndFor
+		\State F:= MinModel($ \phi $)
+		\State \Return F
+%		
+%		\State create\_z3\_file()
+%		\State fences\_required = run\_z3\_file()
+%		\State insert\_into\_input\_file(fences\_required)
+		\EndProcedure
+		\label{alg:fence-syn}
+	\end{algorithmic}
+\end{algorithm}
 
+The \ourtool uses Algorithm~\ref{alg:fence-syn} to insert fences in an 
+input program $ P $. The algorithm start by initializing the 
+SAT formula $ \phi $ with true.  Line 2 uses a counter-example generator 
+to compute the set of counter examples in the program $ P $. 
+Lines 4-12 generates SAT formula for each counter-example $ \tau $.
+Lines 5 and 6 add candidate fences in the set of events of counter-example 
+$ \tau $ and compute $ \lsb $ in the updated trace (i.e., with candidate 
+fences). 
+\divComment{I wrote it as $ \seqb{\tau'}{}{} $ since it can't be parameterized with $ \tau $}.
+Line 7 computes $ \setSO $-order in counter example $ \tau $ with candidate fences.
+Line 8 finds all $ \setSO $-cycles. If there are no $ \setSO $-cycles 
+present, the behavior can't be stopped used any \cc fences. Hence, we 
+terminate the algorithm at this point.
+Else, in line 12, we generate a SAT formula for the set of $ \setSO $-cycles and add it to formula $ \phi $
+Lastly, in line 13 we find the minimal model of formula $ \phi $, which 
+gives us the minimal set of fences to be inserted in order to stop the 
+buggy behaviors.
+The rest of this section discuss each of these steps in detail.
+
+\noindent\textbf{Generating Counter Examples:} 
+\ourtechnique requires a set of counter examples $ \mathcal{CE} $. 
+Each of these counter-examples $ \tau $ should give us a list program events 
+$ \events_\tau $ and $ \setSB, \setHB, \setMO, \setSW $ relations over the 
+program events. 
+A program event consists of instruction label, action, memory order, and variable. 
+\divComment{We don't actually need variable and value since we have rf and other relations already.}
+Our approach treats a counter example generator that reports all of this information as a black box. 
+\divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\divComment{Replace it with counter example generator}
-The tool first begins by analyzing the input program through a C11 model 
-checker or verification tool. This tool runs all possible executions of 
-the program and gives a list of buggy traces as output. A buggy trace 
-here means an execution run where an assertion was violated in the program. 
-\divComment{Mention what is needed in the counter example}
-The model checker provides the exact order of instructions, which when 
-executed in the order can cause the program to stop mid-way by running 
-into an assertion and not being able to satisfy it. The verification 
-tool also provides the meta data for each instruction, such as read-from 
-values, memory orders and line number in the actual program.
 
 In the program described in Fig \ref{fig:dekker2}, inserting an SC fence 
 between the instructions (1) and (2), and an SC fence between (5) and (6) 
