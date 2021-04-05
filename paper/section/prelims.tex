@@ -53,9 +53,12 @@
 	\item \color{olive}//a \color{black} \qquad the value expected to be read in that line is a
 	\item buggy traces / buggy executions
 	\item candidate fences
-	\item original/transformed program or buggy/fixed program
+	\item original/transformed program or buggy/fixed program ($ P/ P_f $)
 	\item invalidated traces: counter-examples with inserted fences
 	\item $\setSO$-order/ $\setSO$-cycle
 	\item writes and reads include rmw unless otherwise mentioned
 	\item execution sequence and sequence interchangeably used
+	\item $ \lhb, \lrf, \lmo, $ 
+	\item Each event is tuple (inst label, action, memory order, variable, value) \divComment{variable and value are probably not needed.}
+	\item Set of counter examples $ \mathcal{CE} $. A counter-example $ \tau $ is tuple $ \langle \events_\tau, \setHB, \setMO, \setRF \rangle $. 
 \end{itemize}

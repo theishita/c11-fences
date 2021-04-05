@@ -1,62 +1,84 @@
-As discussed in Section~\ref{sec:c11} in a valid \cc execution 
-sequence, the \sc ordered events form a total order ($\setTO$).
+Consider a buggy input program $P$.
+%
+As discussed in Section~\ref{sec:c11}, in a valid \cc execution 
+sequence of $P$ (including a buggy execution or a counter example), 
+the \sc ordered events must form a total order ($\setTO$).
 %
 Contrarily, if we synthesize \sc ordered fences in the input program 
-such that the total order requirement is violated then we can
-invalidate the sequence and stop the program behavior.
+such that the total order requirement in the buggy sequence gets violated 
+then we can invalidate the sequence and stop the program behavior.
 This concept forms the base of our synthesis technique.
 
 We introduce an irreflexive and possibly cyclic relation
 on \sc ordered events called \sc-order ($\setSO$).
 %
 To construct the $\setSO$ order, we introduce the following \lso-rules.
-The \lso-rules are an interpretation of the \lto-rule derived from
-the $\setMO$ and $\setHB$ orders.
+The \lso-rules are an interpretation or simply a derivative of the 
+\lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf} 
+(Section~\ref{sec:c11}).
+%formed by direct derivative and dual of the rules .
 
 \begin{itemize}[label=soFFnrf,align=left,leftmargin=*]
 	\item [\hl{sohb}:] $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
 			$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ then 
 			$\so{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \newline
-			($\setHB$ order implies $\setSO$ order)
+			($\setHB$ order implies $\setSO$)
 	
-	\item [\hl{soWW}:] $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
+	\item [\hl{somo}:] $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
 			$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
 			then $\so{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \newline
-			($\setMO$ order implies $\setSO$ order)
+			($\setMO$ order implies $\setSO$)
 			
-	\item [\hl{soWR}:] $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
+	\item [\hl{sorf}:] $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
 			\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
 			$\so{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \newline
-			($\setRF$ order implies $\setSO$ order)
+			($\setRF$ order implies $\setSO$)
 			
-	\item [\hl{soRW}:] $\forall w_1 \in \writes_\tau$, $r^{\sc}_1 \in 
-			\ordreads{sc}_\tau$ \st $\rf{\tau}{w_1}{r^{\sc}_1}$ if 
-			$\exists w^{\sc}_2 \in \ordwrites{\sc}_\tau$ \st 
-			$\mo{\tau}{w_1}{w^{\sc}_2}$ then $\so{\tau}{r^{\sc}_1}{w^{\sc}_2}$ 
+	\item [\hl{sofr}:] $\forall r^\sc_1 \in \ordreads{\sc}_\tau$, $w^\sc_1 \in
+			\ordwrites{\sc}_\tau$ if $\fr{\tau}{r^\sc_1}{w^sc_1}$ then 
+			$\so{\tau}{r^{\sc}_1}{w^{\sc}_1}$ 
 			\newline
-			(\sc writes $\setMO$ ordered after another write are also $\setSO$
-			ordered after all \sc reads that read from the second write)
+			($\setFR$ order implies $\setSO$)
 			
-	\item [\hl{soFW}:] $\forall f^{\sc} \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
+	\item [\hl{soFWfr}:] $\forall f^{\sc}_1 \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
 			\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
-			\reads_\tau$ \st $\seqb{\tau}{f^{\sc}}{r_1}$, $\seqb{\tau}{w_2}{w^{\sc}_1}$ 
-			and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}}{w^{\sc}_1}$ \newline
-			(transitive $\setSB$ $\union$ $\setRF$ implies $\setSO$ order)
+			\reads_\tau$ \st $\seqb{\tau}{f^{\sc}_1}{r_1}$, $\mo{\tau}{w_2}{w^{\sc}_1}$ 
+			and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_1}{w^{\sc}_1}$ \newline
+			($\setFR$ though \sc write-fence synchronization implies $\setSO$)
 			
-	\item [\hl{soFFrf}:]  $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
+	\item [\hl{soRFfr}:] $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $r^\sc_1 \in
+			\ordreads{\sc}_\tau$ if $\exists w_1, w_2 \in \writes_\tau$ \st
+			$\seqb{\tau}{w_2}{f^\sc_1}$, $\mo{\tau}{w_1}{w_2}$ and
+			$\rf{\tau}{w_1}{r^\sc_1}$ then $\so{\tau}{r^\sc_1}{f^\sc_1}$\newline
+			($\setFR$ though \sc read-fence synchronization implies $\setSO$)
+	
+%	snj: the next 3 are covered under hb implies so		
+%	\item [\hl{soFFfr}:] $\forall f^\sc_1, f^\sc_2 \in \ordfences{\sc}_\tau$,
+%			$w_1, w_2 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
+%			$\seqb{\tau}{f^\sc_1}{r_1}$, $\seqb{\tau}{w_2}{f^\sc_2}$, 
+%			$\mo{\tau}{w_1}{w_2}$ and $\rf{\tau}{w_1}{r_1}$ then
+%			$\so{\tau}{f^\sc_1}{f^\sc_2}$\newline
+%			($\setFR$ though \sc fence-fence synchronization implies $\setSO$)
+%			
+%	\item [\hl{soWFsw}:] $\forall$ $w^\sc_1 \in \ordwrites{\sc}_\tau$ $f^\sc_1 \in
+%			\ordfences{\sc}_\tau$ if $\exists r_1 \in \reads_\tau$ \st 
+%			$\rf{\tau}{w^\sc_\tau}{r_1}$ and $\seqb{\tau}{r_1}{f^\sc_1}$ then 
+%			$\so{\tau}{w^\sc_1}{f^\sc_1}$\newline
+%			($\setSW$ between \sc write-fence implies $\setSO$)
+%			
+%	\item [\hl{soFRsw}:] $\forall r^\sc_1 \in \ordreads{\sc}_\tau$, $f^\sc_1 \in
+%			\ordfences{\sc}_\tau$ if $\exists w_1 \in \writes_\tau$ \st
+%			$\rf{\tau}{w_1}{r^\sc_1}$ and $\seqb{\tau}{f^\sc_1}{w_1}$ then
+%			$\so{\tau}{f^\sc_1}{r^\sc_1}$\newline
+%			($\setSW$ between \sc fence-read implies $\setSO$)
+			
+			
+	\item [\hl{soFFsw}:]  $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
 			if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
 			$\seqb{\tau}{f^{\sc}_1}{w_1}$, $\seqb{\tau}{r_1}{f^{\sc}_2}$ 
 			and $\rf{\tau}{w_1}{r_1}$ then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \newline
-			($\setSW$ between fences \cite{C11} implies $\setSO$ order)
-			
-	\item [\hl{soFFnrf}:] $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
-			if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
-			$\seqb{\tau}{w_1}{f^{\sc}_1}$, $\seqb{\tau}{f^{\sc}_2}{r_1}$ and
-			$\exists w_2 \in \writes_\tau$ \st $\mo{\tau}{w_2}{w_1}$,
-			$\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_2}{f^{\sc}_1}$ \newline
-			()
+			($\setSW$ between \sc fence-fences implies $\setSO$)
 \end{itemize}
-\snj{Why is soWF not in list? similarly why not WFnrf FWnrf?}
 
 Consider a \cc execution sequence $\tau$ and a transformation
 $\fixed{\tau}$ of $\tau$ \st $\events_{\fixed{\tau}}$ = $\events_\tau$

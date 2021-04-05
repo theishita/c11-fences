@@ -132,6 +132,7 @@
 \newcommand{\nmo}[3]{\nreln{\textbf{\textcolor{RedOrange}{mo}}}{#1}{#2}{#3}\xspace}
 \renewcommand{\to}[3]{\reln{\textbf{\textcolor{Brown}{to}}}{#1}{#2}{#3}\xspace}
 \newcommand{\so}[3]{\reln{\textbf{\textcolor{Mahogany}{so}}}{#1}{#2}{#3}\xspace} %sc
+\newcommand{\fr}[3]{\reln{\textbf{\textcolor{RoyalPurple}{fr}}}{#1}{#2}{#3}} %rb
 
 % relation name without events
 \newcommand{\setSB}{\seqb{\tau}{}{}\xspace}
@@ -145,6 +146,7 @@
 \newcommand{\setSO}{\so{\tau}{}{}\xspace}
 \newcommand{\nsetHB}{\nhb{\tau}{}{}\xspace}
 \newcommand{\nsetMO}{\nmo{\tau}{}{}\xspace}
+\newcommand{\setFR}{\fr{\tau}{}{}\xspace}
 
 % relation label 
 \newcommand{\lsb}{\textbf{\textcolor{CarnationPink}{sb}}\xspace}
@@ -156,6 +158,7 @@
 \newcommand{\lmo}{\textbf{\textcolor{RedOrange}{mo}}\xspace}
 \newcommand{\lto}{\textbf{\textcolor{Brown}{to}}\xspace}
 \newcommand{\lso}{\textbf{\textcolor{Mahogany}{so}}\xspace}
+\newcommand{\lfr}{\textbf{\textcolor{RoyalPurple}{fr}}\xspace}
 
 \newcommand{\var}[1]{\color{OliveGreen}\texttt{#1}\color{black}\xspace}
 \newcommand{\fun}[2]{\color{Sepia}\texttt{#1(\color{Gray}\textit{#2}\color{Sepia})}\color{black}\xspace}
@@ -175,5 +178,5 @@
 %\newtheorem{lemma}[theorem]{Lemma}
 
 \newcommand{\ishComment}[1]{\textit{\color{red}\tiny{#1}}}
-\newcommand{\divComment}[1]{\textit{\color{ForestGreen}{#1}}}
+\newcommand{\divComment}[1]{\textcolor{ForestGreen}{[div: #1]}}
 \newcommand{\snj}[1]{\textcolor{Mahogany}{[snj]: #1}}

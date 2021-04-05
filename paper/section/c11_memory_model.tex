@@ -9,19 +9,28 @@ The events of a sequence $\tau$ are related by the $\setHB$ as follows;
 	\item {\em Intra-thread-hb}: Events of a thread are related by a {\em sequenced-before}
 	($\setSB$) relation in the order of occurrence in the thread;
 	
-	\item {\em Inter-thread-synchronization}: A $\moge$ \acq read event ($ra$) of a thread 
-	$t_i$ when reads from a $\moge$ \rel write event $wr$ of another thread $t_j$ they form a
-	relation {\em synchronizes-with} ($\setSW$) between them as $\sw{\tau}{wr}{ra}$.
+	\item {\em Inter-thread-synchronization}: A $\moge$\acq read event ($ra$) of a thread 
+	$t_i$ when reads from a $\moge$\rel write event ($wr$) of another thread $t_j$ they form a
+	relation {\em synchronizes-with} ($\setSW$) as $\sw{\tau}{wr}{ra}$.
 	%
-	Further, a $\moge$ \acq read event ($ra$) of a thread $t_i$ when reads from a write 
-	event ($w$) in the {\em Release sequence} \cite{C11} of a $\moge$ \rel write event ($wr$) of 
+	Further, a $\moge$\acq read event ($ra$) of a thread $t_i$ when reads from a write 
+	event ($w$) in the {\em Release sequence} \cite{C11} of a $\moge$\rel write event ($wr$) of 
 	another thread $t_j$ then $wr$ and $ra$ form a relation {\em dependency-ordered-before}
 	($\setDOB$) between them as $\dob{\tau}{wr}{ra}$;
 	%
-	(where, a release sequence headed by a $\moge$ \rel write event $wr$ is the maximal 
+	(where, a release sequence headed by a $\moge$\rel write event $wr$ is the maximal 
 	contiguous sequence, of an execution sequence $\tau$, that starts with $wr$ and continues 
-	over write events from the same thread and rmw events or $\moge$ \rel write events from
+	over write events from the same thread and rmw events or $\moge$\rel write events from
 	other threads.)
+	
+	\item {\em Inter-thread-fence-synchronization}: The relation $\setSW$ is also formed 
+	between \cc fences when a read event $\setSB$ ordered before a fence $f_i$ of thread 
+	$t_i$ reads from a write event $\setSB$ ordered after a fence $f_j$ in another thread
+	$t_j$.
+	%
+	Similarly, a fence $\setSB$ ordered before a write can form $\setSW$ with a $\moge$\acq
+	read and a fence $\setSB$ ordered after a read can form $\setSW$ with a $\moge$\rel
+	write when the read reads-from the write.
 	
 	\item {\em Inter-thread-hb}: Events from different threads that are related by the 
 	transitive closure of ($\setSB$ $\union$ $\setSW$ $\union$ $\setDOB$) are related by 
@@ -42,7 +51,7 @@ The set of $\setMO$ rules are,
 \begin{itemize}[label=moWW,align=left,leftmargin=*]
 	\item [\hl{moWW}:] $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
 						$\mo{\tau}{w_1}{w_2}$\newline
-						($\setHB$-ordered writes are ordered by $\setMO$);
+						($\setHB$ ordered writes are ordered by $\setMO$);
 	\item [\hl{moRR}:] $\forall r_1, r_2 \in \reads_\tau$ \st $\hb{\tau}{r_1}{r_2}$
 						and $\exists \rf{\tau}{w_1}{r_1}$
 						then $\rf{\tau}{w_1}{r_2}$ $\v$ $\exists \rf{\tau}{w_2}{r_2}$
@@ -114,16 +123,31 @@ The set of $\setMO$ rules are,
 %	\label{fig:mo-to rules}
 %\end{figure}
 
+We introduce an irreflexive relation \sc{\em -from-read} ($\setFR$) to relate  
+\sc reads with \sc writes ordered {\em after} it.
 
-A valid \cc execution must also form a total order on all events with memory
-order \sc coherent \wrt $\setHB$ and $\setMO$, called \sc{\em -total-order} 
-($\setTO$).
-%
-\begin{definition}[\lto-rule]
-	$\setTO$ $\implies$ $\nsetHB$ $\^$ $\nsetMO$.
+\begin{definition}[\sc{\em -from-read} $\setFR$]\newline
+	$\forall$ $r^\sc \in \ordreads{\sc}_\tau$, $w^\sc \in \ordwrites{\sc}_\tau$
+	if $(r^\sc,w^\sc)$ $\in$ $\setRF^{-1};\setMO$ then $\fr{\tau}{r^\sc}{w^\sc}$.
 \end{definition}
 
-In our technique we use the \lto-rule to build a possibly cyclic
-$\setSO$ order between program events and the newly inserted fences.
+A valid \cc execution must also form a total order on all events with memory
+order \sc, called \sc{\em -total-order} ($\setTO$) \st
+\begin{itemize}[label=to,align=left,leftmargin=*]
+	\item [\hl{toHbMo}:] %$\forall e^\sc_1, e^\sc_2 \in \ordevents{\sc}_\tau$, 
+			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nhb{\tau}{e^\sc_2}{e^\sc_1}$ 
+			$\^$ $\nmo{\tau}{e^\sc_2}{e^\sc_1}$\newline
+			(\sc-total-order is coherent \wrt $\setHB$ and $\setMO$)
+	\item [\hl{toFr}:] $\fr{\tau}{r^\sc}{w^\sc}$ $\implies$ $\to{\tau}{r^\sc}{w^\sc}$
+			(\sc-total-order is coherent \wrt $\setFR$)
+	\item [\hl{toRf}:] if %$\exists r^\sc \in \ordreads{\sc}_\tau$, $w_1 \in \writes_\tau$ \st
+			$\rf{\tau}{w_1}{r^\sc}$ then $\nexists$ $w^\sc \in \ordwrites{\sc}_\tau$
+			\st $\to{\tau}{\mo{\tau}{w_1}{w^\sc}}{r^\sc}$.\newline
+			(an \sc read must read from its immediate \lmo before write)
+\end{itemize}
+%
+
+In our technique we use the \lto-rules to build a possibly cyclic
+$\setSO$ order between \sc program events and the newly inserted \sc fences.
 The cyclicity in the $\setSO$ order invalidates the buggy sequence
 under \cc, explained in Section~\ref{sec:so theory}.
