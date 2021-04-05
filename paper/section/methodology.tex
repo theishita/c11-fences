@@ -66,8 +66,8 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)
 		\For{$ \tau \in \mathcal{CE} $}
 			\State $ \events_\tau^f := \events_\tau\ \union $ candidate fences
-			\State $ \seqb{\tau'}{}{} := $ computeSB($\events_\tau^f$) \State $ \setSO := $ computeSO($\events_\tau^f, \setHB, \setMO, \setRF, \seqb{\tau'}{}{}$)
-			\State cycles := computeCycles($ \setSO $)
+			\State $ \seqb{\tau'}{}{} := $ computeSB($\events_\tau^f$) \State $ \so{\tau'}{}{} := $ computeSO($\events_\tau^f, \setHB, \setMO, \setRF, \seqb{\tau'}{}{}$)
+			\State cycles := computeCycles($ \so{\tau'}{}{} $)
 			\If {cycles == $ \emptyset $}
 				\State ``This behavior can't be stopped using \cc fences.''
 				\State \Return
@@ -95,11 +95,11 @@ Lines 5 and 6 add candidate fences in the set of events of counter-example
 $ \tau $ and compute $ \lsb $ in the updated trace (i.e., with candidate 
 fences). 
 \divComment{I wrote it as $ \seqb{\tau'}{}{} $ since it can't be parameterized with $ \tau $}.
-Line 7 computes $ \setSO $-order in counter example $ \tau $ with candidate fences.
-Line 8 finds all $ \setSO $-cycles. If there are no $ \setSO $-cycles 
+Line 7 computes $ \so{\tau'}{}{} $-order in counter example $ \tau $ with candidate fences.
+Line 8 finds all $ \so{\tau'}{}{} $-cycles. If there are no $ \so{\tau'}{}{} $-cycles 
 present, the behavior can't be stopped used any \cc fences. Hence, we 
 terminate the algorithm at this point.
-Else, in line 12, we generate a SAT formula for the set of $ \setSO $-cycles and add it to formula $ \phi $
+Else, in line 12, we generate a SAT formula for the set of $ \so{\tau'}{}{} $-cycles and add it to formula $ \phi $
 Lastly, in line 13 we find the minimal model of formula $ \phi $, which 
 gives us the minimal set of fences to be inserted in order to stop the 
 buggy behaviors.
@@ -107,47 +107,69 @@ The rest of this section discuss each of these steps in detail.
 
 \noindent\textbf{Generating Counter Examples:} 
 \ourtechnique requires a set of counter examples $ \mathcal{CE} $. 
-Each of these counter-examples $ \tau $ should give us a list program events 
-$ \events_\tau $ and $ \setSB, \setHB, \setMO, \setSW $ relations over the 
+Each of these counter-examples $ \tau $ should consist a list program events 
+$ \events_\tau $ and $ \setHB, \setMO, \setRF, \setSB $ relations over the 
 program events. 
-A program event consists of instruction label, action, memory order, and variable. 
+A program event consists of instruction label, action, memory order, variable, and value. 
 \divComment{We don't actually need variable and value since we have rf and other relations already.}
 Our approach treats a counter example generator that reports all of this information as a black box. 
+Any technique that can generate \cc traces and find buggy behaviors can be used as counter-example generator.
 \divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
+\divComment{TODO: add figures of counter examples in running example.}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%In the program described in Fig \ref{fig:dekker2}, inserting an SC fence 
+%between the instructions (1) and (2), and an SC fence between (5) and (6) 
+%render the program non-buggy, thereby satisfying the given assertions. 
+%After adding these fences, the program will never have a case where 
+%the output can be anything other than ``10''. 
 
-In the program described in Fig \ref{fig:dekker2}, inserting an SC fence 
-between the instructions (1) and (2), and an SC fence between (5) and (6) 
-render the program non-buggy, thereby satisfying the given assertions. 
-After adding these fences, the program will never have a case where 
-the output can be anything other than ``10''. 
+%To obtain the position of these fences, a series of steps is followed. 
+%The two fences strategically inserted in the program are the minimum 
+%number of fences which can be inserted in order to prevent the unwanted 
+%outputs. \snj{Not correct: 
+%	One can add \mosc fences at all positions - before and after all 
+%instructions - in order to make the program as strict as possible under 
+%C11} and hence prevent the buggy outputs if possible, such as in Fig 
+%\ref{fig:dekker3}. 
 
-To obtain the position of these fences, a series of steps is followed. 
-The two fences strategically inserted in the program are the minimum 
-number of fences which can be inserted in order to prevent the unwanted 
-outputs. \snj{Not correct: 
-	One can add \mosc fences at all positions - before and after all 
-instructions - in order to make the program as strict as possible under 
-C11} and hence prevent the buggy outputs if possible, such as in Fig 
-\ref{fig:dekker3}. However, this comes at the cost of making program 
-stricter than required. Therefore, in our solution to retain maximum 
-flexibility, after inserting fences at all places, we must now eliminate 
-the ones which are not required and bring the number of fences down to 
-an optimum or minimum. To do this, we need to find relations between 
-all instructions and understand their semantics.
+%%%% Move to motivation %%%%
+%However, this comes at the cost of making program 
+%stricter than required. Therefore, in our solution to retain maximum 
+%flexibility, after inserting fences at all places, we must now eliminate 
+%the ones which are not required and bring the number of fences down to 
+%an optimum or minimum. To do this, we need to find relations between 
+%all instructions and understand their semantics.
+%
+%The reason for choosing \mosc fences is that they are the strongest type 
+%of fences, as seen in Fig \ref{fig:mo_strength}. In the program described 
+%in Fig \ref{fig:dekker3}, the \moar fences cannot stop the buggy behavior.
+%
+%Another point to note is, inserting \mosc fences at all possible program 
+%locations might not mean that the buggy behaviors are eliminated. 
+%Therefore, our tool can only prevent the assertions from being violated 
+%in cases where the behavior can be stopped using \mosc fences. Note that
+%if a trace cannot be stopped by \mosc fence, then no C11 fence can stop 
+%the trace. The tool also serves to minimize the total number of fences to 
+%be added to the optimal number, thereby retaining the program behaviors 
+%as relaxed as possible.
+%%%%%%%%%%%%%%%%%%
 
-The reason for choosing \mosc fences is that they are the strongest type 
-of fences, as seen in Fig \ref{fig:mo_strength}. In the program described 
-in Fig \ref{fig:dekker3}, the \moar fences cannot stop the buggy behavior.
+\begin{figure}[!htb]
+	\begin{center}
+		\begin{tabular}{l||l}
+			$ \store{y}{1}{\rlx} $ \quad \quad \quad \quad& $ \store{x}{1}{\rlx} $ \\
+			$ \load{a}{x}{\rlx} $ & $ \load{c}{y}{\rlx} $ \\
+			\textbf{if} $ a $ \textbf{then:} & \textbf{if} $ c $ \textbf{then:} \\
+			\quad $ \store{z}{1}{\rlx} $ & \quad $ \store{z}{0}{\rlx} $ \\
+			\quad $ \load{b}{z}{\rlx} $  & \quad$ \load{d}{z}{\rlx} $ \\
+%			\quad assert($ z==1 $) & \quad assert($ z==0 $) \\
+		\end{tabular}
+		\caption{Dekker's Mutual Exclusion program}\label{fig:dekker}
+	\end{center}
+\end{figure}
 
-Another point to note is, inserting \mosc fences at all possible program 
-locations might not mean that the buggy behaviors are eliminated. 
-Therefore, our tool can only prevent the assertions from being violated 
-in cases where the behavior can be stopped using \mosc fences. Note that
-if a trace cannot be stopped by \mosc fence, then no C11 fence can stop 
-the trace. The tool also serves to minimize the total number of fences to 
-be added to the optimal number, thereby retaining the program behaviors 
-as relaxed as possible.
 
 % --------------- FIG all pseudo fences -------------
 \begin{figure}[!htb]
@@ -166,7 +188,9 @@ init y := 0, x := 0;\\
 		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
 	\end{tabular}
 }
-	\caption{Simple two-thread dekker program in C11 syntax with fences at each location}\label{fig:dekker3}
+
+\divComment{All of the memory orders are rel. Is that correct?}
+	\caption{Dekker's Mutual Exclusion program}\label{fig:dekker3}
 \end{center}
 \end{figure}
 
