@@ -12,11 +12,26 @@ This concept forms the base of our synthesis technique.
 We introduce an irreflexive and possibly cyclic relation
 on \sc ordered events called \sc-order ($\setSO$).
 %
-To construct the $\setSO$ order, we introduce the following \lso-rules.
+To construct the $\setSO$ order, we introduce the following \lso-rules
+(diagrammatically shown in Figure~\ref{fig:so rules}).
 The \lso-rules are an interpretation or simply a derivative of the 
 \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf} 
 (Section~\ref{sec:c11}).
 %formed by direct derivative and dual of the rules .
+
+\begin{figure}[t]
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		\resizebox{0.19\textwidth}{!}{\input{figures/so_hbmorf.tex}} &
+		\resizebox{0.19\textwidth}{!}{\input{figures/sofr.tex}} &
+		\resizebox{0.19\textwidth}{!}{\input{figures/soFWfr.tex}} &
+		\resizebox{0.19\textwidth}{!}{\input{figures/soRFfr.tex}} &
+		\resizebox{0.19\textwidth}{!}{\input{figures/soFFsw.tex}} \\
+		\hline
+	\end{tabular}
+	\caption{\lso-rules}
+	\label{fig:so rules}
+\end{figure}
 
 \begin{itemize}[label=soFFnrf,align=left,leftmargin=*]
 	\item [\hl{sohb}:] $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
