@@ -51,10 +51,10 @@
 	\item $\ordwrites{mo}$ \qquad write/store or rmw atomic operation
 	\item $\mole rel$ \qquad memory orders greater than or equal to release
 	\item \color{olive}//a \color{black} \qquad the value expected to be read in that line is a
-	\item buggy traces / buggy executions
+	\item buggy traces / buggy executions  $\tau$
 	\item candidate fences
-	\item original/transformed program or buggy/fixed program ($ P/ P_f $)
-	\item invalidated traces: counter-examples with inserted fences
+	\item original/transformed program or buggy/fixed program ($ P/ \fixed{P} $)
+	\item invalidated traces: counter-examples with inserted fences $\fixed{\tau}$
 	\item $\setSO$-order/ $\setSO$-cycle
 	\item writes and reads include rmw unless otherwise mentioned
 	\item execution sequence and sequence interchangeably used
