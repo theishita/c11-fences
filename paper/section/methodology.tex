@@ -33,7 +33,8 @@ memory orders. For the programs where buggy behavior cannot be stopped
 using fences, it is possible to stop the behavior by annotating some 
 memory operations with stronger memory order.
 Hence, we do not claim that if \ourtechnique cannot stop a buggy \cc 
-execution, it cannot be stopped. 
+execution, it cannot be stopped.
+\divComment{Can we give termination guarantee?}
 
 Unlike common fence synthesis approaches \divComment{Need references}, 
 \ourtechnique does not try to \emph{add} fences optimally in a program.
@@ -114,8 +115,9 @@ A program event consists of instruction label, action, memory order, variable, a
 \divComment{We don't actually need variable and value since we have rf and other relations already.}
 Our approach treats a counter example generator that reports all of this information as a black box. 
 Any technique that can generate \cc traces and find buggy behaviors can be used as counter-example generator.
-\divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
-\divComment{TODO: add figures of counter examples in running example.}
+%\divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
+Counter-examples in \texttt{dekker} program are given in Figure~\ref{fig:dekker-ce}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,17 +160,49 @@ Any technique that can generate \cc traces and find buggy behaviors can be used 
 
 \begin{figure}[!htb]
 	\begin{center}
+		\texttt{(Dekker)} \\ \ \\
 		\begin{tabular}{l||l}
-			$ \store{y}{1}{\rlx} $ \quad \quad \quad \quad& $ \store{x}{1}{\rlx} $ \\
-			$ \load{a}{x}{\rlx} $ & $ \load{c}{y}{\rlx} $ \\
-			\textbf{if} $ a $ \textbf{then:} & \textbf{if} $ c $ \textbf{then:} \\
-			\quad $ \store{z}{1}{\rlx} $ & \quad $ \store{z}{0}{\rlx} $ \\
-			\quad $ \load{b}{z}{\rlx} $  & \quad$ \load{d}{z}{\rlx} $ \\
-%			\quad assert($ z==1 $) & \quad assert($ z==0 $) \\
-		\end{tabular}
-		\caption{Dekker's Mutual Exclusion program}\label{fig:dekker}
+			$ \store{y}{1}{} $ & $ \store{x}{1}{} $ \\
+			$ \load{a}{x}{} $ & $ \load{c}{y}{} $ \\
+			\textbf{if} $ (a=0) $ & \textbf{if} $ (c=0) $ \\
+			\quad $ \store{z}{1}{} $ & \quad $ \store{z}{2}{} $ \\
+%			\quad $ \load{b}{z}{} $   & \quad$ \load{d}{z}{} $ \\
+			\quad assert($ z=1 $) & \quad assert($ z=2 $) \\
+		\end{tabular} 
+%		\caption{Dekker's Mutual Exclusion program}\label{fig:dekker}
 	\end{center}
 \end{figure}
+
+\begin{figure}[!h]
+	\input{figures/dekker-ce1.tex}
+	\input{figures/dekker-ce2.tex}
+	\caption{Counter-examples in Dekker}
+	\label{fig:dekker-ce}
+\end{figure}
+
+%% dekker for cppmem:
+%int main() {
+%	atomic_int x = 0; 
+%	atomic_int y = 0;
+%	atomic_int z = 0;
+%	{{{ {
+%					y.store(1, mo_relaxed);
+%					if (x.load(mo_relaxed).readsvalue(0)) {
+%						z.store(1, mo_relaxed);
+%						z.load(mo_relaxed).readsvalue(1);
+%					}
+%				}
+%				||| {
+%					x.store(1, mo_relaxed);
+%					if (r1=y.load(mo_relaxed).readsvalue(0)) {
+%						z.store(2, mo_relaxed);
+%						z.load(mo_relaxed).readsvalue(2);
+%					}
+%				}
+%	}}};
+%	return 0; 
+%}
+
 
 
 % --------------- FIG all pseudo fences -------------

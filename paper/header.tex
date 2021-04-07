@@ -172,8 +172,14 @@
 \newcommand{\acqrel}{\texttt{acq-rel}\xspace}
 \renewcommand{\sc}{\texttt{sc}\xspace}
 
-\newcommand{\load}[3]{#1 := #2_#3}
-\newcommand{\store}[3]{#1 := #2_#3}
+% load/store events and instructions
+\newcommand{\load}[3]{#1 := #2_{#3}}
+\newcommand{\store}[3]{#1 := #2_{#3}}
+\newcommand{\loadev}[3]{\mathtt{R^{#3}({#1},{#2})}}
+\newcommand{\storeev}[3]{\mathtt{W^{#3}({#1},{#2})}}
+% tikz edges
+\newcommand{\rfedge}[3]{\draw [->,>=stealth,color=PineGreen,thin] ({#1}) -- node[{#3}] { rf} ({#2});}
+\newcommand{\moedge}[3]{\draw [->,>=stealth,color=RedOrange,thin] ({#1}) -- node[{#3}] {mo} ({#2});}
 
 
 %snj: Have to use the ones in format
