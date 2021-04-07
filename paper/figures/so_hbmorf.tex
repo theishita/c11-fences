@@ -1,0 +1,141 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+\tikzstyle{every node}=[font=\normalfont]
+\node (wr1) {$ wr^\sc_1 $};
+\node (wr2) [below=20pt of wr1] {$ wr^\sc_2 $};
+\node (so1) [below=-1pt of wr2] {\hlref{sohb},\hlref{somo},};
+\node (so2) [below=-5pt of so1] {\hlref{sorf}};
+
+\draw [->,>=stealth,color=RedOrange,thin] ($ (wr2.south east)+(.3,-7pt) $) to[out=-135,in=135] node[draw,above=2pt,color=black,-]{} node[right=-2pt,pos=.5,font=\scriptsize] {\textcolor{black}{\lmo/}} node[right=-0.5pt,pos=.25,font=\scriptsize] {\textcolor{black}{\lhb/\lrf}} ($ (wr1.south east)+(0.4,-5pt) $);
+\draw [->,>=stealth,color=Mahogany,thin] ($ (wr1.south west)+(-.3,-5pt) $) to[out=45,in=-45] node[midway,left=-2pt,font=\scriptsize] {\textcolor{black}{\lso}} ($ (wr2.south west)+(-0.3,-7pt) $);
+
+
+
+
+%\node (nodeB) {$ b: r_1 \assign x  $};
+%\node (sigB1) [below left=-3pt and -5pt of nodeB, color=green] {$\sigma_{b11} = $};
+%\node (poB1empty) [right=-1pt of sigB1, color=green] {$ $};
+%\node (poB1) [draw,fit=(poB1empty), color=orange, thin, inner sep=0pt] {};
+%%\node (poB1n1) [right=-3pt of sigB1, color=green] {$ $};
+%%\node (poB1) [draw,fit=(poB1n1), color=orange, thin, inner sep=0pt] {};
+%\node (B1Val) [right=-3pt of poB1, color=green] {$,0$};
+%\node (sigB1State) [fit=(poB1)(B1Val)(sigB1), inner sep=-1pt] {}; 
+
+%\node (sigB2) [right=-3pt of sigB1State, color=green] {$\sigma_{b22} = $};
+%\node (poB2N1) [right=6pt of sigB2, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poB2a) [left=1pt of poB2N1, inner sep=1pt] {$a$};
+%\node (poB2) [draw,fit=(poB2N1)(poB2a), color=orange, thin, inner sep=1pt] {};
+%\node (B2Val) [right=-3pt of poB2, color=green] {$,1$};
+%\node (sigB2State) [fit=(poB2)(B2Val)(sigB2), inner sep=0pt] {}; 
+%
+%
+%
+%%\node (rhoB1) [below =10pt of sigB1State, color=red] {$\rho_{b1}:=0$};
+%%\node (rhoB2) [below =10pt of sigB2State, color=red] {$\rho_{b2}:=1$};
+%
+%
+%\node (nodeC) [below =2 of nodeB] {$c: x \assign 2$};
+%\node (sigC1) [below left=3pt and -4pt of nodeC, color=green] {$\sigma_{c11} = $};
+%\node (poC1N1) [right=6pt of sigC1, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poC1c) [left=1pt of poC1N1, inner sep=1pt] {$c$};
+%\node (poC1) [draw,fit=(poC1c)(poC1N1), color=orange, thin, inner sep=1pt] {};
+%\node (C1Val) [right=-3pt of poC1, color=green] {$,2$};
+%\node (sigC1State) [fit=(poC1)(C1Val)(sigC1), inner sep=0pt] {}; 
+%
+%\node (sigC2) [right=-3pt of sigC1State, color=green] {$\sigma_{c22} = $};
+%\node (poC2n1) [above right=0pt and 5pt of sigC2, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poC2a) [left=1pt of poC2n1, inner sep=0pt] {$a$};
+%\node (poC2n2) [below=9pt of poC2n1, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poC2c) [left=1pt of poC2n2, inner sep=0pt] {$c$};
+%\draw [color=purple] (poC2n1) -- (poC2n2);
+%\node (poC2) [draw,fit=(poC2n1)(poC2a)(poC2n2)(poC2c), color=orange, thin, inner sep=1pt] {};
+%\node (C2Val) [right=-3pt of poC2, color=green] {$,2$};
+%\node (sigC2State) [fit=(poC2)(C2Val)(sigC2), inner sep=0pt] {}; 
+%
+%
+%
+%%\node (rhoC) [below=30pt of nodeC, color=red] {$\rho_{c}=2$};
+%
+%\node (nodeA) [left =3.5 of nodeB] {$a: x \assign 1$};
+%\node (sigA) [below left=-2pt and -25pt of nodeA, color=green] {$\sigma_{a11} = $};
+%\node (poAN1) [right=6pt of sigA, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poAa) [left=1pt of poAN1, inner sep=1pt] {$a$};
+%\node (poA) [draw,fit=(poAN1)(poAa), color=orange, thin, inner sep=1pt] {};
+%\node (AVal) [right=-3pt of poA, color=green] {$,1$};
+%\node (sigAState) [fit=(poA)(AVal)(sigA), inner sep=-1pt] {}; 
+%
+%%\node (rhoA) [below=1pt of sigAState, color=red] {$\rho_{a} := 1$};
+%
+%
+%\node (nodeD) [right =5.5 of nodeB] {$ d: r_2 \assign x  $};
+%\node (sigD1) [below left=3pt and -5pt of nodeD, color=green] {$\sigma_{d22} = $};
+%\node (poD1N1) [right=6pt of sigD1, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poD1c) [left=1pt of poD1N1, inner sep=1pt] {$c$};
+%\node (poD1) [draw,fit=(poD1c)(poD1N1), color=orange, thin, inner sep=1pt] {};
+%\node (D1Val) [right=-3pt of poD1, color=green] {$,2$};
+%\node (sigD1State) [fit=(poD1)(D1Val)(sigD1), inner sep=0pt] {}; 
+%
+%\node (sigD2) [right=-3pt of sigD1State, color=green] {$\sigma_{d33} = $};
+%\node (poD2n1) [above right=0pt and 5pt of sigD2, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poD2a) [left=1pt of poD2n1, inner sep=0pt] {$a$};
+%\node (poD2n2) [below=9pt of poD2n1, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poD2c) [left=1pt of poD2n2, inner sep=0pt] {$c$};
+%\draw [color=purple] (poD2n1) -- (poD2n2);
+%\node (poD2) [draw,fit=(poD2n1)(poD2a)(poD2n2)(poD2c), color=orange, thin, inner sep=1pt] {};
+%\node (D2Val) [right=-3pt of poD2, color=green] {$,2$};
+%\node (sigD2State) [fit=(poD2)(D2Val)(sigD2), inner sep=0pt] {};  
+%
+%
+%
+%\node (nodeE) [below =2 of nodeD] {$e: r_3 \assign x$};
+%\node (sigE1) [below left=3pt and -5pt of nodeE, color=green] {$\sigma_{e23} = $};
+%\node (poE1N1) [right=6pt of sigE1, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poE1c) [left=1pt of poE1N1, inner sep=1pt] {$c$};
+%\node (poE1) [draw,fit=(poE1c)(poE1N1), color=orange, thin, inner sep=1pt] {};
+%\node (E1Val) [right=-3pt of poE1, color=green] {$,2$};
+%\node (sigE1State) [fit=(poE1)(E1Val)(sigE1), inner sep=0pt] {}; 
+%
+%\node (sigE2) [right=-3pt of sigE1State, color=green] {$\sigma_{e34} = $};
+%\node (poE2n1) [above right=0pt and 5pt of sigE2, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poE2a) [left=1pt of poE2n1, inner sep=0pt] {$a$};
+%\node (poE2n2) [below=9pt of poE2n1, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poE2c) [left=1pt of poE2n2, inner sep=0pt] {$c$};
+%\draw [color=purple] (poE2n1) -- (poE2n2);
+%\node (poE2) [draw,fit=(poE2n1)(poE2a)(poE2n2)(poE2c), color=orange, thin, inner sep=1pt] {};
+%\node (E2Val) [right=-3pt of poE2, color=green] {$,2$};
+%\node (sigE2State) [fit=(poE2)(E2Val)(sigE2), inner sep=0pt] {}; 
+%
+%\node (sigE3) [below =9pt of sigE1, color=green] {$\sigma_{e32} = $};
+%\node (poE3n1) [above right=0pt and 5pt of sigE3, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poE3c) [left=1pt of poE3n1, inner sep=0pt] {$c$};
+%\node (poE3n2) [below=9pt of poE3n1, circle,fill=black,inner sep=0pt,minimum size=3pt] {};
+%\node (poE3a) [left=1pt of poE3n2, inner sep=0pt] {$a$};
+%\draw [color=purple] (poE3n1) -- (poE3n2);
+%\node (poE3) [draw,fit=(poE3n1)(poE3a)(poE3n2)(poE3c), color=orange, thin, inner sep=1pt] {};
+%\node (E3Val) [right=-3pt of poE3, color=green] {$,1$};
+%\node (sigE3State) [fit=(poE3)(E3Val)(sigE3), inner sep=0pt] {};
+%
+%\node (sigE4) [right =-11pt of sigE3State, color=green] {$\quad \sigma_{e35} = \bot$};
+%\node (sigE4State) [fit=(sigE4), inner sep=1pt] {};
+%
+%
+%
+%
+%%\draw [dashed,->,>=stealth,color=brown,thin] (sigB1State.west) to[out=45,in=-45] (sigC1State.west);
+%%\draw [dashed,->,>=stealth,color=brown,thin] (sigB2State.west) to[out=45,in=-45] (sigC2State.west);
+%%\draw [dashed,->,>=stealth,color=brown,thin] (sigD1State.west) to[out=45,in=-45] (sigE1State.west);
+%%\draw [dashed,->,>=stealth,color=brown,thin] (sigD2State.west) to[out=45,in=-45] (sigE2State.west);
+%%\draw [dashed,->,>=stealth,color=brown,thin] (sigD1State.east) to[out=135,in=-135] (sigE3State.east);
+%%\draw [dashed,->,>=stealth,color=brown,thin] (sigD2State.east) to[out=135,in=-135] (sigE4State.east);
+%%\draw [dashed,->,>=stealth,color=blue,thin] (sigC1State.north east) to[out=-110,in=0] node[midway,left] {rf} (sigD1State.west);
+%%\draw [dashed,->,>=stealth,color=blue,thin] (sigC2State.east) to[out=-150,in=0] node[midway,left] {rf} (sigD2State.west);
+%
+%\draw [dashed,->,>=stealth,color=blue,thin] (sigAState) to[out=165,in=25] node[midway,above] {rf} (sigB2State.south);
+%\draw [dashed,->,>=stealth,color=blue,thin] (sigC1State.north east) -- node[midway,above] {rf} (sigD1State.south west);
+%\draw [dashed,->,>=stealth,color=blue,thin] (sigC2State.north east) -- node[midway,above] {rf} (sigD2State.south west);
+%\draw [dashed,->,>=stealth,color=blue,thin] (sigAState) to[out=105,in=15] node[midway,above] { rf} (sigE3State.west);
+%\draw [dashed,->,>=stealth,color=blue,thin] (sigAState) to[out=100,in=20] node[midway,above] {rf} (sigE4State.south);
+
+%\draw [dashed,->,>=stealth,color=blue,thin] (rhoA) -- node[midway,above] {rf} (rhoB2);
+%\vspace{-10pt}
+\end{tikzpicture}

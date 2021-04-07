@@ -70,7 +70,7 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 			\State $ \seqb{\tau'}{}{} := $ computeSB($\events_\tau^f$) \State $ \so{\tau'}{}{} := $ computeSO($\events_\tau^f, \setHB, \setMO, \setRF, \seqb{\tau'}{}{}$)
 			\State cycles := computeCycles($ \so{\tau'}{}{} $)
 			\If {cycles == $ \emptyset $}
-				\State ``This behavior can't be stopped using \cc fences.''
+				\State \texttt{Abort} (``This behavior can't be stopped using \cc fences.'')
 				\State \Return
 			\EndIf
 			\State $\phi := \phi\ \^ $ genFormula(cycles)

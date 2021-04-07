@@ -45,85 +45,35 @@ Additionally, in a sequence $\tau$, all write events of an object $x$ are relate
 total order called {\em modification-order} ($\setMO$).
 %
 The $\setMO$ order is constructed in compliance to a set of coherence
-\lmo-rules defined by \cc based on $\setHB$. 
+\lmo-rules defined by \cc based on $\setHB$ and $\setRF$ ({\em reads-from}, 
+relation between a write and a read that reads the value of the write event). 
+\snj{I have removed the formal definitions of the \lmo-rules, they are there 
+in the latex file as comment if needed.}
 %
-The set of $\setMO$ rules are,
-\begin{itemize}[label=moWW,align=left,leftmargin=*]
-	\item [\hl{moWW}:] $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
-						$\mo{\tau}{w_1}{w_2}$\newline
-						($\setHB$ ordered writes are ordered by $\setMO$);
-	\item [\hl{moRR}:] $\forall r_1, r_2 \in \reads_\tau$ \st $\hb{\tau}{r_1}{r_2}$
-						and $\exists \rf{\tau}{w_1}{r_1}$
-						then $\rf{\tau}{w_1}{r_2}$ $\v$ $\exists \rf{\tau}{w_2}{r_2}$
-						and $\mo{\tau}{w_1}{w_2}$\newline
-						($\setHB$ between reads forms $\setMO$ between their source
-						writes (if they are different events));
-	\item [\hl{moRW}:] $\forall r_1 \in \reads_\tau$, $w_1 \in \writes_\tau$ \st
-						$\hb{\tau}{r_1}{w_1}$ then $\exists \rf{\tau}{w_2}{r_1}$ and
-						$\mo{\tau}{w_2}{w_1}$\newline
-						($\setHB$ order from a read to a write forms $\setMO$ between the
-						source of the read and the hb-after write);
-	\item [\hl{moWR}:] $\forall w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st
-						$\hb{\tau}{w_1}{r_1}$ then $\rf{\tau}{w_1}{r_1}$ $\v$
-						$\exists \rf{\tau}{w_2}{r_1}$ and $\mo{\tau}{w_1}{w_2}$\newline
-						($\setHB$ order from a write to a read forms $\setMO$ between
-						the write and the source of the read (if the two are
-						different events)).
-\end{itemize}
-
-%\begin{figure}[t]
-	%	\begin{tabular}{|l m{0.9\textwidth}|}
-	%		\hline
-	%		\hl{moWW} & $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
-	%					$\mo{\tau}{w_1}{w_2}$ \\
-	%		\hl{moRR} & $\forall r_1, r_2 \in \reads_\tau$ \st $\hb{\tau}{r_1}{r_2}$
-	%					and $\exists \rf{\tau}{w_1}{r_1}$
-	%					then $\rf{\tau}{w_1}{r_2}$ $\v$ $\exists \rf{\tau}{w_2}{r_2}$
-	%					and $\mo{\tau}{w_1}{w_2}$  \\
-	%		\hl{moRW} & $\forall r_1 \in \reads_\tau$, $w_1 \in \writes_\tau$ \st
-	%					$\hb{\tau}{r_1}{w_1}$ then $\exists \rf{\tau}{w_2}{r_1}$ and
-	%					$\mo{\tau}{w_2}{w_1}$ \\
-	%		\hl{moWR} & $\forall w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st
-	%					$\hb{\tau}{w_1}{r_1}$ then $\rf{\tau}{w_1}{r_1}$ $\v$
-	%					$\exists \rf{\tau}{w_2}{r_1}$ and $\mo{\tau}{w_1}{w_2}$ \\
-	%		
-	%		\hline
-	%	\end{tabular}
-	
-%	\begin{tabular}{|l m{0.86\textwidth}|}
-%		\hline
-%		\hl{tohb} & $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
-%		$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ 
-%		then $\to{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \\
-%		\hl{toWW} & $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
-%		$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
-%		then $\to{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \\
-%		\hl{toWR} & $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
-%		\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
-%		$\to{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \\
-%		\hl{toRW} & $\forall w_1 \in \writes_\tau$, $r^{\sc}_1 \in \ordreads{sc}_\tau$ \st 
-%		$\rf{\tau}{w_1}{r^{\sc}_1}$ if $\exists w^{\sc}_2 \in \ordwrites{\sc}_\tau$
-%		\st $\mo{\tau}{w_1}{w^{\sc}_2}$ then $\to{\tau}{r^{\sc}_1}{w^{\sc}_2}$ \\
-%		\hl{toFW} & $\forall f^{\sc} \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
-%		\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
-%		\reads_\tau$ \st $\seqb{\tau}{f^{\sc}}{r_1}$, $\seqb{\tau}{w_2}{w^{\sc}_1}$ 
-%		and $\rf{\tau}{w_2}{r_1}$ then $\to{\tau}{f^{\sc}}{w^{\sc}_1}$ \\
-%		\hl{toFFrf} & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
-%		if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
-%		$\seqb{\tau}{f^{\sc}_1}{w_1}$, $\seqb{\tau}{r_1}{f^{\sc}_2}$ 
-%		and $\rf{\tau}{w_1}{r_1}$ then $\to{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \\
-%		\hl{toFFnrf} & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
-%		if $\exists w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st 
-%		$\seqb{\tau}{w_1}{f^{\sc}_1}$, $\seqb{\tau}{f^{\sc}_2}{r_1}$ and
-%		$\exists w_2 \in \writes_\tau$ \st $\mo{\tau}{w_2}{w_1}$,
-%		$\rf{\tau}{w_2}{r_1}$ then $\to{\tau}{f^{\sc}_2}{f^{\sc}_1}$ \\
-%		\hline
-%	\end{tabular}
-%	\caption{\lmo and \lto coherence rules}
-%	\label{fig:mo-to rules}
-%\end{figure}
-
-We introduce an irreflexive relation \sc{\em -from-read} ($\setFR$) to relate  
+%The set of $\setMO$ rules are,
+%\begin{itemize}[label=moWW,align=left,leftmargin=*]
+%	\item [\hl{moWW}:] $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
+%						$\mo{\tau}{w_1}{w_2}$\newline
+%						($\setHB$ ordered writes are ordered by $\setMO$);
+%	\item [\hl{moRR}:] $\forall r_1, r_2 \in \reads_\tau$ \st $\hb{\tau}{r_1}{r_2}$
+%						and $\exists \rf{\tau}{w_1}{r_1}$
+%						then $\rf{\tau}{w_1}{r_2}$ $\v$ $\exists \rf{\tau}{w_2}{r_2}$
+%						and $\mo{\tau}{w_1}{w_2}$\newline
+%						($\setHB$ between reads forms $\setMO$ between their source
+%						writes (if they are different events));
+%	\item [\hl{moRW}:] $\forall r_1 \in \reads_\tau$, $w_1 \in \writes_\tau$ \st
+%						$\hb{\tau}{r_1}{w_1}$ then $\exists \rf{\tau}{w_2}{r_1}$ and
+%						$\mo{\tau}{w_2}{w_1}$\newline
+%						($\setHB$ order from a read to a write forms $\setMO$ between the
+%						source of the read and the hb-after write);
+%	\item [\hl{moWR}:] $\forall w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st
+%						$\hb{\tau}{w_1}{r_1}$ then $\rf{\tau}{w_1}{r_1}$ $\v$
+%						$\exists \rf{\tau}{w_2}{r_1}$ and $\mo{\tau}{w_1}{w_2}$\newline
+%						($\setHB$ order from a write to a read forms $\setMO$ between
+%						the write and the source of the read (if the two are
+%						different events)).
+%\end{itemize}
+Further, we introduce an irreflexive relation \sc{\em -from-read} ($\setFR$) to relate  
 \sc reads with \sc writes ordered {\em after} it.
 
 \begin{definition}[\sc{\em -from-read} $\setFR$]\newline

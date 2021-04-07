@@ -1,0 +1,15 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+\tikzstyle{every node}=[font=\normalfont]
+\node (w1) {$ w_1 $};
+\node (w2) [right=25pt of w1] {$ w^\sc_2 $};
+\node (r1) [below left=20pt and -15pt of w1] {$ r^\sc_1 $};
+\node (sofr) [below right=-2pt and -2pt of r1] {\hlref{sofr}};
+
+%\draw [->,>=stealth,color=Mahogany,thin] (er1)+(-7pt, 0) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lchb$ } (ew1)+(7pt, 0);
+\draw [->,>=stealth,color=RedOrange,thin] (w1) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lmo$ } (w2);
+\draw [->,>=stealth,color=Mahogany,thin] (r1) -- 
+node[midway,right,font=\scriptsize,color=black] { $\lfr/\lso$ } (w2);
+\draw [->,>=stealth,color=PineGreen,thin] (w1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lrf$ } (r1);`
+
+\end{tikzpicture}
