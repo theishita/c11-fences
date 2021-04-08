@@ -1,11 +1,11 @@
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
 \begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
 \tikzstyle{every node}=[font=\normalfont]
-\node (w1) {$ w_1 $};
-\node (w2) [right=25pt of w1] {$ w_2 $};
-\node (r1) [below left=20pt and -15pt of w1] {$ r^\sc_1 $};
-\node (f1) [below left=20pt and -15pt of w2] {$ f^\sc_1 $};
-\node (sorffr) [below right=0pt and -5pt of r1] {\hlref{soRFfr}};
+\node (r1) {$ r^\sc_1 $};
+\node (f1) [right=25pt of r1] {$ f^\sc_1 $};
+\node (w1) [below left=20pt and -15pt of r1] {$ w_1 $};
+\node (w2) [below left=20pt and -15pt of w2] {$ w_2 $};
+\node (sorffr) [below right=0pt and -5pt of w1] {\hlref{soRFfr}};
 
 `\draw [->,>=stealth,color=RedOrange,thin] (w1) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lmo$ } (w2);
 \draw [->,>=stealth,color=PineGreen,thin] (w1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $ \lrf $ } (r1);
