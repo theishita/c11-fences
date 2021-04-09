@@ -82,7 +82,7 @@ Further, we introduce an irreflexive relation \sc{\em -from-read} ($\setFR$) to 
 \end{definition}
 
 A valid \cc execution must also form a total order on all events with memory
-order \sc, called \sc{\em -total-order} ($\setTO$) \st
+order \sc, called \sc{\em -total-order} ($\setTO$) \cite{LahavVafeiadis-PLDI17} \st
 \begin{itemize}[label=to,align=left,leftmargin=*]
 	\item [\hl{toHbMo}:] %$\forall e^\sc_1, e^\sc_2 \in \ordevents{\sc}_\tau$, 
 			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nhb{\tau}{e^\sc_2}{e^\sc_1}$ 
