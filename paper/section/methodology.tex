@@ -17,7 +17,7 @@
 %% brief overview of our approach
 % Sections:
 %% counter example generator and its specifications/requirements
-%% inserting candidate fences and computing SC
+%% inserting candidate fences and computing SO
 %%% mention a trivial solution here
 %% Fence minimization
 
@@ -66,8 +66,8 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 		\State $\phi := \top$
 		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)
 		\For{$ \tau \in \mathcal{CE} $}
-			\State $ \events_\tau^f := \events_\tau\ \union $ candidate fences
-			\State $ \seqb{\tau^{\mathtt{im}}}{}{} := $ computeSB($\events_\tau^f$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_\tau^f, \setHB, \setMO, \setRF, \seqb{\im{\tau}}{}{}$)
+			\State $ \events_{\im{\tau}} := \events_\tau\ \union $ candidate fences
+			\State $ \seqb{\im{\tau}}{}{} := $ computeSB($\setSB, \events_{\im{\tau}}$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_{\im{\tau}}, \setHB, \setMO, \setRF, \seqb{\im{\tau}}{}{}$)
 			\State cycles := computeCycles($ \so{\im{\tau}}{}{} $)
 			\If {cycles == $ \emptyset $}
 				\State \texttt{Abort} (``This behavior can't be stopped using \cc fences.'')
@@ -111,7 +111,7 @@ Each of these counter-examples $ \tau $ should consist a list program events
 $ \events_\tau $ and $ \setHB, \setMO, \setRF, \setSB $ relations over the 
 program events. 
 A program event consists of instruction label, action, memory order, variable, and value. 
-\divComment{We don't actually need variable and value since we have rf and other relations already.}
+\divComment{We don't actually need value since we have rf and other relations already.}
 Our approach treats a counter example generator that reports all of this information as a black box. 
 Any technique that can generate \cc traces and find buggy behaviors can be used as counter-example generator.
 %\divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
@@ -164,32 +164,75 @@ simplicity.
 \end{figure}
 
 % --------------- FIG all pseudo fences -------------
-\begin{figure}[!htb]
-\begin{center}
-\texttt{
-init y := 0, x := 0;\\
-	\begin{tabular}{c l || c l}
-		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
-		(1) & W$\mathtt{_{rel}}$y(1) & (5) & W$\mathtt{_{rel}}$x(1)\\
-		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
-		(2) & if R$\mathtt{_{rel}x}$ == 0 & (6) & if R$\mathtt{_{rel}y}$ == 0\\
-		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
-		(3) & \qquad W$\mathtt{_{rel}}$c(1) & (7) & \qquad W$\mathtt{_{rel}}$c(0)\\
-		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
-		(4) & \qquad assert($\mathtt{R_{rel}c}$ == 1) & (8) & \qquad assert($\mathtt{R_{rel}c}$ == 0)\\
-		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
-	\end{tabular}
-}
+%\begin{figure}[!htb]
+%\begin{center}
+%\texttt{
+%init y := 0, x := 0;\\
+%	\begin{tabular}{c l || c l}
+%		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
+%		(1) & W$\mathtt{_{rel}}$y(1) & (5) & W$\mathtt{_{rel}}$x(1)\\
+%		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
+%		(2) & if R$\mathtt{_{rel}x}$ == 0 & (6) & if R$\mathtt{_{rel}y}$ == 0\\
+%		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
+%		(3) & \qquad W$\mathtt{_{rel}}$c(1) & (7) & \qquad W$\mathtt{_{rel}}$c(0)\\
+%		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
+%		(4) & \qquad assert($\mathtt{R_{rel}c}$ == 1) & (8) & \qquad assert($\mathtt{R_{rel}c}$ == 0)\\
+%		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
+%	\end{tabular}
+%}
 
-\divComment{All of the memory orders are rel. Is that correct?}
-	\caption{Dekker's Mutual Exclusion program}\label{fig:dekker3}
-\end{center}
-\end{figure}
+%\divComment{All of the memory orders are rel. Is that correct?}
+%	\caption{Dekker's Mutual Exclusion program}\label{fig:dekker3}
+%\end{center}
+%\end{figure}
 
 
 \subsection{Computing SO relation}
-For each counter-example $ \tau $ of buggy program $ P $, we assume that 
-there is a \mosc fence before and after every program event.
+\noindent\textbf{Inserting Candidate Fences:}
+For each counter-example $ \tau $ of buggy program $ P $, we 
+construct an intermediate trace $ \im{\tau} $ by assuming the existance candidate fences in the trace $ \tau $.
+Our approach assumes all possible program locations as a valid location 
+for candidate fences. 
+Hence the $ \im{\tau} $ will have at least one \mosc fence before and after every program event in $ \tau $.
+It is possible to start with a smaller set of program locations for 
+candidate fences. 
+In this case our approach will return the optimal fence placement wrt the 
+set of candidate fences.
+Since we are assuming existence of candidate fences at all possible 
+program locations, the trace $ \im{\tau} $ should be invalid \cc execution 
+if $ \tau $ can be stopped using \mosc fences.
+Hence, if $ \im{\tau} $ is not invalid \cc execution for some 
+the counter-examples $ \tau $ in $ \mathcal{CE} $, we determine that \mosc 
+fences are not sufficient to stop the buggy behaviors of the program.
+Recall that \mosc fences are the strongest \cc fences. 
+If \mosc fences cannot stop a buggy behavior in a program, we can conclude 
+that \cc fences are not strong enough to render this program correct.
+Previous works \cite{LahavVafeiadis-PLDI17,Batty-POPL12} suggest that \mosc fences are not sufficient to achieve SC memory 
+model. 
+Hence it is possible that a valid SC program is buggy under \cc with all 
+possible \mosc fences inserted. 
+In some of these cases strengthening the memory order annotated for some 
+of the program instructions might render the program correct. 
+However, strengthening the memory order annotation is out of the scope of this work. 
+
+\noindent\textbf{Computing \lsb in Intermediate Traces:} 
+In line 5 of the Algorithm~\ref{alg:fence-syn}, we compute set of program 
+events in trace $ \im{\tau} $. Naturally, this set will consist of 
+candidate fences along with all the program events in trace $ \tau $.
+The set $ \setSB $ represents the pair of program events related by 
+relation $ \lsb $ in the trace $ \tau $. We compute the set 
+$ \seqb{\im{\tau}}{}{} $ for the events of the trace $ \im{\tau} $. 
+The computeSB function takes set of \lsb event pairs in $ \tau $ 
+($ \setSB $), the set of events in trace $ \im{\tau} $ 
+($ \events_{\im{\tau}} $) as input and computes the set of \lsb in 
+$ \im{\tau} $ based on instruction labels, their position in the program $ P $. \divComment{Do we need event action to compute the \lsb?}
+
+\noindent\textbf{Computing \lso in Intermediate Traces:}
+
+
+\subsection{Synthesizing Fences}
+
+\subsection{Synthesizing Optimal Fences}
 
 
 % --------- ADDING FENCES -------------
