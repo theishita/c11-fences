@@ -104,16 +104,16 @@ of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf}
 \end{itemize}
 
 Consider a \cc execution sequence $\tau$ and a transformation
-$\fixed{\tau}$ of $\tau$ \st $\events_{\fixed{\tau}}$ = $\events_\tau$
+$\fx{\tau}$ of $\tau$ \st $\events_{\fx{\tau}}$ = $\events_\tau$
 $\union$ set of synthesized fences and $\to{\tau}{}{}$ $\subseteq$
-$\so{\fixed{\tau}}{}{}$.
+$\so{\fx{\tau}}{}{}$.
 %
-Cyclic $\so{\fixed{\tau}}{}{}$ implies that there does not exist a 
-total order on \sc ordered events of $\fixed{\tau}$. The sequence $\fixed{\tau}$, 
+Cyclic $\so{\fx{\tau}}{}{}$ implies that there does not exist a 
+total order on \sc ordered events of $\fx{\tau}$. The sequence $\fx{\tau}$, 
 then, is not a valid \cc execution and the buggy sequence $\tau$ 
 has been invalidated.
 
 Thus, the aim of this work is to synthesis fences in the input program $P$
 at appropriate locations and force a cyclic $\setSO$ order in the \sc 
 ordered events of a buggy trace $\tau$ of $P$ and invalidating the trace 
-for the transformed program $\fixed{P}$.
+for the transformed program $\fx{P}$.

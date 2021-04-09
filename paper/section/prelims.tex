@@ -53,8 +53,8 @@
 	\item \color{olive}//a \color{black} \qquad the value expected to be read in that line is a
 	\item buggy traces / buggy executions  $\tau$
 	\item candidate fences
-	\item original/transformed program or buggy/fixed program ($ P/ \fixed{P} $)
-	\item invalidated traces: counter-examples with inserted fences $\fixed{\tau}$
+	\item original/intermediate/transformed program or buggy/intermediate/fixed program ($ P/ \im{P}/ \fx{P} $)
+	\item intermediate trace: with candidate fences $ \im{\tau} $, invalidated traces: counter-examples with inserted fences $\fx{\tau}$
 	\item $\setSO$-order/ $\setSO$-cycle
 	\item writes and reads include rmw unless otherwise mentioned
 	\item execution sequence and sequence interchangeably used
