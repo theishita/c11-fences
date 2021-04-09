@@ -63,7 +63,7 @@ A greater number of instructions may or may not produce a sizeable \lto graph.
 This depends upon the semantics of the input program. However, chances are,
 an intricate graph with many \lto relations will result in an enormous number of cycles, 
 sometimes having exponential numbers, resulting in a much greater
-computation time. This is evidenced by looking at the Z3 computation 
+computation time. This is evidenced by looking at the \z computation 
 time column, since the SAT Solver is only concerned with reducing the cycles
 to a minimal required number of fences. For instance, the benchmark \texttt{pgsql0}, though having 
 a very small number of buggy executions, has an execution time of a few minutes. Much
