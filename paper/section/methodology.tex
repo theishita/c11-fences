@@ -67,7 +67,7 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)
 		\For{$ \tau \in \mathcal{CE} $}
 			\State $ \events_\tau^f := \events_\tau\ \union $ candidate fences
-			\State $ \seqb{\tau'}{}{} := $ computeSB($\events_\tau^f$) \State $ \so{\tau'}{}{} := $ computeSO($\events_\tau^f, \setHB, \setMO, \setRF, \seqb{\tau'}{}{}$)
+			\State $ \seqb{\tau^{\mathtt{im}}}{}{} := $ computeSB($\events_\tau^f$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_\tau^f, \setHB, \setMO, \setRF, \seqb{\tau'}{}{}$)
 			\State cycles := computeCycles($ \so{\tau'}{}{} $)
 			\If {cycles == $ \emptyset $}
 				\State \texttt{Abort} (``This behavior can't be stopped using \cc fences.'')
@@ -106,7 +106,7 @@ gives us the minimal set of fences to be inserted in order to stop the
 buggy behaviors.
 The rest of this section discuss each of these steps in detail.
 
-\noindent\textbf{Generating Counter Examples:} 
+\subsection{Generating Counter Examples:} 
 \ourtechnique requires a set of counter examples $ \mathcal{CE} $. 
 Each of these counter-examples $ \tau $ should consist a list program events 
 $ \events_\tau $ and $ \setHB, \setMO, \setRF, \setSB $ relations over the 
@@ -117,24 +117,6 @@ Our approach treats a counter example generator that reports all of this informa
 Any technique that can generate \cc traces and find buggy behaviors can be used as counter-example generator.
 %\divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
 Counter-examples in \texttt{dekker} program are given in Figure~\ref{fig:dekker-ce}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%In the program described in Fig \ref{fig:dekker2}, inserting an SC fence 
-%between the instructions (1) and (2), and an SC fence between (5) and (6) 
-%render the program non-buggy, thereby satisfying the given assertions. 
-%After adding these fences, the program will never have a case where 
-%the output can be anything other than ``10''. 
-
-%To obtain the position of these fences, a series of steps is followed. 
-%The two fences strategically inserted in the program are the minimum 
-%number of fences which can be inserted in order to prevent the unwanted 
-%outputs. \snj{Not correct: 
-%	One can add \mosc fences at all positions - before and after all 
-%instructions - in order to make the program as strict as possible under 
-%C11} and hence prevent the buggy outputs if possible, such as in Fig 
-%\ref{fig:dekker3}. 
 
 %%%% Move to motivation %%%%
 %However, this comes at the cost of making program 
@@ -180,31 +162,6 @@ Counter-examples in \texttt{dekker} program are given in Figure~\ref{fig:dekker-
 	\label{fig:dekker-ce}
 \end{figure}
 
-%% dekker for cppmem:
-%int main() {
-%	atomic_int x = 0; 
-%	atomic_int y = 0;
-%	atomic_int z = 0;
-%	{{{ {
-%					y.store(1, mo_relaxed);
-%					if (x.load(mo_relaxed).readsvalue(0)) {
-%						z.store(1, mo_relaxed);
-%						z.load(mo_relaxed).readsvalue(1);
-%					}
-%				}
-%				||| {
-%					x.store(1, mo_relaxed);
-%					if (r1=y.load(mo_relaxed).readsvalue(0)) {
-%						z.store(2, mo_relaxed);
-%						z.load(mo_relaxed).readsvalue(2);
-%					}
-%				}
-%	}}};
-%	return 0; 
-%}
-
-
-
 % --------------- FIG all pseudo fences -------------
 \begin{figure}[!htb]
 \begin{center}
@@ -227,6 +184,13 @@ init y := 0, x := 0;\\
 	\caption{Dekker's Mutual Exclusion program}\label{fig:dekker3}
 \end{center}
 \end{figure}
+
+
+\subsection{Computing SO relation}
+For each counter-example $ \tau $ of buggy program $ P $, we assume that 
+there is a \mosc fence before and after every program instruction 
+\divComment{or event?}. 
+%We call a trace with candidate fences $ \tau' $ and  The $ \setSB $ will change in the 
 
 % --------- ADDING FENCES -------------
 \subsection{Adding Pseudo Fences}
