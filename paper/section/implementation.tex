@@ -3,11 +3,11 @@ example) by inserting \sc ordered fences in the input program $P$
 by the technique discussed in Section~\ref{sec:methodology}.
 %
 The technique relies on a {\em counter example generator} to provide
-(i) a buggy execution sequence (or counter example) along with (ii)
-the $\setMO$, $\setHB$ and $\setRF$ relations between the events of the
-buggy execution (line 3, Algorithm~\ref{alg:fence-syn}).
+(i) buggy execution sequences (or counter examples) along with (ii)
+the $\setMO$, $\setHB$ and $\setRF$ relations between the events of 
+each buggy execution (line 3, Algorithm~\ref{alg:fence-syn}).
 %
-We chose \cds \cite{cds} as the closest solution for our purpose
+We recognized \cds \cite{cds} as the closest solution for our purpose
 owing to the following reasons;
 
 \begin{enumerate}
@@ -34,39 +34,79 @@ owing to the following reasons;
 
 To bridge the gap between \cds's output and \ourtechnique's requirement,
 we perform a pre-processing step that uses the $\setSB$ and $\setRF$ relations 
-provided \cds to compute the $\setHB$ and $\setMO$ relations on the events
-of the buggy executions based on the coherence rules provided by \cc model.
+provided by \cds to compute the $\setHB$ and $\setMO$ relations on the events
+of the buggy executions, based on the coherence rules provided by \cc model.
 %
 The buggy executions along with $\setSB$, $\setRF$ and computed $\setHB$ 
 and $\setMO$ relations are provided as input to the core technique 
-(lines 4-14, Algorithm~\ref{alg:fence-syn}) for synthesizing fences,
+(lines 4-14, Algorithm~\ref{alg:fence-syn}) for synthesizing fences as
 discussed in Section~\ref{sec:methodology}.
 
 The core technique and the pre-processing has been implemented in 
 {\tt Python}.
 \ourtechnique uses {\em Johnson's} algorithm provided in {\em networkx}
-library to detect cycles in the $\setSO$ relation built over the \sc
+library to detect cycles in the $\setSO$ relation that are built over the \sc
 events of the intermediate execution sequence that has the complete set 
-of candidate fences.
+of candidate fences (line 8, Algorithm~\ref{alg:fence-syn}).
+%
+Upon finding cycles, \ourtechnique uses \z theorem prover to find the 
+{\em min-model} for the formula containing $\setSO$ cycles (line 13, 
+Algorithm~\ref{alg:fence-syn}).
 
 {\bf Time efficient alternative technique:} It was observed that analysis
-time of the core technique and Z3 computation of min-model were impacted
+time of the core technique and \z computation of min-model were impacted
 by the number of buggy sequences returned by \cds.
 %
 As a counter measure we propose a time efficient alternative to the core 
 technique that considers one buggy execution sequence at a time.
 %
 This technique picks any one buggy executions of input program $P$,
-fixes the same by inserting \sc fences transforming $P$ to $P'$ with the
-\sc fences. The technique then looks for the next buggy execution with 
-$P'$ as the input program till \cds returns no buggy executions, or
+fixes the same by inserting \sc fences and  transforms $P$ to $P'$,
+where $P'$ contains the newly added \sc fences along with the events already
+in $P$. 
+%
+The technique then looks for the next buggy execution by invoking \cds 
+with $P'$ as the input program. 
+The process repeats till \cds returns no buggy executions, or
 finds a buggy execution that cannot be fixed with \sc fences.
 
-The technique is not optimal in the number of fences inserted as 
-\snj{provide reason}.
+\begin{wrapfigure}{l}{0.45\textwidth}
+	\begin{tabular}{|l|}
+		\hline
+		$\setSO$ cycles in $\tau_1$\\
+		\tab$\so{\tau_1}{\so{\tau_1}{\so{\tau_1}{f_1}{f_2}}{e_1}}{f_3}$\\
+		\tab$\so{\tau_1}{\so{\tau_1}{\so{\tau_1}{f_3}{f_4}}{f_1}}{f_3}$\\
+		$\formula{\tau_1}$ = ($f_1 \^ f_2$) $\v$ ($f_3 \^ f_4 \^ f_1$)\\
+		\\
+		$\setSO$ cycles in $\tau_2$\\
+		\tab$\so{\tau_2}{\so{\tau_2}{f_3}{f_4}}{f_3}$\\
+		$\formula{\tau_2}$ = ($f_3 \^ f_4$)\\
+		\hline
+	\end{tabular}
+	\caption{example showing non-optimality of the efficient version }
+	\label{fig:eg}
+\end{wrapfigure}
+
+The technique is sound, \ie if the buggy behavior(s) can be stopped by 
+inserting \sc fences in the program then the technique will successfully
+invalidate the behavior(s);
+but the technique is not optimal in the number of fences inserted.
+The non-optimality of the efficient version is a result of the reduction
+in information that the technique has to work with (from all buggy executions
+to just one at a time). As a consequence of considering one execution per
+iteration the \z formula is attenuated with terms only from one execution.
 %
+Consider the example in Figure~\ref{fig:eg} depicting $\setSO$ cycles in two buggy 
+executions of an input program. The primary \ourtechnique technique
+would provide the formula $\formula{\tau_1}$ $\^$ $\formula{\tau_2}$ to 
+\z and thus recognize $(f_3 \^ f_4 \^ f_1)$ as the optimal solution.
+The time efficient version, however, may consider the formula 
+$\formula{\tau_1}$ in the first iteration and $\formula{\tau_2}$ in the
+next iteration and return  ($f_1 \^ f_2$) $\^$ ($f_3 \^ f_4$) as the
+result which is larger in size than the optimal solution.
+
 However, it was observed from the experimental results that the time
-efficient technique performed significantly better in terms of the
-analysis time while adding a reasonably small number of extra \sc
-fences. The difference has been discussed in detail in the following 
-section.
+efficient technique significantly performs the primary technique in terms of 
+the analysis time while adding a reasonably small number of extra \sc
+fences. The experimental results have been discussed in detail in the 
+following section.
