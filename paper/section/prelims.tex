@@ -1,64 +1,82 @@
-%% -------------------- C11 MODEL ------------------------
-%\subsection{The C11 Model}
-%\par
-%Since the C/C++11 \cite{C11} memory model is a relaxed model, load/store operations can be re-ordered before they are stored into the memory. In multi-threaded programs due to re-orderings between loads and stores, and other factors such as different methods used by different hardware for cache coherency, threads may end up seeing loads and stores by other threads in an order different than the one intended. One way of controlling this is through specifying the memory order for each operation in the program.
+Consider an acyclic multi-threaded \cc program $P$. The threads
+of the program perform a sequence of memory access operations 
+on a set of shared memory objects and \cc memory fences.
+The memory access operations can be atomic or non-atomic in
+nature.
 %
-%\begin{figure}
-%	\begin{center}
-%		\begin{tabular}{|c|}
-%		\hline
-%		non-atomic $<$ relaxed $<$ release = acquire $<$ sequential consistency\\
-%		\hline
-%		\end{tabular}
-%	\caption{Memory orders in increasing order of strength}\label{fig:mo_strength}
-%	\end{center}
-%\end{figure}
+An instance of a thread operation in an execution sequence is
+called an {\em event}. We use $\events$ to denote the set of all
+program events. We further use $\writes$, $\reads$ and $\fences$
+to denote the write, read and fence events of the input program.
 %
-%As discussed previously, this feature can cause behaviour which is unexpected by the programmer. Two memory consistency primitives introduced into the C/C++11 model can be exploited by us in this scenario - \textit{atomic operations} and \textit{memory fences}. 
-%
-%% ------------- ATOMIC OPS ----------------
-%\subsubsection{Atomic Operations}
-%Examples of atomic operations in the C/C++11 memory order are atomic loads, atomic stores, atomic read-modify-writes. These operations are carried out on atomic objects/variables.
-%
-%\ishComment{insert examples of atomic ops like a.load(mo\_rel) etc}
-%
-%The approach described in this project makes use of these atomic operations within the input program.
-%
-%% --------------- FENCES ----------------
-%\subsubsection{C11 Fences}
-%\par
-%A fence in the C11 model is also an atomic instruction which can be inserted between other instructions. These fences prevent memory operations to be ordered or re-ordered past the fence and they also permit the operations to be ordered in-between threads. 
-%
-%\par
-%A fence can have memory order SC, release, acquire. Specifically, a release fence prevents previous load/store operations from being re-ordered and moved after the fence and an acquire fence prevents load/store operations after the fence to be re-ordered and moved before the fence. On the other hand, an SC fence prevents both such behaviours. This project focuses only on SC fences and inserting them into the program in order to methodically stop instructions from re-ordering and preventing the unexpected behaviour.
-%\ishComment{behaviour spelling}
-%
-%% ---------------- TYPES OF RELATIONS -----------
-%\subsection{Basic relations}
-%\par
-%In a program execution, there can be certain relations formed between instructions. Each type of relation has rules or preconditions which dictate the type of relation between any two instructions.
-%
-%\par
-%Three basic relations which are useful in calculating many other relations are the \textit{sequenced-before}, \textit{synchronizes-with} and \textit{read-from} relations. In basic terms, any instruction in a thread is said to be sequenced before all instructions that are evaluated after it in the same thread. In order to concurrently access shared variables in a synchronized manner to avoid data races, the \textit{synchronizes-with} relation is used among instructions from different threads. Finally, a read instruction is said to be \textit{reading-from} the value of a write instruction.
-%
-%These relations form the basis for all other relations which are required in the methodology of this paper. These relations are \textit{happens-before}, \textit{modification order} and \textit{total order}.
+An execution of $P$ is a sequence of events $\tau$ = 
+$e_1.e_2...e_n$ \st $e_i \in \events$. We use $\events_\tau$
+(and accordingly $\writes_\tau$, $\reads_\tau$, $\fences_\tau$)
+to denote the respective sets of events in an execution sequence, 
+or simply sequence, $\tau$.
 
-% ---------------- NOTATIONS -----------
-\subsection{Notation}
+\noindent
+{\bf Memory ordering under \cc}: 
+Each memory access operation and fence in a \cc program is 
+associated with a memory order that defines the ordering restriction
+placed on atomic and non-atomic access around atomic memory access. 
+%
+An event shares the same memory order as its corresponding operation
+in the input program.
+%
+\cc provides the following set of memory 
+orders, $\moset$ = $\{ \na, \rlx, \rel, \acq, \acqrel, \sc \}$, 
+representing the orders relaxed (\rlx), release (\rel), acquire (\acq),
+acquire-release (\acqrel) and sequentially consistent (\sc) for
+atomic events. A non-atomic event has \na memory order associated with 
+it.
+%
+We use $\ordevents{mo}_\tau$ (and accordingly $\ordwrites{mo}_\tau$, 
+$\ordreads{mo}_\tau$ and $\ordfences{mo}_\tau$) to represent the $mo$
+ordered events of an execution sequence $\tau$ (where, $mo \in \moset$).
+
+\noindent
+{\bf \cc fences}: \cc provides atomic thread fences or simply \cc
+fences to provide additional reordering restrictions on program 
+events. Note that \cc fences are not memory barriers and do not
+provide support for flushing local write values to shared memory.
+%
+A fence can be associated with memory orders $\acqrel$ and $\sc$
+providing varying degrees of reordering restrictions.
+
+
+\noindent
+{\bf Buggy and invalidated executions}: The sequences of events of a 
+thread of 
+program $P$ may contain {\em assert checks} as a means of providing
+program specification. An execution sequence that violates an 
+assert check (\ie the condition in the assert check computes to
+{\em false}) is called a buggy execution sequence.
+
+The purpose of this work is to synthesize \cc fences at appropriate
+program locations to invalidate a buggy sequence. Particularly, the
+event interactions in the execution sequence with synthesized fences
+render the resulting program behavior invalid under \cc, thus ensuring
+that the previously buggy sequence would not materialize as a 
+\cc program execution.
+
+We represent the invalidated or fixed sequence corresponding to a 
+buggy sequence $\tau$ by $\fx{\tau}$. 
+%
+As an intermediate step between $\tau$ and $\fx{\tau}$, we form an 
+intermediate version of the sequence $\tau$ with candidate fences
+some of which are retained as a part of $\fx{\tau}$. We represent
+the intermediate version of $\tau$ as $\im{\tau}$. The details
+of the step are discussed in Section~\ref{sec:methodology}.
+%
+We also use $\im{P}$ and $\fx{P}$ to represent the intermediate and
+fixed versions of the input program $P$.
+
+\snj{I have not added the following from the list of notations.}
 \begin{itemize}
-	\item $\ordfences{mo}_\tau$ \quad fence with memory order mo in sequence $\tau$
-	\item $\ordreads{mo}_\tau$ \quad read/load or rmw atomic operation
-	\item $\ordwrites{mo}$ \qquad write/store or rmw atomic operation
-	\item $\mole rel$ \qquad memory orders greater than or equal to release
-	\item \color{olive}//a \color{black} \qquad the value expected to be read in that line is a
-	\item buggy traces / buggy executions  $\tau$
-	\item candidate fences
-	\item original/intermediate/transformed program or buggy/intermediate/fixed program ($ P/ \im{P}/ \fx{P} $)
-	\item intermediate trace: with candidate fences $ \im{\tau} $, invalidated traces: counter-examples with inserted fences $\fx{\tau}$
-	\item $\setSO$-order/ $\setSO$-cycle
-	\item writes and reads include rmw unless otherwise mentioned
-	\item execution sequence and sequence interchangeably used
-	\item $ \lhb, \lrf, \lmo, \lsb, \setHB, \setRF, \setMO, \setSB $
-	\item Each event is tuple (inst label, action, memory order, variable, value) \divComment{variable and value are probably not needed.}
-	\item Set of counter examples $ \mathcal{CE} $. A counter-example $ \tau $ is tuple $ \langle \events_\tau, \setHB, \setMO, \setRF, \setSB  \rangle $. 
+
+	\item writes and reads include rmw unless otherwise mentioned \snj{Iv skipped rmws}
+	\item $ \lhb, \lrf, \lmo, \lsb, \setHB, \setRF, \setMO, \setSB $ \snj{lets not do that at all}
+	\item Each event is tuple (inst label, action, memory order, variable, value) \divComment{variable and value are probably not needed.} \snj{do we need the tuple definition of event, we are not using it.}
+	\item Set of counter examples $ \mathcal{CE} $. A counter-example $ \tau $ is tuple $ \langle \events_\tau, \setHB, \setMO, \setRF, \setSB  \rangle $.  \snj{lets add this as a comment in algo itslef, its not used anywhere else.}
 \end{itemize}

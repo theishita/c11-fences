@@ -64,7 +64,7 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 	\begin{algorithmic}[1]	
 		\Procedure{\ourtechnique}{$ P $}
 		\State $\phi := \top$
-		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)
+		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)\Comment{$\mathcal{CE}$ = $ \langle \events_\tau, \setHB, \setMO, \setRF, \setSB  \rangle $}
 		\For{$ \tau \in \mathcal{CE} $}
 			\State $ \events_{\im{\tau}} := \events_\tau\ \union $ candidate fences
 			\State $ \seqb{\im{\tau}}{}{} := $ computeSB($\setSB, \events_{\im{\tau}}$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_{\im{\tau}}, \setHB, \setMO, \setRF, \seqb{\im{\tau}}{}{}$)
@@ -79,8 +79,8 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 		\State F:= MinModel($ \phi $)
 		\State \Return F
 %		
-%		\State create\_z3\_file()
-%		\State fences\_required = run\_z3\_file()
+%		\State create\_\z\_file()
+%		\State fences\_required = run\_\z\_file()
 %		\State insert\_into\_input\_file(fences\_required)
 		\EndProcedure
 		\label{alg:fence-syn}
@@ -581,7 +581,7 @@ unlike the original solution where four fences were sought.
 Implementing such a propostional formula for programs with 
 more than 50 execution traces, with each of them having uncountable 
 fences would be quite an overhead. An SMT/SAT Solver is used for 
-this purpose. Our tool uses Z3 to find minimum satisfying assignment 
+this purpose. Our tool uses \z to find minimum satisfying assignment 
 of such formulas. A formula similar to the one in Fig \ref{fig:fence_form} 
 is created for each program and the minimum cost with the maximum 
 satisfying assignment is computed. 

@@ -24,6 +24,7 @@ class hb:
 	def get(self):
 		return self.mat,self.size,self.to_edges
 
+	# adds all transitive relations
 	def complete_matrix(self):
 
 		temp = Graph(self.size)

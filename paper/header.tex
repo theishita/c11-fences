@@ -12,6 +12,7 @@
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage{framed,enumitem}
+\usepackage{wrapfig}
 
 % for colours
 \usepackage{xspace}
@@ -78,12 +79,14 @@
 \newcommand{\cds}{CDSChecker\xspace}
 \newcommand{\genmc}{GenMC\xspace}
 \newcommand{\tracer}{Tracer\xspace}
+\newcommand{\z}{\texttt{Z3}\xspace}
 
 % sets and entitites
 \newcommand{\program}{$P$\xspace} %input program
 \newcommand{\programhat}{$\widehat{P}$\xspace} %transformed/fixed program
 \newcommand{\fx}[1]{{#1}^{\mathtt{fx}}\xspace}
 \newcommand{\im}[1]{{#1}^{\mathtt{im}}\xspace}
+\newcommand{\formula}[1]{\mathscr{F}(#1)\xspace}
 \newcommand{\threads}{\mathcal{T}\xspace}
 \newcommand{\states}{\Sigma\xspace}
 \newcommand{\moset}{\mathcal{M}\xspace}
@@ -92,7 +95,6 @@
 \newcommand{\s}[1]{s_{[#1]}\xspace} % state reached after exploring sequence #1
 % events' sets aux
 \newcommand{\wt}[1]{{\mathbb{W}#1}}
-\newcommand{\md}[1]{{\mathbb{M}#1}}
 \newcommand{\rd}[1]{{\mathbb{R}#1}}
 \newcommand{\fn}[1]{{\mathbb{F}#1}}
 % events' sets
