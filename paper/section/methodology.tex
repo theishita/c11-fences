@@ -17,7 +17,7 @@
 %% brief overview of our approach
 % Sections:
 %% counter example generator and its specifications/requirements
-%% inserting candidate fences and computing SC
+%% inserting candidate fences and computing SO
 %%% mention a trivial solution here
 %% Fence minimization
 
@@ -33,7 +33,8 @@ memory orders. For the programs where buggy behavior cannot be stopped
 using fences, it is possible to stop the behavior by annotating some 
 memory operations with stronger memory order.
 Hence, we do not claim that if \ourtechnique cannot stop a buggy \cc 
-execution, it cannot be stopped. 
+execution, it cannot be stopped.
+\divComment{Can we give termination guarantee?}
 
 Unlike common fence synthesis approaches \divComment{Need references}, 
 \ourtechnique does not try to \emph{add} fences optimally in a program.
@@ -47,7 +48,7 @@ unnecessary fences, has minimal number of \mosc fences required in that
 program to stop the buggy executions. 
 
 \ourtechnique takes a set of counter examples as input.
-We use \cc 's $ \setSB, \setHB, \setMO, \setRF $ relations to compute 
+We use \cc 's $\setSB$, $\setHB$, $\setMO$, $\setRF$ relations to compute 
 $ \setSO $-order assuming the existence of candidate fences.
 We prove that the transitive closure of $ \setSO $-order is the same as 
 $ \setTO $ in any valid \cc trace. 
@@ -63,13 +64,13 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 	\begin{algorithmic}[1]	
 		\Procedure{\ourtechnique}{$ P $}
 		\State $\phi := \top$
-		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)
+		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)\Comment{$\mathcal{CE}$ = $ \langle \events_\tau, \setHB, \setMO, \setRF, \setSB  \rangle $}
 		\For{$ \tau \in \mathcal{CE} $}
-			\State $ \events_\tau^f := \events_\tau\ \union $ candidate fences
-			\State $ \seqb{\tau'}{}{} := $ computeSB($\events_\tau^f$) \State $ \setSO := $ computeSO($\events_\tau^f, \setHB, \setMO, \setRF, \seqb{\tau'}{}{}$)
-			\State cycles := computeCycles($ \setSO $)
+			\State $ \events_{\im{\tau}} := \events_\tau\ \union $ candidate fences
+			\State $ \seqb{\im{\tau}}{}{} := $ computeSB($\setSB, \events_{\im{\tau}}$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_{\im{\tau}}, \setHB, \setMO, \setRF, \seqb{\im{\tau}}{}{}$)
+			\State cycles := computeCycles($ \so{\im{\tau}}{}{} $)
 			\If {cycles == $ \emptyset $}
-				\State ``This behavior can't be stopped using \cc fences.''
+				\State \texttt{Abort} (``This behavior can't be stopped using \cc fences.'')
 				\State \Return
 			\EndIf
 			\State $\phi := \phi\ \^ $ genFormula(cycles)
@@ -78,8 +79,8 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 		\State F:= MinModel($ \phi $)
 		\State \Return F
 %		
-%		\State create\_z3\_file()
-%		\State fences\_required = run\_z3\_file()
+%		\State create\_\z\_file()
+%		\State fences\_required = run\_\z\_file()
 %		\State insert\_into\_input\_file(fences\_required)
 		\EndProcedure
 		\label{alg:fence-syn}
@@ -92,83 +93,147 @@ SAT formula $ \phi $ with true.  Line 2 uses a counter-example generator
 to compute the set of counter examples in the program $ P $. 
 Lines 4-12 generates SAT formula for each counter-example $ \tau $.
 Lines 5 and 6 add candidate fences in the set of events of counter-example 
-$ \tau $ and compute $ \lsb $ in the updated trace (i.e., with candidate 
+$ \tau $ and compute $ \lsb $ in the updated trace $ \im{\tau} $ (i.e., with candidate 
 fences). 
-\divComment{I wrote it as $ \seqb{\tau'}{}{} $ since it can't be parameterized with $ \tau $}.
-Line 7 computes $ \setSO $-order in counter example $ \tau $ with candidate fences.
-Line 8 finds all $ \setSO $-cycles. If there are no $ \setSO $-cycles 
+Line 7 computes $ \so{\im{\tau}}{}{} $-order in counter example $ \tau $ with candidate fences.
+Line 8 finds all $ \so{\im{\tau}}{}{} $-cycles. If there are no $ \so{\im{\tau}}{}{} $-cycles 
 present, the behavior can't be stopped used any \cc fences. Hence, we 
 terminate the algorithm at this point.
-Else, in line 12, we generate a SAT formula for the set of $ \setSO $-cycles and add it to formula $ \phi $
+Else, in line 12, we generate a SAT formula for the set of $ \so{\im{\tau}}{}{} $-cycles and add it to formula $ \phi $
 Lastly, in line 13 we find the minimal model of formula $ \phi $, which 
 gives us the minimal set of fences to be inserted in order to stop the 
 buggy behaviors.
 The rest of this section discuss each of these steps in detail.
 
-\noindent\textbf{Generating Counter Examples:} 
+\subsection{Generating Counter Examples:} 
 \ourtechnique requires a set of counter examples $ \mathcal{CE} $. 
-Each of these counter-examples $ \tau $ should give us a list program events 
-$ \events_\tau $ and $ \setSB, \setHB, \setMO, \setSW $ relations over the 
+Each of these counter-examples $ \tau $ should consist a list program events 
+$ \events_\tau $ and $ \setHB, \setMO, \setRF, \setSB $ relations over the 
 program events. 
-A program event consists of instruction label, action, memory order, and variable. 
-\divComment{We don't actually need variable and value since we have rf and other relations already.}
+A program event consists of instruction label, action, memory order, variable, and value. 
+\divComment{We don't actually need value since we have rf and other relations already.}
 Our approach treats a counter example generator that reports all of this information as a black box. 
-\divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Any technique that can generate \cc traces and find buggy behaviors can be used as counter-example generator.
+%\divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
+Counter-examples in \texttt{dekker} program are given in 
+Figure~\ref{fig:dekker-ce}. We have omitted \lsb, \lhb from the traces for 
+simplicity. 
 
-In the program described in Fig \ref{fig:dekker2}, inserting an SC fence 
-between the instructions (1) and (2), and an SC fence between (5) and (6) 
-render the program non-buggy, thereby satisfying the given assertions. 
-After adding these fences, the program will never have a case where 
-the output can be anything other than ``10''. 
+%%%% Move to motivation %%%%
+%However, this comes at the cost of making program 
+%stricter than required. Therefore, in our solution to retain maximum 
+%flexibility, after inserting fences at all places, we must now eliminate 
+%the ones which are not required and bring the number of fences down to 
+%an optimum or minimum. To do this, we need to find relations between 
+%all instructions and understand their semantics.
+%
+%The reason for choosing \mosc fences is that they are the strongest type 
+%of fences, as seen in Fig \ref{fig:mo_strength}. In the program described 
+%in Fig \ref{fig:dekker3}, the \moar fences cannot stop the buggy behavior.
+%
+%Another point to note is, inserting \mosc fences at all possible program 
+%locations might not mean that the buggy behaviors are eliminated. 
+%Therefore, our tool can only prevent the assertions from being violated 
+%in cases where the behavior can be stopped using \mosc fences. Note that
+%if a trace cannot be stopped by \mosc fence, then no C11 fence can stop 
+%the trace. The tool also serves to minimize the total number of fences to 
+%be added to the optimal number, thereby retaining the program behaviors 
+%as relaxed as possible.
+%%%%%%%%%%%%%%%%%%
 
-To obtain the position of these fences, a series of steps is followed. 
-The two fences strategically inserted in the program are the minimum 
-number of fences which can be inserted in order to prevent the unwanted 
-outputs. \snj{Not correct: 
-	One can add \mosc fences at all positions - before and after all 
-instructions - in order to make the program as strict as possible under 
-C11} and hence prevent the buggy outputs if possible, such as in Fig 
-\ref{fig:dekker3}. However, this comes at the cost of making program 
-stricter than required. Therefore, in our solution to retain maximum 
-flexibility, after inserting fences at all places, we must now eliminate 
-the ones which are not required and bring the number of fences down to 
-an optimum or minimum. To do this, we need to find relations between 
-all instructions and understand their semantics.
+\begin{figure}[!htb]
+	\begin{center}
+		\texttt{(Dekker)} \\ \ \\
+		\begin{tabular}{l||l}
+			$ \store{y}{1}{} $ & $ \store{x}{1}{} $ \\
+			$ \load{a}{x}{} $ & $ \load{c}{y}{} $ \\
+			\textbf{if} $ (a=0) $ & \textbf{if} $ (c=0) $ \\
+			\quad $ \store{z}{1}{} $ & \quad $ \store{z}{2}{} $ \\
+%			\quad $ \load{b}{z}{} $   & \quad$ \load{d}{z}{} $ \\
+			\quad assert($ z=1 $) & \quad assert($ z=2 $) \\
+		\end{tabular} 
+%		\caption{Dekker's Mutual Exclusion program}\label{fig:dekker}
+	\end{center}
+\end{figure}
 
-The reason for choosing \mosc fences is that they are the strongest type 
-of fences, as seen in Fig \ref{fig:mo_strength}. In the program described 
-in Fig \ref{fig:dekker3}, the \moar fences cannot stop the buggy behavior.
-
-Another point to note is, inserting \mosc fences at all possible program 
-locations might not mean that the buggy behaviors are eliminated. 
-Therefore, our tool can only prevent the assertions from being violated 
-in cases where the behavior can be stopped using \mosc fences. Note that
-if a trace cannot be stopped by \mosc fence, then no C11 fence can stop 
-the trace. The tool also serves to minimize the total number of fences to 
-be added to the optimal number, thereby retaining the program behaviors 
-as relaxed as possible.
+\begin{figure}[!h]
+	\input{figures/dekker-ce1.tex}
+	\input{figures/dekker-ce2.tex}
+	\caption{Counter-examples in Dekker}
+	\label{fig:dekker-ce}
+\end{figure}
 
 % --------------- FIG all pseudo fences -------------
-\begin{figure}[!htb]
-\begin{center}
-\texttt{
-init y := 0, x := 0;\\
-	\begin{tabular}{c l || c l}
-		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
-		(1) & W$\mathtt{_{rel}}$y(1) & (5) & W$\mathtt{_{rel}}$x(1)\\
-		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
-		(2) & if R$\mathtt{_{rel}x}$ == 0 & (6) & if R$\mathtt{_{rel}y}$ == 0\\
-		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
-		(3) & \qquad W$\mathtt{_{rel}}$c(1) & (7) & \qquad W$\mathtt{_{rel}}$c(0)\\
-		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
-		(4) & \qquad assert($\mathtt{R_{rel}c}$ == 1) & (8) & \qquad assert($\mathtt{R_{rel}c}$ == 0)\\
-		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
-	\end{tabular}
-}
-	\caption{Simple two-thread dekker program in C11 syntax with fences at each location}\label{fig:dekker3}
-\end{center}
-\end{figure}
+%\begin{figure}[!htb]
+%\begin{center}
+%\texttt{
+%init y := 0, x := 0;\\
+%	\begin{tabular}{c l || c l}
+%		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
+%		(1) & W$\mathtt{_{rel}}$y(1) & (5) & W$\mathtt{_{rel}}$x(1)\\
+%		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
+%		(2) & if R$\mathtt{_{rel}x}$ == 0 & (6) & if R$\mathtt{_{rel}y}$ == 0\\
+%		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
+%		(3) & \qquad W$\mathtt{_{rel}}$c(1) & (7) & \qquad W$\mathtt{_{rel}}$c(0)\\
+%		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
+%		(4) & \qquad assert($\mathtt{R_{rel}c}$ == 1) & (8) & \qquad assert($\mathtt{R_{rel}c}$ == 0)\\
+%		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
+%	\end{tabular}
+%}
+
+%\divComment{All of the memory orders are rel. Is that correct?}
+%	\caption{Dekker's Mutual Exclusion program}\label{fig:dekker3}
+%\end{center}
+%\end{figure}
+
+
+\subsection{Computing SO relation}
+\noindent\textbf{Inserting Candidate Fences:}
+For each counter-example $ \tau $ of buggy program $ P $, we 
+construct an intermediate trace $ \im{\tau} $ by assuming the existance candidate fences in the trace $ \tau $.
+Our approach assumes all possible program locations as a valid location 
+for candidate fences. 
+Hence the $ \im{\tau} $ will have at least one \mosc fence before and after every program event in $ \tau $.
+It is possible to start with a smaller set of program locations for 
+candidate fences. 
+In this case our approach will return the optimal fence placement wrt the 
+set of candidate fences.
+Since we are assuming existence of candidate fences at all possible 
+program locations, the trace $ \im{\tau} $ should be invalid \cc execution 
+if $ \tau $ can be stopped using \mosc fences.
+Hence, if $ \im{\tau} $ is not invalid \cc execution for some 
+the counter-examples $ \tau $ in $ \mathcal{CE} $, we determine that \mosc 
+fences are not sufficient to stop the buggy behaviors of the program.
+Recall that \mosc fences are the strongest \cc fences. 
+If \mosc fences cannot stop a buggy behavior in a program, we can conclude 
+that \cc fences are not strong enough to render this program correct.
+Previous works \cite{LahavVafeiadis-PLDI17,Batty-POPL12} suggest that \mosc fences are not sufficient to achieve SC memory 
+model. 
+Hence it is possible that a valid SC program is buggy under \cc with all 
+possible \mosc fences inserted. 
+In some of these cases strengthening the memory order annotated for some 
+of the program instructions might render the program correct. 
+However, strengthening the memory order annotation is out of the scope of this work. 
+
+\noindent\textbf{Computing \lsb in Intermediate Traces:} 
+In line 5 of the Algorithm~\ref{alg:fence-syn}, we compute set of program 
+events in trace $ \im{\tau} $. Naturally, this set will consist of 
+candidate fences along with all the program events in trace $ \tau $.
+The set $ \setSB $ represents the pair of program events related by 
+relation $ \lsb $ in the trace $ \tau $. We compute the set 
+$ \seqb{\im{\tau}}{}{} $ for the events of the trace $ \im{\tau} $. 
+The computeSB function takes set of \lsb event pairs in $ \tau $ 
+($ \setSB $), the set of events in trace $ \im{\tau} $ 
+($ \events_{\im{\tau}} $) as input and computes the set of \lsb in 
+$ \im{\tau} $ based on instruction labels, their position in the program $ P $. \divComment{Do we need event action to compute the \lsb?}
+
+\noindent\textbf{Computing \lso in Intermediate Traces:}
+
+
+\subsection{Synthesizing Fences}
+
+\subsection{Synthesizing Optimal Fences}
+
 
 % --------- ADDING FENCES -------------
 \subsection{Adding Pseudo Fences}
@@ -502,7 +567,7 @@ unlike the original solution where four fences were sought.
 Implementing such a propostional formula for programs with 
 more than 50 execution traces, with each of them having uncountable 
 fences would be quite an overhead. An SMT/SAT Solver is used for 
-this purpose. Our tool uses Z3 to find minimum satisfying assignment 
+this purpose. Our tool uses \z to find minimum satisfying assignment 
 of such formulas. A formula similar to the one in Fig \ref{fig:fence_form} 
 is created for each program and the minimum cost with the maximum 
 satisfying assignment is computed. 

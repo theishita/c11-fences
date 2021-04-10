@@ -1,0 +1,26 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1pt,y=1pt,yscale=1,xscale=1]
+\tikzstyle{every node}=[font=\scriptsize]
+\node (initx) {$ \storeev{x}{0}{\na} $};
+\node (inity) [below=5pt of initx] {$ \storeev{y}{0}{\na} $};
+\node (initz) [below=5pt of inity] {$ \storeev{z}{0}{\na} $};
+\node (wy1) [below right=5pt and 20pt of initz] {$ \storeev{y}{1}{\rlx} $};
+\node (rx0) [below=5pt of wy1] {$ \loadev{x}{0}{\rlx} $};
+\node (wz1) [below=5pt of rx0] {$ \storeev{z}{1}{\rlx} $};
+\node (rz1) [below=5pt of wz1] {$ \loadev{z}{1}{\rlx} $};
+
+\node (wx1) [right=20pt of wy1] {$ \storeev{x}{1}{\rlx} $};
+\node (ry0) [below=5pt of wx1] {$ \loadev{y}{0}{\rlx} $};
+\node (wz2) [below=5pt of ry0] {$ \storeev{z}{2}{\rlx} $};
+\node (rz2) [below=5pt of wz2] {$ \loadev{z}{1}{\rlx} $};
+
+\rfedge{initx}{rx0}{midway,above};
+\rfedge{inity}{ry0}{midway,above};
+\rfedge{wz1}{rz1}{midway,left};
+\rfedge{wz1}{rz2}{midway,above};
+
+\moedge{initx}{wx1}{midway,below};
+\moedge{inity}{wy1}{midway,below};
+
+
+\end{tikzpicture}
