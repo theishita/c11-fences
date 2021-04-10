@@ -183,9 +183,12 @@
 \newcommand{\store}[3]{#1 := #2_{#3}}
 \newcommand{\loadev}[3]{\mathtt{R^{#3}({#1},{#2})}}
 \newcommand{\storeev}[3]{\mathtt{W^{#3}({#1},{#2})}}
+\newcommand{\fenceev}[1]{\textcolor{Brown}{--\fn{#1}--}}
 % tikz edges
 \newcommand{\rfedge}[3]{\draw [->,>=stealth,color=PineGreen,thin] ({#1}) -- node[{#3}] { rf} ({#2});}
 \newcommand{\moedge}[3]{\draw [->,>=stealth,color=RedOrange,thin] ({#1}) -- node[{#3}] {mo} ({#2});}
+
+\newcommand{\cycles}[1]{\mathcal{C}_{#1}}
 
 
 %snj: Have to use the ones in format

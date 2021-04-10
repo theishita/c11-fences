@@ -211,9 +211,30 @@ Previous works \cite{LahavVafeiadis-PLDI17,Batty-POPL12} suggest that \mosc fenc
 model. 
 Hence it is possible that a valid SC program is buggy under \cc with all 
 possible \mosc fences inserted. 
-In some of these cases strengthening the memory order annotated for some 
+In some of these cases strengthening `the memory order annotated for some 
 of the program instructions might render the program correct. 
 However, strengthening the memory order annotation is out of the scope of this work. 
+
+%\begin{figure}[!htb]
+%	\begin{center}
+%%		\texttt{(Dekker)} \\ \ \\
+%		\begin{tabular}{l||l}
+%			$ \fenceev{11} $ & $ \fenceev{21} $ \\
+%			$ \store{y}{1}{} $ & $ \store{x}{1}{} $ \\
+%			$ \fenceev{12} $ & $ \fenceev{22} $ \\
+%			$ \load{a}{x}{} $ & $ \load{c}{y}{} $ \\
+%			$ \fenceev{13} $ & $ \fenceev{23} $ \\
+%			\textbf{if} $ (a=0) $ & \textbf{if} $ (c=0) $ \\
+%			\quad $ \fenceev{14} $ & \quad $ \fenceev{24} $ \\
+%			\quad $ \store{z}{1}{} $ & \quad $ \store{z}{2}{} $ \\
+%			%			\quad $ \load{b}{z}{} $   & \quad$ \load{d}{z}{} $ \\
+%			\quad $ \fenceev{15} $ & \quad $ \fenceev{25} $ \\
+%			\quad assert($ z=1 $) & \quad assert($ z=2 $) \\
+%			\quad $ \fenceev{16} $ & \quad $ \fenceev{26} $ \\
+%		\end{tabular} 
+%		\caption{Dekker with Candidate Fence}\label{fig:dekker-im}
+%	\end{center}
+%\end{figure}
 
 \noindent\textbf{Computing \lsb in Intermediate Traces:} 
 In line 5 of the Algorithm~\ref{alg:fence-syn}, we compute set of program 
@@ -243,8 +264,6 @@ The same argument hold for \lrf relation as well.
 \divComment{Need an argument for \lhb too.}
 %We have already computed $ \seqb{\im{\tau}}{}{} $
  
-
-\subsection{Synthesizing Fences}
 \snj{Why hb, mo computed for $\tau$ and not $\im{\tau}$}\newline
 Note that, the intermediate sequence $\im{\tau}$ may be invalid under 
 \cc due to a possible cycle in the $\so{\im{\tau}}{}{}$ relation. 
@@ -263,7 +282,56 @@ between the candidate fences inserted in $\im{\tau}$ and the events
 of $\tau$. The two relations are sufficient as the goal is to
 find $\so{\im{\tau}}{}{}$ cycle and invalidate the sequence under \cc.
 
-\subsection{Synthesizing Optimal Fences}
+
+\subsection{Reducing Fence Synthesis to SAT problem}
+Recall that transitive closure of $ \so{\im{\tau}}{}{} $ is same as 
+$ \to{\im{\tau}}{}{} $ in a valid \cc execution. Since  
+$ \to{\im{\tau}}{}{} $ is a total order, a valid \cc execution should not 
+have a cycle in $ \so{\im{\tau}}{}{} $. Conversely, if a trace has 
+$ \so{\im{\tau}}{}{} $-cycle, it cannot be a valid \cc execution. 
+In order to make a trace $ \tau $ invalid under \cc, we force a \lso-cycle by inserting appropriate fences. 
+Since $ \im{\tau} $ assumes \mosc fences at all possible program locations,
+any such cycle must exists in $ \so{\im{\tau}}{}{} $. 
+Hence, our problem is reduced to finding appropriate cycle in 
+$\so{\im{\tau}}{}{} $ and introducing these fences in the program to 
+invalidate the trace $ \tau $.
+If we introduced enough fences to cause at least \lso-cycle in 
+every counter example, we stop all the buggy execution. 
+It is possible that a counter example $ \tau $ does not have any 
+$\so{\im{\tau}}{}{}$-cycles. Since $ \im{\tau} $ has \mosc fences at all 
+possible program locations, we cannot add fences in such a trace to 
+make it invalid \cc execution. 
+Line 8 in Algorithm~\ref{alg:fence-syn} computes set $\so{\im{\tau}}{}{}$-cycles. 
+The problem of finding cycles in a graph is well-studied area. Hence, we 
+choose to skip the details of this step.
+If there are no $\so{\im{\tau}}{}{}$-cycle in some $ \tau $, we conclude 
+that it is not possible to stop this behavior using \cc fences in lines 
+9-11.
+
+
+%We create a Boolean formula for every \lso-cycle every counter-example. 
+Let $ \cycles{\im{\tau}} $ be the set of \lso-cycles in a trace $ \im{\tau} $, 
+where a cycle $ c \in \cycles{\im{\tau}} $ is ordered sequence of 
+$ \ordevents{\sc} $. We abuse the notation $\ordevents{\sc}_c$ to 
+represent the set of events in a cycle $ c $. 
+All the read and write events in $\ordevents{\sc}_c$ are already in program $ P $. 
+Hence, to introduce a cycle $ c $ in the execution, we add the fences in $\ordevents{\sc}_c$, i.e, 
+$\ordevents{\sc}_c \intersection \ordfences{\sc}$, in the program $ P $.
+In other words, a cycle $ c $ can be introduced in a program if we insert 
+$ (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
+\ordfences{\sc}} \fn{})$ fences in the program $ P $.
+Recall that we need to stop at least one cycle from the set 
+$ \cycles{\im{\tau}} $ in order to make a trace $ \tau $ invalid.
+Hence we need to insert $ (\bigvee\limits_{c \in \cycles{\im{\tau}}} (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
+\ordfences{\sc}} \fn{})) $ to stop a trace $ \tau $. 
+We use $\formula{\tau}$ to represent the boolean formula 
+$ (\bigvee\limits_{c \in \cycles{\im{\tau}}} 
+(\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
+\ordfences{\sc}} \fn{})) $. 
+Clearly, any satisfying assignment to $ \formula{\tau} $ will give list of fences required to stop the buggy execution $ \tau $.
+
+
+\subsection{Finding Optimal Placement of the Fences}
 
 
 % --------- ADDING FENCES -------------
