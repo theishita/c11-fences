@@ -5,7 +5,16 @@ The memory access operations can be atomic or non-atomic in
 nature.
 %
 An instance of a thread operation in an execution sequence is
-called an {\em event}. We use $\events$ to denote the set of all
+called an {\em event}. 
+Events of a thread $t$ are uniquely indexed with an id. An event 
+with id $i$ of thread $t$ is represented by a tuple
+$\langle i, t, act, obj, ord, inst \rangle$ where $act, obj, ord,
+inst$ represent the event action $\in$ $\{$reads, writes, rmws 
+(read-modify-writes), fences$\}$, the memory object(s) accessed by 
+the event, the memory order associated with the event and program
+instruction corresponding to the event respectively.
+%
+We use $\events$ to denote the set of all
 program events. We further use $\writes$, $\reads$ and $\fences$
 to denote the write, read and fence events of the input program.
 %
@@ -67,16 +76,7 @@ As an intermediate step between $\tau$ and $\fx{\tau}$, we form an
 intermediate version of the sequence $\tau$ with candidate fences
 some of which are retained as a part of $\fx{\tau}$. We represent
 the intermediate version of $\tau$ as $\im{\tau}$. The details
-of the step are discussed in Section~\ref{sec:methodology}.
+of the intermediate step are discussed in Section~\ref{sec:methodology}.
 %
 We also use $\im{P}$ and $\fx{P}$ to represent the intermediate and
 fixed versions of the input program $P$.
-
-\snj{I have not added the following from the list of notations.}
-\begin{itemize}
-
-	\item writes and reads include rmw unless otherwise mentioned \snj{Iv skipped rmws}
-	\item $ \lhb, \lrf, \lmo, \lsb, \setHB, \setRF, \setMO, \setSB $ \snj{lets not do that at all}
-	\item Each event is tuple (inst label, action, memory order, variable, value) \divComment{variable and value are probably not needed.} \snj{do we need the tuple definition of event, we are not using it.}
-	\item Set of counter examples $ \mathcal{CE} $. A counter-example $ \tau $ is tuple $ \langle \events_\tau, \setHB, \setMO, \setRF, \setSB  \rangle $.  \snj{lets add this as a comment in algo itslef, its not used anywhere else.}
-\end{itemize}
