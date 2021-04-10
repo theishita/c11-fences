@@ -13,6 +13,8 @@ inst$ represent the event action $\in$ $\{$reads, writes, rmws
 (read-modify-writes), fences$\}$, the memory object(s) accessed by 
 the event, the memory order associated with the event and program
 instruction corresponding to the event respectively.
+Note that, the set of memory objects of a rmw event can be a 
+non-singleton set and would be empty for fence events.
 %
 We use $\events$ to denote the set of all
 program events. We further use $\writes$, $\reads$ and $\fences$
@@ -45,7 +47,7 @@ $\ordreads{mo}_\tau$ and $\ordfences{mo}_\tau$) to represent the $mo$
 ordered events of an execution sequence $\tau$ (where, $mo \in \moset$).
 
 \noindent
-{\bf \cc fences}: \cc provides atomic thread fences or simply \cc
+{\bf \cc fences}: \cc provides atomic thread fences or simply 
 fences to provide additional reordering restrictions on program 
 events. Note that \cc fences are not memory barriers and do not
 provide support for flushing local write values to shared memory.
