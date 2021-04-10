@@ -231,6 +231,23 @@ $ \im{\tau} $ based on instruction labels, their position in the program $ P $. 
 
 
 \subsection{Synthesizing Fences}
+\snj{Why hb, mo computed for $\tau$ and not $\im{\tau}$}\newline
+Note that, the intermediate sequence $\im{\tau}$ may be invalid under 
+\cc due to a possible cycle in the $\so{\im{\tau}}{}{}$ relation. 
+As a result, the coherence rules of \cc do not apply to $\im{\tau}$. 
+In the absence of \cc coherence rules the $\hb{\im{\tau}}{}{}$ and 
+the $\mo{\im{\tau}}{}{}$ relations cannot be formed on the events of 
+$\im{\tau}$.
+%
+Secondly, attempting to form $\hb{\im{\tau}}{}{}$ and 
+$\mo{\im{\tau}}{}{}$ relations would modify the $\setHB$ and $\setMO$
+effectively changing the buggy sequence $\tau$.
+
+We, thus, only construct the relation $\so{\im{\tau}}{}{}$ and 
+$\seqb{\im{\tau}}{}{}$ (needed for $\so{\im{\tau}}{}{}$) 
+between the candidate fences inserted in $\im{\tau}$ and the events
+of $\tau$. The two relations are sufficient as the goal is to
+find $\so{\im{\tau}}{}{}$ cycle and invalidate the sequence under \cc.
 
 \subsection{Synthesizing Optimal Fences}
 
