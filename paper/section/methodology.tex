@@ -227,8 +227,22 @@ The computeSB function takes set of \lsb event pairs in $ \tau $
 ($ \events_{\im{\tau}} $) as input and computes the set of \lsb in 
 $ \im{\tau} $ based on instruction labels, their position in the program $ P $. \divComment{Do we need event action to compute the \lsb?}
 
-\noindent\textbf{Computing \lso in Intermediate Traces:}
-
+\noindent\textbf{Computing \lso in Intermediate Traces:} 
+%In \textsection\ref{sec:so theory}, we explain the rules to compute \lso relation given \lhb, \lmo, \lrf and \lsb relations. 
+The line 7 of Algorithm~\ref{alg:fence-syn} uses the rules defined in 
+\textsection\ref{sec:so theory} to compute the \lso relation in the trace 
+$ \im{\tau} $ using the relations \lhb, \lmo, \lrf and \lsb. 
+We use relations $ \setHB, \setMO, \setRF $ and $ \seqb{\im{\tau}}{}{} $ to compute $ \so{\im{\tau}}{}{} $.
+Note that we have used the \lhb, \lmo and \lrf for trace $ \tau $ and \lsb 
+for trace $ \im{\tau} $. 
+Since \lmo is a relation between write events, fences will not be a part 
+of it. Although, these fences may induce \lmo between some write event 
+pairs in an actual execution. 
+\divComment{How do we know these induces \lmo will not effect \lso?}
+The same argument hold for \lrf relation as well.
+\divComment{Need an argument for \lhb too.}
+%We have already computed $ \seqb{\im{\tau}}{}{} $
+ 
 
 \subsection{Synthesizing Fences}
 
