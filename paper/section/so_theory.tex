@@ -39,75 +39,158 @@ of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf}
 	\label{fig:so rules}
 \end{figure}
 
-\begin{itemize}[label=soFFnrf,align=left,leftmargin=*]
-	\item [\hl{sohb}:] $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
-			$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ then 
-			$\so{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \newline
-			($\setHB$ order implies $\setSO$)
+\begin{longtable}{|p{0.11\textwidth} p{0.88\textwidth}|}
+	\hline
+	\multicolumn{2}{|l|}{\bf $\setHB$, $\setMO$, $\setRF$ base rules:}\\
 	
-	\item [\hl{somo}:] $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
-			$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
-			then $\so{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \newline
-			($\setMO$ order implies $\setSO$)
-			
-	\item [\hl{sorf}:] $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
-			\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
-			$\so{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \newline
-			($\setRF$ order implies $\setSO$)
-			
-	\item [\hl{soEF}:] $\forall wr^\sc_1 \in \ordevents{\sc}_\tau$, $f^\sc_1 \in
-			\ordfences{\sc}_\tau$ if $\exists wr_2 \in \events_\tau$ \st 
-			($\mo{\tau}{wr^\sc_1}{wr_2}$ $\v$ $\hb{\tau}{wr^\sc_1}{wr_2}$
-			$\v$ $\rf{\tau}{wr^\sc_1}{wr_2}$) $\^$ $\seqb{\tau}{wr_2}{f^\sc_1}$ 
-			then $\so{\tau}{wr^\sc_1}{f^\sc_1}$\newline
-			($\setHB$ between \sc event-fence implies $\setSO$)
-			
-	\item [\hl{soFE}:] $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $wr^\sc_2 \in
-			\ordevents{\sc}_\tau$ if $\exists wr_1 \in \events_\tau$ \st 
-			($\mo{\tau}{wr_1}{wr^\sc_2}$ $\v$ $\hb{\tau}{wr_1}{wr^\sc_2}$
-			$\v$ $\rf{\tau}{wr_1}{wr^\sc_2}$) $\^$ $\seqb{\tau}{f^\sc_1}{wr_1}$ 
-			then $\so{\tau}{f^\sc_1}{wr^\sc_2}$\newline
-			($\setHB$ between fence-\sc event implies $\setSO$)
-			
-	\item [\hl{soFF}:]  $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
-			if $\exists wr_1, wr_2 \in \events_\tau$ \st 
-			($\mo{\tau}{wr_1}{wr_2}$ $\v$ $\hb{\tau}{wr_1}{wr_2}$
-			$\v$ $\rf{\tau}{wr_1}{wr_2}$) $\^$
-			($\seqb{\tau}{f^{\sc}_1}{wr_1}$, $\seqb{\tau}{wr_2}{f^{\sc}_2}$) 
-			then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \newline
-			($\setHB$ between \sc fence-fences implies $\setSO$)
-			
-	\item [\hl{sofr}:] $\forall r^\sc_1 \in \ordreads{\sc}_\tau$, $w^\sc_1 \in
-			\ordwrites{\sc}_\tau$ if $\fr{\tau}{r^\sc_1}{w^sc_1}$ then 
-			$\so{\tau}{r^{\sc}_1}{w^{\sc}_1}$ 
-			\newline
-			($\setFR$ order implies $\setSO$)
-			
-	\item [\hl{soFWfr}:] $\forall f^{\sc}_1 \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
-			\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
-			\reads_\tau$ \st $\seqb{\tau}{f^{\sc}_1}{r_1}$, $\mo{\tau}{w_2}{w^{\sc}_1}$ 
-			and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_1}{w^{\sc}_1}$ \newline
-			($\setFR$ though \sc write-fence synchronization implies $\setSO$)
-			
-	\item [\hl{soRFfr}:] $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $r^\sc_1 \in
-			\ordreads{\sc}_\tau$ if $\exists w_1, w_2 \in \writes_\tau$ \st
-			$\seqb{\tau}{w_2}{f^\sc_1}$, $\mo{\tau}{w_1}{w_2}$ and
-			$\rf{\tau}{w_1}{r^\sc_1}$ then $\so{\tau}{r^\sc_1}{f^\sc_1}$\newline
-			($\setFR$ though \sc read-fence synchronization implies $\setSO$)
-			
-	\item [\hl{soFFfr}:] $\forall f^\sc_1, f^\sc_2 \in \ordfences{\sc}_\tau$
-			if $\exists$ $w_1, w_2 \in \ordwrites{\sc}_\tau$, $r_1 \in
-			\ordreads{\sc}_\tau$ \st $\seqb{\tau}{f^\sc_1}{r_1}$, 
-			$\seqb{\tau}{w_1}{f^\sc_2}$, $\mo{\tau}{w_2}{w_1}$ and
-			$\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^\sc_1}{f^\sc_2}$\newline
-			($\setFR$ though \sc fence-fence synchronization implies $\setSO$)
-\end{itemize}
+	\hl{sohb}, \hl{somo},  & 
+	$\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
+	$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ $\v$ $\mo{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$
+	$\v$ $\rf{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ then 
+	$\so{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \\
+	\hl{sorf}: & ($\setHB$ order implies $\setSO$) \\
+	
+%	\hl{somo}: & $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
+%	$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
+%	then $\so{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \\
+%	& ($\setMO$ order implies $\setSO$) \\
+%	
+%	\hl{sorf}: & $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
+%	\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
+%	$\so{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \\
+%	& ($\setRF$ order implies $\setSO$) \\
+	& \\
+	
+	\multicolumn{2}{|l|}{\bf $\setHB$, $\setMO$, $\setRF$ rules extended
+		for fences:} \\
+	
+	\hl{soEF}: & $\forall wr^\sc_1 \in \ordevents{\sc}_\tau$, $f^\sc_1 \in
+	\ordfences{\sc}_\tau$ if $\exists wr_2 \in \events_\tau$ \st 
+	($\mo{\tau}{wr^\sc_1}{wr_2}$ $\v$ $\hb{\tau}{wr^\sc_1}{wr_2}$
+	$\v$ $\rf{\tau}{wr^\sc_1}{wr_2}$) $\^$ $\seqb{\tau}{wr_2}{f^\sc_1}$ 
+	then $\so{\tau}{wr^\sc_1}{f^\sc_1}$ \\
+	& ($\setHB$ between \sc event-fence implies $\setSO$) \\
+	
+	\hl{soFE}: & $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $wr^\sc_2 \in
+	\ordevents{\sc}_\tau$ if $\exists wr_1 \in \events_\tau$ \st 
+	($\mo{\tau}{wr_1}{wr^\sc_2}$ $\v$ $\hb{\tau}{wr_1}{wr^\sc_2}$
+	$\v$ $\rf{\tau}{wr_1}{wr^\sc_2}$) $\^$ $\seqb{\tau}{f^\sc_1}{wr_1}$ 
+	then $\so{\tau}{f^\sc_1}{wr^\sc_2}$ \\
+	& ($\setHB$ between fence-\sc event implies $\setSO$) \\
+	
+	\hl{soFF}: & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
+	if $\exists wr_1, wr_2 \in \events_\tau$ \st 
+	($\mo{\tau}{wr_1}{wr_2}$ $\v$ $\hb{\tau}{wr_1}{wr_2}$
+	$\v$ $\rf{\tau}{wr_1}{wr_2}$) $\^$
+	($\seqb{\tau}{f^{\sc}_1}{wr_1}$, $\seqb{\tau}{wr_2}{f^{\sc}_2}$) 
+	then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \\
+	& ($\setHB$ between \sc fence-fences implies $\setSO$) \\
+	\hline
+\end{longtable}
+	
+\begin{longtable}{|p{0.13\textwidth} p{0.86\textwidth}|}
+	\hline
+	\multicolumn{2}{|l|}{\bf $\setFR$ base rule:}\\
+	
+	\hl{sofr}: & $\forall r^\sc_1 \in \ordreads{\sc}_\tau$, $w^\sc_1 \in
+	\ordwrites{\sc}_\tau$ if $\fr{\tau}{r^\sc_1}{w^sc_1}$ then 
+	$\so{\tau}{r^{\sc}_1}{w^{\sc}_1}$ \\
+	& ($\setFR$ order implies $\setSO$) \\
+	
+	& \\
+	
+	\multicolumn{2}{|l|}{\bf $\setFR$ rules extended for fences:}\\
+	
+	\hl{soFWfr}: & $\forall f^{\sc}_1 \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
+	\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
+	\reads_\tau$ \st $\seqb{\tau}{f^{\sc}_1}{r_1}$, $\mo{\tau}{w_2}{w^{\sc}_1}$ 
+	and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_1}{w^{\sc}_1}$ \\
+	& ($\setFR$ though \sc write-fence synchronization implies $\setSO$) \\
+	
+	\hl{soRFfr}: & $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $r^\sc_1 \in
+	\ordreads{\sc}_\tau$ if $\exists w_1, w_2 \in \writes_\tau$ \st
+	$\seqb{\tau}{w_2}{f^\sc_1}$, $\mo{\tau}{w_1}{w_2}$ and
+	$\rf{\tau}{w_1}{r^\sc_1}$ then $\so{\tau}{r^\sc_1}{f^\sc_1}$ \\
+	& ($\setFR$ though \sc read-fence synchronization implies $\setSO$) \\
+	
+	\hl{soFFfr}: & $\forall f^\sc_1, f^\sc_2 \in \ordfences{\sc}_\tau$
+	if $\exists$ $w_1, w_2 \in \ordwrites{\sc}_\tau$, $r_1 \in
+	\ordreads{\sc}_\tau$ \st $\seqb{\tau}{f^\sc_1}{r_1}$, 
+	$\seqb{\tau}{w_1}{f^\sc_2}$, $\mo{\tau}{w_2}{w_1}$ and
+	$\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^\sc_1}{f^\sc_2}$ \\
+	& ($\setFR$ though \sc fence-fence synchronization implies $\setSO$) \\
+	\hline
+\end{longtable}
+
+
+%\begin{itemize}[label=soFFnrf,align=left,leftmargin=*]
+%	\item [\hl{sohb}:] $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
+%			$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ then 
+%			$\so{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \newline
+%			($\setHB$ order implies $\setSO$)
+%	
+%	\item [\hl{somo}:] $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
+%			$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
+%			then $\so{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \newline
+%			($\setMO$ order implies $\setSO$)
+%			
+%	\item [\hl{sorf}:] $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
+%			\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
+%			$\so{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \newline
+%			($\setRF$ order implies $\setSO$)
+%			
+%	\item [\hl{soEF}:] $\forall wr^\sc_1 \in \ordevents{\sc}_\tau$, $f^\sc_1 \in
+%			\ordfences{\sc}_\tau$ if $\exists wr_2 \in \events_\tau$ \st 
+%			($\mo{\tau}{wr^\sc_1}{wr_2}$ $\v$ $\hb{\tau}{wr^\sc_1}{wr_2}$
+%			$\v$ $\rf{\tau}{wr^\sc_1}{wr_2}$) $\^$ $\seqb{\tau}{wr_2}{f^\sc_1}$ 
+%			then $\so{\tau}{wr^\sc_1}{f^\sc_1}$\newline
+%			($\setHB$ between \sc event-fence implies $\setSO$)
+%			
+%	\item [\hl{soFE}:] $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $wr^\sc_2 \in
+%			\ordevents{\sc}_\tau$ if $\exists wr_1 \in \events_\tau$ \st 
+%			($\mo{\tau}{wr_1}{wr^\sc_2}$ $\v$ $\hb{\tau}{wr_1}{wr^\sc_2}$
+%			$\v$ $\rf{\tau}{wr_1}{wr^\sc_2}$) $\^$ $\seqb{\tau}{f^\sc_1}{wr_1}$ 
+%			then $\so{\tau}{f^\sc_1}{wr^\sc_2}$\newline
+%			($\setHB$ between fence-\sc event implies $\setSO$)
+%			
+%	\item [\hl{soFF}:]  $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
+%			if $\exists wr_1, wr_2 \in \events_\tau$ \st 
+%			($\mo{\tau}{wr_1}{wr_2}$ $\v$ $\hb{\tau}{wr_1}{wr_2}$
+%			$\v$ $\rf{\tau}{wr_1}{wr_2}$) $\^$
+%			($\seqb{\tau}{f^{\sc}_1}{wr_1}$, $\seqb{\tau}{wr_2}{f^{\sc}_2}$) 
+%			then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \newline
+%			($\setHB$ between \sc fence-fences implies $\setSO$)
+%			
+%	\item [\hl{sofr}:] $\forall r^\sc_1 \in \ordreads{\sc}_\tau$, $w^\sc_1 \in
+%			\ordwrites{\sc}_\tau$ if $\fr{\tau}{r^\sc_1}{w^sc_1}$ then 
+%			$\so{\tau}{r^{\sc}_1}{w^{\sc}_1}$ 
+%			\newline
+%			($\setFR$ order implies $\setSO$)
+%			
+%	\item [\hl{soFWfr}:] $\forall f^{\sc}_1 \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
+%			\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
+%			\reads_\tau$ \st $\seqb{\tau}{f^{\sc}_1}{r_1}$, $\mo{\tau}{w_2}{w^{\sc}_1}$ 
+%			and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_1}{w^{\sc}_1}$ \newline
+%			($\setFR$ though \sc write-fence synchronization implies $\setSO$)
+%			
+%	\item [\hl{soRFfr}:] $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $r^\sc_1 \in
+%			\ordreads{\sc}_\tau$ if $\exists w_1, w_2 \in \writes_\tau$ \st
+%			$\seqb{\tau}{w_2}{f^\sc_1}$, $\mo{\tau}{w_1}{w_2}$ and
+%			$\rf{\tau}{w_1}{r^\sc_1}$ then $\so{\tau}{r^\sc_1}{f^\sc_1}$\newline
+%			($\setFR$ though \sc read-fence synchronization implies $\setSO$)
+%			
+%	\item [\hl{soFFfr}:] $\forall f^\sc_1, f^\sc_2 \in \ordfences{\sc}_\tau$
+%			if $\exists$ $w_1, w_2 \in \ordwrites{\sc}_\tau$, $r_1 \in
+%			\ordreads{\sc}_\tau$ \st $\seqb{\tau}{f^\sc_1}{r_1}$, 
+%			$\seqb{\tau}{w_1}{f^\sc_2}$, $\mo{\tau}{w_2}{w_1}$ and
+%			$\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^\sc_1}{f^\sc_2}$\newline
+%			($\setFR$ though \sc fence-fence synchronization implies $\setSO$)
+%\end{itemize}
 
 Consider a \cc execution sequence $\tau$ and a transformation
 $\fx{\tau}$ of $\tau$ \st $\events_{\fx{\tau}}$ = $\events_\tau$
 $\union$ set of synthesized fences and $\to{\tau}{}{}$ $\subseteq$
-$\so{\fx{\tau}}{}{}$.
-\divComment{Transitive closure if so. not so} \divComment{Reflexive transistive closure or transitive closure?}
+(transitive closure of $\so{\fx{\tau}}{}{}$).
 %
 Cyclic $\so{\fx{\tau}}{}{}$ implies that there does not exist a 
 total order on \sc ordered events of $\fx{\tau}$. The sequence $\fx{\tau}$, 

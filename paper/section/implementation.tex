@@ -29,7 +29,7 @@ owing to the following reasons;
 		\genmc is designed for a variant of \cc \cite{LahavVafeiadis-PLDI17} and
 		does not support an option for returning all buggy executions. \tracer is
 		designed for a subset of \cc that has no support for \sc, \na or \rel 
-		memory orders.
+		memory orders. \snj{What about Herd?}
 \end{enumerate}
 
 To bridge the gap between \cds's output and \ourtechnique's requirement,
@@ -73,14 +73,14 @@ finds a buggy execution that cannot be fixed with \sc fences.
 \begin{wrapfigure}{l}{0.45\textwidth}
 	\begin{tabular}{|l|}
 		\hline
-		$\setSO$ cycles in $\tau_1$\\
+		$\so{\tau_1}{}{}$ cycles in $\tau_1$\\
 		\tab$\so{\tau_1}{\so{\tau_1}{\so{\tau_1}{f_1}{f_2}}{e_1}}{f_3}$\\
 		\tab$\so{\tau_1}{\so{\tau_1}{\so{\tau_1}{f_3}{f_4}}{f_1}}{f_3}$\\
-		$\formula{\tau_1}$ = ($f_1 \^ f_2$) $\v$ ($f_3 \^ f_4 \^ f_1$)\\
+		$\formula{\so{\tau_1}{}{}}$ = ($f_1 \^ f_2$) $\v$ ($f_3 \^ f_4 \^ f_1$)\\
 		\\
-		$\setSO$ cycles in $\tau_2$\\
+		$\so{\tau_2}{}{}$ cycles in $\tau_2$\\
 		\tab$\so{\tau_2}{\so{\tau_2}{f_3}{f_4}}{f_3}$\\
-		$\formula{\tau_2}$ = ($f_3 \^ f_4$)\\
+		$\formula{\so{\tau_2}{}{}}$ = ($f_3 \^ f_4$)\\
 		\hline
 		\multicolumn{1}{r}{\scriptsize $e_i$: program events,
 					$f_i$: candidate fences}
@@ -98,17 +98,19 @@ in information that the technique has to work with (from all buggy executions
 to just one at a time). As a consequence of considering one execution per
 iteration the \z formula is attenuated with terms only from one execution.
 %
-Consider the example in Figure~\ref{fig:eg} depicting $\setSO$ cycles in two buggy 
-executions of an input program. The primary \ourtechnique technique
-would provide the formula $\formula{\tau_1}$ $\^$ $\formula{\tau_2}$ to 
-\z and thus recognize $(f_3 \^ f_4 \^ f_1)$ as the optimal solution.
+Consider the example in Figure~\ref{fig:eg} depicting $\setSO$ cycles in 
+two buggy executions of an input program. The primary \ourtechnique 
+technique would provide the formula $\formula{\so{\tau_1}{}{}}$ $\^$ 
+$\formula{\so{\tau_2}{}{}}$ to \z and thus recognize $(f_3 \^ f_4 \^ f_1)$ 
+as the optimal solution.
 The time efficient version, however, may consider the formula 
-$\formula{\tau_1}$ in the first iteration and $\formula{\tau_2}$ in the
-next iteration and return  ($f_1 \^ f_2$) $\^$ ($f_3 \^ f_4$) as the
-result which is larger in size than the optimal solution.
+$\formula{\so{\tau_1}{}{}}$ in the first iteration and 
+$\formula{\so{\tau_2}{}{}}$ in the next iteration and return  ($f_1 \^ f_2$) 
+$\^$ ($f_3 \^ f_4$) as the result which contains more fences than the 
+optimal solution.
 
 However, it was observed from the experimental results that the time
-efficient technique significantly performs the primary technique in terms of 
+efficient technique significantly outperforms the primary technique in terms of 
 the analysis time while adding a reasonably small number of extra \sc
 fences. The experimental results have been discussed in detail in the 
 following section.
