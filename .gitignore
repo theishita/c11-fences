@@ -17,9 +17,10 @@ __pycache__/
 compute_fences
 *_store
 
-# testing files
+# testing files/folders
 *_fenced.cc
 *testing*
+code/benchmarks/test
 
 # model checker files:
 # cds checker
