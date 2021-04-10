@@ -64,8 +64,8 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 	\begin{algorithmic}[1]	
 		\Procedure{\ourtechnique}{$ P $}
 		\State $\phi := \top$
-		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)\Comment{$\mathcal{CE}$ = $ \langle \events_\tau, \setHB, \setMO, \setRF, \setSB  \rangle $}
-		\For{$ \tau \in \mathcal{CE} $}
+		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)
+		\For{$ \tau \in \mathcal{CE} $}\Comment{$\tau$ = $ \langle \events_\tau, \setHB, \setMO, \setRF, \setSB  \rangle $}
 			\State $ \events_{\im{\tau}} := \events_\tau\ \union $ candidate fences
 			\State $ \seqb{\im{\tau}}{}{} := $ computeSB($\setSB, \events_{\im{\tau}}$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_{\im{\tau}}, \setHB, \setMO, \setRF, \seqb{\im{\tau}}{}{}$)
 			\State cycles := computeCycles($ \so{\im{\tau}}{}{} $)
