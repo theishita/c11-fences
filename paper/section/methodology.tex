@@ -73,7 +73,7 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 				\State \texttt{Abort} (``This behavior can't be stopped using \cc fences.'')
 				\State \Return
 			\EndIf
-			\State $\phi := \phi\ \^ $ genFormula(cycles)
+			\State $\phi := \phi\ \^ \formula{\so{\im{\tau}}{}{}} $ 
 %			\State $ \phi := \phi_\tau $
 		\EndFor
 		\State F:= MinModel($ \phi $)
@@ -309,7 +309,6 @@ that it is not possible to stop this behavior using \cc fences in lines
 9-11.
 
 
-%We create a Boolean formula for every \lso-cycle every counter-example. 
 Let $ \cycles{\im{\tau}} $ be the set of \lso-cycles in a trace $ \im{\tau} $, 
 where a cycle $ c \in \cycles{\im{\tau}} $ is ordered sequence of 
 $ \ordevents{\sc} $. We abuse the notation $\ordevents{\sc}_c$ to 
@@ -319,426 +318,77 @@ Hence, to introduce a cycle $ c $ in the execution, we add the fences in $\ordev
 $\ordevents{\sc}_c \intersection \ordfences{\sc}$, in the program $ P $.
 In other words, a cycle $ c $ can be introduced in a program if we insert 
 $ (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
-\ordfences{\sc}} \fn{})$ fences in the program $ P $.
+\ordfences{\sc}} \fn{})$ fences in the program $ P $, 
+where the truth assignment to a fence corresponds to inserting that fence 
+in the program.
 Recall that we need to stop at least one cycle from the set 
 $ \cycles{\im{\tau}} $ in order to make a trace $ \tau $ invalid.
 Hence we need to insert $ (\bigvee\limits_{c \in \cycles{\im{\tau}}} (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
 \ordfences{\sc}} \fn{})) $ to stop a trace $ \tau $. 
-We use $\formula{\tau}$ to represent the boolean formula 
-$ (\bigvee\limits_{c \in \cycles{\im{\tau}}} 
-(\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
-\ordfences{\sc}} \fn{})) $. 
-Clearly, any satisfying assignment to $ \formula{\tau} $ will give list of fences required to stop the buggy execution $ \tau $.
+We use $\formula{\so{\im{\tau}}{}{}}$ to represent the boolean formula 
+corresponding to the $ \so{\im{\tau}}{}{} $-cycles.
+Clearly, any satisfying assignment to $ \formula{\so{\im{\tau}}{}{}} $ 
+will give list of fences required to stop the buggy execution $ \tau $.
+%
+Furthermore, we construct the formula for all trace 
+$ \tau \in \mathcal{CE} $ by conjuncting them in 
+line 12 of Algorithm~\ref{alg:fence-syn}, i.e., 
+at the end of the for loop in lines 4-12, the formula 
+$ \phi \definedas (\bigwedge\limits_{\tau \in \mathcal{CE}} 
+(\bigvee\limits_{c \in \cycles{\im{\tau}}} 
+(\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection \ordfences{\sc}} \fn{}))) $.
+Any satisfying assignment of the formula $\phi$ will list the fences that 
+are enough to stop the buggy behaviors in $ \mathcal{CE} $.
+
+%\begin{lemma}
+%	Introducing fences in any $\so{\im{\tau}}{}{}$-cycle will stop the counter example $ \tau $ in actual execution of the program.
+%\end{lemma}
+
+\begin{lemma}
+	If there are no cycles in $\so{\im{\tau}}{}{}$ of a buggy execution 
+	$\tau$, the counter-example $ \tau $ cannot be stopped using any \cc 
+	fences.
+\end{lemma}
+
+\begin{theorem}
+	Any satisfying assignment to $ \formula{\so{\im{\tau}}{}{}} $ 
+	will give list of fences required to stop the buggy execution $ \tau $
+\end{theorem}
 
 
 \subsection{Finding Optimal Placement of the Fences}
+One possible satisfying assignment to formula $ \phi $ is assigning the 
+value true to all fences. Clearly such a solution is very expensive.
+The number of truth assignments in the solution of formula $ \phi $ is 
+equal to the number of fences inserted in the program.
+%A satisfying assignment of the formula $ \phi $ with lesser number 
+%of fences will give us a more optimal fence placement. 
+Hence, a satisfying assignment of the formula $ \phi $ with the least 
+number of fences will give us the optimal fence placement. 
+Therefore, we reduce the problem of finding optimal fence placement to the 
+minimal model of a SAT formula. 
 
+The problem of minimal model computation has been studied in 
+\divComment{need references}. \divComment{Need complexity argument for min model}.
 
-% --------- ADDING FENCES -------------
-\subsection{Adding Pseudo Fences}
-\par
-We use a verification tool to generate a set of all the buggy traces. 
-Each trace is then taken individually and analyzed. For each trace, 
-the first step is inserting pseudo fences. \mosc fences are inserted 
-before/after each instruction in the trace. This can be seen in 
-Fig. \ref{fig:dekker3}. The fences are not actually added to the 
-input program, but only added for reference purposes as a step in 
-the tool. The maximum number of fences possible are added so that 
-the required ones can be retained and the rest can be eliminated.
+In some cases, a fence at certain program location maybe more expensive 
+than at other program location. For example, a fence inside a loop is may 
+execute several times. Hence, such a fence may be more expensive than a 
+fence placed outside the loop body.
+%
+\ourtechnique can handle such constraints by using weighted minimal model 
+problem \divComment{need references}, where weight of each fence 
+corresponds how expensive the fence is. 
+The Algorithm~\ref{alg:fence-syn} can be modified to take weight 
+function as input. 
+%
+The current implementation of \ourtechnique uses repeated calls to Z3 SAT 
+solver to find the minimal model. \divComment{How are we solving it?}
 
-% --------------- FINDING RELATIONS -----------
-\subsection{Finding relations}
-% What is TO?
-The C11 standard \cite{C11} states that in any valid execution 
-all the \mosc instructions should form a total order. Such total order
-has to be consistent with modification order and 
-happens-before relation. This means that for any two \mosc instructions A 
-and B such that A $ \neq B $, either $\to{\tau}{A}{B}$ or $\to{\tau}{B}{A}$. 
-Hence, an execution with both $\to{\tau}{A}{B}$ and $\to{\tau}{B}{A}$ is infeasible.
-% Why TO?
-Our technique computes $\setSO$ of buggy execution when pseudo fences are 
-present. If such $\setSO$ has a cycle, then the program with these fences 
-will not have this buggy execution. 
-Hence, by finding these cycles we can work out the required fences.
-% Example
-For example, in Fig \ref{fig:dekker2}, if the assert statement is violated
-if either thread reads the value written to variable $c$ by the other thread.
-% Other relations
-%In order to find $\setSO$, we first compute the $\setSB$, $\setSW$, $\setHB$ and 
-%$\setMO$ relations.
-The basis of our approach lies upon finding relations between the 
-instructions and figuring out how they affect the program in order to 
-reduce the total fences to a minimum. 
-
-\par
-The next step after inserting pseudo fences is finding relations between 
-instructions, including fences. 
-These relations will help in figuring out which fences to eliminate from 
-the trace. In particular, we are concerned with the $\setSO$ (total order) 
-relations between all SC instructions and fences. Rules for TO relations 
-for the C11 model are described in the official standard \cite{C11}. 
-These rules are dependent relations $\setSO $, $\setSW$, $\setHB$ and $\setMO$, which 
-would have to be computed first, and an order is followed for the same.
-
-% --------------- HB -----------------
-\subsubsection{Finding $\setHB$ relations}
-The first and most basic relation is $\setHB$ (happens-before). 
-An instruction A is said to happen-before B if:\\
-($\sw{\tau}{A}{B}$) $\lor$ ($\seqb{\tau}{A}{B}$) $\lor$ ($\hb{\tau}{A}{X}$ $\land$ $\hb{\tau}{X}{B}$) $\implies$ $\hb{\tau}{A}{B}$
-
-\par
-Therefore, $\setSB$ (sequenced-before) and $\setSW$ (synchronizes-with) 
-relations are computed first. 
-An $\setSW$ relation is formed based on the following rules:
-\begin{enumerate}
-\item $\setSW$ relation between thread create and thread start instructions\\
-$\sw{\tau}{thread A create}{thread A start}$
-
-\item $\setSW$ relation between thread finish and thread join instructions\\
-$\sw{\tau}{thread A finish}{thread A join}$
-
-\item $\setSW$ relation between read (R) and write (W) instructions.\\
-$\rf{\tau}{W_{\geq rel}x}{R_{\geq acq}x}$ $\implies$ $\sw{\tau}{W_{\geq rel}x}{R_{\geq acq}x}$\\
-RMW operations are considered as both reads and writes in this case.
-\end{enumerate}
-Note that since we do not consider \moacq, \morel and \moar fences, 
-our $\setSW$ rules do not capture them.
-\par
-
-
-% --------------- FIG --------------
-%\begin{figure}
-%\begin{center}
-%	\input{section/figures-tables/hb_instr_example.tex}
-%	\caption{a. Example instruction trace from CDS Checker.\\b. Adjacency table of hb relations as formed by the tool.}
-%	\label{fig:cds_hb}
-%\end{center}
-%\end{figure}
-
-\par
-The $\setHB$ relation is computed for all instructions before inserting the 
-pseudo fences in the tool. 
-This way we compute the $\setHB$ for the actual input program rather than a 
-modified version of program along with pseudo fences. The advantages of this
-approach are two fold. First, $\setHB$ relation is only required 
-to compute the $\setMO$ (modification order) relations, which is concerned only 
-with the write instructions. Therefore, computing $\setHB$ relations before 
-inserting pseudo fences works as an optimization. Second, if we compute $\setHB$
-after inserting fences, we will have some $\setHB$ relations that are not in 
-the actual execution but will exist in the execution of program with all the 
-pseudo fences. \divComment{What is the problem with having such hb?}
-\divComment{Rule 1b of computing TO is also using hb, but only over write operations. So the first points still holds.}
-
-\begin{lemma} For any valid execution of a program, the relation $\setHB$ computed 
-	as above is same as \emph{happens-before} of C11.
-\end{lemma}
-
-% --------------- MO ------------
-\subsubsection{Finding $\setMO$ relations}
-$\setMO$ relations are formed between write instructions when the value of a 
-variable is changed at some point in the program. The rules for modification 
-order as described by the standard \cite{C11} are:
-\begin{enumerate}
-    \item Write-write coherence: \\
-    $\hb{\tau}{A_x}{B_x}$ $\implies$ $\mo{\tau}{A_x}{B_x}$\\
-    \textit{where A, B are write operations modifying variable x}
-    
-    \item Read-read coherence:\\
-    $\hb{\tau}{\rf{\tau}{X_x}{A_x}}{B_x}$ $\implies$ ($\rf{\tau}{X_x}{B_x}$) $\lor$\ ($\rf{\tau}{\mo{\tau}{X_x}{Y_x}}{B_x}$)\\
-    \textit{where X, Y are writes on x\\ and A, B are reads on x}
-    
-    \item Read-write coherence:\\
-    $\hb{\tau}{A_x}{B_x}$ $\implies$ ($\rf{\tau}{X_x}{A_x}$) $\land$\ ($\mo{\tau}{X_x}{B_x}$)\\
-    \textit{where X, B are writes on variable x\\and A is a read on variable x}
-    
-    \item Write-read coherence:\\
-    $\hb{\tau}{X_x}{B_x}$ $\implies$ ($\rf{\tau}{X_x}{B_x}$) $\lor$\ ($\rf{\tau}{\mo{\tau}{X_x}{Y_x}}{B_x}$)\\
-    \textit{where X, Y are writes on variable x\\and B is a read on variable x}
-\end{enumerate}
-
-\begin{lemma}
-	For any valid execution of a program, the relation $\setMO$ computed 
-	as above is same as \emph{modification-order} of C11.
-\end{lemma}
-
-\par
-After this step, the pseudo fences are inserted.
-
-% --------------- TO -----------
-\subsubsection{Finding $\setSO$ relations between SC instructions}\label{to_rel}
-The final step in finding relations and the main step that is required for 
-fence elimination is to find $\setSO$ relations. The rules for $\setSO$ relations 
-in the C11 standard are defined in \cite{C11}. These rules can be interpreted 
-as the following:
-%\input{section/figures-tables/to_rules.tex}
-\textit{Note: ``the fence above instruction A'' is a comprehensive term for all 
-	the fences which are sequenced-before instruction A.}
-Intuitively, transitive closure of $\setSO$ is \emph{sc} ordering over the 
-given program execution if the program had the pseudo fences to begin with.
-Such an execution may or may not be valid under C11 memory model.
 
 \begin{theorem}
-	For any valid execution of a program, the transitive closure of $\setSO$ 
-	is the same as \emph{to} order of C11 of in the corresponding (possibly 
-	invalid) trace with candidate fences.
-\end{theorem}
-
-
-% --------------- SOLN EXPLAINED -------------
-\subsection{Eliminating Fences}
-The rules in \textsection\ref{to_rel} provides us $\setSO$ relations between all 
-instructions and fences. We now get a graph that would look 
-like Fig \ref{fig:cycles}. 
-
-%Further, the transitivity of $\setSO$ 
-%relation will give us some additional pair in $\setSO$. 
-
-\par
-The purpose of creating a graph this way is to detect if there are any cycles 
-formed in the trace after inserting the fences. 
-In a total order 
-%relation, the antisymmetry and connexity properties state that:\\
-%Either \too{A}{B} or \too{B}{A} and if (\too{A}{B} $\land$ \too{B}{A}) then A = B.\\
-%This property of TO can be exploited to minimize the fences. 
-According to the C/C++11 standard, each \mosc instruction is in total order 
-with every other \mosc instruction. This means that for any two \mosc 
-instructions A and B, either $\to{\tau}{A}{B}$ or $\to{\tau}{B}{A}$. According to 
-$\setSO$ rules, if both of these relations hold true, then A = B. 
-If A $\neq$ B and A and B are different entities which satisfy the 
-relation ($\to{\tau}{A}{B}$ $\land$ $\to{\tau}{B}{A}$), that means that a cycle is 
-formed between instructions A and B. This, in turn, violates the $\setSO$ 
-property, rendering the execution infeasible. If a certain execution 
-becomes infeasible, then it would never exhibit during an actual execution 
-of the program.
-
-Note that apart from the rules described above, some $\setSO$ edges 
-will be created due to the transitivity of $\setSO$.
-We have not included these edges in our final graph and limited 
-the edges in graphs to the set that was computed using the rules 
-in \textsection\ref{to_rel}. That is, all $\setSB$ edges are taken into 
-consideration whether immediate 
-or not, and only those edges formed via the $\setSO$ rules discussed in 
-section \textsection\ref{to_rel} are considered while forming a graph. 
-The reason of this is explained in \textsection\ref{sec:no-transitive}.
-
-
-% --------------- FIG 5 -------------------
-\begin{figure}
-\begin{center}
-	\input{section/figures-tables/cycle_example.tex}
-	\caption{A graph structure created by various relations acting as edges}
-	\label{fig:cycles}
-\end{center}
-\end{figure}
-
-\subsection{Restricting Buggy Executions}
-\par
-We find out $\setSO$ relations in only the buggy or erroneous traces which 
-are obtain from verification tool. For each erroneous trace, a graph is 
-formed with the instructions/fences as nodes and the $\setSO$ relations as 
-edges. 
-Our purpose is to insert fences such that the graph of the buggy exection 
-will contain a cycle 
-When such a cycle is introduced, it violates the properties of a total 
-order relation in C11, rendering the entire execution infeasible. 
-An infeasible execution will never occur during runtime, which means 
-that the buggy execution in which the $\setSO$ cycle is introduces using 
-fences will never be executed. 
-Hence the assertion which was being violated will remain satisfied. 
-
-In case there are no cycles forming for one or more of the buggy traces, 
-the behavior is deemed to be unpreventable using \mosc fences. 
-
-\par
-In Fig \ref{fig:cycles}, a number of cycles can be noted. Some of them are:
-\begin{itemize}
-\item \textit{$I_1n_1 \rightarrow F_2n_2 \rightarrow I_2n_1 \rightarrow I_1n_1$}
-\item \textit{$F_2n_2 \rightarrow F_3n_2 \rightarrow F_2n_2$}
-\item \textit{$F_1n_1 \rightarrow I_1n_1 \rightarrow F_2n_2 \rightarrow F_3n_2 \rightarrow F_1n_1$}
-\item \textit{$I_1n_1 \rightarrow F_2n_2 \rightarrow F_3n_2 \rightarrow F_2n_2 \rightarrow I_2n_1 \rightarrow I_1n_1$}
-\end{itemize} 
-A single cycle out of the above mentioned or others being formed needs 
-to be created in order to prevent this particular run from ever taking 
-place. From just looking over it once, one can notice that the smallest 
-cycle would be \textit{$F_2n_2 \rightarrow F_3n_2 \rightarrow F_2n_2$} 
-with just two participating nodes. However, the cycle with the least 
-number of fences is \textit{$I_1n_1 \rightarrow F_2n_2 \rightarrow I_2n_1 
-\rightarrow I_1n_1$} with just one fence (\textit{$F_2n_2$}) being inserted. 
-Hence, if just \textit{$F_2n_2$} is inserted into the program, this particular 
-buggy trace will be stopped. This method is carried out for all such 
-buggy traces and their cycles are calculated and stored.
-
-Another point to note is that, for each cycle, only the fences are considered
-while calculating the final result. This is because the instructions present in the
-cycles (if any) are already present in the input program and are immutable.
-The fences, on the other hand, are the inserted by us and therefore are the only
-entities considered while finding the final result.
-
-
-\begin{lemma}
-	Introducing fences in any cycle of $\setSO$ will stop that cycle 
-	from forming in actual run of the program.
-\end{lemma}
-
-\begin{lemma}
-	If there are no cycles in $\setSO$ of a buggy execution, the behavior 
-	cannot be stopped using any C11 fences.
-\end{lemma}
-
-\begin{theorem}
-	Stopping all cycles of $\setSO$ in any buggy execution will stop that
-	buggy execution in actual run of program.
-\end{theorem}
-
-% --------------- FENCE MIN PROBLEM ----------
-\subsection{The Fence Minimization Problem} \label{sec:fence-min}
-\par
-Even if cycles are calculated for each trace, the solution for obtaining 
-a minimized number of fences to be inserted is not so straight-forward 
-as simply choosing the one with the minimum fences for each trace. 
-For one, there might be multiple cycles containing minimum fences. 
-Another issue is that this would not yield the actual minimized 
-number of fences. 
-
-% --------------- FIG 6 -------------------
-\begin{figure}
-\begin{center}
-	Cycles from trace 1:\\
-	\textit{$F_1 \rightarrow F_2 \rightarrow I_1 \rightarrow F_1$}\\
-	\textit{$F_3 \rightarrow F_4 \rightarrow F_1 \rightarrow F_3$}\\
-	Cycles from trace 2:\\
-	\textit{$F_3 \rightarrow F_4 \rightarrow F_3$}
-	\caption{Example cycles from traces}
-	\label{fig:fence_min}
-\end{center}
-\end{figure}
-
-Fig \ref{fig:fence_min} shows cycles from two buggy traces from 
-a program. 
-one solution to obtain the minimum number of fences was 
-to take the smallest cycle from each trace, that is to take the 
-cycle which contains the least number of fences from each execution 
-trace. In this case, fences \textit{$F_1$}, \textit{$F_2$} 
-would be chosen from trace 1 and fences \textit{$F_3$}, \textit{$F_4$} 
-would be chosen from trace 2. This makes four total fences that 
-to include in the main program to stop the behavior where 
-any assertion gets violated.
-
-\par
-However, this is not the optimal solution. Fig \ref{fig:fence_form} 
-shows the example explained in Fig \ref{fig:fence_min} converted 
-into its respective formula in propositional logic. For each trace, 
-the cycles are added as disjunctions, with each fence in a cycle 
-being a necessary component, deeming it a conjunction. Since each 
-trace needs to satisfy at least one cycle for the trace to become 
-infeasible, each cycle is a disjunction. All traces need to be 
-prevented, so each trace is part of a conjunction. Let 
-$ \mathcal{B} $ be the set of all buggy execution of a program with 
-at least one cycle. Let $ \mathcal{F}(\mathcal{B}) $ gives the 
-fence minimization formula for set of buggy executions $ \mathcal{B} $.
-
-% --------------- FIG 7 -----------------
-\begin{figure}
-\begin{center}
-	( ( $F_1 \land F_2\ ) \lor\ ( F_3 \land F_4 \land F_1\ )\ ) \land\ (\ (\ F_3 \land F_4$ ) )
-	\caption{Formula for Fig \ref{fig:fence_min}}
-	\label{fig:fence_form}
-\end{center}
-\end{figure}
-
-\par
-The formula in fig \ref{fig:fence_form} can be looked at as a 
-cost function to minimize the cost, with each entity being a fence, 
-having value either 0 or 1. A fence having value 1 would mean that 
-it should be inserted in the program and value 0 would mean that 
-it should not be inserted in the program, according to the 
-minimized cost. From this formula, the solution for Fig \ref{fig:fence_min} 
-comes out to have 3 fences – \textit{$F_3, F_4, F_1$}, 
-unlike the original solution where four fences were sought.
-
-\begin{theorem}
-	For any input program $ \mathcal{F}(\mathcal{B}) $ gives optimal
+	For any input program $ P $, minimal model of $ \phi $ gives optimal
 	number of fences required to stop all the buggy behaviors in 
-	$ \mathcal{B} $.
+	$ \mathcal{CE} $.
 \end{theorem}
 
-\par
-Implementing such a propostional formula for programs with 
-more than 50 execution traces, with each of them having uncountable 
-fences would be quite an overhead. An SMT/SAT Solver is used for 
-this purpose. Our tool uses \z to find minimum satisfying assignment 
-of such formulas. A formula similar to the one in Fig \ref{fig:fence_form} 
-is created for each program and the minimum cost with the maximum 
-satisfying assignment is computed. 
-
-\input{section/figures-tables/algo_figure.tex}
-
-
-\subsubsection{why transitive TO edges aren't considered} \label{sec:no-transitive}
-The relations which are considered to form the final graph are - 
-all $\setSB$ edges between only \mosc instructions including transitive $\setSB$ edges, 
-and directly formed $\setSO$ edges but not transitively formed $\setSO$ edges.  
-This is because transitively formed $\setSO$ relations will be of 
-no use in our case. If there is a transitive $\setSO$ relation formed 
-between two instructions, then this relation has been caused by 
-some other edges in our graph. 
-Our formula is concerned only with the cycles in the graph 
-(as discussed in \textsection\ref{sec:fence-min}), we will focus on 
-the new cycles that might come if we were to consider the transitive 
-edges. These cycles might be formed because of two reasons - 
-either the new cycle consists of i) some transitive edges in the 
-actual program that we did not include in $\setSO$, or ii) some 
-transitive edges created due to pseudo fences. In case i), the cycle 
-(let $C$) is certainly caused by some pseudo fence inserted in the program 
-since the actual program execution cannot have a cycle. Since the 
-transitive edge is formed due to some edge in our $\setSO$, there 
-will be a representative cycle $C'$ of the cycle $C$ formed using 
-edges in $\setSO$. As our formula only concerns the pseudo fences, 
-the formula constructed for $C$ and $C'$ will be the same. 
-Similarly in case ii), since the cycle is created due to transitive 
-edge caused by one or more fences, the formula must consist these 
-fences too as a way to determine which fences caused the cycle. Hence,
-the formula remains same. 
-
-%Even if we were to consider these edges, the formula will not change. 
-%Therefore, for this transitive 
-%relation, we need not consider the two nodes participating in the 
-%transitive edge, instead we need to consider the original nodes 
-%which caused this transitive relation to form in the first place. 
-%Transitive edges are formed through transitive relations which will 
-%hide the originally formed TO relations. But by excluding the 
-%original edges, the transitive edges we need will never actually be formed.
-
-For instance, look at Fig \ref{fig:cycles}. The edge \textit{$F_3n_2$} 
-$\rightarrow$ \textit{$I_1n_1$} is not an edge found through the rules of 
-TO relations. It is a transitive edge. So if we were to consider the cycle 
-\textit{$F_3n_2$} $\rightarrow$ \textit{$I_1n_1$} $\rightarrow$ \textit{$F_2n_2$}
-$\rightarrow$ \textit{$F_3n_2$}, we notice that the edge \textit{$F_3n_2$} 
-$\rightarrow$ \textit{$I_1n_1$} cannot exist on its own. Hence we cannot simply 
-consider the three edges which partake in the formation of this cycle.
-We will need to consider all the possible edges which caused the formation of the 
-transitive edge, which are:
-\begin{enumerate}
-	\item \textit{$F_3n_2$} $\rightarrow$ \textit{$F_2n_2$} $\rightarrow$ 
-\textit{$I_2n_1$} $\rightarrow$ \textit{$I_1n_1$}
-	\item \textit{$F_3n_2$} $\rightarrow$ \textit{$F_1n_1$} $\rightarrow$ \textit{$I_1n_1$}
-\end{enumerate}
-
-Hence the cycle \textit{$F_3n_2$} $\rightarrow$ \textit{$I_1n_1$} $\rightarrow$
-\textit{$F_2n_2$} $\rightarrow$ \textit{$F_3n_2$} translates into the following cycles:
-\begin{enumerate}
-	\item \textit{$F_3n_2$} $\rightarrow$ \textit{$F_2n_2$} $\rightarrow$ \textit{$I_2n_1$} 
-$\rightarrow$ \textit{$I_1n_1$} $\rightarrow$ \textit{$F_2n_2$} $\rightarrow$ \textit{$F_3n_2$}
-	\item \textit{$F_3n_2$} $\rightarrow$ \textit{$F_1n_1$} $\rightarrow$ \textit{$I_1n_1$} $\rightarrow$
-\textit{$F_2n_2$} $\rightarrow$ \textit{$F_3n_2$}
-\end{enumerate}
-
-
-\par
-So even if transitive $\setSO$ relations are considered as graph edges, 
-they would not impact our final solution. 
-%For each transitively 
-%formed edge, all original edges which would have possibly caused 
-%the transitive edge would be needed to be kept track of. 
-Therefore, using just the original edges serves our purpose 
-in a much more efficient manner.
