@@ -1,30 +1,38 @@
-Consider an acyclic multi-threaded \cc program $P$. The threads
-of the program perform a sequence of memory access operations 
-on a set of shared memory objects and \cc memory fences.
-The memory access operations can be atomic or non-atomic in
-nature.
+Consider a\deleted{n acyclic} multi-threaded \cc
+program \added{$\parallel_{i\in \text{\tt TID}} P_i$, where $\text{\tt TID}= \{1,\ldots,n\}$ is the set of thread ids}. \deleted{The} \added{Each} thread \deleted {of the program}
+\added{$P_i$ is a loop-free program, which}
+performs a sequence of memory access operations on a set of shared
+memory objects and \cc memory fences.  The memory access operations
+can be atomic or non-atomic in nature.
 %
-An instance of a thread operation in an execution sequence is
-called an {\em event}. 
-Events of a thread $t$ are uniquely indexed with an id. An event 
-with id $i$ of thread $t$ is represented by a tuple
-$\langle i, t, act, obj, ord, inst \rangle$ where $act, obj, ord,
-inst$ represent the event action $\in$ $\{$reads, writes, rmws 
-(read-modify-writes), fences$\}$, the memory object(s) accessed by 
-the event, the memory order associated with the event and program
-instruction corresponding to the event respectively.
-Note that, the set of memory objects of a rmw event can be a 
-non-singleton set and would be empty for fence events.
+An instance of a thread operation in an execution is called an {\em
+event}.  Events of a thread $t$ are uniquely indexed with an id.
+\svs {
+\begin{definition}
+An event $i$ of thread $t$ is represented by a tuple $\langle i, t, act, obj,$ $ ord, inst \rangle$ where:
+\begin{itemize}
+\item $act$ represents the event action $\in \{ \text{\tt read}, \text{\tt write}, \text{\tt rmw}, \text{\tt fence} \} $,
+\item $obj$ is the set of memory objects accessed,
+\item $ord$ records the memory order associated with the event, and
+\item $inst$ is the corresponding program instruction.
+\end{itemize}
+\end{definition} }
+Note that the
+set of memory objects of a rmw event can be non-singleton and
+\deleted{would be} empty for fence events.
 %
-We use $\events$ to denote the set of all
-program events. We further use $\writes$, $\reads$ and $\fences$
-to denote the write, read and fence events of the input program.
+\deleted{We use} \added{Let} $\events$ \deleted{to} denote the set of all
+program events. \deleted{We further use} \added{Furthermore,}
+$\writes$, $\reads$ and $\fences$
+ denote the write, read and fence events of the input program.
 %
 An execution of $P$ is a sequence of events $\tau$ = 
 $e_1.e_2...e_n$ \st $e_i \in \events$. We use $\events_\tau$
 (and accordingly $\writes_\tau$, $\reads_\tau$, $\fences_\tau$)
 to denote the respective sets of events in an execution sequence, 
 or simply sequence, $\tau$.
+\svs{why the execution of C11 program be shown as a sequence.
+RC11 paper clearly avoids having this representation.}
 
 \noindent
 {\bf Memory ordering under \cc}: 
