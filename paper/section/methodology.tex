@@ -237,7 +237,7 @@ However, strengthening the memory order annotation is out of the scope of this w
 %\end{figure}
 
 \noindent\textbf{Computing \lsb in Intermediate Traces:} 
-In line 5 of the Algorithm~\ref{alg:fence-syn}, we compute set of program 
+Line 5 of the Algorithm~\ref{alg:fence-syn} computes the set of program 
 events in trace $ \im{\tau} $. Naturally, this set will consist of 
 candidate fences along with all the program events in trace $ \tau $.
 The set $ \setSB $ represents the pair of program events related by 
@@ -315,16 +315,14 @@ $ \ordevents{\sc} $. We abuse the notation $\ordevents{\sc}_c$ to
 represent the set of events in a cycle $ c $. 
 All the read and write events in $\ordevents{\sc}_c$ are already in program $ P $. 
 Hence, to introduce a cycle $ c $ in the execution, we add the fences in $\ordevents{\sc}_c$, i.e, 
-$\ordevents{\sc}_c \intersection \ordfences{\sc}$, in the program $ P $.
+$\ordfences{\sc}_c$, in the program $ P $.
 In other words, a cycle $ c $ can be introduced in a program if we insert 
-$ (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
-\ordfences{\sc}} \fn{})$ fences in the program $ P $, 
+$ (\bigwedge\limits_{f \in \ordfences{\sc}_c} f)$ fences in the program $ P $, 
 where the truth assignment to a fence corresponds to inserting that fence 
 in the program.
 Recall that we need to stop at least one cycle from the set 
 $ \cycles{\im{\tau}} $ in order to make a trace $ \tau $ invalid.
-Hence we need to insert $ (\bigvee\limits_{c \in \cycles{\im{\tau}}} (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
-\ordfences{\sc}} \fn{})) $ to stop a trace $ \tau $. 
+Hence we need to insert $ (\bigvee\limits_{c \in \cycles{\im{\tau}}} (\bigwedge\limits_{f \in \ordfences{\sc}_c} f)) $ to stop a trace $ \tau $. 
 We use $\formula{\so{\im{\tau}}{}{}}$ to represent the boolean formula 
 corresponding to the $ \so{\im{\tau}}{}{} $-cycles.
 Clearly, any satisfying assignment to $ \formula{\so{\im{\tau}}{}{}} $ 
@@ -336,7 +334,7 @@ line 12 of Algorithm~\ref{alg:fence-syn}, i.e.,
 at the end of the for loop in lines 4-12, the formula 
 $ \phi \definedas (\bigwedge\limits_{\tau \in \mathcal{CE}} 
 (\bigvee\limits_{c \in \cycles{\im{\tau}}} 
-(\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection \ordfences{\sc}} \fn{}))) $.
+(\bigwedge\limits_{f \in \ordfences{\sc}_c} f))) $.
 Any satisfying assignment of the formula $\phi$ will list the fences that 
 are enough to stop the buggy behaviors in $ \mathcal{CE} $.
 
