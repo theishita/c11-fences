@@ -1,5 +1,7 @@
 Consider a\deleted{n acyclic} multi-threaded \cc
-program \added{$\parallel_{i\in \text{\tt TID}} P_i$, where $\text{\tt TID}= \{1,\ldots,n\}$ is the set of thread ids}. \deleted{The} \added{Each} thread \deleted {of the program}
+program \added{$P$ $:=$ $\parallel_{i\in \text{\tt TID}} P_i$, 
+where $\text{\tt TID}= \{1,\ldots,n\}$ is the set of thread ids}. 
+\deleted{The} \added{Each} thread \deleted {of the program}
 \added{$P_i$ is a loop-free program, which}
 performs a sequence of memory access operations on a set of shared
 memory objects and \cc memory fences.  The memory access operations
@@ -7,55 +9,71 @@ can be atomic or non-atomic in nature.
 %
 An instance of a thread operation in an execution is called an {\em
 event}.  Events of a thread $t$ are uniquely indexed with an id.
-\svs {
-\begin{definition}
+%
+\begin{definition}[Event]\newline
 An event $i$ of thread $t$ is represented by a tuple $\langle i, t, act, obj,$ $ ord, inst \rangle$ where:
-\begin{itemize}
-\item $act$ represents the event action $\in \{ \text{\tt read}, \text{\tt write}, \text{\tt rmw}, \text{\tt fence} \} $,
-\item $obj$ is the set of memory objects accessed,
-\item $ord$ records the memory order associated with the event, and
-\item $inst$ is the corresponding program instruction.
+\begin{itemize}[label=inst,align=left,leftmargin=*]
+\item [$act$] represents the event action $\in \{ \text{\tt read}, \text{\tt write}, \text{\tt rmw}, \text{\tt fence} \} $,
+\item [$obj$] is the set of memory objects accessed,
+\item [$ord$] records the \cc memory order associated with the event, and
+\item [$inst$] is the corresponding program instruction.
 \end{itemize}
-\end{definition} }
-Note that the
-set of memory objects of a rmw event can be non-singleton and
-\deleted{would be} empty for fence events.
+\end{definition}
+The $act$ {\tt rmw} represents {\em read-modify-write}.
 %
-\deleted{We use} \added{Let} $\events$ \deleted{to} denote the set of all
-program events. \deleted{We further use} \added{Furthermore,}
-$\writes$, $\reads$ and $\fences$
- denote the write, read and fence events of the input program.
+Note that the set of memory objects of an rmw event can be non-singleton 
+and for a fence event it is an empty set.
 %
-An execution of $P$ is a sequence of events $\tau$ = 
-$e_1.e_2...e_n$ \st $e_i \in \events$. We use $\events_\tau$
-(and accordingly $\writes_\tau$, $\reads_\tau$, $\fences_\tau$)
-to denote the respective sets of events in an execution sequence, 
-or simply sequence, $\tau$.
-\svs{why the execution of C11 program be shown as a sequence.
-RC11 paper clearly avoids having this representation.}
+Let $\events$ denote the set of all program events. Furthermore,
+$\writes$, $\reads$ and $\fences$ denote the write, read and fence 
+events of the input program.
+%
+Throughout the text, use of read event as well as write event includes rmw
+events unless specified otherwise.
+%
+\begin{definition}[Trace]\newline
+	A trace or a maximal execution (or simply execution) $\tau$ of the input 
+	program $P$ under \cc is a tuple 
+	$\langle \events_\tau, \setHB, \setMO, \setRF \rangle$, where
+	\begin{itemize}[label=sethb,align=left,leftmargin=*]
+		\item [$\events_\tau$] represents the set of events in the trace $\tau$,
+		\item [$\setHB$] ({\em Happen-before} relation) is a partial order on
+			$\events_\tau$ representing the event interactions and inter-thread
+			synchronizations, discussed in Section~\ref{sec:c11},
+		\item [$\setMO$] ({\em Modification-order}) is a total order on the
+			writes of an object that establishes coherence of $\tau$ 
+			\wrt $\setHB$ , and
+		\item [$\setRF$] ({\em Reads-from}) is a relation from a write event to
+			a read event signifying that the read event takes the value of 
+			the write event in $\tau$.
+	\end{itemize}
+\end{definition}
 
 \noindent
 {\bf Memory ordering under \cc}: 
-Each memory access operation and fence in a \cc program is 
-associated with a memory order that defines the ordering restriction
-placed on atomic and non-atomic access around atomic memory access. 
+\deleted{Each memory} The memory access and fence operations
+\deleted{in a \cc program} \deleted{is} \added{are} 
+associated with \deleted{a memory} ordering \added{modes}
+that defines the ordering restriction \added{ on them.}
+\deleted{ placed on atomic and non-atomic access around atomic memory access.}
 %
-An event shares the same memory order as its corresponding operation
-in the input program.
+\deleted{An event shares the same memory order as its corresponding operation
+in the input program.}
 %
-\cc provides the following set of memory 
-orders, $\moset$ = $\{ \na, \rlx, \rel, \acq, \acqrel, \sc \}$, 
-representing the orders relaxed (\rlx), release (\rel), acquire (\acq),
+\deleted{\cc provides the following set of memory 
+ orders} $\moset$ = $\{ \na, \rlx, \rel, \acq, \acqrel, \sc \}$, 
+represents the orders relaxed (\rlx), release (\rel), acquire (\acq),
 acquire-release (\acqrel) and sequentially consistent (\sc) for
 atomic events. A non-atomic event has \na memory order associated with 
 it.
 %
-We use $\ordevents{mo}_\tau$ (and accordingly $\ordwrites{mo}_\tau$, 
-$\ordreads{mo}_\tau$ and $\ordfences{mo}_\tau$) to represent the $mo$
-ordered events of an execution sequence $\tau$ (where, $mo \in \moset$).
-\divComment{Don't call it mo. Confusing with modification order}
+We use $\ordevents{m}_\tau$ (and accordingly $\ordwrites{m}_\tau$, 
+$\ordreads{m}_\tau$ and $\ordfences{m}_\tau$) to represent the $m$
+ordered events of an execution sequence $\tau$ (where, $m \in \moset$);
+for example $\ordwrites{\rel}_\tau$ represents the write events of 
+$\tau$ with ordering restriction \rel.
 
-
+\deleted{
 \noindent
 {\bf \cc fences}: \cc provides atomic thread fences or simply 
 fences to provide additional reordering restrictions on program 
@@ -63,29 +81,27 @@ events. Note that \cc fences are not memory barriers and do not
 provide support for flushing local write values to shared memory.
 %
 A fence can be associated with memory orders $\acqrel$ and $\sc$
-providing varying degrees of reordering restrictions.
-
+providing varying degrees of reordering restrictions.}
 
 \noindent
-{\bf Buggy and invalidated executions}: The sequences of events of a 
-thread of 
+{\bf Buggy and invalidated executions}: The threads of 
 program $P$ may contain {\em assert checks} as a means of providing
-program specification. An execution sequence that violates an 
+program specification. A trace that violates an 
 assert check (\ie the condition in the assert check computes to
-{\em false}) is called a buggy execution sequence.
+{\em false}) is called a buggy trace.
 
 The purpose of this work is to synthesize \cc fences at appropriate
-program locations to invalidate a buggy sequence. Particularly, the
-event interactions in the execution sequence with synthesized fences
+program locations to invalidate buggy traces. Particularly, the
+event relation in the buggy traces with synthesized fences
 render the resulting program behavior invalid under \cc, thus ensuring
-that the previously buggy sequence would not materialize as a 
+that a previously buggy trace would not materialize as a 
 \cc program execution.
 
-We represent the invalidated or fixed sequence corresponding to a 
-buggy sequence $\tau$ by $\fx{\tau}$. 
+We represent the invalidated or fixed trace corresponding to a 
+buggy trace $\tau$ by $\fx{\tau}$. 
 %
 As an intermediate step between $\tau$ and $\fx{\tau}$, we form an 
-intermediate version of the sequence $\tau$ with candidate fences
+intermediate version of the trace $\tau$ with candidate fences
 some of which are retained as a part of $\fx{\tau}$. We represent
 the intermediate version of $\tau$ as $\im{\tau}$. The details
 of the intermediate step are discussed in Section~\ref{sec:methodology}.
