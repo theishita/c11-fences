@@ -1,17 +1,20 @@
-The \cc memory model forms an irreflexive and acyclic relation over the events of 
-an execution sequence $\tau$ called the {\em happens-before} relation 
+The \cc memory model \added{introduces the {\em happens-before} relation},
+which is an irreflexive and acyclic relation over the events of 
+an \deleted{execution sequence} \svs{again: should it be trace?}
+$\tau$ called  
 ($\setHB \subseteq \events_\tau {\times} \events_\tau$);
-such that, the execution sequence is {\em coherent} (or valid) under \cc if 
+such that, \svs{the execution sequence(?)} is {\em coherent} (or valid) under \cc if 
 the $\setHB$ relation does not violate any {\em coherence rule} of \cc
 \cite{C11}\cite{batty2011mathematizing}.
 %
 Consider the set of memory orders $\moge \rel$ = $\{\rel, \acqrel, \sc\}$
-and $\moge \acq = \{\acq, \acqrel, \sc\}$.
+and $\moge \acq = \{\acq, \acqrel, \sc\}$. \svs{why not the full C11? }
 %
 The events of a sequence $\tau$ are related by the $\setHB$ as follows;
 \begin{itemize}
-	\item {\em Intra-thread-hb}: Events of a thread are related by a {\em sequenced-before}
-	($\setSB$) relation in the order of occurrence in the thread;
+	\item {\em Intra-thread-hb}: A pair of events in $P_i$ are related by
+        their program order are also related by {\em sequenced-before} relation
+	($\setSB$).
 	
 	\item {\em Inter-thread-synchronization}: A $\moge$\acq read event ($ra$) of a thread 
 	$t_i$ when reads from a $\moge$\rel write event ($wr$) of another thread $t_j$ they form a
@@ -21,11 +24,13 @@ The events of a sequence $\tau$ are related by the $\setHB$ as follows;
 	event ($w$) in the {\em Release sequence} \cite{C11} of a $\moge$\rel write event ($wr$) of 
 	another thread $t_j$ then $wr$ and $ra$ form a relation {\em dependency-ordered-before}
 	($\setDOB$) between them as $\dob{\tau}{wr}{ra}$;
-	%
-	(where, a release sequence headed by a $\moge$\rel write event $wr$ is the maximal 
-	contiguous sequence, of an execution sequence $\tau$, that starts with $wr$ and continues 
-	over write events from the same thread and rmw events or $\moge$\rel write events from
-	other threads.)
+	% (where, a release sequence headed by a $\moge$\rel write
+	event $wr$ is the maximal contiguous sequence, of an execution
+	sequence $\tau$, that starts with $wr$ and continues over
+	write events from the same thread and rmw events or
+	$\moge$\rel write events from other threads.) \comment{Quite
+	unparsable! I should get the jist in just 2-3 sentences, which
+	I am not getting here.}
 	
 	\item {\em Inter-thread-fence-synchronization}: The relation $\setSW$ is also formed 
 	between \cc fences when a read event $\setSB$ ordered before a fence $f_i$ of thread 
@@ -34,7 +39,8 @@ The events of a sequence $\tau$ are related by the $\setHB$ as follows;
 	%
 	Similarly, a fence $\setSB$ ordered before a write can form $\setSW$ with a $\moge$\acq
 	read and a fence $\setSB$ ordered after a read can form $\setSW$ with a $\moge$\rel
-	write when the read reads-from the write.
+	write when the read reads-from the write. \comment{may be better to show via diagram
+        and explain without using too many symbols.}
 	
 	\item {\em Inter-thread-hb}: Events from different threads that are related by the 
 	transitive closure of ($\setSB$ $\union$ $\setSW$ $\union$ $\setDOB$) are related by 
@@ -84,6 +90,8 @@ Further, we introduce an irreflexive relation \sc{\em -from-read} ($\setFR$) to 
 \begin{definition}[\sc{\em -from-read} $\setFR$]\newline
 	$\forall$ $r^\sc \in \ordreads{\sc}_\tau$, $w^\sc \in \ordwrites{\sc}_\tau$
 	if $(r^\sc,w^\sc)$ $\in$ $\setRF^{-1};\setMO$ then $\fr{\tau}{r^\sc}{w^\sc}$.
+        \svs{What do you mean here by $R1;R2$? Also, what is $\setRF^{-1}$; As a suggestion
+        -- it is better to use names for relations than math symbols.}
 \end{definition}
 
 A valid \cc execution must also form a total order on all events with memory
