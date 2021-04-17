@@ -32,6 +32,8 @@ Throughout the text, use of read event as well as write event includes rmw
 events unless specified otherwise.
 %
 \begin{definition}[Trace]\newline
+\svs{The definition is cyclic, it uses $\events_\tau$ to define $\tau$. Also, I am not convinced why 
+rf and mo together are insufficient and why we need hb additionally? }
 	A trace or a maximal execution (or simply execution) $\tau$ of the input 
 	program $P$ under \cc is a tuple 
 	$\langle \events_\tau, \setHB, \setMO, \setRF \rangle$, where
@@ -71,7 +73,7 @@ We use $\ordevents{m}_\tau$ (and accordingly $\ordwrites{m}_\tau$,
 $\ordreads{m}_\tau$ and $\ordfences{m}_\tau$) to represent the $m$
 ordered events of an execution sequence $\tau$ (where, $m \in \moset$);
 for example $\ordwrites{\rel}_\tau$ represents the write events of 
-$\tau$ with ordering restriction \rel.
+$\tau$ with ordering restriction \rel. \svs{Why not use $o \in \moset$ representing order as a replacement?}
 
 \deleted{
 \noindent
@@ -84,19 +86,22 @@ A fence can be associated with memory orders $\acqrel$ and $\sc$
 providing varying degrees of reordering restrictions.}
 
 \noindent
-{\bf Buggy and invalidated executions}: The threads of 
-program $P$ may contain {\em assert checks} as a means of providing
-program specification. A trace that violates an 
-assert check (\ie the condition in the assert check computes to
-{\em false}) is called a buggy trace.
+{\bf Buggy and invalidated executions}: A \deleted{ threads of} 
+program $P$ may contain {\em assert} \added{instructions}  \deleted{as a means of providing} 
+\added{ as correctness}
+\deleted{program} specification. \added{$P$ is considered buggy} when a trace of $P$ 
+\deleted {that violates an 
+assert check (\ie the condition in the assert check computes} \added{evaluates} to
+{\em false}. \deleted{is called a buggy trace.}
 
-The purpose of this work is to synthesize \cc fences at appropriate
+
+\comment{This is not the place for the paragraph}The purpose of this work 
+is to synthesize \cc fences at appropriate
 program locations to invalidate buggy traces. Particularly, the
 event relation in the buggy traces with synthesized fences
 render the resulting program behavior invalid under \cc, thus ensuring
 that a previously buggy trace would not materialize as a 
-\cc program execution.
-
+\cc program execution. 
 We represent the invalidated or fixed trace corresponding to a 
 buggy trace $\tau$ by $\fx{\tau}$. 
 %
