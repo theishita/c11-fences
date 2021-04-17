@@ -52,12 +52,14 @@ error_string = ""
 
 def fn_main(filename):
 	global mc_total
+	global pre_calc_total
 	global z3_total
 	global fences_added
 	global total_iter
 	global error_string
 
 	z3_time = 0
+	pre_calc_total = 0
 
 	if max_iter and total_iter == max_iter:
 		return
@@ -74,7 +76,7 @@ def fn_main(filename):
 		sys.exit(0)
 	elif no_buggy_execs:
 		get_p = Processing(traces)
-		fences_present, fences_present_locs, z3vars, disjunctions, error_string = get_p.get()				# runs and returns locations
+		fences_present, fences_present_locs, z3vars, disjunctions, error_string, pre_calc_total = get_p.get()				# runs and returns locations
 
 		if error_string:
 			print(oc.WARNING + error_string + oc.ENDC)
@@ -111,10 +113,11 @@ print(oc.OKBLUE + oc.BOLD + "\n\n================= OVERALL =================" + 
 if not error_string:
 	print(oc.OKGREEN, oc.BOLD, "Total fences added: \t", fences_added, oc.ENDC)
 print("Time- CDS Checker:\t",round(mc_total, 2))
+print("Time- Pre-calculations:\t",round(pre_calc_total, 2))
 if z3_total > 0:
 	print("Time- Z3:\t\t",round(z3_total, 2))
 print("\nTime- Total:\t\t",round(end-start, 2))
-print("Time- Tool only:\t",round(end-start-mc_total-z3_total, 2))
+print("Time- Tool only:\t",round(end-start-mc_total-pre_calc_total-z3_total, 2))
 if no_traces:
 	print("\nTotal iterations:\t",total_iter)
 	print("Time- avg per iter:\t",round((end-start)/total_iter, 2))

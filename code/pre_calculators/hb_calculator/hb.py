@@ -2,7 +2,7 @@
 
 # --------------------------------------------------------
 
-from graph import Graph
+from pre_calculators.graph import Graph
 from constants import *
 
 class hb:
@@ -22,7 +22,7 @@ class hb:
 		self.complete_matrix()
 
 	def get(self):
-		return self.mat,self.size,self.to_edges
+		return self.mat, self.size, self.to_edges
 
 	# adds all transitive relations
 	def complete_matrix(self):
@@ -79,7 +79,7 @@ class hb:
 						self.mat.addEdge(v1,v2)
 						self.to_edges.append((v1,v2))
 
-			# create sw's between read/rmw and write/rmw statements
+			# create sw's between read/rmw and write/rmw statements - based on rf
 			if trace[i][TYPE] == READ or trace[i][TYPE] == RMW:
 				rf = trace[i][RF]
 				for j in trace:
@@ -87,5 +87,6 @@ class hb:
 						if j[MO] in write_models and trace[i][MO] in read_models:
 							# self.sw_edges.append((j[S_NO],trace[i][S_NO]))
 							self.mat.addEdge(j[S_NO],trace[i][S_NO])
+							# if they are of memory order sc, then they are also counted as TO edges
 							if j[MO] == SEQ_CST and trace[i][MO] == SEQ_CST:
 								self.to_edges.append((j[S_NO],trace[i][S_NO]))

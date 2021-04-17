@@ -3,13 +3,12 @@
 # --------------------------------------------------------
 
 import ast
-from graph import Graph
 import networkx as nx
 from constants import *
 
 class to:
 
-	def __init__(self,order,fences_thread,mo_edges,to_edges):
+	def __init__(self, order, fences_thread, mo_edges, to_edges):
 		self.order = order
 		self.fences_thread = fences_thread
 		self.mo_edges = mo_edges
@@ -25,7 +24,7 @@ class to:
 		self.rule3()
 		self.rule4()
 
-		self.to_edges = list(set(self.to_edges))		# remove repeats
+		self.to_edges = list(set(self.to_edges))		# remove duplicates
 
 	def get(self):
 		return self.to_edges
