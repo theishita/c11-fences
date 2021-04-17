@@ -86,24 +86,28 @@ A fence can be associated with memory orders $\acqrel$ and $\sc$
 providing varying degrees of reordering restrictions.}
 
 \noindent
-{\bf Buggy and invalidated executions}: A \deleted{ threads of} 
+{\bf Buggy and fixed executions}: A \deleted{ threads of} 
 program $P$ may contain {\em assert} \added{instructions}  \deleted{as a means of providing} 
 \added{ as correctness}
 \deleted{program} specification. \added{$P$ is considered buggy} when a trace of $P$ 
 \deleted {that violates an 
-assert check (\ie the condition in the assert check computes} \added{evaluates} to
+assert check (\ie the condition in the assert check computes} \added{has an
+assert expression evaluating} to
 {\em false}. \deleted{is called a buggy trace.}
 
 
-\comment{This is not the place for the paragraph}The purpose of this work 
+\textcolor{Maroon}{The purpose of this work 
 is to synthesize \cc fences at appropriate
 program locations to invalidate buggy traces. Particularly, the
 event relation in the buggy traces with synthesized fences
 render the resulting program behavior invalid under \cc, thus ensuring
 that a previously buggy trace would not materialize as a 
-\cc program execution. 
-We represent the invalidated or fixed trace corresponding to a 
-buggy trace $\tau$ by $\fx{\tau}$. 
+\cc program execution.} \comment{Consider moving the above para to the Intro!}
+
+\deleted{We represent the fixed trace corresponding to a}
+\added {Let the} 
+buggy trace \added{be denoted by} $\tau$, \deleted{by} \added{and the
+corresponding fixed trace is denoted by} $\fx{\tau}$. 
 %
 As an intermediate step between $\tau$ and $\fx{\tau}$, we form an 
 intermediate version of the trace $\tau$ with candidate fences
@@ -112,4 +116,4 @@ the intermediate version of $\tau$ as $\im{\tau}$. The details
 of the intermediate step are discussed in Section~\ref{sec:methodology}.
 %
 We also use $\im{P}$ and $\fx{P}$ to represent the intermediate and
-fixed versions of the input program $P$.
+fixed versions of the input program $P$. \svs{I don't like the above para.}
