@@ -1,10 +1,30 @@
-\cite{abdulla-tso-fences} solves the problem of automatic fence 
-insertion in TSO programs. This technique generates counter-examples,
-and identifies a set of write-read pairs, the reordering of which may 
-have resulted in buggy execution. Clearly, the buggy behavior can be 
-stopped by inserting fence between these pairs to stop the reorderings.
-The paper finds minimal set of such pairs to stop the buggy behavior.
-This technique heavily relies on the fact that only writes can reorder 
-after reads. Hence, it cannot be applied for any memory model that 
-allows/disallow a different set of orderings such as PSO, RMO, C11.
+The literature in the  fence synthesis is dominated by 
+techniques targeting the x86-TSO and sparc PSO memory models
+such as \cite{abdulla2012counter}\cite{alglave2010fences}
+\cite{alglave2014don}\cite{linden2011verification}
+\cite{abdulla2012automatic}\cite{abdulla2015best}
+\cite{bender2015declarative} for x86-TSO,
+\cite{abdulla2015precise}\cite{linden2013verification} 
+for sparc PSO and \cite{liu2012dynamic}
+\cite{meshman2014synthesis}\cite{abdulla2013memorax}
+\cite{joshi2015property}\cite{kuperstein2012automatic}
+for both TSO and PSO.
+%
+The technique \cite{bender2015declarative} additionally
+provides fence synthesis for ARMv7 memory model and 
+\cite{kuperstein2012automatic} additionally provides
+fence synthesis for RMO memory model.
+%
+Apart from the techniques for TSO and PSO, a few 
+fence synthesis techniques have been proposed for Power
+memory model \cite{alglave2010fences}\cite{abdulla2015precise}
+\cite{fang2003automatic}; \cite{fang2003automatic} also 
+provides support for IA-32 memory model.
 
+Some of the earlier works in the area \cite{alglave2010fences}
+\cite{abdulla2015precise}\cite{fang2003automatic} 
+perform fence synthesis to reduce a weak memory behaviors of an 
+input program to those permitted under Sequential Consistency (SC)
+or its variant \cite{abdulla2015best}.
+%
+Most techniques \cite{
