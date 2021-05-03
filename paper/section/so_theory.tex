@@ -1,12 +1,12 @@
 Consider a buggy input program $P$.
 %
-As discussed in Section~\ref{sec:c11}, in a valid \cc execution 
-sequence of $P$ (including a buggy execution or a counter example), 
+As discussed in Section~\ref{sec:c11}, in a valid trace of $P$ 
+(including a buggy trace \aka a counter example), 
 the \sc ordered events must form a total order ($\setTO$).
 %
 Contrarily, if we synthesize \sc ordered fences in the input program 
-such that the total order requirement in the buggy sequence gets violated 
-then we can invalidate the sequence and stop the program behavior.
+such that the total order requirement in the buggy trace gets violated 
+then we can invalidate the trace and stop the program behavior.
 This concept forms the base of our synthesis technique.
 
 We introduce an irreflexive and possibly cyclic relation
@@ -187,19 +187,19 @@ of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf}
 %			($\setFR$ though \sc fence-fence synchronization implies $\setSO$)
 %\end{itemize}
 
-Consider a \cc execution sequence $\tau$ and a transformation
-$\fx{\tau}$ of $\tau$ \st $\events_{\fx{\tau}}$ = $\events_\tau$
+Consider a \cc trace $\tau$ and a transformation
+$\inv{\tau}$ of $\tau$ \st $\events_{\inv{\tau}}$ = $\events_\tau$
 $\union$ set of synthesized fences, then;
 %
 \begin{theorem}
-	$\to{\tau}{}{}$ $\subseteq$ (transitive closure of $\so{\fx{\tau}}{}{}$)
-	while if $\exists$ $\to{\im{\tau}}{}{}$ then $\to{\im{\tau}}{}{}$ = 
-	(transitive closure of $\so{\fx{\tau}}{}{}$)
+	$\to{\tau}{}{}$ $\subseteq$ (transitive closure of $\so{\inv{\tau}}{}{}$)
+	while if $\exists$ $\to{\imm{\tau}}{}{}$ then $\to{\imm{\tau}}{}{}$ = 
+	(transitive closure of $\so{\inv{\tau}}{}{}$)
 \end{theorem}
 %
-A cyclic $\so{\fx{\tau}}{}{}$ implies that there does not exist a 
-total order on \sc ordered events of $\fx{\tau}$. The sequence $\fx{\tau}$, 
-then, is not a valid \cc execution and the buggy sequence $\tau$ 
+A cyclic $\so{\inv{\tau}}{}{}$ implies that there does not exist a 
+total order on \sc ordered events of $\inv{\tau}$. The trace $\inv{\tau}$, 
+then, is not a valid \cc trace and the buggy trace $\tau$ 
 has been invalidated.
 %
 Thus, the aim of this work is to synthesis fences in the input program $P$
