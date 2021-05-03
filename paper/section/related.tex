@@ -1,13 +1,9 @@
 The literature in the  fence synthesis is dominated by 
 techniques targeting the x86-TSO and sparc PSO memory models
-such as \cite{abdulla2012counter}\cite{alglave2010fences}
-\cite{alglave2014don}\cite{linden2011verification}
-\cite{abdulla2012automatic}\cite{abdulla2015best}
-\cite{bender2015declarative} for x86-TSO,
-\cite{abdulla2015precise}\cite{linden2013verification} 
-for sparc PSO and \cite{liu2012dynamic}
-\cite{meshman2014synthesis}\cite{abdulla2013memorax}
-\cite{joshi2015property}\cite{kuperstein2012automatic}
+such as \cite{abdulla2012counter,alglave2010fences,alglave2014don,linden2011verification,abdulla2012automatic,abdulla2015best,bender2015declarative} 
+for x86-TSO,
+\cite{abdulla2015precise,linden2013verification} 
+for sparc PSO and \cite{liu2012dynamic,meshman2014synthesis,abdulla2013memorax,joshi2015property,kuperstein2012automatic}
 for both TSO and PSO.
 %
 The technique \cite{bender2015declarative} additionally
@@ -17,14 +13,15 @@ fence synthesis for RMO memory model.
 %
 Apart from the techniques for TSO and PSO, a few 
 fence synthesis techniques have been proposed for Power
-memory model \cite{alglave2010fences}\cite{abdulla2015precise}
-\cite{fang2003automatic}; \cite{fang2003automatic} also 
+memory model 
+\cite{alglave2010fences,abdulla2015precise,fang2003automatic}, 
+where \cite{fang2003automatic} also 
 provides support for IA-32 memory model.
 
-Some of the earlier works in the area \cite{alglave2010fences}
-\cite{abdulla2015precise}\cite{fang2003automatic} 
-perform fence synthesis to reduce a weak memory behaviors of an 
+Some of the earlier works in the area 
+\cite{alglave2010fences,abdulla2015precise,fang2003automatic} 
+perform fence synthesis to reduce weak memory behaviors of an 
 input program to those permitted under Sequential Consistency (SC)
 or its variant \cite{abdulla2015best}.
 %
-Most techniques \cite{
+%Most techniques \cite{
