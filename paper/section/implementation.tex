@@ -1,33 +1,33 @@
-\ourtechnique attempts to invalidate a buggy execution (\aka counter
+\ourtechnique attempts to invalidate a buggy trace (\aka counter
 example) by inserting \sc ordered fences in the input program $P$
 by the technique discussed in Section~\ref{sec:methodology}.
 %
 The technique relies on a {\em counter example generator} to provide
-(i) buggy execution sequences (or counter examples) along with (ii)
+(i) buggy traces (or counter examples) along with (ii)
 the $\setMO$, $\setHB$ and $\setRF$ relations between the events of 
-each buggy execution (line 3, Algorithm~\ref{alg:fence-syn}).
+each buggy trace (line 3, Algorithm~\ref{alg:fence-syn}).
 %
 We recognized \cds \cite{cds} as the closest solution for our purpose
 owing to the following reasons;
 
 \begin{enumerate}
-	\item \cds is a stateless model checker that returns execution sequences 
-		with assert violations (\aka buggy executions) if any.
+	\item \cds is a stateless model checker that returns traces 
+		with assert violations (\aka buggy traces) if any.
 	
 	\item Unlike competing alternatives, \cds does not halt at the detection 
-		of the first buggy execution instead it continues to provide all buggy 
-		executions.
+		of the first buggy trace instead it continues to provide all buggy 
+		traces.
 	
 	\item \cds also provides $\setRF$ and $\setSB$ relations between the events 
-		of the buggy execution. The information returned by \cds is sufficient
+		of the buggy trace. The information returned by \cds is sufficient
 		to compute the $\setHB$ and $\setMO$ relations.
 	
-	\item Competing alternatives that return buggy executions for an input
+	\item Competing alternatives that return buggy traces for an input
 		program, namely \genmc \cite{genmc-PLDI19} and \tracer \cite{tracer2018}, 
 		do not support our requirements.
 		%
 		\genmc is designed for a variant of \cc \cite{LahavVafeiadis-PLDI17} and
-		does not support an option for returning all buggy executions. \tracer is
+		does not support an option for returning all buggy traces. \tracer is
 		designed for a subset of \cc that has no support for \sc, \na or \rel 
 		memory orders. \snj{What about Herd?}
 \end{enumerate}
@@ -35,9 +35,9 @@ owing to the following reasons;
 To bridge the gap between \cds's output and \ourtechnique's requirement,
 we perform a pre-processing step that uses the $\setSB$ and $\setRF$ relations 
 provided by \cds to compute the $\setHB$ and $\setMO$ relations on the events
-of the buggy executions, based on the coherence rules provided by \cc model.
+of the buggy traces, based on the coherence rules provided by \cc model.
 %
-The buggy executions along with $\setSB$, $\setRF$ and computed $\setHB$ 
+The buggy traces along with $\setSB$, $\setRF$ and computed $\setHB$ 
 and $\setMO$ relations are provided as input to the core technique 
 (lines 4-14, Algorithm~\ref{alg:fence-syn}) for synthesizing fences as
 discussed in Section~\ref{sec:methodology}.
@@ -46,7 +46,7 @@ The core technique and the pre-processing has been implemented in
 {\tt Python}.
 \ourtechnique uses {\em Johnson's} algorithm provided in {\em networkx}
 library to detect cycles in the $\setSO$ relation that are built over the \sc
-events of the intermediate execution sequence that has the complete set 
+events of the intermediate trace that has the complete set 
 of candidate fences (line 8, Algorithm~\ref{alg:fence-syn}).
 %
 Upon finding cycles, \ourtechnique uses \z theorem prover to find the 
@@ -55,20 +55,20 @@ Algorithm~\ref{alg:fence-syn}).
 
 {\bf Time efficient alternative technique:} It was observed that analysis
 time of the core technique and \z computation of min-model were impacted
-by the number of buggy sequences returned by \cds.
+by the number of buggy traces returned by \cds.
 %
 As a counter measure we propose a time efficient alternative to the core 
-technique that considers one buggy execution sequence at a time.
+technique that considers one buggy trace at a time.
 %
-This technique picks any one buggy executions of input program $P$,
+This technique picks any one buggy traces of input program $P$,
 fixes the same by inserting \sc fences and  transforms $P$ to $P'$,
 where $P'$ contains the newly added \sc fences along with the events already
 in $P$. 
 %
-The technique then looks for the next buggy execution by invoking \cds 
+The technique then looks for the next buggy trace by invoking \cds 
 with $P'$ as the input program. 
-The process repeats till \cds returns no buggy executions, or
-finds a buggy execution that cannot be fixed with \sc fences.
+The process repeats till \cds returns no buggy traces, or
+finds a buggy trace that cannot be fixed with \sc fences.
 
 \begin{wrapfigure}{l}{0.45\textwidth}
 	\begin{tabular}{|l|}
@@ -94,12 +94,12 @@ inserting \sc fences in the program then the technique will successfully
 invalidate the behavior(s);
 but the technique is not optimal in the number of fences inserted.
 The non-optimality of the efficient version is a result of the reduction
-in information that the technique has to work with (from all buggy executions
-to just one at a time). As a consequence of considering one execution per
-iteration the \z formula is attenuated with terms only from one execution.
+in information that the technique has to work with (from all buggy traces
+to just one at a time). As a consequence of considering one trace per
+iteration the \z formula is attenuated with terms only from one trace.
 %
 Consider the example in Figure~\ref{fig:eg} depicting $\setSO$ cycles in 
-two buggy executions of an input program. The primary \ourtechnique 
+two buggy traces of an input program. The primary \ourtechnique 
 technique would provide the formula $\formula{\so{\tau_1}{}{}}$ $\^$ 
 $\formula{\so{\tau_2}{}{}}$ to \z and thus recognize $(f_3 \^ f_4 \^ f_1)$ 
 as the optimal solution.
