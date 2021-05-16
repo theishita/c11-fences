@@ -1,44 +1,29 @@
-The \cc memory model forms an irreflexive and acyclic relation over the events of 
-an execution sequence $\tau$ called the {\em happens-before} relation 
-($\setHB \subseteq \events_\tau {\times} \events_\tau$);
-such that, the execution sequence is {\em coherent} (or valid) under \cc if 
+The \cc memory model \added{introduces the {\em happens-before} relation} ($\setHB$),
+which is an irreflexive and acyclic relation over the events of 
+a trace $\tau$ \st $\setHB \subseteq \events_\tau {\times} \events_\tau$.
+A trace is {\em coherent} (or valid) under \cc if 
 the $\setHB$ relation does not violate any {\em coherence rule} of \cc
-\cite{C11}\cite{batty2011mathematizing}.
+\cite{batty2011mathematizing}\cite{C11}.
 %
-Consider the set of memory orders $\moge \rel$ = $\{\rel, \acqrel, \sc\}$
-and $\moge \acq = \{\acq, \acqrel, \sc\}$.
+%Consider the set of memory orders $\moge \rel$ = $\{\rel, \acqrel, \sc\}$
+%and $\moge \acq = \{\acq, \acqrel, \sc\}$. \svs{why not the full C11? }
 %
 The events of a sequence $\tau$ are related by the $\setHB$ as follows;
 \begin{itemize}
-	\item {\em Intra-thread-hb}: Events of a thread are related by a {\em sequenced-before}
-	($\setSB$) relation in the order of occurrence in the thread;
+	\item {\em Intra-thread-hb}: A pair of events in $P_i$ are related by
+        their program order are also related by {\em sequenced-before} relation
+		($\setSB$).
 	
-	\item {\em Inter-thread-synchronization}: A $\moge$\acq read event ($ra$) of a thread 
-	$t_i$ when reads from a $\moge$\rel write event ($wr$) of another thread $t_j$ they form a
-	relation {\em synchronizes-with} ($\setSW$) as $\sw{\tau}{wr}{ra}$.
-	%
-	Further, a $\moge$\acq read event ($ra$) of a thread $t_i$ when reads from a write 
-	event ($w$) in the {\em Release sequence} \cite{C11} of a $\moge$\rel write event ($wr$) of 
-	another thread $t_j$ then $wr$ and $ra$ form a relation {\em dependency-ordered-before}
-	($\setDOB$) between them as $\dob{\tau}{wr}{ra}$;
-	%
-	(where, a release sequence headed by a $\moge$\rel write event $wr$ is the maximal 
-	contiguous sequence, of an execution sequence $\tau$, that starts with $wr$ and continues 
-	over write events from the same thread and rmw events or $\moge$\rel write events from
-	other threads.)
-	
-	\item {\em Inter-thread-fence-synchronization}: The relation $\setSW$ is also formed 
-	between \cc fences when a read event $\setSB$ ordered before a fence $f_i$ of thread 
-	$t_i$ reads from a write event $\setSB$ ordered after a fence $f_j$ in another thread
-	$t_j$.
-	%
-	Similarly, a fence $\setSB$ ordered before a write can form $\setSW$ with a $\moge$\acq
-	read and a fence $\setSB$ ordered after a read can form $\setSW$ with a $\moge$\rel
-	write when the read reads-from the write.
-	
-	\item {\em Inter-thread-hb}: Events from different threads that are related by the 
-	transitive closure of ($\setSB$ $\union$ $\setSW$ $\union$ $\setDOB$) are related by 
-	the {\em inter-thread-hb} relation ($\setITHB$). 
+	\item {\em Inter-thread-hb}: A reads-from relation 
+		$\rf{\tau}{e^w}{e^r}$ between strict ordered events $e^w, e^r$ of two 
+		threads may form a synchronization between the two threads 
+		\cite{batty2011mathematizing}\cite{C11}. 
+		The synchronization forms an inter-thread-hb relation ($\setITHB$)
+		between $e^w$ and $e^r$ and between the write events $\setSB$-ordered 
+		before $e^w$ and the read events $\setSB$-ordered after $e^r$.\newline
+		%
+		The $\setITHB$ relation can also be formed between \cc fences 
+		\cite{batty2011mathematizing}\cite{C11}.
 \end{itemize}
 
 Accordingly, two events $e_1,e_2$ in an execution sequence $\tau$ are happens-before 
@@ -52,8 +37,6 @@ The $\setMO$ order is constructed in compliance to a set of coherence
 \lmo-rules defined by \cc \cite{C11}
  based on $\setHB$ and $\setRF$ ({\em reads-from}, 
 relation between a write and a read that reads the value of the write event). 
-\snj{I have removed the formal definitions of the \lmo-rules, they are there 
-in the latex file as comment if needed.}
 %
 %The set of $\setMO$ rules are,
 %\begin{itemize}[label=moWW,align=left,leftmargin=*]
@@ -83,9 +66,12 @@ Further, we introduce an irreflexive relation \sc{\em -from-read} ($\setFR$) to 
 
 \begin{definition}[\sc{\em -from-read} $\setFR$]\newline
 	$\forall$ $r^\sc \in \ordreads{\sc}_\tau$, $w^\sc \in \ordwrites{\sc}_\tau$
-	if $(r^\sc,w^\sc)$ $\in$ $\setRF^{-1};\setMO$ then $\fr{\tau}{r^\sc}{w^\sc}$.
+	if $(r^\sc,w^\sc)$ $\in$ $\setRF^{-1};\setMO$ then $\fr{\tau}{r^\sc}{w^\sc}$;
 \end{definition}
 
+where we use $R^{-1}$ to represent the inverse of a relation $R$ and we use $R_1;R_2$
+to represent the composition of two relation $R_1$ and $R_2$.
+% 
 A valid \cc execution must also form a total order on all events with memory
 order \sc, called \sc{\em -total-order} ($\setTO$) \cite{LahavVafeiadis-PLDI17} \st
 \begin{itemize}[label=to,align=left,leftmargin=*]

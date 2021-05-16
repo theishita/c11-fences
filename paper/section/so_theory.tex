@@ -1,12 +1,12 @@
 Consider a buggy input program $P$.
 %
-As discussed in Section~\ref{sec:c11}, in a valid \cc execution 
-sequence of $P$ (including a buggy execution or a counter example), 
+As discussed in Section~\ref{sec:c11}, in a valid trace of $P$ 
+(including a buggy trace \aka a counter example), 
 the \sc ordered events must form a total order ($\setTO$).
 %
 Contrarily, if we synthesize \sc ordered fences in the input program 
-such that the total order requirement in the buggy sequence gets violated 
-then we can invalidate the sequence and stop the program behavior.
+such that the total order requirement in the buggy trace gets violated 
+then we can invalidate the trace and stop the program behavior.
 This concept forms the base of our synthesis technique.
 
 We introduce an irreflexive and possibly cyclic relation
@@ -14,7 +14,7 @@ on \sc ordered events called \sc-order ($\setSO$).
 %
 To construct the $\setSO$ order, we introduce the following \lso-rules
 (diagrammatically shown in Figure~\ref{fig:so rules}).
-The \lso-construction-rules are an interpretation or simply a derivative 
+The \lso-rules are an interpretation or simply a derivative 
 of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf} 
 (Section~\ref{sec:c11}).
 %formed by direct derivative and dual of the rules .
@@ -27,13 +27,20 @@ of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf}
 		\resizebox{0.24\textwidth}{!}{\input{figures/so_hbmorf.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/soEF.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/soFE.tex}} &
-		\resizebox{0.24\textwidth}{!}{\input{figures/soFF.tex}} \\\hline
+		\resizebox{0.24\textwidth}{!}{\input{figures/soFF.tex}} \\
+		\hline\hline
 		
 		\resizebox{0.24\textwidth}{!}{\input{figures/sofr.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/soRFfr.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/soFWfr.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/soFFfr.tex}} \\
 		\hline
+		
+		\multicolumn{1}{c||}{} & 
+		\resizebox{0.24\textwidth}{!}{\input{figures/soRFfr_ext.tex}} &
+		\resizebox{0.24\textwidth}{!}{\input{figures/soFWfr_ext.tex}} & 
+		\multicolumn{1}{|c}{}\\
+		\cline{2-3}
 	\end{tabular}
 	\caption{\lso-rules}
 	\label{fig:so rules}
@@ -101,17 +108,33 @@ of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf}
 	
 	\multicolumn{2}{|l|}{\bf $\setFR$ rules extended for fences:}\\
 	
+	\hl{soRFfr}: & $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $r^\sc_1 \in
+	\ordreads{\sc}_\tau$ if $\exists w_1, w_2 \in \writes_\tau$ \st
+	$\seqb{\tau}{w_2}{f^\sc_1}$, $\mo{\tau}{w_1}{w_2}$ and
+	$\rf{\tau}{w_1}{r^\sc_1}$ then $\so{\tau}{r^\sc_1}{f^\sc_1}$ \\
+	& ($\setFR$ though \sc read-fence synchronization implies $\setSO$) \\
+	
+	\hl{soRFfr-ext}: & \tab $\forall r^\sc_1 \in \ordreads{\sc}_\tau$, $f^\sc_1 
+	\in \ordfences{\sc}_\tau$ if $\exists w_1,w_2 \in \writes_\tau$, $r_2 \in
+	\reads_\tau$ \st $\seqb{\tau}{r^\sc_1}{r_2}$, $\seqb{\tau}{w_2}{f^\sc_1}$,
+	$\mo{\tau}{w_1}{w_2}$ and $\rf{\tau}{w_1}{r_2}$ then 
+	$\so{\tau}{r^\sc_1}{f^\sc_1}$ \\
+	& ($\setFR$ though \sc read-fence synchronization via $\setSB$ implies 
+	$\setSO$) \\
+	
 	\hl{soFWfr}: & $\forall f^{\sc}_1 \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
 	\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
 	\reads_\tau$ \st $\seqb{\tau}{f^{\sc}_1}{r_1}$, $\mo{\tau}{w_2}{w^{\sc}_1}$ 
 	and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_1}{w^{\sc}_1}$ \\
 	& ($\setFR$ though \sc write-fence synchronization implies $\setSO$) \\
 	
-	\hl{soRFfr}: & $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $r^\sc_1 \in
-	\ordreads{\sc}_\tau$ if $\exists w_1, w_2 \in \writes_\tau$ \st
-	$\seqb{\tau}{w_2}{f^\sc_1}$, $\mo{\tau}{w_1}{w_2}$ and
-	$\rf{\tau}{w_1}{r^\sc_1}$ then $\so{\tau}{r^\sc_1}{f^\sc_1}$ \\
-	& ($\setFR$ though \sc read-fence synchronization implies $\setSO$) \\
+	\hl{soFWfr-ext}: & \tab $\forall f^{\sc}_1 \in \ordfences{\sc}_\tau$, 
+	$w^{\sc}_1 \in \ordwrites{\sc}_\tau$ if $\exists w_2, w_3 \in \writes_\tau$, 
+	$r_1 \in \reads_\tau$ \st $\seqb{\tau}{f^{\sc}_1}{r_1}$, 
+	$\seqb{\tau}{w_3}{w^\sc_1}$, $\mo{\tau}{w_2}{w_3}$ and $\rf{\tau}{w_2}{r_1}$ 
+	then $\so{\tau}{f^\sc_1}{w^\sc_1}$ \\
+	& ($\setFR$ though \sc write-fence synchronization via $\setSB$ implies 
+	$\setSO$) \\
 	
 	\hl{soFFfr}: & $\forall f^\sc_1, f^\sc_2 \in \ordfences{\sc}_\tau$
 	if $\exists$ $w_1, w_2 \in \ordwrites{\sc}_\tau$, $r_1 \in
@@ -187,19 +210,19 @@ of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf}
 %			($\setFR$ though \sc fence-fence synchronization implies $\setSO$)
 %\end{itemize}
 
-Consider a \cc execution sequence $\tau$ and a transformation
-$\fx{\tau}$ of $\tau$ \st $\events_{\fx{\tau}}$ = $\events_\tau$
+Consider a \cc trace $\tau$ and a transformation
+$\inv{\tau}$ of $\tau$ \st $\events_{\inv{\tau}}$ = $\events_\tau$
 $\union$ set of synthesized fences, then;
 %
 \begin{theorem}
-	$\to{\tau}{}{}$ $\subseteq$ (transitive closure of $\so{\fx{\tau}}{}{}$)
-	while if $\exists$ $\to{\im{\tau}}{}{}$ then $\to{\im{\tau}}{}{}$ = 
-	(transitive closure of $\so{\fx{\tau}}{}{}$)
+	$\to{\tau}{}{}$ $\subseteq$ (transitive closure of $\so{\inv{\tau}}{}{}$);
+	however, if $\exists$ $\to{\imm{\tau}}{}{}$ then $\to{\imm{\tau}}{}{}$ = 
+	(transitive closure of $\so{\inv{\tau}}{}{}$)
 \end{theorem}
 %
-A cyclic $\so{\fx{\tau}}{}{}$ implies that there does not exist a 
-total order on \sc ordered events of $\fx{\tau}$. The sequence $\fx{\tau}$, 
-then, is not a valid \cc execution and the buggy sequence $\tau$ 
+A cyclic $\so{\inv{\tau}}{}{}$ implies that there does not exist a 
+total order on \sc ordered events of $\inv{\tau}$. The trace $\inv{\tau}$, 
+then, is not a valid \cc trace and the buggy trace $\tau$ 
 has been invalidated.
 %
 Thus, the aim of this work is to synthesis fences in the input program $P$

@@ -34,6 +34,8 @@ events unless specified otherwise.
 \begin{definition}[Trace]\newline
 \svs{The definition is cyclic, it uses $\events_\tau$ to define $\tau$. Also, I am not convinced why 
 rf and mo together are insufficient and why we need hb additionally? }
+\snj{$\events_\tau$ is just a representative symbol, it is not parametric on $\tau$.
+The set $\events_\tau \subseteq \events$.}
 	A trace or a maximal execution (or simply execution) $\tau$ of the input 
 	program $P$ under \cc is a tuple 
 	$\langle \events_\tau, \setHB, \setMO, \setRF \rangle$, where
@@ -53,17 +55,14 @@ rf and mo together are insufficient and why we need hb additionally? }
 
 \noindent
 {\bf Memory ordering under \cc}: 
-\deleted{Each memory} The memory access and fence operations
-\deleted{in a \cc program} \deleted{is} \added{are} 
-associated with \deleted{a memory} ordering \added{modes}
+The memory access and fence operations are
+associated with ordering modes
 that defines the ordering restriction \added{ on them.}
+\snj{Technically, the restriction is on the events around the
+current event, as stated in the following deleted line:}
 \deleted{ placed on atomic and non-atomic access around atomic memory access.}
 %
-\deleted{An event shares the same memory order as its corresponding operation
-in the input program.}
-%
-\deleted{\cc provides the following set of memory 
- orders} $\moset$ = $\{ \na, \rlx, \rel, \acq, \acqrel, \sc \}$, 
+$\moset$ = $\{ \na, \rlx, \rel, \acq, \acqrel, \sc \}$, 
 represents the orders relaxed (\rlx), release (\rel), acquire (\acq),
 acquire-release (\acqrel) and sequentially consistent (\sc) for
 atomic events. A non-atomic event has \na memory order associated with 
@@ -73,43 +72,65 @@ We use $\ordevents{m}_\tau$ (and accordingly $\ordwrites{m}_\tau$,
 $\ordreads{m}_\tau$ and $\ordfences{m}_\tau$) to represent the $m$
 ordered events of an execution sequence $\tau$ (where, $m \in \moset$);
 for example $\ordwrites{\rel}_\tau$ represents the write events of 
-$\tau$ with ordering restriction \rel. \svs{Why not use $o \in \moset$ representing order as a replacement?}
+$\tau$ with ordering restriction \rel. 
+\svs{Why not use $o \in \moset$ representing order as a replacement?}
+\snj{It makes the definitions very long and difficult to follow, 
+eg: let $x \in \events_\tau$
+$\^$ $ord(x) = \rel$ vs let $x \in \ordevents{\rel}_\tau$}
 
-\deleted{
-\noindent
-{\bf \cc fences}: \cc provides atomic thread fences or simply 
-fences to provide additional reordering restrictions on program 
-events. Note that \cc fences are not memory barriers and do not
-provide support for flushing local write values to shared memory.
-%
-A fence can be associated with memory orders $\acqrel$ and $\sc$
-providing varying degrees of reordering restrictions.}
+%\deleted{
+%\noindent
+%{\bf \cc fences}: \cc provides atomic thread fences or simply 
+%fences to provide additional reordering restrictions on program 
+%events. Note that \cc fences are not memory barriers and do not
+%provide support for flushing local write values to shared memory.
+%%
+%A fence can be associated with memory orders $\acqrel$ and $\sc$
+%providing varying degrees of reordering restrictions.}
 
 \noindent
-{\bf Buggy and invalidated executions}: A \deleted{ threads of} 
-program $P$ may contain {\em assert} \added{instructions}  \deleted{as a means of providing} 
-\added{ as correctness}
-\deleted{program} specification. \added{$P$ is considered buggy} when a trace of $P$ 
+{\bf Buggy and fixed executions}: A program $P$ may contain {\em assert} 
+instructions as correctness specification. 
+\added{$P$ is considered buggy} when a trace of $P$ 
 \deleted {that violates an 
-assert check (\ie the condition in the assert check computes} \added{evaluates} to
+assert check (\ie the condition in the assert check computes} \added{has an
+assert expression evaluating} to
 {\em false}. \deleted{is called a buggy trace.}
+\snj{We are more interested in defining a buggy `traces'. 
+So we can add in the end that such traces are called `buggy traces'.}
 
 
-\comment{This is not the place for the paragraph}The purpose of this work 
+\textcolor{Maroon}{The purpose of this work 
 is to synthesize \cc fences at appropriate
 program locations to invalidate buggy traces. Particularly, the
 event relation in the buggy traces with synthesized fences
 render the resulting program behavior invalid under \cc, thus ensuring
 that a previously buggy trace would not materialize as a 
-\cc program execution. 
-We represent the invalidated or fixed trace corresponding to a 
-buggy trace $\tau$ by $\fx{\tau}$. 
+\cc program execution.} \comment{Consider moving the above para to the Intro!}
+\snj{We can state it in intro as well as here and thus keep reiterating our goal
+to make it clear to the reader (provided we have the space.)}
+
+\deleted{We represent the fixed trace corresponding to a
+buggy trace $\tau$ by $\inv{\tau}$. 
 %
-As an intermediate step between $\tau$ and $\fx{\tau}$, we form an 
+As an intermediate step between $\tau$ and $\inv{\tau}$, we form an 
 intermediate version of the trace $\tau$ with candidate fences
-some of which are retained as a part of $\fx{\tau}$. We represent
-the intermediate version of $\tau$ as $\im{\tau}$. The details
+some of which are retained as a part of $\inv{\tau}$. We represent
+the intermediate version of $\tau$ as $\imm{\tau}$. The details
 of the intermediate step are discussed in Section~\ref{sec:methodology}.
 %
-We also use $\im{P}$ and $\fx{P}$ to represent the intermediate and
-fixed versions of the input program $P$.
+We also use $\imm{P}$ and $\fx{P}$ to represent the intermediate and
+fixed versions of the input program $P$.} \svs{I don't like the above para.}
+\snj{The paragraph has been rewritten below:}
+
+
+In the processes of invalidating a buggy trace $\tau$ of a program $P$,
+$\tau$ undergoes two versions of transformations, an intermediate version
+(represented as $\imm{\tau}$) and a final `invalidated' version (represented
+as $\inv{\tau}$). The transformations have been discussed in 
+Sections~\ref{sec:methodology} and \ref{sec:implementation}.
+%
+Note that once all the buggy traces $\tau$ have been transformed to 
+the invalidated version
+$\inv{\tau}$ by adding appropriate fences, we then consider the input 
+program $P$ {\em fixed} or free of bugs (represented as $\fx{P}$). 
