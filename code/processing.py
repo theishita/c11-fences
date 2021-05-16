@@ -51,8 +51,8 @@ class Processing:
 			hb_matrix, size, self.to_edges = hb_graph.get()
 
 			# MO
-			get_mo = mo(trace, hb_matrix, size)
-			mo_edges = get_mo.get()
+			get_mo = mo(trace, hb_matrix, size, self.to_edges)
+			mo_edges, self.to_edges = get_mo.get()
 			# print("mo =",mo_edges)
 			pre_calc_end = time.time()
 			self.pre_calc_total += (pre_calc_end-pre_calc_start)

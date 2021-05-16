@@ -87,6 +87,6 @@ class hb:
 						if j[MO] in write_models and trace[i][MO] in read_models:
 							# self.sw_edges.append((j[S_NO],trace[i][S_NO]))
 							self.mat.addEdge(j[S_NO],trace[i][S_NO])
-							# if they are of memory order sc, then they are also counted as TO edges
+							# if they are of memory order sc, then they need to also be counted as TO edges
 							if j[MO] == SEQ_CST and trace[i][MO] == SEQ_CST:
 								self.to_edges.append((j[S_NO],trace[i][S_NO]))
