@@ -33,7 +33,7 @@ memory orders. For the programs where buggy behavior cannot be stopped
 using fences, it is possible to stop the behavior by annotating some 
 memory operations with stronger memory order.
 Hence, we do not claim that if \ourtechnique cannot stop a buggy \cc 
-execution, it cannot be stopped.
+trace, it cannot be stopped.
 \divComment{Can we give termination guarantee?}
 
 Unlike common fence synthesis approaches \divComment{Need references}, 
@@ -45,7 +45,7 @@ tries to \emph{remove} the unnecessary fences from the set of candidate
 fences based on axiomatic relations of \cc. 
 Our approach grantees that the program resulted after removing the 
 unnecessary fences, has minimal number of \mosc fences required in that 
-program to stop the buggy executions. 
+program to stop the buggy traces. 
 
 \ourtechnique takes a set of counter examples as input.
 We use \cc 's $\setSB$, $\setHB$, $\setMO$, $\setRF$ relations to compute 
@@ -57,7 +57,7 @@ cycle formed by transitive sequence of ordered pair in $ \setSO $-order.
 We call such cycles $\setSO$-cycle. 
 We use $ \setSO $-order and $ \setSO $-cycle to generate an SAT formula. 
 Any satisfying assignment of this SAT formula is a possible fence 
-placement to stop the buggy execution. We find the minimal satisfying assignment of this SAT formula to find optimal fence placement. 
+placement to stop the buggy trace. We find the minimal satisfying assignment of this SAT formula to find optimal fence placement. 
 
 \begin{algorithm}
 	\caption{\ourtechnique}
@@ -66,14 +66,14 @@ placement to stop the buggy execution. We find the minimal satisfying assignment
 		\State $\phi := \top$
 		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)
 		\For{$ \tau \in \mathcal{CE} $}\Comment{$\tau$ = $ \langle \events_\tau, \setHB, \setMO, \setRF, \setSB  \rangle $}
-			\State $ \events_{\im{\tau}} := \events_\tau\ \union $ candidate fences
-			\State $ \seqb{\im{\tau}}{}{} := $ computeSB($\setSB, \events_{\im{\tau}}$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_{\im{\tau}}, \setHB, \setMO, \setRF, \seqb{\im{\tau}}{}{}$)
-			\State cycles := computeCycles($ \so{\im{\tau}}{}{} $)
+			\State $ \events_{\imm{\tau}} := \events_\tau\ \union $ candidate fences
+			\State $ \seqb{\imm{\tau}}{}{} := $ computeSB($\setSB, \events_{\imm{\tau}}$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_{\imm{\tau}}, \setHB, \setMO, \setRF, \seqb{\imm{\tau}}{}{}$)
+			\State cycles := computeCycles($ \so{\imm{\tau}}{}{} $)
 			\If {cycles == $ \emptyset $}
 				\State \texttt{Abort} (``This behavior can't be stopped using \cc fences.'')
 				\State \Return
 			\EndIf
-			\State $\phi := \phi\ \^ \formula{\so{\im{\tau}}{}{}} $ 
+			\State $\phi := \phi\ \^ \formula{\so{\imm{\tau}}{}{}} $ 
 %			\State $ \phi := \phi_\tau $
 		\EndFor
 		\State F:= MinModel($ \phi $)
@@ -93,13 +93,13 @@ SAT formula $ \phi $ with true.  Line 2 uses a counter-example generator
 to compute the set of counter examples in the program $ P $. 
 Lines 4-12 generates SAT formula for each counter-example $ \tau $.
 Lines 5 and 6 add candidate fences in the set of events of counter-example 
-$ \tau $ and compute $ \lsb $ in the updated trace $ \im{\tau} $ (i.e., with candidate 
+$ \tau $ and compute $ \lsb $ in the updated trace $ \imm{\tau} $ (i.e., with candidate 
 fences). 
-Line 7 computes $ \so{\im{\tau}}{}{} $-order in counter example $ \tau $ with candidate fences.
-Line 8 finds all $ \so{\im{\tau}}{}{} $-cycles. If there are no $ \so{\im{\tau}}{}{} $-cycles 
+Line 7 computes $ \so{\imm{\tau}}{}{} $-order in counter example $ \tau $ with candidate fences.
+Line 8 finds all $ \so{\imm{\tau}}{}{} $-cycles. If there are no $ \so{\imm{\tau}}{}{} $-cycles 
 present, the behavior can't be stopped used any \cc fences. Hence, we 
 terminate the algorithm at this point.
-Else, in line 12, we generate a SAT formula for the set of $ \so{\im{\tau}}{}{} $-cycles and add it to formula $ \phi $
+Else, in line 12, we generate a SAT formula for the set of $ \so{\imm{\tau}}{}{} $-cycles and add it to formula $ \phi $
 Lastly, in line 13 we find the minimal model of formula $ \phi $, which 
 gives us the minimal set of fences to be inserted in order to stop the 
 buggy behaviors.
@@ -190,18 +190,18 @@ simplicity.
 \subsection{Computing SO relation}
 \noindent\textbf{Inserting Candidate Fences:}
 For each counter-example $ \tau $ of buggy program $ P $, we 
-construct an intermediate trace $ \im{\tau} $ by assuming the existance candidate fences in the trace $ \tau $.
+construct an intermediate trace $ \imm{\tau} $ by assuming the existance candidate fences in the trace $ \tau $.
 Our approach assumes all possible program locations as a valid location 
 for candidate fences. 
-Hence the $ \im{\tau} $ will have at least one \mosc fence before and after every program event in $ \tau $.
+Hence the $ \imm{\tau} $ will have at least one \mosc fence before and after every program event in $ \tau $.
 It is possible to start with a smaller set of program locations for 
 candidate fences. 
 In this case our approach will return the optimal fence placement wrt the 
 set of candidate fences.
 Since we are assuming existence of candidate fences at all possible 
-program locations, the trace $ \im{\tau} $ should be invalid \cc execution 
+program locations, the trace $ \imm{\tau} $ should be invalid \cc trace 
 if $ \tau $ can be stopped using \mosc fences.
-Hence, if $ \im{\tau} $ is not invalid \cc execution for some 
+Hence, if $ \imm{\tau} $ is not invalid \cc trace for some 
 the counter-examples $ \tau $ in $ \mathcal{CE} $, we determine that \mosc 
 fences are not sufficient to stop the buggy behaviors of the program.
 Recall that \mosc fences are the strongest \cc fences. 
@@ -237,80 +237,80 @@ However, strengthening the memory order annotation is out of the scope of this w
 %\end{figure}
 
 \noindent\textbf{Computing \lsb in Intermediate Traces:} 
-Line 5 of the Algorithm~\ref{alg:fence-syn} computes the set of program 
-events in trace $ \im{\tau} $. Naturally, this set will consist of 
+In line 5 of the Algorithm~\ref{alg:fence-syn}, we compute set of program 
+events in trace $ \imm{\tau} $. Naturally, this set will consist of 
 candidate fences along with all the program events in trace $ \tau $.
 The set $ \setSB $ represents the pair of program events related by 
 relation $ \lsb $ in the trace $ \tau $. We compute the set 
-$ \seqb{\im{\tau}}{}{} $ for the events of the trace $ \im{\tau} $. 
+$ \seqb{\imm{\tau}}{}{} $ for the events of the trace $ \imm{\tau} $. 
 The computeSB function takes set of \lsb event pairs in $ \tau $ 
-($ \setSB $), the set of events in trace $ \im{\tau} $ 
-($ \events_{\im{\tau}} $) as input and computes the set of \lsb in 
-$ \im{\tau} $ based on instruction labels, their position in the program $ P $. \divComment{Do we need event action to compute the \lsb?}
+($ \setSB $), the set of events in trace $ \imm{\tau} $ 
+($ \events_{\imm{\tau}} $) as input and computes the set of \lsb in 
+$ \imm{\tau} $ based on instruction labels, their position in the program $ P $. \divComment{Do we need event action to compute the \lsb?}
 
 \noindent\textbf{Computing \lso in Intermediate Traces:} 
 %In \textsection\ref{sec:so theory}, we explain the rules to compute \lso relation given \lhb, \lmo, \lrf and \lsb relations. 
 The line 7 of Algorithm~\ref{alg:fence-syn} uses the rules defined in 
 \textsection\ref{sec:so theory} to compute the \lso relation in the trace 
-$ \im{\tau} $ using the relations \lhb, \lmo, \lrf and \lsb. 
-We use relations $ \setHB, \setMO, \setRF $ and $ \seqb{\im{\tau}}{}{} $ to compute $ \so{\im{\tau}}{}{} $.
+$ \imm{\tau} $ using the relations \lhb, \lmo, \lrf and \lsb. 
+We use relations $ \setHB, \setMO, \setRF $ and $ \seqb{\imm{\tau}}{}{} $ to compute $ \so{\imm{\tau}}{}{} $.
 Note that we have used the \lhb, \lmo and \lrf for trace $ \tau $ and \lsb 
-for trace $ \im{\tau} $. 
+for trace $ \imm{\tau} $. 
 Since \lmo is a relation between write events, fences will not be a part 
 of it. Although, these fences may induce \lmo between some write event 
-pairs in an actual execution. 
+pairs in an actual trace. 
 \divComment{How do we know these induces \lmo will not effect \lso?}
 The same argument hold for \lrf relation as well.
 \divComment{Need an argument for \lhb too.}
-%We have already computed $ \seqb{\im{\tau}}{}{} $
+%We have already computed $ \seqb{\imm{\tau}}{}{} $
  
-\snj{Why hb, mo computed for $\tau$ and not $\im{\tau}$}\newline
-Note that, the intermediate sequence $\im{\tau}$ may be invalid under 
-\cc due to a possible cycle in the $\so{\im{\tau}}{}{}$ relation. 
-As a result, the coherence rules of \cc do not apply to $\im{\tau}$. 
-In the absence of \cc coherence rules the $\hb{\im{\tau}}{}{}$ and 
-the $\mo{\im{\tau}}{}{}$ relations cannot be formed on the events of 
-$\im{\tau}$.
+\snj{Why hb, mo computed for $\tau$ and not $\imm{\tau}$}\newline
+Note that, the intermediate trace $\imm{\tau}$ may be invalid under 
+\cc due to a possible cycle in the $\so{\imm{\tau}}{}{}$ relation. 
+As a result, the coherence rules of \cc do not apply to $\imm{\tau}$. 
+In the absence of \cc coherence rules the $\hb{\imm{\tau}}{}{}$ and 
+the $\mo{\imm{\tau}}{}{}$ relations cannot be formed on the events of 
+$\imm{\tau}$.
 %
-Secondly, attempting to form $\hb{\im{\tau}}{}{}$ and 
-$\mo{\im{\tau}}{}{}$ relations would modify the $\setHB$ and $\setMO$
-effectively changing the buggy sequence $\tau$.
+Secondly, attempting to form $\hb{\imm{\tau}}{}{}$ and 
+$\mo{\imm{\tau}}{}{}$ relations would modify the $\setHB$ and $\setMO$
+effectively changing the buggy trace $\tau$.
 
-We, thus, only construct the relation $\so{\im{\tau}}{}{}$ and 
-$\seqb{\im{\tau}}{}{}$ (needed for $\so{\im{\tau}}{}{}$) 
-between the candidate fences inserted in $\im{\tau}$ and the events
+We, thus, only construct the relation $\so{\imm{\tau}}{}{}$ and 
+$\seqb{\imm{\tau}}{}{}$ (needed for $\so{\imm{\tau}}{}{}$) 
+between the candidate fences inserted in $\imm{\tau}$ and the events
 of $\tau$. The two relations are sufficient as the goal is to
-find $\so{\im{\tau}}{}{}$ cycle and invalidate the sequence under \cc.
+find $\so{\imm{\tau}}{}{}$ cycle and invalidate the trace under \cc.
 
 
 \subsection{Reducing Fence Synthesis to SAT problem}
-Recall that transitive closure of $ \so{\im{\tau}}{}{} $ is same as 
-$ \to{\im{\tau}}{}{} $ in a valid \cc execution. Since  
-$ \to{\im{\tau}}{}{} $ is a total order, a valid \cc execution should not 
-have a cycle in $ \so{\im{\tau}}{}{} $. Conversely, if a trace has 
-$ \so{\im{\tau}}{}{} $-cycle, it cannot be a valid \cc execution. 
+Recall that transitive closure of $ \so{\imm{\tau}}{}{} $ is same as 
+$ \to{\imm{\tau}}{}{} $ in a valid \cc trace. Since  
+$ \to{\imm{\tau}}{}{} $ is a total order, a valid \cc trace should not 
+have a cycle in $ \so{\imm{\tau}}{}{} $. Conversely, if a trace has 
+$ \so{\imm{\tau}}{}{} $-cycle, it cannot be a valid \cc trace. 
 In order to make a trace $ \tau $ invalid under \cc, we force a \lso-cycle by inserting appropriate fences. 
-Since $ \im{\tau} $ assumes \mosc fences at all possible program locations,
-any such cycle must exists in $ \so{\im{\tau}}{}{} $. 
+Since $ \imm{\tau} $ assumes \mosc fences at all possible program locations,
+any such cycle must exists in $ \so{\imm{\tau}}{}{} $. 
 Hence, our problem is reduced to finding appropriate cycle in 
-$\so{\im{\tau}}{}{} $ and introducing these fences in the program to 
+$\so{\imm{\tau}}{}{} $ and introducing these fences in the program to 
 invalidate the trace $ \tau $.
 If we introduced enough fences to cause at least \lso-cycle in 
-every counter example, we stop all the buggy execution. 
+every counter example, we stop all the buggy trace. 
 It is possible that a counter example $ \tau $ does not have any 
-$\so{\im{\tau}}{}{}$-cycles. Since $ \im{\tau} $ has \mosc fences at all 
+$\so{\imm{\tau}}{}{}$-cycles. Since $ \imm{\tau} $ has \mosc fences at all 
 possible program locations, we cannot add fences in such a trace to 
 make it invalid \cc execution. 
-Line 8 in Algorithm~\ref{alg:fence-syn} computes set $\so{\im{\tau}}{}{}$-cycles. 
+Line 8 in Algorithm~\ref{alg:fence-syn} computes set $\so{\imm{\tau}}{}{}$-cycles. 
 The problem of finding cycles in a graph is well-studied area. Hence, we 
 choose to skip the details of this step.
-If there are no $\so{\im{\tau}}{}{}$-cycle in some $ \tau $, we conclude 
+If there are no $\so{\imm{\tau}}{}{}$-cycle in some $ \tau $, we conclude 
 that it is not possible to stop this behavior using \cc fences in lines 
 9-11.
 
 
-Let $ \cycles{\im{\tau}} $ be the set of \lso-cycles in a trace $ \im{\tau} $, 
-where a cycle $ c \in \cycles{\im{\tau}} $ is ordered sequence of 
+Let $ \cycles{\imm{\tau}} $ be the set of \lso-cycles in a trace $ \imm{\tau} $, 
+where a cycle $ c \in \cycles{\imm{\tau}} $ is ordered sequence of 
 $ \ordevents{\sc} $. We abuse the notation $\ordevents{\sc}_c$ to 
 represent the set of events in a cycle $ c $. 
 All the read and write events in $\ordevents{\sc}_c$ are already in program $ P $. 
@@ -321,11 +321,12 @@ $ (\bigwedge\limits_{f \in \ordfences{\sc}_c} f)$ fences in the program $ P $,
 where the truth assignment to a fence corresponds to inserting that fence 
 in the program.
 Recall that we need to stop at least one cycle from the set 
-$ \cycles{\im{\tau}} $ in order to make a trace $ \tau $ invalid.
-Hence we need to insert $ (\bigvee\limits_{c \in \cycles{\im{\tau}}} (\bigwedge\limits_{f \in \ordfences{\sc}_c} f)) $ to stop a trace $ \tau $. 
-We use $\formula{\so{\im{\tau}}{}{}}$ to represent the boolean formula 
-corresponding to the $ \so{\im{\tau}}{}{} $-cycles.
-Clearly, any satisfying assignment to $ \formula{\so{\im{\tau}}{}{}} $ 
+$ \cycles{\imm{\tau}} $ in order to make a trace $ \tau $ invalid.
+Hence we need to insert $ (\bigvee\limits_{c \in \cycles{\imm{\tau}}} (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
+\ordfences{\sc}} \fn{})) $ to stop a trace $ \tau $. 
+We use $\formula{\so{\imm{\tau}}{}{}}$ to represent the boolean formula 
+corresponding to the $ \so{\imm{\tau}}{}{} $-cycles.
+Clearly, any satisfying assignment to $ \formula{\so{\imm{\tau}}{}{}} $ 
 will give list of fences required to stop the buggy execution $ \tau $.
 %
 Furthermore, we construct the formula for all trace 
@@ -333,23 +334,23 @@ $ \tau \in \mathcal{CE} $ by conjuncting them in
 line 12 of Algorithm~\ref{alg:fence-syn}, i.e., 
 at the end of the for loop in lines 4-12, the formula 
 $ \phi \definedas (\bigwedge\limits_{\tau \in \mathcal{CE}} 
-(\bigvee\limits_{c \in \cycles{\im{\tau}}} 
-(\bigwedge\limits_{f \in \ordfences{\sc}_c} f))) $.
+(\bigvee\limits_{c \in \cycles{\imm{\tau}}} 
+(\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection \ordfences{\sc}} \fn{}))) $.
 Any satisfying assignment of the formula $\phi$ will list the fences that 
 are enough to stop the buggy behaviors in $ \mathcal{CE} $.
 
 %\begin{lemma}
-%	Introducing fences in any $\so{\im{\tau}}{}{}$-cycle will stop the counter example $ \tau $ in actual execution of the program.
+%	Introducing fences in any $\so{\imm{\tau}}{}{}$-cycle will stop the counter example $ \tau $ in actual execution of the program.
 %\end{lemma}
 
 \begin{lemma}
-	If there are no cycles in $\so{\im{\tau}}{}{}$ of a buggy execution 
+	If there are no cycles in $\so{\imm{\tau}}{}{}$ of a buggy execution 
 	$\tau$, the counter-example $ \tau $ cannot be stopped using any \cc 
 	fences.
 \end{lemma}
 
 \begin{theorem}
-	Any satisfying assignment to $ \formula{\so{\im{\tau}}{}{}} $ 
+	Any satisfying assignment to $ \formula{\so{\imm{\tau}}{}{}} $ 
 	will give list of fences required to stop the buggy execution $ \tau $
 \end{theorem}
 

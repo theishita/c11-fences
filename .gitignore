@@ -12,6 +12,8 @@ __pycache__/
 *.fls
 *.dvi
 *.fdb_latexmk
+*.soc
+*.loc
 
 # generated files from the tool
 compute_fences

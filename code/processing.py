@@ -10,15 +10,15 @@
 # Then proceeds on to find out cycles from the TO graph.
 # --------------------------------------------------------
 
-from hb import hb
-from graph import Graph
-from mo import mo
+from pre_calculators.hb_calculator.hb import hb
+from pre_calculators.mo_calculator.mo import mo
 from to import to
 from cycle import Cycles
 from z3translate import z3translate
 from constants import *
 
 import sys
+import time
 
 # IDEA: any var with _thread at the end means that it is separated by thread number
 class Processing:
@@ -28,6 +28,7 @@ class Processing:
 		self.fences_present = []										# list of fences converted to their respective variable names
 		self.fences_present_locs = []
 		self.error_string = ''
+		self.pre_calc_total = 0									# time taken for calculation of initial values - HB, MO, SB
 
 		trace_no = 0
 		# print("traces=",traces)
@@ -44,14 +45,17 @@ class Processing:
 			trace_no += 1
 			# print("---------Trace",trace_no,"---------")
 
+			pre_calc_start = time.time()
 			# HB
 			hb_graph = hb(trace)
-			mat, size, self.to_edges = hb_graph.get()
+			hb_matrix, size, self.to_edges = hb_graph.get()
 
 			# MO
-			get_mo = mo(trace, mat, size)
-			mo_edges = get_mo.get()
+			get_mo = mo(trace, hb_matrix, size, self.to_edges)
+			mo_edges, self.to_edges = get_mo.get()
 			# print("mo =",mo_edges)
+			pre_calc_end = time.time()
+			self.pre_calc_total += (pre_calc_end-pre_calc_start)
 
 			# ADD FENCES
 			order=self.fence(trace)
@@ -162,4 +166,4 @@ class Processing:
 					self.sc_sb_edges.append((i[j],i[k]))
 
 	def get(self):
-		return self.fences_present, self.fences_present_locs, self.z3vars, self.disjunctions, self.error_string
+		return self.fences_present, self.fences_present_locs, self.z3vars, self.disjunctions, self.error_string, self.pre_calc_total
