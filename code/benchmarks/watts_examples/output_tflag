@@ -1,0 +1,149 @@
+
+
+
+===========================
+thread01.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.thread01.o.d -o thread01.o thread01.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.thread01_fenced.o.d -o thread01_fenced.o thread01_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.thread01_fenced.o.d -o thread01_fenced.o thread01_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.9
+Time- Z3:		 0.03
+Fences added:		 2
+[95m[1m
+
+=============== ITERATION 2 ===============[0m
+
+
+Buggy executions:	 1
+Time- CDS Checker:	 0.94
+Time- Z3:		 0.05
+Fences added:		 1
+[95m[1m
+
+=============== ITERATION 3 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 1.13
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 3 [0m
+Time- CDS Checker:	 2.96
+Time- Pre-calculations:	 0
+Time- Z3:		 0.08
+
+Time- Total:		 3.16
+Time- Tool only:	 0.13
+
+Total iterations:	 3
+Time- avg per iter:	 1.05
+
+
+
+===========================
+thread01_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.thread01_fenced.o.d -o thread01_fenced.o thread01_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 0
+Time- CDS Checker:	 0.86
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.86
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.91
+Time- Tool only:	 0.05
+
+Total iterations:	 1
+Time- avg per iter:	 0.91
+
+
+
+===========================
+output_tflag
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
+
+
+
+===========================
+threadcreate02.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.threadcreate02.o.d -o threadcreate02.o threadcreate02.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+Time- CDS Checker:	 0.76
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.76
+Time- Pre-calculations:	 0.0
+
+Time- Total:		 0.8
+Time- Tool only:	 0.04
+
+Total iterations:	 1
+Time- avg per iter:	 0.8
+
+
+
+===========================
+output
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[95m[1m
+
+=============== ITERATION 1 ===============[0m
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
