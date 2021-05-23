@@ -46,7 +46,7 @@ class to:
 		for b in range(len(self.reads)):
 			if type(self.reads[b]) is list:
 				try: a = next(i for i,v in enumerate(self.writes) 
-								if type(v) is list and v[S_NO] == self.reads[b][RF]) 	# the write which send the rf value to b
+								if type(v) is list and v[S_NO] == self.reads[b][RF]) 	# the write which sends the rf value to b
 				except: continue
 
 				# finding indexes of places to stop
@@ -54,30 +54,25 @@ class to:
 				x0 = self.fences_thread[x_thread][0]
 				x0_index = self.order.index(x0)
 				a_index = self.order.index(self.writes[a])
-
-				y_thread = self.reads[b][T_NO] -1
-				y_last = self.fences_thread[y_thread][-1]
-				y_last_index = self.order.index(y_last)
-				b_index = self.order.index(self.reads[b])
 				
 				# adding relations for all sc events above A with all sc events below B
 				for i in range(x0_index, a_index):
 					a_sb = self.order[i]
-					if type(a_sb) is list and a_sb[MO] == SEQ_CST:
+					if type(a_sb) is list and a_sb[TYPE] == WRITE and a_sb[MO] == SEQ_CST:
 						x = a_sb[S_NO]
 					elif type(a_sb) is not list:
 						x = a_sb
 					else: continue
 
-					for j in range(b_index, y_last_index):
-						b_sb = self.order[j]
-						if type(b_sb) is list and b_sb[MO] == SEQ_CST:
-							y = b_sb[S_NO]
-						elif type(b_sb) is not list:
-							y = b_sb
-						else: continue
+					if self.reads[b][MO] == SEQ_CST:
+						self.to_edges.append((x,self.reads[b][S_NO]))
 
-						self.to_edges.append((x,y))
+					y = self.reads[b+1]
+					y_thread = self.reads[b][T_NO] -1
+					y_index = self.fences_thread[y_thread].index(y)
+
+					for i in range(y_index, len(self.fences_thread[y_thread])):
+						self.to_edges.append((x, self.fences_thread[y_thread][i]))
 
 	def rule1(self):
 		for b in self.reads:
