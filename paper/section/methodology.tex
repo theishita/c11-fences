@@ -315,10 +315,9 @@ $ \ordevents{\sc} $. We abuse the notation $\ordevents{\sc}_c$ to
 represent the set of events in a cycle $ c $. 
 All the read and write events in $\ordevents{\sc}_c$ are already in program $ P $. 
 Hence, to introduce a cycle $ c $ in the execution, we add the fences in $\ordevents{\sc}_c$, i.e, 
-$\ordevents{\sc}_c \intersection \ordfences{\sc}$, in the program $ P $.
+$\ordfences{\sc}_c$, in the program $ P $.
 In other words, a cycle $ c $ can be introduced in a program if we insert 
-$ (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
-\ordfences{\sc}} \fn{})$ fences in the program $ P $, 
+$ (\bigwedge\limits_{f \in \ordfences{\sc}_c} f)$ fences in the program $ P $, 
 where the truth assignment to a fence corresponds to inserting that fence 
 in the program.
 Recall that we need to stop at least one cycle from the set 
