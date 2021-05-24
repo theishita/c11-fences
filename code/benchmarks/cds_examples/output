@@ -1,0 +1,2045 @@
+
+
+
+===========================
+dekker_no_fence_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence_fenced.o.d -o dekker_no_fence_fenced.o dekker_no_fence_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.43
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.43
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_v2_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_2_fenced.o.d -o mot_eg_v2_2_fenced.o mot_eg_v2_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 7.43
+Time- Pre-calculations:	 0
+
+Time- Total:		 7.43
+Time- Tool only:	 0.0
+
+
+
+===========================
+CRCW_mot_eg_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.CRCW_mot_eg_2.o.d -o CRCW_mot_eg_2.o CRCW_mot_eg_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 16
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.38
+Time- Pre-calculations:	 0.14
+Time- Z3:		 0.01
+
+Time- Total:		 0.58
+Time- Tool only:	 0.05
+
+
+
+===========================
+mot_eg_v2_3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_3_fenced.o.d -o mot_eg_v2_3_fenced.o mot_eg_v2_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+mot_eg_3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_3_fenced.o.d -o mot_eg_3_fenced.o mot_eg_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 3.76
+Time- Pre-calculations:	 0
+
+Time- Total:		 3.76
+Time- Tool only:	 0.0
+
+
+
+===========================
+dekker_no_fence_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence_modified.o.d -o dekker_no_fence_modified.o dekker_no_fence_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 24
+[93m
+No TO cycles can be formed for trace 3
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.36
+Time- Pre-calculations:	 0.0
+
+Time- Total:		 0.38
+Time- Tool only:	 0.01
+
+
+
+===========================
+mot_eg_v3_modified_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_modified_fenced.o.d -o mot_eg_v3_modified_fenced.o mot_eg_v3_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.38
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.38
+Time- Tool only:	 0.0
+
+
+
+===========================
+read_write_lock_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_3.o.d -o read_write_lock_3.o read_write_lock_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+read_write_lock_unreach_11_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_11_fenced.o.d -o read_write_lock_unreach_11_fenced.o read_write_lock_unreach_11_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.34
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.35
+Time- Tool only:	 0.0
+
+
+
+===========================
+fib_bench_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_bench_false-unreach-call.o.d -o fib_bench_false-unreach-call.o fib_bench_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+read_write_lock_unreach_11.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_11.o.d -o read_write_lock_unreach_11.o read_write_lock_unreach_11.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 1
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.33
+Time- Pre-calculations:	 0.01
+Time- Z3:		 0.01
+
+Time- Total:		 0.36
+Time- Tool only:	 0.01
+
+
+
+===========================
+read_write_lock_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_2_fenced.o.d -o read_write_lock_2_fenced.o read_write_lock_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 1.41
+Time- Pre-calculations:	 0
+
+Time- Total:		 1.42
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_v2_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_3.o.d -o mot_eg_v2_3.o mot_eg_v2_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+mot_eg_v3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3.o.d -o mot_eg_v3.o mot_eg_v3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 19
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.35
+Time- Pre-calculations:	 0.04
+Time- Z3:		 0.01
+
+Time- Total:		 0.45
+Time- Tool only:	 0.04
+
+
+
+===========================
+mot_eg_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_modified.o.d -o mot_eg_modified.o mot_eg_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 292
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 0.68
+Time- Pre-calculations:	 2.47
+Time- Z3:		 0.09
+
+Time- Total:		 4.42
+Time- Tool only:	 1.18
+
+
+
+===========================
+triangular_true-longer-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.triangular_true-longer-unreach-call.o.d -o triangular_true-longer-unreach-call.o triangular_true-longer-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+read_write_lock_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_2.o.d -o read_write_lock_2.o read_write_lock_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 524
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 1.25
+Time- Pre-calculations:	 5.0
+Time- Z3:		 5.58
+
+Time- Total:		 64.73
+Time- Tool only:	 52.89
+
+
+
+===========================
+crew_1.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_1.o.d -o crew_1.o crew_1.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.34
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.34
+Time- Tool only:	 0.0
+
+
+
+===========================
+peterson_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.peterson_fenced.o.d -o peterson_fenced.o peterson_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.35
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.35
+Time- Tool only:	 0.0
+
+
+
+===========================
+triangular_false-longer-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.triangular_false-longer-unreach-call.o.d -o triangular_false-longer-unreach-call.o triangular_false-longer-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+read_write_lock_unreach_13.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_13.o.d -o read_write_lock_unreach_13.o read_write_lock_unreach_13.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 9229
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 45.68
+Time- Pre-calculations:	 92.71
+Time- Z3:		 0.09
+
+Time- Total:		 180.91
+Time- Tool only:	 42.44
+
+
+
+===========================
+dekker_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_false-unreach-call.o.d -o dekker_false-unreach-call.o dekker_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.4
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.41
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_4_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_4_fenced.o.d -o mot_eg_4_fenced.o mot_eg_4_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 3.07
+Time- Pre-calculations:	 0
+
+Time- Total:		 3.07
+Time- Tool only:	 0.0
+
+
+
+===========================
+fib_mod_true-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_true-unreach-call.o.d -o fib_mod_true-unreach-call.o fib_mod_true-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 1.02
+Time- Pre-calculations:	 0
+
+Time- Total:		 1.02
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_4.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_4.o.d -o mot_eg_4.o mot_eg_4.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 3927
+[1m[91m
+Tool time exceeded 15 minutes.
+[0m
+
+
+
+===========================
+fib_mod_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_false-unreach-call.o.d -o fib_mod_false-unreach-call.o fib_mod_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 12
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 3 [0m
+Time- CDS Checker:	 3.66
+Time- Pre-calculations:	 0.05
+Time- Z3:		 0.35
+
+Time- Total:		 7.24
+Time- Tool only:	 3.18
+
+
+
+===========================
+CRCW_mot_eg_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.CRCW_mot_eg_2_fenced.o.d -o CRCW_mot_eg_2_fenced.o CRCW_mot_eg_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.46
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.46
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_2.o.d -o mot_eg_2.o mot_eg_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 3927
+[1m[91m
+Tool time exceeded 15 minutes.
+[0m
+
+
+
+===========================
+read_write_lock_unreach_12_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_12_fenced.o.d -o read_write_lock_unreach_12_fenced.o read_write_lock_unreach_12_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.43
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.43
+Time- Tool only:	 0.0
+
+
+
+===========================
+dekker_no_fence.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence.o.d -o dekker_no_fence.o dekker_no_fence.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 2
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.4
+Time- Pre-calculations:	 0.0
+Time- Z3:		 0.02
+
+Time- Total:		 0.43
+Time- Tool only:	 0.01
+
+
+
+===========================
+triangular_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.triangular_false-unreach-call.o.d -o triangular_false-unreach-call.o triangular_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 23.01
+Time- Pre-calculations:	 0.01
+
+Time- Total:		 23.03
+Time- Tool only:	 0.01
+
+
+
+===========================
+fib_bench_true-longest-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_bench_true-longest-unreach-call.o.d -o fib_bench_true-longest-unreach-call.o fib_bench_true-longest-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+crew_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_2.o.d -o crew_2.o crew_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 22
+[93m
+No TO cycles can be formed for trace 5
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.36
+Time- Pre-calculations:	 0.02
+
+Time- Total:		 0.4
+Time- Tool only:	 0.03
+
+
+
+===========================
+fib_mod_false-unreach-call_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_false-unreach-call_fenced.o.d -o fib_mod_false-unreach-call_fenced.o fib_mod_false-unreach-call_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 106.39
+Time- Pre-calculations:	 0
+
+Time- Total:		 106.39
+Time- Tool only:	 0.0
+
+
+
+===========================
+read_write_lock_unreach_12.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_12.o.d -o read_write_lock_unreach_12.o read_write_lock_unreach_12.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 58
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.49
+Time- Pre-calculations:	 0.32
+Time- Z3:		 0.02
+
+Time- Total:		 1.0
+Time- Tool only:	 0.18
+
+
+
+===========================
+thin-air.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.thin-air.o.d -o thin-air.o thin-air.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 4
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.35
+Time- Pre-calculations:	 0.0
+
+Time- Total:		 0.36
+Time- Tool only:	 0.01
+
+
+
+===========================
+CRCW_mot_eg_1_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.CRCW_mot_eg_1_modified.o.d -o CRCW_mot_eg_1_modified.o CRCW_mot_eg_1_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 7
+[93m
+No TO cycles can be formed for trace 4
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.37
+Time- Pre-calculations:	 0.04
+
+Time- Total:		 0.42
+Time- Tool only:	 0.02
+
+
+
+===========================
+mot_eg_v3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_fenced.o.d -o mot_eg_v3_fenced.o mot_eg_v3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.33
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.34
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_3.o.d -o mot_eg_3.o mot_eg_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 3927
+[1m[91m
+Tool time exceeded 15 minutes.
+[0m
+
+
+
+===========================
+read_write_lock_3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_3_fenced.o.d -o read_write_lock_3_fenced.o read_write_lock_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+crew_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_3.o.d -o crew_3.o crew_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 376
+[93m
+No TO cycles can be formed for trace 5
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 1.31
+Time- Pre-calculations:	 0.02
+
+Time- Total:		 1.39
+Time- Tool only:	 0.06
+
+
+
+===========================
+mot_eg_v3_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_modified.o.d -o mot_eg_v3_modified.o mot_eg_v3_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 29
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 5 [0m
+Time- CDS Checker:	 0.33
+Time- Pre-calculations:	 0.07
+Time- Z3:		 0.01
+
+Time- Total:		 0.47
+Time- Tool only:	 0.06
+
+
+
+===========================
+fib_bench_true-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_bench_true-unreach-call.o.d -o fib_bench_true-unreach-call.o fib_bench_true-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+mot_eg_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_2_fenced.o.d -o mot_eg_2_fenced.o mot_eg_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 3.35
+Time- Pre-calculations:	 0
+
+Time- Total:		 3.35
+Time- Tool only:	 0.0
+
+
+
+===========================
+read_write_lock_unreach_13_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_13_fenced.o.d -o read_write_lock_unreach_13_fenced.o read_write_lock_unreach_13_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 147.71
+Time- Pre-calculations:	 0
+
+Time- Total:		 147.71
+Time- Tool only:	 0.0
+
+
+
+===========================
+output
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
+
+
+
+===========================
+lamport_true_unreach.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.lamport_true_unreach.o.d -o lamport_true_unreach.o lamport_true_unreach.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 16
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.54
+Time- Pre-calculations:	 0.0
+
+Time- Total:		 0.55
+Time- Tool only:	 0.01
+
+
+
+===========================
+peterson.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.peterson.o.d -o peterson.o peterson.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 24
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.49
+Time- Pre-calculations:	 0.12
+Time- Z3:		 0.05
+
+Time- Total:		 2.69
+Time- Tool only:	 2.02
+
+
+
+===========================
+mot_eg_v2_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_2.o.d -o mot_eg_v2_2.o mot_eg_v2_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 1835
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 3.21
+Time- Pre-calculations:	 11.9
+Time- Z3:		 0.05
+
+Time- Total:		 25.36
+Time- Tool only:	 10.2
+
+
+
+===========================
+dekker_no_fence_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence_fenced.o.d -o dekker_no_fence_fenced.o dekker_no_fence_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.66
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.67
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_v2_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_2_fenced.o.d -o mot_eg_v2_2_fenced.o mot_eg_v2_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 7.31
+Time- Pre-calculations:	 0
+
+Time- Total:		 7.31
+Time- Tool only:	 0.0
+
+
+
+===========================
+CRCW_mot_eg_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.CRCW_mot_eg_2.o.d -o CRCW_mot_eg_2.o CRCW_mot_eg_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 16
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.39
+Time- Pre-calculations:	 0.14
+Time- Z3:		 0.01
+
+Time- Total:		 0.59
+Time- Tool only:	 0.05
+
+
+
+===========================
+mot_eg_v2_3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_3_fenced.o.d -o mot_eg_v2_3_fenced.o mot_eg_v2_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+mot_eg_3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_3_fenced.o.d -o mot_eg_3_fenced.o mot_eg_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 3.58
+Time- Pre-calculations:	 0
+
+Time- Total:		 3.58
+Time- Tool only:	 0.0
+
+
+
+===========================
+dekker_no_fence_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence_modified.o.d -o dekker_no_fence_modified.o dekker_no_fence_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 24
+[93m
+No TO cycles can be formed for trace 3
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.36
+Time- Pre-calculations:	 0.0
+
+Time- Total:		 0.38
+Time- Tool only:	 0.02
+
+
+
+===========================
+mot_eg_v3_modified_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_modified_fenced.o.d -o mot_eg_v3_modified_fenced.o mot_eg_v3_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.39
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.4
+Time- Tool only:	 0.0
+
+
+
+===========================
+read_write_lock_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_3.o.d -o read_write_lock_3.o read_write_lock_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+read_write_lock_unreach_11_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_11_fenced.o.d -o read_write_lock_unreach_11_fenced.o read_write_lock_unreach_11_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.33
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.33
+Time- Tool only:	 0.0
+
+
+
+===========================
+fib_bench_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_bench_false-unreach-call.o.d -o fib_bench_false-unreach-call.o fib_bench_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+read_write_lock_unreach_11.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_11.o.d -o read_write_lock_unreach_11.o read_write_lock_unreach_11.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 1
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.34
+Time- Pre-calculations:	 0.0
+Time- Z3:		 0.01
+
+Time- Total:		 0.36
+Time- Tool only:	 0.01
+
+
+
+===========================
+read_write_lock_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_2_fenced.o.d -o read_write_lock_2_fenced.o read_write_lock_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 1.69
+Time- Pre-calculations:	 0
+
+Time- Total:		 1.69
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_v2_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_3.o.d -o mot_eg_v2_3.o mot_eg_v2_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+mot_eg_v3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3.o.d -o mot_eg_v3.o mot_eg_v3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 19
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.33
+Time- Pre-calculations:	 0.05
+Time- Z3:		 0.02
+
+Time- Total:		 0.44
+Time- Tool only:	 0.04
+
+
+
+===========================
+mot_eg_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_modified.o.d -o mot_eg_modified.o mot_eg_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 292
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 0.74
+Time- Pre-calculations:	 2.35
+Time- Z3:		 0.04
+
+Time- Total:		 4.19
+Time- Tool only:	 1.06
+
+
+
+===========================
+triangular_true-longer-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.triangular_true-longer-unreach-call.o.d -o triangular_true-longer-unreach-call.o triangular_true-longer-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+read_write_lock_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_2.o.d -o read_write_lock_2.o read_write_lock_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 524
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 4 [0m
+Time- CDS Checker:	 1.24
+Time- Pre-calculations:	 4.54
+Time- Z3:		 4.9
+
+Time- Total:		 67.31
+Time- Tool only:	 56.63
+
+
+
+===========================
+crew_1.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_1.o.d -o crew_1.o crew_1.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.33
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.34
+Time- Tool only:	 0.0
+
+
+
+===========================
+peterson_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.peterson_fenced.o.d -o peterson_fenced.o peterson_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.35
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.35
+Time- Tool only:	 0.0
+
+
+
+===========================
+triangular_false-longer-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.triangular_false-longer-unreach-call.o.d -o triangular_false-longer-unreach-call.o triangular_false-longer-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+read_write_lock_unreach_13.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_13.o.d -o read_write_lock_unreach_13.o read_write_lock_unreach_13.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 9229
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 44.8
+Time- Pre-calculations:	 91.92
+Time- Z3:		 0.1
+
+Time- Total:		 174.2
+Time- Tool only:	 37.38
+
+
+
+===========================
+output_tflag
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
+
+
+
+===========================
+dekker_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_false-unreach-call.o.d -o dekker_false-unreach-call.o dekker_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.39
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.39
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_4_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_4_fenced.o.d -o mot_eg_4_fenced.o mot_eg_4_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 2.51
+Time- Pre-calculations:	 0
+
+Time- Total:		 2.51
+Time- Tool only:	 0.0
+
+
+
+===========================
+fib_mod_true-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_true-unreach-call.o.d -o fib_mod_true-unreach-call.o fib_mod_true-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 1.01
+Time- Pre-calculations:	 0
+
+Time- Total:		 1.01
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_4.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_4.o.d -o mot_eg_4.o mot_eg_4.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 3927
+[1m[91m
+Tool time exceeded 15 minutes.
+[0m
+
+
+
+===========================
+fib_mod_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_false-unreach-call.o.d -o fib_mod_false-unreach-call.o fib_mod_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 12
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 3 [0m
+Time- CDS Checker:	 3.83
+Time- Pre-calculations:	 0.05
+Time- Z3:		 0.33
+
+Time- Total:		 5.83
+Time- Tool only:	 1.62
+
+
+
+===========================
+CRCW_mot_eg_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.CRCW_mot_eg_2_fenced.o.d -o CRCW_mot_eg_2_fenced.o CRCW_mot_eg_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.47
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.48
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_2.o.d -o mot_eg_2.o mot_eg_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 3927
+[1m[91m
+Tool time exceeded 15 minutes.
+[0m
+
+
+
+===========================
+mot_eg_modified_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_modified_fenced.o.d -o mot_eg_modified_fenced.o mot_eg_modified_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 12.08
+Time- Pre-calculations:	 0
+
+Time- Total:		 12.08
+Time- Tool only:	 0.0
+
+
+
+===========================
+read_write_lock_unreach_12_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_12_fenced.o.d -o read_write_lock_unreach_12_fenced.o read_write_lock_unreach_12_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.45
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.46
+Time- Tool only:	 0.0
+
+
+
+===========================
+dekker_no_fence.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.dekker_no_fence.o.d -o dekker_no_fence.o dekker_no_fence.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 2
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.39
+Time- Pre-calculations:	 0.01
+Time- Z3:		 0.01
+
+Time- Total:		 0.43
+Time- Tool only:	 0.02
+
+
+
+===========================
+triangular_false-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.triangular_false-unreach-call.o.d -o triangular_false-unreach-call.o triangular_false-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 1
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 22.62
+Time- Pre-calculations:	 0.01
+
+Time- Total:		 22.64
+Time- Tool only:	 0.01
+
+
+
+===========================
+fib_bench_true-longest-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_bench_true-longest-unreach-call.o.d -o fib_bench_true-longest-unreach-call.o fib_bench_true-longest-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+crew_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_2.o.d -o crew_2.o crew_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 22
+[93m
+No TO cycles can be formed for trace 5
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.36
+Time- Pre-calculations:	 0.02
+
+Time- Total:		 0.4
+Time- Tool only:	 0.03
+
+
+
+===========================
+fib_mod_false-unreach-call_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_mod_false-unreach-call_fenced.o.d -o fib_mod_false-unreach-call_fenced.o fib_mod_false-unreach-call_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 104.82
+Time- Pre-calculations:	 0
+
+Time- Total:		 104.82
+Time- Tool only:	 0.0
+
+
+
+===========================
+read_write_lock_unreach_12.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_12.o.d -o read_write_lock_unreach_12.o read_write_lock_unreach_12.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 58
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.45
+Time- Pre-calculations:	 0.32
+Time- Z3:		 0.01
+
+Time- Total:		 0.95
+Time- Tool only:	 0.18
+
+
+
+===========================
+thin-air.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.thin-air.o.d -o thin-air.o thin-air.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 4
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.34
+Time- Pre-calculations:	 0.0
+
+Time- Total:		 0.35
+Time- Tool only:	 0.01
+
+
+
+===========================
+CRCW_mot_eg_1_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.CRCW_mot_eg_1_modified.o.d -o CRCW_mot_eg_1_modified.o CRCW_mot_eg_1_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 7
+[93m
+No TO cycles can be formed for trace 4
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.34
+Time- Pre-calculations:	 0.04
+
+Time- Total:		 0.4
+Time- Tool only:	 0.02
+
+
+
+===========================
+mot_eg_v3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_fenced.o.d -o mot_eg_v3_fenced.o mot_eg_v3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.34
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.35
+Time- Tool only:	 0.0
+
+
+
+===========================
+mot_eg_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_3.o.d -o mot_eg_3.o mot_eg_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 3927
+[1m[91m
+Tool time exceeded 15 minutes.
+[0m
+
+
+
+===========================
+read_write_lock_3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_3_fenced.o.d -o read_write_lock_3_fenced.o read_write_lock_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+crew_3.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_3.o.d -o crew_3.o crew_3.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 376
+[93m
+No TO cycles can be formed for trace 5
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 1.29
+Time- Pre-calculations:	 0.02
+
+Time- Total:		 1.38
+Time- Tool only:	 0.06
+
+
+
+===========================
+mot_eg_v3_modified.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v3_modified.o.d -o mot_eg_v3_modified.o mot_eg_v3_modified.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 29
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 5 [0m
+Time- CDS Checker:	 0.39
+Time- Pre-calculations:	 0.08
+Time- Z3:		 0.01
+
+Time- Total:		 0.55
+Time- Tool only:	 0.07
+
+
+
+===========================
+fib_bench_true-unreach-call.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.fib_bench_true-unreach-call.o.d -o fib_bench_true-unreach-call.o fib_bench_true-unreach-call.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Model Checking time exceeded 5 minutes.[0m
+
+
+
+===========================
+mot_eg_2_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_2_fenced.o.d -o mot_eg_2_fenced.o mot_eg_2_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 3.69
+Time- Pre-calculations:	 0
+
+Time- Total:		 3.69
+Time- Tool only:	 0.01
+
+
+
+===========================
+crew_3_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.crew_3_fenced.o.d -o crew_3_fenced.o crew_3_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 0.47
+Time- Pre-calculations:	 0
+
+Time- Total:		 0.47
+Time- Tool only:	 0.0
+
+
+
+===========================
+read_write_lock_unreach_13_fenced.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.read_write_lock_unreach_13_fenced.o.d -o read_write_lock_unreach_13_fenced.o read_write_lock_unreach_13_fenced.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 0
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 0 [0m
+Time- CDS Checker:	 152.57
+Time- Pre-calculations:	 0
+
+Time- Total:		 152.57
+Time- Tool only:	 0.0
+
+
+
+===========================
+output
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+[1m[91m
+Error while model checking.
+Please check and resolve the error.[0m
+
+
+
+===========================
+lamport_true_unreach.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.lamport_true_unreach.o.d -o lamport_true_unreach.o lamport_true_unreach.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 16
+[93m
+No TO cycles can be formed for trace 1
+Hence this behaviour cannot be stopped using SC fences
+[0m
+[94m[1m
+
+================= OVERALL =================[0m
+Time- CDS Checker:	 0.53
+Time- Pre-calculations:	 0.01
+
+Time- Total:		 0.55
+Time- Tool only:	 0.01
+
+
+
+===========================
+peterson.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.peterson.o.d -o peterson.o peterson.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 24
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 0.5
+Time- Pre-calculations:	 0.12
+Time- Z3:		 0.05
+
+Time- Total:		 2.4
+Time- Tool only:	 1.73
+
+
+
+===========================
+mot_eg_v2_2.cc
+===========================
+make -C test
+make[1]: Entering directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+g++ -MMD -MF ./.mot_eg_v2_2.o.d -o mot_eg_v2_2.o mot_eg_v2_2.cc -Wall -g -O3 -I.. -I../include -L.. -lmodel
+make[1]: Leaving directory '/home/sanjana/Workspace/publication-material/c11-fences/model-checker/cds-checker/test'
+
+
+Buggy executions:	 1835
+[94m[1m
+
+================= OVERALL =================[0m
+[92m [1m Total fences added: 	 2 [0m
+Time- CDS Checker:	 3.25
+Time- Pre-calculations:	 12.43
+Time- Z3:		 0.05
+
+Time- Total:		 25.62
+Time- Tool only:	 9.89
