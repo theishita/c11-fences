@@ -37,11 +37,6 @@
 %\usepackage[numbers]{natbib}
 %\usepackage{url}
 
-% implies and iff arrows
-\renewcommand{\iff}{\xspace\Leftrightarrow\xspace}
-\renewcommand{\implies}{\xspace\Rightarrow\xspace}
-\newcommand{\onlyif}{\xspace\Leftarrow\xspace}
-
 % commonly used abbreviations and expressions
 \renewcommand{\th}{^{th}\xspace} % superscript th for numbers eg i^{th}
 \newcommand{\definedas}{\triangleq\xspace}
@@ -107,7 +102,10 @@
 \newcommand{\ordwrites}[1]{\events^\wt{(#1)}\xspace}
 \newcommand{\ordreads}[1]{\events^\rd{(#1)}\xspace}
 \newcommand{\ordfences}[1]{\events^\fn{(#1)}\xspace}
-
+% cycles
+\newcommand{\scycles}[1]{\texttt{Scycles}(#1)\xspace}
+\newcommand{\rcycles}[1]{\texttt{Rcycles}(#1)\xspace}
+\newcommand{\cycle}[1]{\texttt{cycles}(#1)\xspace}
 
 % memory orders
 \newcommand{\mosc}{\texttt{seq\_cst}\xspace}
@@ -140,6 +138,8 @@
 \renewcommand{\to}[3]{\reln{\textbf{\textcolor{Brown}{to}}}{#1}{#2}{#3}\xspace}
 \newcommand{\so}[3]{\reln{\textbf{\textcolor{Mahogany}{so}}}{#1}{#2}{#3}\xspace} %sc
 \newcommand{\fr}[3]{\reln{\textbf{\textcolor{RoyalPurple}{fr}}}{#1}{#2}{#3}} %rb
+\newcommand{\ssw}[3]{\reln{\textbf{\textcolor{Mahogany}{ssw}}}{#1}{#2}{#3}} %sc-sw
+\newcommand{\nithb}[3]{\nreln{\textbf{\textcolor{NavyBlue}{ithb}}}{#1}{#2}{#3}\xspace}
 
 % relation name without events
 \newcommand{\setSB}{\seqb{\tau}{}{}\xspace}
@@ -151,6 +151,7 @@
 \newcommand{\setMO}{\mo{\tau}{}{}\xspace}
 \newcommand{\setTO}{\to{\tau}{}{}\xspace}
 \newcommand{\setSO}{\so{\tau}{}{}\xspace}
+\newcommand{\setSSW}{\ssw{\tau}{}{}\xspace}
 \newcommand{\nsetHB}{\nhb{\tau}{}{}\xspace}
 \newcommand{\nsetMO}{\nmo{\tau}{}{}\xspace}
 \newcommand{\setFR}{\fr{\tau}{}{}\xspace}
@@ -165,6 +166,7 @@
 \newcommand{\lmo}{\textbf{\textcolor{RedOrange}{mo}}\xspace}
 \newcommand{\lto}{\textbf{\textcolor{Brown}{to}}\xspace}
 \newcommand{\lso}{\textbf{\textcolor{Mahogany}{so}}\xspace}
+\newcommand{\lssw}{\textbf{\textcolor{Mahogany}{ssw}}\xspace}
 \newcommand{\lfr}{\textbf{\textcolor{RoyalPurple}{fr}}\xspace}
 
 \newcommand{\var}[1]{\color{OliveGreen}\texttt{#1}\color{black}\xspace}
@@ -206,4 +208,3 @@
 % the [final] option to clear the changes and show the last changes
 % only.
 \usepackage[commentmarkup=todo,highlightmarkup=background]{changes}
-
