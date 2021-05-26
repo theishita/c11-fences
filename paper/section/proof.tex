@@ -1,6 +1,5 @@
 \newcommand{\onsc}[1]{#1|_\sc \xspace}
 
-
 Let $\cycle{\tau}$ represent the cycles of a trace $\tau$ and 
 $\scycles{\tau}$, $\rcycles{\tau}$ represent the strong and 
 relaxed cycles of $\tau$ respectively.
@@ -15,7 +14,7 @@ A relaxed cycle $r \in \rcycles{\tau}$ of a trace $\tau$ contains a
 set of events $\events_{s}$ = $\{e_1, e_2 ... e_n\}$,
 where $\events_{r} \subseteq \events_\tau$,
 \st $\reln{R}{s}{e_1}{\reln{R}{s}{...}{\reln{R}{s}{e_n}{e_1}}} $,
-where $R = \setHB \union \setSSW$.\newline
+where $R = \setHB \union \setWS$.\newline
 
 \noindent
 Let $\onsc{R}$ represent a subset of a relation $R$ on \sc events;
@@ -95,13 +94,13 @@ $e_1,e_2 \in \ordevents{\sc}$.
 	\qed
 \end{proof}
 
-{\definition $\setSSW$ relation}
+{\definition $\setWS$ relation}
 The relation represents the absence of synchronization by $\setSW$ or $\setDOB$ 
 \ie
 
 If $\exists e_1 \in \ordwrites{\sc}_\tau \union \ordfences{\sc}_\tau$, 
 $e_2 \in \ordreads{\sc}_\tau \union \ordfences{\sc}_\tau$ then
-$\ssw{\tau}{e_2}{e_1}$ if
+$\ws{\tau}{e_2}{e_1}$ if
 $\exists (e_2',e_1') \in \setRF^{-1}$ \st
 $\seqb{\tau}{e_1'}{e_1}$ and $\seqb{\tau}{e_2}{e_2'}$.
 
@@ -109,11 +108,11 @@ $\seqb{\tau}{e_1'}{e_1}$ and $\seqb{\tau}{e_2}{e_2'}$.
 $\exists (e_2',e_1') \in \setRF^{-1}$ $\implies$
 $(e_1',e_2') \nin \setITHB$ $\implies$
 $\neg(\sw{\tau}{e_1}{e_2} \v \dob{\tau}{e_1}{e_2})$ $\implies$
-$\ssw{\tau}{e_2}{e_1}$.
+$\ws{\tau}{e_2}{e_1}$.
 }
 
 
-{\theorem {\lssw-rules are exhaustive}}
+{\theorem {\lws-rules are exhaustive}}
 \begin{proof}
 	{\case $e_1 \in \ordwrites{\sc}_\tau$, $e_2 \in \ordreads{\sc}_\tau$}
 	then 
