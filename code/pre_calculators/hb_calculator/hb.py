@@ -82,11 +82,26 @@ class hb:
 			# create sw's between read/rmw and write/rmw statements - based on rf
 			if trace[i][TYPE] == READ or trace[i][TYPE] == RMW:
 				rf = trace[i][RF]
-				for j in trace:
-					if j[S_NO] == rf:
-						if j[MO] in write_models and trace[i][MO] in read_models:
-							# self.sw_edges.append((j[S_NO],trace[i][S_NO]))
-							self.mat.addEdge(j[S_NO],trace[i][S_NO])
-							# if they are of memory order sc, then they need to also be counted as TO edges
-							if j[MO] == SEQ_CST and trace[i][MO] == SEQ_CST:
-								self.to_edges.append((j[S_NO],trace[i][S_NO]))
+				try: j = next(i for i,v in enumerate(trace)
+								if type(v) is list and v[S_NO] == rf)
+				except: continue
+				if trace[j][MO] in write_models and trace[i][MO] in read_models:
+					# self.sw_edges.append((j[S_NO],trace[i][S_NO]))
+					self.mat.addEdge(trace[j][S_NO],trace[i][S_NO])
+					# if they are of memory order sc, then they need to also be counted as TO edges
+					if trace[j][MO] == SEQ_CST and trace[i][MO] == SEQ_CST:
+						self.to_edges.append((trace[j][S_NO],trace[i][S_NO]))
+			
+				# dob rule
+				# elif trace[j][MO] not in write_models and trace[i][MO] in read_models:
+				# 	j_thread = trace[j][T_NO]
+				# 	try: j_thread_0 = next(i for i,v in enumerate(trace)
+				# 				if type(v) is list and v[T_NO] == j_thread)
+				# 	except: continue
+				# 	for a in range(j_thread_0, j):
+				# 		if trace[a][MO] in write_models or trace[a][MO] in read_models:
+				# 			self.mat.addEdge(trace[a][S_NO],trace[i][S_NO])
+				# 			# if they are of memory order sc, then they need to also be counted as TO edges
+				# 			if trace[a][MO] == SEQ_CST and trace[i][MO] == SEQ_CST:
+				# 				self.to_edges.append((trace[a][S_NO],trace[i][S_NO]))
+

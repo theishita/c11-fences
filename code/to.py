@@ -45,23 +45,35 @@ class to:
 	def rule0(self):
 		for b in range(len(self.reads)):
 			if type(self.reads[b]) is list:
-				y = self.reads[b+1]
 				try: a = next(i for i,v in enumerate(self.writes) 
-								if type(v) is list and v[S_NO] == self.reads[b][RF]) 	# the write which send the rf value to b
+								if type(v) is list and v[S_NO] == self.reads[b][RF]) 	# the write which sends the rf value to b
 				except: continue
 
-				x = self.writes[a-1]
-				
-				# adding relations for fences above A and fences below B
+				# finding indexes of places to stop
 				x_thread = self.writes[a][T_NO] -1
-				y_thread = self.reads[b][T_NO] -1
-				x_index = self.fences_thread[x_thread].index(x)
-				y_index = self.fences_thread[y_thread].index(y)
+				x0 = self.fences_thread[x_thread][0]
+				x0_index = self.order.index(x0)
+				a_index = self.order.index(self.writes[a])
+				
+				# adding relations for all sc events above A with all sc events below B
+				for i in range(x0_index, a_index):
+					a_sb = self.order[i]
+					if type(a_sb) is list and a_sb[TYPE] == WRITE and a_sb[MO] == SEQ_CST:
+						x = a_sb[S_NO]
+					elif type(a_sb) is not list:
+						x = a_sb
+					else: continue
 
-				for i in range(0, x_index+1):
-					for j in range(y_index, len(self.fences_thread[y_thread])):
-						self.to_edges.append((self.fences_thread[x_thread][i],self.fences_thread[y_thread][j]))
-	
+					if self.reads[b][MO] == SEQ_CST:
+						self.to_edges.append((x,self.reads[b][S_NO]))
+
+					y = self.reads[b+1]
+					y_thread = self.reads[b][T_NO] -1
+					y_index = self.fences_thread[y_thread].index(y)
+
+					for i in range(y_index, len(self.fences_thread[y_thread])):
+						self.to_edges.append((x, self.fences_thread[y_thread][i]))
+
 	def rule1(self):
 		for b in self.reads:
 			if type(b) is list and b[MO] == SEQ_CST:
@@ -166,12 +178,12 @@ class to:
 
 			# rule 4a = soEF
 			if self.writes[b_index][MO] == SEQ_CST:
-				for i in range(x_index,len(self.fences_thread[x_thread])): # all fences below A ( A -sb-> X )
+				for i in range(x_index,len(self.fences_thread[x_thread])): # all fences below A ( B -sb-> X )
 					self.to_edges.append((b, self.fences_thread[x_thread][i]))
 			# rule 4b = soFE
 			if self.writes[a_index][MO] == SEQ_CST:
 				for i in range(0, y_index+1):
-					self.to_edges.append((self.fences_thread[y_thread][i], a)) # all fences above B ( Y -sb-> B)
+					self.to_edges.append((self.fences_thread[y_thread][i], a)) # all fences above B ( Y -sb-> A )
 			# rule 4c = soFF
 			for i in range(0, y_index+1):
 				for j in range(x_index, len(self.fences_thread[x_thread])):
@@ -202,12 +214,12 @@ class to:
 
 					# rule 4a = soEF
 					if b[MO] == SEQ_CST:
-						for i in range(x_index,len(self.fences_thread[x_thread])): # all fences below A ( A -sb-> X )
+						for i in range(x_index,len(self.fences_thread[x_thread])): # all fences below A ( B -sb-> X )
 							self.to_edges.append((b[S_NO], self.fences_thread[x_thread][i]))
 					# rule 4b = soFE
 					if self.reads[a_index][MO] == SEQ_CST:
 						for i in range(0, y_index+1):
-							self.to_edges.append((self.fences_thread[y_thread][i], self.reads[a_index][S_NO])) # all fences above B ( Y -sb-> B)
+							self.to_edges.append((self.fences_thread[y_thread][i], self.reads[a_index][S_NO])) # all fences above B ( Y -sb-> A )
 					# rule 4c = soFF
 					for i in range(0, y_index+1):
 						for j in range(x_index, len(self.fences_thread[x_thread])):
@@ -253,12 +265,12 @@ class to:
 					if type(write) is list and write[T_NO] != m2[T_NO]:
 						break
 					else:
-						if type(write) is list and read[MO] == SEQ_CST:
+						if type(write) is list and write[MO] == SEQ_CST:
 							b1_index = write[S_NO]
 
 							# adding relations for fences above b2
-							x = self.writes[b2_index-1]
-							x_thread = self.writes[b2_index][T_NO] -1
+							x = self.reads[b2_index-1]
+							x_thread = self.reads[b2_index][T_NO] -1
 							x_index = self.fences_thread[x_thread].index(x)
 							for i in range(0, x_index+1):
 								self.to_edges.append((self.fences_thread[x_thread][i], b1_index))
