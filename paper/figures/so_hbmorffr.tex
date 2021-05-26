@@ -4,10 +4,10 @@
 \node (wr1) {$ wr^\sc_1 $};
 \node (wr2) [below=20pt of wr1] {$ wr^\sc_2 $};
 \node (so1) [below=-5pt of wr2] {\hlref{sohb},\hlref{somo},};
-\node (so2) [below=-5pt of so1] {\hlref{sorf}};
+\node (so2) [below left=-5pt and -66pt of so1] {\hlref{sorf},\hlref{sofr}};
 
 \draw [->,>=stealth,color=Mahogany,thin] ($ (wr1.south east)+(.3,-5pt) $) to[out=135,in=-135] node[midway,right=-2pt,font=\scriptsize] {\textcolor{black}{\lso}} ($ (wr2.south east)+(0.4,-7pt) $);
-\draw [->,>=stealth,color=RedOrange,thin] ($ (wr1.south west)+(-.3,-5pt) $) to[out=45,in=-45] node[left=-2pt,pos=.25,font=\scriptsize] {\textcolor{black}{\lmo/}} node[left=-0.5pt,pos=.5,font=\scriptsize] {\textcolor{black}{\lhb/\lrf}} ($ (wr2.south west)+(-0.3,-7pt) $);
+\draw [->,>=stealth,color=RedOrange,thin] ($ (wr1.south west)+(-.3,-5pt) $) to[out=45,in=-45] node[left=-2pt,pos=.25,font=\scriptsize] {\textcolor{black}{\lmo/\lrf}} node[left=-0.5pt,pos=.5,font=\scriptsize] {\textcolor{black}{\lhb/\lfr}} ($ (wr2.south west)+(-0.3,-7pt) $);
 
 
 
