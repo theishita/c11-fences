@@ -157,12 +157,13 @@ read the initial value $0$ (as shown in \hlref{mutex}(i))
 then the program violates mutual exclusion
 property. Note that, the relation $\setFR$ is not a \cc relation, it has
 been introduced in this work to assist with forming $\setSO$ relation.
-In the absence of $\setFR$, $\setHB$ $\union$ $\setMO$ $\union$ $\setRF$
+In the absence of $\setFR$, $\setHB$ $\union$ $\setRF$ $\union$ $\setMO$
 and $\setTO$ are both acyclic and the trace $\tau$ is possible under \cc.
 %
 The buggy trace can be invalidated by introducing \sc-fences $\mathbb{F}^\sc_1$
 and $\mathbb{F}^\sc_1$ as shown in \hlref{mutex}(ii). The \lso-rules
-\hlref{sohb} and \hlref{soFF} can be used to construct $\setSO$ edges between 
+\hlref{sohb} and \hlref{soFE} (that uses $\setFR$ $\implies$ $\setSO$) can be 
+used to construct $\setSO$ edges between 
 the program events and synthesized fences to form a cyclic $\setSO$ relation.
 The cycle in $\setSO$ relation indicates that a valid total-order cannot
 be formed on \sc-events of $\inv{\tau}$ and thus the trace cannot
@@ -178,10 +179,24 @@ the $\setHB \union \setRF \union \setMO$ must be acyclic.
 In the second strategy we attempt to introduce synchronization
 between threads by synthesizing fences. The synchronization
 would further introduce $\setITHB$ relation between events
-that could stop a buggy behavior creating a cycle in 
+that could stop a buggy behavior by creating a cycle in 
 $\setHB \union \setRF \union \setMO$. 
-This strategy may invalidate a buggy trace by introducing 
+Note that, this strategy invalidates a buggy trace by introducing 
 weaker fences (of memory orders \rel, \acq and \acqrel).
+
+\setlength{\textfloatsep}{0pt}
+\begin{wrapfigure}{l}{0.6\textwidth}
+	\vspace{-2.5em}
+	\begin{tabular}{|c|c|}
+		\multicolumn{2}{c}{Initially $x = 0, y = 0$} \\
+		\hline
+		\resizebox{0.29\textwidth}{!}{\input{figures/egWeakFence_1.tex}} &
+		\resizebox{0.29\textwidth}{!}{\input{figures/egWeakFence_2.tex}} \\
+		\hline
+		\multicolumn{2}{c}{\hl{mutex}}
+	\end{tabular}
+	\vspace{-2.5em}
+\end{wrapfigure}
 
 
 \snj{sc fences alone ensures optimality inno of fences, str 2 needed for opt in type of fences.}
