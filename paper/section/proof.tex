@@ -1,5 +1,3 @@
-\newcommand{\onsc}[1]{#1|_\sc \xspace}
-
 Let $\cycle{\tau}$ represent the cycles of a trace $\tau$ and 
 $\scycles{\tau}$, $\rcycles{\tau}$ represent the strong and 
 relaxed cycles of $\tau$ respectively.
@@ -15,11 +13,6 @@ set of events $\events_{s}$ = $\{e_1, e_2 ... e_n\}$,
 where $\events_{r} \subseteq \events_\tau$,
 \st $\reln{R}{s}{e_1}{\reln{R}{s}{...}{\reln{R}{s}{e_n}{e_1}}} $,
 where $R = \setHB \union \setWS$.\newline
-
-\noindent
-Let $\onsc{R}$ represent a subset of a relation $R$ on \sc events;
-\ie $(e_1,e_2) \in \onsc{R}$ $\iff$ $(e_1,e_2) \in R$ $\^$
-$e_1,e_2 \in \ordevents{\sc}$.
 
 {\theorem{\lso-rules are exhaustive \ie $\setTO$ = $(\setSO)^+$ }}
 \begin{proof}
