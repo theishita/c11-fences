@@ -1,23 +1,24 @@
+\ourtechnique attempts to invalidate a buggy trace (\aka counter
+example) by one of the following two strategies:
+\begin{itemize}[label=strategy1,align=left,leftmargin=*]
+	\item [Strategy1]:
+		Invalidate by violating \sc-\lto-order.
+	\item [Strategy2]:
+		Invalidate by increasing inter-thread synchronization.
+\end{itemize}
+
+\noindent
+{\bf Strategy1: Invalidate by violating \sc-\lto-order. 
+	(\sfence)}\newline
 Consider a buggy input program $P$.
 %
 As discussed in Section~\ref{sec:c11}, in a valid trace of $P$ 
-(including a buggy trace \aka a counter example), 
+(including a buggy trace), 
 the \sc ordered events must form a total order ($\setTO$).
 %
 Contrarily, if we synthesize \sc ordered fences in the input program 
 such that the total order requirement in the buggy trace gets violated 
 then we can invalidate the trace and stop the program behavior.
-This concept forms the base of our synthesis technique.
-
-We introduce an irreflexive and possibly cyclic relation
-on \sc ordered events called \sc-order ($\setSO$).
-%
-To construct the $\setSO$ order, we introduce the following \lso-rules
-(diagrammatically shown in Figure~\ref{fig:so rules}).
-The \lso-rules are an interpretation or simply a derivative 
-of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf} 
-(Section~\ref{sec:c11}).
-%formed by direct derivative and dual of the rules .
 
 \begin{figure}[t]
 	\begin{tabular}{|c||c|c|c|}
@@ -29,28 +30,8 @@ of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf}
 		\resizebox{0.24\textwidth}{!}{\input{figures/soFE.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/soFF.tex}} \\
 		\hline
-%		\hline
-
-%		\resizebox{0.24\textwidth}{!}{\input{figures/sofr.tex}} &
-%		\resizebox{0.24\textwidth}{!}{\input{figures/soRFfr.tex}} &
-%		\resizebox{0.24\textwidth}{!}{\input{figures/soFWfr.tex}} &
-%		\resizebox{0.24\textwidth}{!}{\input{figures/soFFfr.tex}} \\
-%		\hline
-%		
-%		\multicolumn{1}{c||}{} & 
-%		\resizebox{0.24\textwidth}{!}{\input{figures/soRFfr_ext.tex}} &
-%		\resizebox{0.24\textwidth}{!}{\input{figures/soFWfr_ext.tex}} & 
-%		\multicolumn{1}{|c}{}\\
-%		\cline{2-3}
-	\end{tabular}
-	\caption{\lso-rules}
-	\label{fig:so rules}
-\end{figure}
-
-\begin{figure}[t]
-	\begin{tabular}{|c||c|c|c|}
-		\multicolumn{1}{c}{base rule} & 
-		\multicolumn{3}{c}{extended fence rules} \\\hline
+		\multicolumn{4}{c}{(a) \lso-rules} \\
+		\hline
 		
 		\resizebox{0.24\textwidth}{!}{\input{figures/sw.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/swEF.tex}} &
@@ -60,66 +41,73 @@ of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf}
 		\resizebox{0.24\textwidth}{!}{\input{figures/dob.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/dobEF.tex}} &&\\
 		\hline
-		
-	\end{tabular}
-	\caption{\lsw- and \ldob-rules}
-	\label{fig:sw-dob rules}
-\end{figure}
-
-\begin{figure}[t]
-	\begin{tabular}{|c||c|c|c|}
-		\multicolumn{1}{c}{base rule} & 
-		\multicolumn{3}{c}{extended fence rules} \\\hline
+		\multicolumn{4}{c}{(b) \lsw- and \ldob-rules} \\
+		\hline
 		
 		\resizebox{0.24\textwidth}{!}{\input{figures/ws.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/wsEF.tex}} & 
 		\resizebox{0.24\textwidth}{!}{\input{figures/wsFE.tex}} &
 		\resizebox{0.24\textwidth}{!}{\input{figures/wsFF.tex}} \\
 		\hline
-		
+		\multicolumn{4}{c}{(c) \lws-rules} \\	
 	\end{tabular}
-	\caption{\lws-rules}
-	\label{fig:ws rules}
+	\caption{Rules to form relation between program events and 
+		candidate fences}
+	\label{fig:so rules}
 \end{figure}
+
+
+We introduce an irreflexive and possibly cyclic relation
+on \sc ordered events called \sc-order ($\setSO$).
+%
+To construct $\setSO$, we introduce a set of \lso-rules
+(diagrammatically shown in Figure~\ref{fig:so rules}(a) and
+discussed below).
+%
+The \lso base rules are simply implied from
+the \lto-rules, \hlref{toHb}, \hlref{toMo} \hlref{toFr} 
+and \hlref{toRf} (Section~\ref{sec:c11}).
+%
+The extended rules apply respective $\lto$-rules to relaxed
+events with appropriately placed fences as described in
+\cc \cite{C11}\cite{Batty-POPL12}.
+
 
 \begin{longtable}{|p{0.11\textwidth} p{0.88\textwidth}|}
 	\hline
-	\multicolumn{2}{|l|}{\bf $\setHB$, $\setMO$, $\setRF$ base rules:}\\
+	\multicolumn{2}{|l|}{\bf \lso-base rules:}\\
 	
-	\hl{sohb}, \hl{somo},  & 
-	$\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
+	\hl{sohb}, & 
+	$\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if \\
+	\hl{somo}, &
 	$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ $\v$ $\mo{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$
-	$\v$ $\rf{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ then 
-	$\so{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \\
-	\hl{sorf}: & ($\setHB$ order implies $\setSO$) \\
-	
-%	\hl{somo}: & $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
-%	$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
-%	then $\so{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \\
-%	& ($\setMO$ order implies $\setSO$) \\
-%	
-%	\hl{sorf}: & $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
-%	\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
-%	$\so{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \\
-%	& ($\setRF$ order implies $\setSO$) \\
+	$\v$ $\rf{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ 
+	$\v$ $\fr{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$\\
+	\hl{sorf}, & 
+	then $\so{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \\
+	\hl{sofr}: & ($\setHB$, $\setMO$, $\setRF$. $\setFR$ between \sc events 
+				implies $\setSO$) \\
 	& \\
 	
-	\multicolumn{2}{|l|}{\bf $\setHB$, $\setMO$, $\setRF$ rules extended
-		for fences:} \\
+	\multicolumn{2}{|l|}{\bf \lso-rules extended for fences:} \\
 	
 	\hl{soEF}: & $\forall wr^\sc_1 \in \ordevents{\sc}_\tau$, $f^\sc_1 \in
 	\ordfences{\sc}_\tau$ if $\exists wr_2 \in \events_\tau$ \st 
 	($\mo{\tau}{wr^\sc_1}{wr_2}$ $\v$ $\hb{\tau}{wr^\sc_1}{wr_2}$
 	$\v$ $\rf{\tau}{wr^\sc_1}{wr_2}$) $\^$ $\seqb{\tau}{wr_2}{f^\sc_1}$ 
 	then $\so{\tau}{wr^\sc_1}{f^\sc_1}$ \\
-	& ($\setHB$ between \sc event-fence implies $\setSO$) \\
+	& ($\setHB$, $\setMO$, $\setRF$. $\setFR$ between \sc event and relaxed 
+		event forms $\setSO$ with assistance of an appropriately placed 
+		fence) \\
 	
 	\hl{soFE}: & $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $wr^\sc_2 \in
 	\ordevents{\sc}_\tau$ if $\exists wr_1 \in \events_\tau$ \st 
 	($\mo{\tau}{wr_1}{wr^\sc_2}$ $\v$ $\hb{\tau}{wr_1}{wr^\sc_2}$
 	$\v$ $\rf{\tau}{wr_1}{wr^\sc_2}$) $\^$ $\seqb{\tau}{f^\sc_1}{wr_1}$ 
 	then $\so{\tau}{f^\sc_1}{wr^\sc_2}$ \\
-	& ($\setHB$ between fence-\sc event implies $\setSO$) \\
+	& ($\setHB$, $\setMO$, $\setRF$. $\setFR$ between relaxed event and
+	\sc event forms $\setSO$ with assistance of an appropriately placed 
+	fence) \\
 	
 	\hl{soFF}: & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
 	if $\exists wr_1, wr_2 \in \events_\tau$ \st 
@@ -127,141 +115,29 @@ of the \lto-rules, \hlref{toHbMo}, \hlref{toFr} and \hlref{toRf}
 	$\v$ $\rf{\tau}{wr_1}{wr_2}$) $\^$
 	($\seqb{\tau}{f^{\sc}_1}{wr_1}$, $\seqb{\tau}{wr_2}{f^{\sc}_2}$) 
 	then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \\
-	& ($\setHB$ between \sc fence-fences implies $\setSO$) \\
+	& ($\setHB$, $\setMO$, $\setRF$. $\setFR$ between relaxed events 
+		forms $\setSO$ with assistance of appropriately placed fences) \\
 	\hline
 \end{longtable}
-	
-\begin{longtable}{|p{0.13\textwidth} p{0.86\textwidth}|}
-	\hline
-	\multicolumn{2}{|l|}{\bf $\setFR$ base rule:}\\
-	
-	\hl{sofr}: & $\forall r^\sc_1 \in \ordreads{\sc}_\tau$, $w^\sc_1 \in
-	\ordwrites{\sc}_\tau$ if $\fr{\tau}{r^\sc_1}{w^sc_1}$ then 
-	$\so{\tau}{r^{\sc}_1}{w^{\sc}_1}$ \\
-	& ($\setFR$ order implies $\setSO$) \\
-	
-	& \\
-	
-	\multicolumn{2}{|l|}{\bf $\setFR$ rules extended for fences:}\\
-	
-	\hl{soRFfr}: & $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $r^\sc_1 \in
-	\ordreads{\sc}_\tau$ if $\exists w_1, w_2 \in \writes_\tau$ \st
-	$\seqb{\tau}{w_2}{f^\sc_1}$, $\mo{\tau}{w_1}{w_2}$ and
-	$\rf{\tau}{w_1}{r^\sc_1}$ then $\so{\tau}{r^\sc_1}{f^\sc_1}$ \\
-	& ($\setFR$ though \sc read-fence synchronization implies $\setSO$) \\
-	
-	\hl{soRFfr-ext}: & \tab $\forall r^\sc_1 \in \ordreads{\sc}_\tau$, $f^\sc_1 
-	\in \ordfences{\sc}_\tau$ if $\exists w_1,w_2 \in \writes_\tau$, $r_2 \in
-	\reads_\tau$ \st $\seqb{\tau}{r^\sc_1}{r_2}$, $\seqb{\tau}{w_2}{f^\sc_1}$,
-	$\mo{\tau}{w_1}{w_2}$ and $\rf{\tau}{w_1}{r_2}$ then 
-	$\so{\tau}{r^\sc_1}{f^\sc_1}$ \\
-	& ($\setFR$ though \sc read-fence synchronization via $\setSB$ implies 
-	$\setSO$) \\
-	
-	\hl{soFWfr}: & $\forall f^{\sc}_1 \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
-	\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
-	\reads_\tau$ \st $\seqb{\tau}{f^{\sc}_1}{r_1}$, $\mo{\tau}{w_2}{w^{\sc}_1}$ 
-	and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_1}{w^{\sc}_1}$ \\
-	& ($\setFR$ though \sc write-fence synchronization implies $\setSO$) \\
-	
-	\hl{soFWfr-ext}: & \tab $\forall f^{\sc}_1 \in \ordfences{\sc}_\tau$, 
-	$w^{\sc}_1 \in \ordwrites{\sc}_\tau$ if $\exists w_2, w_3 \in \writes_\tau$, 
-	$r_1 \in \reads_\tau$ \st $\seqb{\tau}{f^{\sc}_1}{r_1}$, 
-	$\seqb{\tau}{w_3}{w^\sc_1}$, $\mo{\tau}{w_2}{w_3}$ and $\rf{\tau}{w_2}{r_1}$ 
-	then $\so{\tau}{f^\sc_1}{w^\sc_1}$ \\
-	& ($\setFR$ though \sc write-fence synchronization via $\setSB$ implies 
-	$\setSO$) \\
-	
-	\hl{soFFfr}: & $\forall f^\sc_1, f^\sc_2 \in \ordfences{\sc}_\tau$
-	if $\exists$ $w_1, w_2 \in \ordwrites{\sc}_\tau$, $r_1 \in
-	\ordreads{\sc}_\tau$ \st $\seqb{\tau}{f^\sc_1}{r_1}$, 
-	$\seqb{\tau}{w_1}{f^\sc_2}$, $\mo{\tau}{w_2}{w_1}$ and
-	$\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^\sc_1}{f^\sc_2}$ \\
-	& ($\setFR$ though \sc fence-fence synchronization implies $\setSO$) \\
-	\hline
-\end{longtable}
-
-
-%\begin{itemize}[label=soFFnrf,align=left,leftmargin=*]
-%	\item [\hl{sohb}:] $\forall wr^{\sc}_1, wr^{\sc}_2 \in \ordevents{\sc}_\tau$ if 
-%			$\hb{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ then 
-%			$\so{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \newline
-%			($\setHB$ order implies $\setSO$)
-%	
-%	\item [\hl{somo}:] $\forall w^{\sc}_1, w^{\sc}_2 \in \ordwrites{\sc}_\tau$ if 
-%			$\mo{\tau}{w^{\sc}_1}{w^{\sc}_2}$
-%			then $\so{\tau}{w^{\sc}_1}{w^{\sc}_2}$ \newline
-%			($\setMO$ order implies $\setSO$)
-%			
-%	\item [\hl{sorf}:] $\forall w^{\sc}_1 \in \ordwrites{sc}_\tau$, $r^{\sc}_1 \in 
-%			\ordreads{\sc}_\tau$ if $\rf{\tau}{w^{\sc}_1}{r^{\sc}_1}$ then 
-%			$\so{\tau}{w^{\sc}_1}{r^{\sc}_1}$ \newline
-%			($\setRF$ order implies $\setSO$)
-%			
-%	\item [\hl{soEF}:] $\forall wr^\sc_1 \in \ordevents{\sc}_\tau$, $f^\sc_1 \in
-%			\ordfences{\sc}_\tau$ if $\exists wr_2 \in \events_\tau$ \st 
-%			($\mo{\tau}{wr^\sc_1}{wr_2}$ $\v$ $\hb{\tau}{wr^\sc_1}{wr_2}$
-%			$\v$ $\rf{\tau}{wr^\sc_1}{wr_2}$) $\^$ $\seqb{\tau}{wr_2}{f^\sc_1}$ 
-%			then $\so{\tau}{wr^\sc_1}{f^\sc_1}$\newline
-%			($\setHB$ between \sc event-fence implies $\setSO$)
-%			
-%	\item [\hl{soFE}:] $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $wr^\sc_2 \in
-%			\ordevents{\sc}_\tau$ if $\exists wr_1 \in \events_\tau$ \st 
-%			($\mo{\tau}{wr_1}{wr^\sc_2}$ $\v$ $\hb{\tau}{wr_1}{wr^\sc_2}$
-%			$\v$ $\rf{\tau}{wr_1}{wr^\sc_2}$) $\^$ $\seqb{\tau}{f^\sc_1}{wr_1}$ 
-%			then $\so{\tau}{f^\sc_1}{wr^\sc_2}$\newline
-%			($\setHB$ between fence-\sc event implies $\setSO$)
-%			
-%	\item [\hl{soFF}:]  $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
-%			if $\exists wr_1, wr_2 \in \events_\tau$ \st 
-%			($\mo{\tau}{wr_1}{wr_2}$ $\v$ $\hb{\tau}{wr_1}{wr_2}$
-%			$\v$ $\rf{\tau}{wr_1}{wr_2}$) $\^$
-%			($\seqb{\tau}{f^{\sc}_1}{wr_1}$, $\seqb{\tau}{wr_2}{f^{\sc}_2}$) 
-%			then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \newline
-%			($\setHB$ between \sc fence-fences implies $\setSO$)
-%			
-%	\item [\hl{sofr}:] $\forall r^\sc_1 \in \ordreads{\sc}_\tau$, $w^\sc_1 \in
-%			\ordwrites{\sc}_\tau$ if $\fr{\tau}{r^\sc_1}{w^sc_1}$ then 
-%			$\so{\tau}{r^{\sc}_1}{w^{\sc}_1}$ 
-%			\newline
-%			($\setFR$ order implies $\setSO$)
-%			
-%	\item [\hl{soFWfr}:] $\forall f^{\sc}_1 \in \ordfences{\sc}_\tau$, $w^{\sc}_1 \in 
-%			\ordwrites{\sc}_\tau$ if $\exists w_2 \in \writes_\tau$, $r_1 \in 
-%			\reads_\tau$ \st $\seqb{\tau}{f^{\sc}_1}{r_1}$, $\mo{\tau}{w_2}{w^{\sc}_1}$ 
-%			and $\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^{\sc}_1}{w^{\sc}_1}$ \newline
-%			($\setFR$ though \sc write-fence synchronization implies $\setSO$)
-%			
-%	\item [\hl{soRFfr}:] $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $r^\sc_1 \in
-%			\ordreads{\sc}_\tau$ if $\exists w_1, w_2 \in \writes_\tau$ \st
-%			$\seqb{\tau}{w_2}{f^\sc_1}$, $\mo{\tau}{w_1}{w_2}$ and
-%			$\rf{\tau}{w_1}{r^\sc_1}$ then $\so{\tau}{r^\sc_1}{f^\sc_1}$\newline
-%			($\setFR$ though \sc read-fence synchronization implies $\setSO$)
-%			
-%	\item [\hl{soFFfr}:] $\forall f^\sc_1, f^\sc_2 \in \ordfences{\sc}_\tau$
-%			if $\exists$ $w_1, w_2 \in \ordwrites{\sc}_\tau$, $r_1 \in
-%			\ordreads{\sc}_\tau$ \st $\seqb{\tau}{f^\sc_1}{r_1}$, 
-%			$\seqb{\tau}{w_1}{f^\sc_2}$, $\mo{\tau}{w_2}{w_1}$ and
-%			$\rf{\tau}{w_2}{r_1}$ then $\so{\tau}{f^\sc_1}{f^\sc_2}$\newline
-%			($\setFR$ though \sc fence-fence synchronization implies $\setSO$)
-%\end{itemize}
 
 Consider a \cc trace $\tau$ and a transformation
 $\inv{\tau}$ of $\tau$ \st $\events_{\inv{\tau}}$ = $\events_\tau$
 $\union$ set of synthesized fences, then;
 %
-\begin{theorem}
-	$\to{\tau}{}{}$ $\subseteq$ (transitive closure of $\so{\inv{\tau}}{}{}$);
-	however, if $\exists$ $\to{\imm{\tau}}{}{}$ then $\to{\imm{\tau}}{}{}$ = 
-	(transitive closure of $\so{\inv{\tau}}{}{}$)
+
+\begin{theorem} \label{thm:to-so}
+	$\to{\inv{\tau}}{}{}$ = (transitive closure of $\so{\inv{\tau}}{}{}$).
 \end{theorem}
 %
-A cyclic $\so{\inv{\tau}}{}{}$ implies that there does not exist a 
+Thus, using Theorem~\ref{thm:to-so} we can state that,
+a cyclic $\so{\inv{\tau}}{}{}$ implies that there does not exist a 
 total order on \sc ordered events of $\inv{\tau}$. The trace $\inv{\tau}$, 
 then, is not a valid \cc trace and the buggy trace $\tau$ 
 has been invalidated.
 %
-Thus, the aim of this work is to synthesis fences in the input program $P$
+Thus, the aim of \sfence is to synthesis fences in the input program $P$
 at appropriate locations and force a cyclic $\setSO$ order in the \sc 
 ordered events of a buggy trace $\tau$ of $P$ and invalidating the trace 
 for the transformed program $\fx{P}$.
+
+\snj{sc fences alone ensures optimality inno of fences, str 2 needed for opt in type of fences.}
