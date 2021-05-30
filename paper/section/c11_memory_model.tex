@@ -47,6 +47,8 @@ The $\setMO$ order is constructed in compliance to a set of coherence
 \lmo-rules defined by \cc \cite{C11}
 based on $\setHB$ and $\setRF$. 
 %
+In other words, {\it in a valid \cc trace the union of $\setHB$, $\setRF$ and 
+$\setMO$ must be acyclic}.
 %The set of $\setMO$ rules are,
 %\begin{itemize}[label=moWW,align=left,leftmargin=*]
 %	\item [\hl{moWW}:] $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
@@ -79,8 +81,8 @@ reads with writes ordered {\em after} it.
 	if $(r,w)$ $\in$ $\setRF^{-1};\setMO$ then $\fr{\tau}{r}{w}$.
 \end{definition}
 % 
-A valid \cc execution must also form a total order on all events with memory
-order \sc, called \sc{\em -total-order} ($\setTO$) \cite{LahavVafeiadis-PLDI17} \st
+{\it A valid \cc execution must also form a total order on all events with memory
+order \sc}, called \sc{\em -total-order} ($\setTO$) \cite{LahavVafeiadis-PLDI17} \st
 $\forall e^\sc_1, e^\sc_2 \in \ordevents{\sc}$,
 \begin{itemize}[label=to,align=left,leftmargin=*]
 	\item [\hl{toHb}:]
@@ -89,9 +91,10 @@ $\forall e^\sc_1, e^\sc_2 \in \ordevents{\sc}$,
 	\item [\hl{toMo}:]
 			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nmo{\tau}{e^\sc_2}{e^\sc_1}$
 			(\sc-total-order is coherent \wrt $\setMO$)
-	\item [\hl{toFr}:] 
-			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nfr{\tau}{e^\sc_2}{e^\sc_1}$
-			(\sc-total-order is coherent \wrt $\setFR$)
+%	\item [\hl{toFr}:] 
+%			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nfrsc{\tau}{e^\sc_2}{e^\sc_1}$
+%			(\sc-total-order is coherent \wrt $\setFR$)
+\item $\onsc{\nrightarrow^{{\bf\textcolor{RoyalPurple}{fr}}}}$
 	\item [\hl{toRf}:] if 
 			$\rf{\tau}{e_w}{e^\sc_2}$ then $\nexists$ $e^\sc_1 \in \ordwrites{\sc}_\tau$
 			\st $\to{\tau}{\mo{\tau}{e_w}{e^\sc_1}}{e^\sc_2}$.\newline
@@ -102,3 +105,5 @@ $\forall e^\sc_1, e^\sc_2 \in \ordevents{\sc}$,
 In our technique we attempt to break the acyclicity requirement over
 $\setHB$ and $\lto$-rules by strategically placing \cc fences in 
 the input program, as discussed in Section~\ref{sec:so theory}.
+
+\snj{add some intro to fences and fence mo orders.}
