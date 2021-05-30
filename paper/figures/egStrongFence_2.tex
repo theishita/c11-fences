@@ -1,0 +1,23 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+\tikzstyle{every node}=[font=\normalfont]
+\node (fl1) [inner sep=2pt] {$ Flag_1 :=_\sc 1 $};
+\node (fl2) [right=35pt of fl1, inner sep=2pt] {$Flag_2 :=_\sc 1$};
+\node (f1) [below=20pt of fl1, inner sep=2pt] {$\mathbb{F}^\sc_1$};
+\node (f2) [below=20pt of fl2, inner sep=2pt] {$\mathbb{F}^\sc_2$};
+\node (rfl2) [below=20pt of f1, inner sep=2pt] {if $\neg Flag_2$:};
+\node (rfl1) [below=20pt of f2, inner sep=2pt] {if $\neg Flag_1$:};
+\node (cs11) [below right=-1pt and -40pt of rfl2] {(critical};
+\node (cs12) [below right=-4pt and -40pt of cs11] {section1)};
+\node (cs21) [below right=-1pt and -40pt of rfl1] {(critical};
+\node (cs22) [below right=-4pt and -40pt of cs21] {section2)};
+\node (t) [below right=0pt and -35pt of cs12] {(ii) {\tt Invalidated ($\inv{\tau}$)}};
+%
+\draw [->,>=stealth,color=Mahogany] (fl1) -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } node[pos=.25,left=-2pt,font=\scriptsize,color=black] { $\lso$ } node[pos=.65,left=-2pt,font=\scriptsize,color=black] { \hlref{sohb} } (f1);
+\draw [->,>=stealth,color=Mahogany] (fl2) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } node[pos=.25,right=-2pt,font=\scriptsize,color=black] { $\lso$ } node[pos=.65,right=-2pt,font=\scriptsize,color=black] { \hlref{sohb} } (f2);
+\draw [->,>=stealth,color=Mahogany] (f1) -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } node[pos=.25,left=-2pt,font=\scriptsize,color=black] { $\lso$ } node[pos=.65,left=-2pt,font=\scriptsize,color=black] { \hlref{sohb} } (rfl2);
+\draw [->,>=stealth,color=Mahogany] (f2) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } node[pos=.25,right=-2pt,font=\scriptsize,color=black] { $\lso$ } node[pos=.65,right=-2pt,font=\scriptsize,color=black] { \hlref{sohb} } (rfl1);
+\draw [->,>=stealth,color=Mahogany] (rfl1) -- node[pos=.25,sloped,above=-2pt,font=\scriptsize,color=black] { $\lfr$ $\lso$ } node[pos=.25,sloped,below=-2pt,font=\scriptsize,color=black] { \hlref{soFF} } (fl1);
+\draw [->,>=stealth,color=Mahogany] (rfl2) -- node[pos=.25,sloped,above=-2pt,font=\scriptsize,color=black] { $\lfr$ $\lso$ } node[pos=.25,sloped,below=-2pt,font=\scriptsize,color=black] { \hlref{soFF} } (fl2);
+
+\end{tikzpicture}

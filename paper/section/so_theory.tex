@@ -1,25 +1,3 @@
-\ourtechnique attempts to invalidate a buggy trace (\aka counter
-example) by one of the following two strategies:
-\begin{itemize}[label=strategy1,align=left,leftmargin=*]
-	\item [Strategy1]:
-		Invalidate by violating \sc-\lto-order.
-	\item [Strategy2]:
-		Invalidate by increasing inter-thread synchronization.
-\end{itemize}
-
-\noindent
-{\bf Strategy1: Invalidate by violating \sc-\lto-order. 
-	(\sfence)}\newline
-Consider a buggy input program $P$.
-%
-As discussed in Section~\ref{sec:c11}, in a valid trace of $P$ 
-(including a buggy trace), 
-the \sc ordered events must form a total order ($\setTO$).
-%
-Contrarily, if we synthesize \sc ordered fences in the input program 
-such that the total order requirement in the buggy trace gets violated 
-then we can invalidate the trace and stop the program behavior.
-
 \begin{figure}[t]
 	\begin{tabular}{|c||c|c|c|}
 		\multicolumn{1}{c}{base rule} & 
@@ -56,6 +34,27 @@ then we can invalidate the trace and stop the program behavior.
 	\label{fig:so rules}
 \end{figure}
 
+\ourtechnique attempts to invalidate a buggy trace (\aka counter
+example) by one of the following two strategies:
+\begin{itemize}[label=strategy1,align=left,leftmargin=*]
+	\item [Strategy1]:
+		Invalidate by violating \sc-\lto-order.
+	\item [Strategy2]:
+		Invalidate by inter-thread synchronization.
+\end{itemize}
+
+\noindent
+{\bf Strategy1: Invalidate by violating \sc-\lto-order. 
+	(\sfence)}\newline
+Consider a buggy input program $P$.
+%
+As discussed in Section~\ref{sec:c11}, in a valid trace of $P$ 
+(including a buggy trace), 
+the \sc ordered events must form a total order ($\setTO$).
+%
+Contrarily, if we synthesize \sc ordered fences in the input program 
+such that the total order requirement in the buggy trace gets violated 
+then we can invalidate the trace and stop the program behavior.
 
 We introduce an irreflexive and possibly cyclic relation
 on \sc ordered events called \sc-order ($\setSO$).
@@ -71,7 +70,6 @@ and \hlref{toRf} (Section~\ref{sec:c11}).
 The extended rules apply respective $\lto$-rules to relaxed
 events with appropriately placed fences as described in
 \cc \cite{C11}\cite{Batty-POPL12}.
-
 
 \begin{longtable}{|p{0.11\textwidth} p{0.88\textwidth}|}
 	\hline
@@ -119,17 +117,16 @@ events with appropriately placed fences as described in
 		forms $\setSO$ with assistance of appropriately placed fences) \\
 	\hline
 \end{longtable}
-
+%
 Consider a \cc trace $\tau$ and a transformation
 $\inv{\tau}$ of $\tau$ \st $\events_{\inv{\tau}}$ = $\events_\tau$
 $\union$ set of synthesized fences, then;
 %
-
 \begin{theorem} \label{thm:to-so}
 	$\to{\inv{\tau}}{}{}$ = (transitive closure of $\so{\inv{\tau}}{}{}$).
 \end{theorem}
 %
-Thus, using Theorem~\ref{thm:to-so} we can state that,
+Using Theorem~\ref{thm:to-so} we can state that,
 a cyclic $\so{\inv{\tau}}{}{}$ implies that there does not exist a 
 total order on \sc ordered events of $\inv{\tau}$. The trace $\inv{\tau}$, 
 then, is not a valid \cc trace and the buggy trace $\tau$ 
@@ -139,5 +136,52 @@ Thus, the aim of \sfence is to synthesis fences in the input program $P$
 at appropriate locations and force a cyclic $\setSO$ order in the \sc 
 ordered events of a buggy trace $\tau$ of $P$ and invalidating the trace 
 for the transformed program $\fx{P}$.
+
+\setlength{\textfloatsep}{0pt}
+\begin{wrapfigure}{l}{0.5\textwidth}
+	\vspace{-2.5em}
+	\begin{tabular}{|c|}
+		\multicolumn{1}{c}{Initially $Flag_1 = 0, Flag_2 = 0$} \\
+		\hline
+		\resizebox{0.45\textwidth}{!}{\input{figures/egStrongFence_1.tex}} \\
+		\hline
+		\resizebox{0.49\textwidth}{!}{\input{figures/egStrongFence_2.tex}} \\
+		\hline
+		\multicolumn{1}{c}{\hl{mutex}}
+	\end{tabular}
+	\vspace{-2.5em}
+\end{wrapfigure}
+
+Consider the example \hlref{mutex}. If the reads of $Flag_1$ and $Flag_2$ 
+read the initial value $0$ (as shown in \hlref{mutex}(i)) 
+then the program violates mutual exclusion
+property. Note that, the relation $\setFR$ is not a \cc relation, it has
+been introduced in this work to assist with forming $\setSO$ relation.
+In the absence of $\setFR$, $\setHB$ $\union$ $\setMO$ $\union$ $\setRF$
+and $\setTO$ are both acyclic and the trace $\tau$ is possible under \cc.
+%
+The buggy trace can be invalidated by introducing \sc-fences $\mathbb{F}^\sc_1$
+and $\mathbb{F}^\sc_1$ as shown in \hlref{mutex}(ii). The \lso-rules
+\hlref{sohb} and \hlref{soFF} can be used to construct $\setSO$ edges between 
+the program events and synthesized fences to form a cyclic $\setSO$ relation.
+The cycle in $\setSO$ relation indicates that a valid total-order cannot
+be formed on \sc-events of $\inv{\tau}$ and thus the trace cannot
+be produced under \cc.\newline
+
+\noindent
+{\bf Strategy2: Invalidate by inter-thread synchronization.
+(\wfence)}\newline
+As discussed in Section~\ref{sec:c11}, in a valid trace of 
+a buggy program $P$ (including a buggy trace), 
+the $\setHB \union \setRF \union \setMO$ must be acyclic.
+%
+In the second strategy we attempt to introduce synchronization
+between threads by synthesizing fences. The synchronization
+would further introduce $\setITHB$ relation between events
+that could stop a buggy behavior creating a cycle in 
+$\setHB \union \setRF \union \setMO$. 
+This strategy may invalidate a buggy trace by introducing 
+weaker fences (of memory orders \rel, \acq and \acqrel).
+
 
 \snj{sc fences alone ensures optimality inno of fences, str 2 needed for opt in type of fences.}
