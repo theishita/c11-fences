@@ -8,15 +8,13 @@ from constants import *
 
 class to:
 
-	def __init__(self, order, fences_thread, mo_edges, to_edges):
+	def __init__(self, order, reads, writes, fences_thread, mo_edges, to_edges):
 		self.order = order
 		self.fences_thread = fences_thread
 		self.mo_edges = mo_edges
 		self.to_edges = to_edges
-
-		self.writes = []					# writes with their before and after fences
-		self.reads = []						# reads with their before and after fences
-		self.preprocessing(order)
+		self.writes = writes					# writes with their before and after fences
+		self.reads = reads						# reads with their before and after fences
 
 		self.rule0()
 		self.rule1()
@@ -31,17 +29,6 @@ class to:
 	def get(self):
 		return self.to_edges
 	
-	def preprocessing(self, order):
-		for i in range(len(order)):
-			if order[i][TYPE] == WRITE or order[i][TYPE] == RMW:
-				self.writes.append(order[i-1])
-				self.writes.append(order[i])
-				self.writes.append(order[i+1])
-			if order[i][TYPE] == READ or order[i][TYPE] == RMW:
-				self.reads.append(order[i-1])
-				self.reads.append(order[i])
-				self.reads.append(order[i+1])
-
 	def rule0(self):
 		for b in range(len(self.reads)):
 			if type(self.reads[b]) is list:

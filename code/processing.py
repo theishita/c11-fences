@@ -12,6 +12,7 @@
 
 from pre_calculators.hb_calculator.hb import hb
 from pre_calculators.mo_calculator.mo import mo
+from preprocessing import preprocessing
 from to import to
 from cycle import Cycles
 from z3translate import z3translate
@@ -20,7 +21,7 @@ from constants import *
 import sys
 import time
 
-# IDEA: any var with _thread at the end means that it is separated by thread number
+# IDEA: any var with _thread at the end means that it is an array of arrays separated by thread number
 class Processing:
 	def __init__(self, traces):
 		self.z3vars = []												# list of all z3 constants
@@ -67,8 +68,11 @@ class Processing:
 			self.sb()
 			self.to_edges += self.sc_sb_edges
 
+			# pre-process and obtain separately reads, writes with neighbouring fences
+			reads, writes = preprocessing(order)
+
 			# TO
-			calc_to = to(order,self.fences_thread,mo_edges,self.to_edges)
+			calc_to = to(order, reads, writes, self.fences_thread, mo_edges, self.to_edges)
 			self.to_edges = calc_to.get()
 			# print("to =",self.to_edges)
 			
