@@ -135,3 +135,11 @@ Note that once all the buggy traces $\tau$ have been transformed to
 the invalidated version
 $\inv{\tau}$ by adding appropriate fences, we then consider the input 
 program $P$ {\em fixed} or free of bugs (represented as $\fx{P}$). 
+
+\noindent
+{\bf Relational Operators}: 
+We use $R^{-1}$ to represent the inverse of a relation $R$ and 
+$R_1;R_2$ to represent the composition of relations $R_1$ and $R_2$.
+Let $\onsc{R}$ represent a subset of a relation $R$ on \sc events;
+\ie $(e_1,e_2) \in \onsc{R}$ $\iff$ $(e_1,e_2) \in R$ $\^$
+$e_1,e_2 \in \ordevents{\sc}$.
