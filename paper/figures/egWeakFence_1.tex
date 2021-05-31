@@ -1,0 +1,14 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+\tikzstyle{every node}=[font=\normalfont]
+\node (wy) [inner sep=2pt] {$W^\rlx(y,1)$};
+\node (rx) [right=10pt of wy, inner sep=2pt] {$R^\rlx(x,1)$};
+\node (wx) [below=52pt of wy, inner sep=2pt] {$W^\rlx(x,1)$};
+\node (ry) [below=52pt of rx, inner sep=2pt] {$R^\rlx(y,0)$};
+\node (t) [below right=1pt and -45pt of wx] {(i) {\tt Buggy trace ($\tau$)}};
+%
+\draw [->,>=stealth,color=CarnationPink] (wy) -- node[midway,right=-2pt,font=\small,color=black] { $\lsb$ } (wx);
+\draw [->,>=stealth,color=CarnationPink] (rx) -- node[midway,left=-2pt,font=\small,color=black] { $\lsb$ } (ry);
+\draw [->,>=stealth,color=PineGreen] (wx) -- node[pos=.75,left,font=\small,color=black] { $\lrf$ } (rx);
+
+\end{tikzpicture}

@@ -38,13 +38,13 @@
 example) by one of the following two strategies:
 \begin{itemize}[label=strategy1,align=left,leftmargin=*]
 	\item [Strategy1]:
-		Invalidate by violating \sc-\lto-order.
+		Invalidate by violating \sc-total-order.
 	\item [Strategy2]:
 		Invalidate by inter-thread synchronization.
 \end{itemize}
 
 \noindent
-{\bf Strategy1: Invalidate by violating \sc-\lto-order. 
+{\bf Strategy1: Invalidate by violating \sc-total-order. 
 	(\sfence)}\newline
 Consider a buggy input program $P$.
 %
@@ -94,7 +94,7 @@ events with appropriately placed fences as described in
 	($\mo{\tau}{wr^\sc_1}{wr_2}$ $\v$ $\hb{\tau}{wr^\sc_1}{wr_2}$
 	$\v$ $\rf{\tau}{wr^\sc_1}{wr_2}$) $\^$ $\seqb{\tau}{wr_2}{f^\sc_1}$ 
 	then $\so{\tau}{wr^\sc_1}{f^\sc_1}$ \\
-	& ($\setHB$, $\setMO$, $\setRF$. $\setFR$ between \sc event and relaxed 
+	& ($\setHB$, $\setMO$, $\setRF$, $\setFR$ between \sc event and relaxed 
 		event forms $\setSO$ with assistance of an appropriately placed 
 		fence) \\
 	
@@ -103,7 +103,7 @@ events with appropriately placed fences as described in
 	($\mo{\tau}{wr_1}{wr^\sc_2}$ $\v$ $\hb{\tau}{wr_1}{wr^\sc_2}$
 	$\v$ $\rf{\tau}{wr_1}{wr^\sc_2}$) $\^$ $\seqb{\tau}{f^\sc_1}{wr_1}$ 
 	then $\so{\tau}{f^\sc_1}{wr^\sc_2}$ \\
-	& ($\setHB$, $\setMO$, $\setRF$. $\setFR$ between relaxed event and
+	& ($\setHB$, $\setMO$, $\setRF$, $\setFR$ between relaxed event and
 	\sc event forms $\setSO$ with assistance of an appropriately placed 
 	fence) \\
 	
@@ -113,7 +113,7 @@ events with appropriately placed fences as described in
 	$\v$ $\rf{\tau}{wr_1}{wr_2}$) $\^$
 	($\seqb{\tau}{f^{\sc}_1}{wr_1}$, $\seqb{\tau}{wr_2}{f^{\sc}_2}$) 
 	then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \\
-	& ($\setHB$, $\setMO$, $\setRF$. $\setFR$ between relaxed events 
+	& ($\setHB$, $\setMO$, $\setRF$, $\setFR$ between relaxed events 
 		forms $\setSO$ with assistance of appropriately placed fences) \\
 	\hline
 \end{longtable}
@@ -128,13 +128,13 @@ $\union$ set of synthesized fences, then;
 %
 Using Theorem~\ref{thm:to-so} we can state that,
 a cyclic $\so{\inv{\tau}}{}{}$ implies that there does not exist a 
-total order on \sc ordered events of $\inv{\tau}$. The trace $\inv{\tau}$, 
-then, is not a valid \cc trace and the buggy trace $\tau$ 
+total order on \sc ordered events of $\inv{\tau}$. The trace $\inv{\tau}$
+then is not a valid \cc trace and the buggy trace $\tau$ 
 has been invalidated.
 %
-Thus, the aim of \sfence is to synthesis fences in the input program $P$
-at appropriate locations and force a cyclic $\setSO$ order in the \sc 
-ordered events of a buggy trace $\tau$ of $P$ and invalidating the trace 
+Thus, the aim of \sfence is to synthesis \sc-fences in the input program $P$
+at appropriate locations that would force a cyclic $\setSO$ order in the \sc 
+ordered events of a buggy trace $\tau$. The cycle invalidates the trace 
 for the transformed program $\fx{P}$.
 
 \setlength{\textfloatsep}{0pt}
@@ -157,14 +157,16 @@ read the initial value $0$ (as shown in \hlref{mutex}(i))
 then the program violates mutual exclusion
 property. Note that, the relation $\setFR$ is not a \cc relation, it has
 been introduced in this work to assist with forming $\setSO$ relation.
-In the absence of $\setFR$, $\setHB$ $\union$ $\setRF$ $\union$ $\setMO$
-and $\setTO$ are both acyclic and the trace $\tau$ is possible under \cc.
+In the absence of $\setFR$, the trace $\tau$ does not violate any coherence
+rule and is possible under \cc.
 %
 The buggy trace can be invalidated by introducing \sc-fences $\mathbb{F}^\sc_1$
-and $\mathbb{F}^\sc_1$ as shown in \hlref{mutex}(ii). The \lso-rules
-\hlref{sohb} and \hlref{soFE} (that uses $\setFR$ $\implies$ $\setSO$) can be 
-used to construct $\setSO$ edges between 
-the program events and synthesized fences to form a cyclic $\setSO$ relation.
+and $\mathbb{F}^\sc_2$ as shown in \hlref{mutex}(ii). The \lso-rules
+\hlref{sohb} and \hlref{soFE} 
+%(as $\setSB{\implies}\setSO$ and 
+%$\setFR{\implies}\setSO$) 
+ construct the $\setSO$ edges between the program events and synthesized 
+ fences to form a cyclic $\setSO$ relation shown in \hlref{mutex}(ii).
 The cycle in $\setSO$ relation indicates that a valid total-order cannot
 be formed on \sc-events of $\inv{\tau}$ and thus the trace cannot
 be produced under \cc.\newline
@@ -172,17 +174,100 @@ be produced under \cc.\newline
 \noindent
 {\bf Strategy2: Invalidate by inter-thread synchronization.
 (\wfence)}\newline
-As discussed in Section~\ref{sec:c11}, in a valid trace of 
-a buggy program $P$ (including a buggy trace), 
-the $\setHB \union \setRF \union \setMO$ must be acyclic.
-%
 In the second strategy we attempt to introduce synchronization
-between threads by synthesizing fences. The synchronization
-would further introduce $\setITHB$ relation between events
-that could stop a buggy behavior by creating a cycle in 
-$\setHB \union \setRF \union \setMO$. 
+between threads by synthesizing fences. The fences form
+$\setHB$ relation with program events \st coherence
+requirement
+$\neg(\hb{\tau}{e_1}{e_2}$ $\^$ $\fr{\tau}{e_2}{e_1})$ is
+violated.
+%
 Note that, this strategy invalidates a buggy trace by introducing 
-weaker fences (of memory orders \rel, \acq and \acqrel).
+weaker fences (of memory orders \rel, \acq and \acqrel) and 
+is preferred over Strategy1 wherever applicable.
+
+Two threads synchronize over \rel and \acq (or stricter) ordered
+events when an appropriate $\setRF$ is formed. Such synchronization
+form $\setSW$ and $\setDOB$ relations (formally described
+as base $\setSW$ and $\setDOB$ rules),
+where $\setSW \subseteq \setITHB$ and $\setDOB \subseteq \setITHB$.
+%
+The $\setSW$ and $\setDOB$ relations can similarly be formed between
+fences based on appropriate $\setRF$, formally described as
+extended $\setSW$ and $\setDOB$. The rules have been formally presented 
+below and diagrammatically represented in Fig~\ref{fig:so rules}(ii).
+
+\begin{longtable}{|p{0.11\textwidth} p{0.88\textwidth}|}
+	\hline
+	\multicolumn{2}{|l|}{\bf \lsw-, \ldob-base rule:}\\
+	
+	\hl{sw}: &
+	$\forall$ $w^\rel_1 \in \ordwrites{\moge\rel}_\tau$ and
+	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$ 
+	if $\rf{\tau}{w^\rel_1}{r^\acq_1}$ then
+	$\sw{\tau}{w^\rel_1}{r^\acq_1}$ \\
+	& ($\setRF$ between $\moge\rel$ and $\moge\acq$ events 
+		forms $\setSW$) \\
+	
+	\hl{dob}: &
+	$\forall$ $w^\rel_1 \in \ordwrites{\moge\rel}_\tau$,
+	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$ and
+	$w_2 \in$ {\it release-sequence}($w^\rel_1$) \cite{C11}
+	if $\rf{\tau}{w_2}{r^\acq_1}$ then
+	$\dob{\tau}{w^\rel_1}{r^\acq_1}$ \\
+	& ($\setRF$ between release-sequence of $\moge\rel$  
+		and $\moge\acq$ events forms $\setDOB$) \\
+		
+	&\\
+	\multicolumn{2}{|l|}{\bf \lsw-, \ldob-rules extended for fences}\\
+	
+	\hl{swEF}: &
+	$\forall$ $w^\rel_1 \in \ordwrites{\moge\rel}_\tau$,
+	$r_1 \in \reads_\tau$ and $f^\acq_1 \in \ordfences{\moge\acq}_\tau$
+	\st $\seqb{\tau}{r_1}{f^\acq_1}$
+	if $\rf{\tau}{w^\rel_1}{r_1}$ then
+	$\sw{\tau}{w^\rel_1}{f^\acq_1}$ \\
+	& ($\setRF$ between $\moge\rel$ event and relaxed event forms 
+		$\setSW$ with assistance of an appropriately placed 
+		fence) \\
+		
+	\hl{swFE}: &
+	$\forall$ $w_1 \in \writes_\tau$,
+	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$ and 
+	$f^\rel_1 \in \ordfences{\moge\rel}_\tau$
+	\st $\seqb{\tau}{f^\rel_1}{w_1}$
+	if $\rf{\tau}{w_1}{r^\acq_1}$ then
+	$\sw{\tau}{f^\rel_1}{r^\acq_1}$ \\
+	& ($\setRF$ between relaxed event and $\moge\acq$ event forms 
+	$\setSW$ with assistance of an appropriately placed 
+	fence) \\
+	
+	\hl{swFF}: &
+	$\forall$ $w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$,
+	$f^\rel_1 \in \ordfences{\moge\rel}_\tau$ and
+	$f^\acq_2 \in \ordfences{\moge\acq}_\tau$ \st
+	$\seqb{\tau}{f^\rel_1}{w_1}$, $\seqb{\tau}{r_1}{f^\acq_2}$
+	if $\rf{\tau}{w_1}{r_1}$ then
+	$\sw{\tau}{f^\rel_1}{f^\acq_2}$ \\
+	& ($\setRF$ between relaxed events forms 
+	$\setSW$ with assistance of appropriately placed 
+	fences) \\
+	
+	\hl{dobEF}: &
+	$\forall$ $w^\rel_1 \in \ordwrites{\moge\rel}_\tau$, 
+	$w_2 \in \writes_\tau$, $r_1 \in \reads_\tau$ and
+	$f^\acq_1 \in \ordfences{\moge\acq}_\tau$ \st
+	$\seqb{\tau}{w^\rel_1}{w_2}$, $\seqb{\tau}{r_1}{f^\acq_1}$
+	if $\rf{\tau}{w_2}{r_1}$ then
+	$\sw{\tau}{w^\rel_1}{f^\acq_1}$ \\
+	& ($\setRF$ between release-sequence of $\moge\rel$  
+	and relaxed events forms $\setDOB$ with assistance of an 
+	appropriately placed fence) \\
+	
+	\hline
+	\multicolumn{2}{r}{\scriptsize where, 
+		$\moge\rel$ = $\{\rel,\acqrel,\sc\}$, 
+		$\moge\acq$ = $\{\acq,\acqrel,\sc\}$}
+\end{longtable}
 
 \setlength{\textfloatsep}{0pt}
 \begin{wrapfigure}{l}{0.6\textwidth}
@@ -193,10 +278,82 @@ weaker fences (of memory orders \rel, \acq and \acqrel).
 		\resizebox{0.29\textwidth}{!}{\input{figures/egWeakFence_1.tex}} &
 		\resizebox{0.29\textwidth}{!}{\input{figures/egWeakFence_2.tex}} \\
 		\hline
-		\multicolumn{2}{c}{\hl{mutex}}
+		\multicolumn{2}{c}{\hl{sync}}
 	\end{tabular}
 	\vspace{-2.5em}
 \end{wrapfigure}
+
+\noindent
+The synchronizations further form transitive $\setITHB$ relations
+making previously available writes, unavailable to read events.
+%
+Consider the example \hlref{sync}, as all memory accesses in the
+buggy trace $\tau$ are relaxed, 
+$\rf{\tau}{W^\rlx(x,1)}{R^\rlx(x,1)}$ does not form a synchronization
+between the respective threads. As a result, 
+$\nithb{\tau}{W^\rlx(y,1)}{R^\rlx(y,0)}$ and the trace $\tau$ is valid
+under \cc. 
+%
+The buggy trace can be invalidated by introducing weaker fences
+$\mathbb{F}^\rel_1$ and $\mathbb{F}^\acq_2$ as shown in \hlref{sync}(ii).
+The fences $\sw{\inv{\tau}}{\mathbb{F}^\rel_1}{\mathbb{F}^\acq_2}$ form
+$\ithb{\inv{\tau}}{W(y,1)}{Ry(y,0)}$, which violates the coherence of 
+$\inv{\tau}$ as $\ithb{\inv{\tau}}{W(y,1)}{Ry(y,0)}$ $\^$ 
+$\fr{\inv{\tau}}{Ry(y,0)}{W(y,1)}$. 
+
+To successfully synthesize fences $\mathbb{F}^\rel_1$ and 
+$\mathbb{F}^\acq_2$ in \hlref{sync} and similar cases our
+technique must recognize candidate $\setSW$ or $\setDOB$
+related fence(s) that would form the necessary $\setITHB$ 
+and invalidate a buggy trace. In other words, we need to 
+recognize the program locations where a synchronization was 
+absent. To do so we introduce $\lws$-rules 
+(Fig~\ref{fig:so rules}(iii)) that essentially
+signify the absence of a synchronization.
+
+\begin{longtable}{|p{0.11\textwidth} p{0.88\textwidth}|}
+	\hline
+	\multicolumn{2}{|l|}{\bf \lws-base rule} \\
+	
+	\hl{ws}: &
+	$\forall w^\rel_1 \in \ordwrites{\moge\rel}_\tau$,
+	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$,
+	$w_2 \in \writes_\tau$ and $r_2 \in \reads_\tau$ \st
+	$\seqb{\tau}{r^\acq_1}{r_2}$, $\seqb{\tau}{w_2}{w^\rel_1}$
+	if $\fr{\tau}{r_2}{w_2}$ then $\ws{\tau}{r^\acq_1}{w^\rel_1}$ \\
+	& ($\setFR$ implies absence of synchronization
+		between intermediate $\moge\acq$ and $\moge\rel$ events) \\
+		
+	& \\
+	\multicolumn{2}{|l|}{\bf \lws-rules extended for fences} \\
+	
+	\hl{wsEF}: & 
+	$\forall f^\rel_1 \in \ordfences{\moge\rel}_\tau$,
+	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$,
+	$w_1 \in \writes_\tau$ and $r_2 \in \reads_\tau$ \st
+	$\seqb{\tau}{r^\acq_1}{r_2}$, $\seqb{\tau}{w_1}{f^\rel_1}$
+	if $\fr{\tau}{r_2}{w_1}$ then $\ws{\tau}{r^\acq_1}{f^\rel_1}$ \\
+	& ($\setFR$ implies absence of synchronization
+	between intermediate $\moge\acq$ event and $\moge\rel$ fence) \\
+	
+	\hl{wsFE}: & 
+	$\forall w^\rel_1 \in \ordwrites{\moge\rel}_\tau$,
+	$f^\acq_1 \in \ordfences{\moge\acq}_\tau$,
+	$w_2 \in \writes_\tau$ and $r_1 \in \reads_\tau$ \st
+	$\seqb{\tau}{f^\acq_1}{r_1}$, $\seqb{\tau}{w_2}{w^\rel_1}$
+	if $\fr{\tau}{r_1}{w_2}$ then $\ws{\tau}{f^\acq_1}{w^\rel_1}$ \\
+	& ($\setFR$ implies absence of synchronization
+	between intermediate $\moge\acq$ fence and $\moge\rel$ event) \\
+	
+	\hl{wsFF}: & 
+	$\forall f^\acq_1 \in \ordfences{\moge\acq}_\tau$,
+	$f^\rel_2 \in \ordfences{\moge\rel}_\tau$,
+	$w_1 \in \writes_\tau$ and $r_1 \in \reads_\tau$ \st
+	$\seqb{\tau}{f^\acq_1}{r_1}$, $\seqb{\tau}{w_1}{f^\rel_2}$
+	if $\fr{\tau}{r_1}{w_1}$ then $\ws{\tau}{f^\acq_1}{f^\rel_2$ \\
+	& ($\setFR$ implies absence of synchronization
+	between intermediate $\moge\acq$ fence and $\moge\rel$ event) \\
+\end{longtable}
 
 
 \snj{sc fences alone ensures optimality inno of fences, str 2 needed for opt in type of fences.}
