@@ -4,10 +4,10 @@
 \node [inner sep=2pt] (f1) {$ f^\rel_1 $};
 \node (w1) [below left=21pt and -15pt of f1,inner sep=2pt] {$ w_1 $};
 \node (r1) [right=25pt of w1,inner sep=2pt] {$ r^\acq_1 $};
-\node (swfe) [below right=0pt and -15pt of wr1] {\hlref{sw-dobFE}};
+\node (swfe) [below right=0pt and -5pt of wr1] {\hlref{swFE}};
 
-`\draw [->,>=stealth,color=Magenta,thin] (f1.east) -- node[midway,right=0pt,font=\scriptsize,color=black] { $\lsw$ } (r1.north);
-\draw [->,>=stealth,color=PineGreen,thin] (w1) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $ \lrf $ } (r1);
-\draw [->,>=stealth,color=CarnationPink,thin] (f1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (w1);
+`\draw [->,>=stealth,color=Magenta] (f1.east) -- node[midway,right=0pt,font=\scriptsize,color=black] { $\lsw$ } (r1.north);
+\draw [->,>=stealth,color=PineGreen] (w1) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $ \lrf $ } (r1);
+\draw [->,>=stealth,color=CarnationPink] (f1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (w1);
 
 \end{tikzpicture}

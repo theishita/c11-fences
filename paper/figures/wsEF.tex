@@ -4,15 +4,13 @@
 \node (r1) [inner sep=2pt] {$ r^\acq_1 $};
 \node (f1) [right=25pt of r1,inner sep=2pt] {$ f^\rel_1 $};
 \node (r2) [below left=25pt and -13pt of r1, inner sep=1pt] {$ r_2 $};
-\node (w2) [below left=25pt and -15pt of f1, inner sep=1pt] {$ w_2 $};
+\node (w2) [below left=25pt and -15pt of f1, inner sep=1pt] {$ w_1 $};
 %\node (w1) [below right=2pt and 1pt of r1,inner sep=2pt] {$ w_1 $};
 \node (wsEF) [below right=0pt and 0pt of r2] {\hlref{wsEF}};
 
-%`\draw [->,>=stealth,color=RedOrange,thin] (w1) -- node[pos=0.7,left=-2pt,font=\scriptsize,color=black] { $\lmo$ } (w2);
-%\draw [->,>=stealth,color=PineGreen,thin] (w1) -- node[pos=0.7,right=-2pt,font=\scriptsize,color=black] { $ \lrf $ } (r2);
-\draw [->,>=stealth,color=CarnationPink,thin] (r1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (r2);
-\draw [->,>=stealth,color=CarnationPink,thin] (w2) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (f1);
-\draw [->,>=stealth,color=Mahogany,thin] (r1) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lws$ } (f1);
-\draw [->,>=stealth,color=RoyalPurple,thin] (r2) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lfr$ } (w2);
+\draw [->,>=stealth,color=CarnationPink] (r1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (r2);
+\draw [->,>=stealth,color=CarnationPink] (w2) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (f1);
+\draw [->,>=stealth,color=Mahogany] (r1) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lws$ } (f1);
+\draw [->,>=stealth,color=RoyalPurple] (r2) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lfr$ } (w2);
 
 \end{tikzpicture}
