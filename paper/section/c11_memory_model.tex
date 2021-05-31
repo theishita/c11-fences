@@ -9,14 +9,15 @@ In this paper we discuss only subsets of $\setHB$ and
 coherence rules that are relevant to this work.
 %
 %
-Let $\setRF$ represent a {\em reads-from} relation relating a 
-write event to a read event, that reads from it in trace $\tau$.
-The events of a sequence $\tau$ are related by the $\setHB$ as 
+Let $\setRF$ represent a {\em reads-from} relation \st 
+$\rf{\tau}{w_1}{r_1}$ signifies that $r_1 \in \reads_\tau$ 
+read its value from $w_1 \in \writes_\tau$ in trace $\tau$.
+The events of a trace $\tau$ are related by the $\setHB$ as 
 follows;
 \begin{itemize}
-	\item {\em Intra-thread-hb}: A pair of events in $P_i$ are related by
-        their program order are also related by a 
-        {\em sequenced-before} relation ($\setSB$).
+	\item {\em Intra-thread-hb}: Events of a thread $P_i$  are 
+		related by {\em sequenced-before} relation ($\setSB$) in 
+		their order of occurrence in $P_i$.
 	
 	\item {\em Inter-thread-hb}: When a strict write $e_w$ (memory order
 		\rel or stricter) and a strict read $e_r$ (memory order \acq or
@@ -29,7 +30,6 @@ follows;
 		%
 		As a consequence, every event $e,e'$ \st $\seqb{\tau}{e}{e_w}$ and 
 		$\seqb{\tau}{e_r}{e'}$ are also related as $\ithb{\tau}{e}{e'}$.
-		\newline
 		%
 		The $\setITHB$ relation can also be formed between \cc fences 
 		\cite{batty2011mathematizing}\cite{C11}, we skip the details 
@@ -40,15 +40,11 @@ Accordingly, two events $e_1,e_2$ in an execution sequence $\tau$ are happens-be
 related \ie
 $\hb{\tau}{e_1}{e_2}$ if $\seqb{\tau}{e_1}{e_2}$ $\v$ $\ithb{\tau}{e_1}{e_2}$.
 %
-Further, in a sequence $\tau$, all write events of an object $x$ are related by a 
+Further, in a trace $\tau$, all write events of an object $x$ are related by a 
 total order called {\em modification-order} ($\setMO$).
 %
-The $\setMO$ order is constructed in compliance to a set of coherence
-\lmo-rules defined by \cc \cite{C11}
-based on $\setHB$ and $\setRF$. 
+The $\setMO$ order is constructed in compliance to $\setHB$ and $\setRF$. 
 %
-In other words, {\it in a valid \cc trace the union of $\setHB$, $\setRF$ and 
-$\setMO$ must be acyclic}.
 %The set of $\setMO$ rules are,
 %\begin{itemize}[label=moWW,align=left,leftmargin=*]
 %	\item [\hl{moWW}:] $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
@@ -77,13 +73,20 @@ We introduce an irreflexive relation {\em from-reads} ($\setFR$) to relate
 reads with writes ordered {\em after} it.
 
 \begin{definition}[{\em from-reads} $\setFR$]\newline
-	$\forall$ $r \in \reads_\tau$, $w \in \writes_\tau$
-	if $(r,w)$ $\in$ $\setRF^{-1};\setMO$ then $\fr{\tau}{r}{w}$.
+	$\forall$ $r {\in} \reads_\tau$, $w {\in} \writes_\tau$
+	if $(r,w){\in}\setRF^{-1}{;}\setMO$ then $\fr{\tau}{r}{w}$.
 \end{definition}
 % 
-{\it A valid \cc execution must also form a total order on all events with memory
-order \sc}, called \sc{\em -total-order} ($\setTO$) \cite{LahavVafeiadis-PLDI17} \st
+A coherent \cc trace must:
+(i) forbid read of a write that is happens-before 
+hidden by a later write in $\setMO$, in other words, 
+$\neg(\hb{\tau}{e_1}{e_2}$ $\^$ $\fr{\tau}{e_2}{e_1})$;
+%
+(ii) form a total order on all events with memory
+order \sc, called \sc{\em -total-order} ($\setTO$) 
+\cite{LahavVafeiadis-PLDI17} \st
 $\forall e^\sc_1, e^\sc_2 \in \ordevents{\sc}$,
+
 \begin{itemize}[label=to,align=left,leftmargin=*]
 	\item [\hl{toHb}:]
 			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nhb{\tau}{e^\sc_2}{e^\sc_1}$ 
@@ -91,10 +94,10 @@ $\forall e^\sc_1, e^\sc_2 \in \ordevents{\sc}$,
 	\item [\hl{toMo}:]
 			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nmo{\tau}{e^\sc_2}{e^\sc_1}$
 			(\sc-total-order is coherent \wrt $\setMO$)
-%	\item [\hl{toFr}:] 
-%			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nfrsc{\tau}{e^\sc_2}{e^\sc_1}$
-%			(\sc-total-order is coherent \wrt $\setFR$)
-\item $\onsc{\nrightarrow^{{\bf\textcolor{RoyalPurple}{fr}}}}$
+	\item [\hl{toFr}:] 
+			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nfrsc{\tau}{e^\sc_2}{e^\sc_1}$
+			(\sc-total-order is coherent \wrt $\setFR$)
+%\item $$
 	\item [\hl{toRf}:] if 
 			$\rf{\tau}{e_w}{e^\sc_2}$ then $\nexists$ $e^\sc_1 \in \ordwrites{\sc}_\tau$
 			\st $\to{\tau}{\mo{\tau}{e_w}{e^\sc_1}}{e^\sc_2}$.\newline
