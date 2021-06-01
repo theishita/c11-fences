@@ -124,6 +124,7 @@ $\union$ set of synthesized fences, then;
 %
 \begin{theorem} \label{thm:to-so}
 	$\to{\inv{\tau}}{}{}$ = (transitive closure of $\so{\inv{\tau}}{}{}$).
+	\snj{proof in appendix.}
 \end{theorem}
 %
 Using Theorem~\ref{thm:to-so} we can state that,
@@ -369,6 +370,11 @@ that essentially capture the absence of a synchronization.
 		$\moge\rel$ = $\{\rel,\acqrel,\sc\}$, 
 		$\moge\acq$ = $\{\acq,\acqrel,\sc\}$}
 \end{longtable}
+
+\begin{theorem} \label{thm:ws exhaustive}
+	\lws-rules exhaustively capture absence of synchronization.
+	\snj{proof in appendix.}
+\end{theorem}
 
 To summarize, Strategy2 builds on two sets of events:
 (i) candidate events that can form a synchronization 

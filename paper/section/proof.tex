@@ -107,7 +107,70 @@ $\ws{\tau}{e_2}{e_1}$.
 
 {\theorem {\lws-rules are exhaustive}}
 \begin{proof}
-	{\case $e_1 \in \ordwrites{\sc}_\tau$, $e_2 \in \ordreads{\sc}_\tau$}
-	then 
+	The $\setWS$ relation signifies the absence of synchronization,
+	\ie, 
 	
+	$\forall$
+	$\fr{\tau}{r_1}{w_1}$ $\implies$
+	if $\exists$ $e^\rel_1 \in \ordevents{\moge\rel}_\tau$ and
+	$e^\acq_2 \in \ordevents{\moge\acq}_\tau$ \st 
+	$\seqb{\tau}{w_1}{e^\rel_1}$ and $\seqb{\tau}{e^\acq_2}{r_1}$
+	then $\nsw{\tau}{e^\rel_1}{e^\acq_2}$ $\^$ 
+	$\ndob{\tau}{e^\rel_1}{e^\acq_2}$
+	(where $\moge\rel$ = $\{\rel,\acqrel,\sc\}$ and 
+	$\moge\acq$ = $\{\acq,\acqrel,\sc\}$).
+	
+	I] The $\setSW$ relation can be formed (or be absent) 
+	between the following combinations of type of $e^\rel_1$ 
+	and $e^\acq_2$
+	(covered in rules \hlref{sw}, \hlref{swEF}, \hlref{swFE} and
+	\hlref{swFF}):
+	
+	\begin{itemize}[label=Case EE,align=left,leftmargin=*]
+		\item [Case EE]: $e^\rel_1 \in \ordwrites{\moge\rel}_\tau$
+			and $e^\acq_2 \in \ordreads{\moge\acq}_\tau$ (as in 
+			rule \hlref{sw}) 
+			$\implies$ $\ws{\tau}{e^\acq_2}{e^\rel_1}$
+			(by definition of \hlref{ws})
+			
+		\item [Case EF]: $e^\rel_1 \in \ordwrites{\moge\rel}_\tau$
+			and $e^\acq_2 \in \ordfences{\moge\acq}_\tau$ (as in 
+			rule \hlref{swEF}) 
+			$\implies$ $\ws{\tau}{e^\acq_2}{e^\rel_1}$
+			(by definition of \hlref{wsEF})
+		
+		\item [Case FE]: $e^\rel_1 \in \ordfences{\moge\rel}_\tau$
+			and $e^\acq_2 \in \ordreads{\moge\acq}_\tau$ (as in 
+			rule \hlref{swFE}) 
+			$\implies$ $\ws{\tau}{e^\acq_2}{e^\rel_1}$
+			(by definition of \hlref{wsFE})
+		
+		\item [Case FF]: $e^\rel_1 \in \ordfences{\moge\rel}_\tau$
+			and $e^\acq_2 \in \ordfences{\moge\acq}_\tau$ (as in 
+			rule \hlref{swFF}) 
+			$\implies$ $\ws{\tau}{e^\acq_2}{e^\rel_1}$
+			(by definition of \hlref{wsFF})
+	\end{itemize}
+
+	The $\setDOB$ relation can be formed (or be absent) 
+	between the following combinations of type of $e^\rel_1$ 
+	and $e^\acq_2$
+	(covered in rules \hlref{dob} and \hlref{dobEF}):
+	
+	\begin{itemize}[label=Case EE,align=left,leftmargin=*]
+		\item [Case EE]: $e^\rel_1 \in \ordwrites{\moge\rel}_\tau$
+		and $e^\acq_2 \in \ordreads{\moge\acq}_\tau$ (as in 
+		rule \hlref{dob}) 
+		$\implies$ $\ws{\tau}{e^\acq_2}{e^\rel_1}$
+		(by definition of \hlref{ws})
+		
+		\item [Case EF]: $e^\rel_1 \in \ordwrites{\moge\rel}_\tau$
+		and $e^\acq_2 \in \ordfences{\moge\acq}_\tau$ (as in 
+		rule \hlref{dobEF}) 
+		$\implies$ $\ws{\tau}{e^\acq_2}{e^\rel_1}$
+		(by definition of \hlref{wsEF})
+	\end{itemize}
+
+	Thus, every case of $\setSW$ and $\setDOB$ is covered to form
+	\lws-rules. Therefore, the rules are exhaustive.
 \end{proof}
