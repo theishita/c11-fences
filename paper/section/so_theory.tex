@@ -190,7 +190,7 @@ Two threads synchronize over \rel and \acq (or stricter) ordered
 events when an appropriate $\setRF$ is formed. Such synchronization
 form $\setSW$ ({\it synchronizes-with}) and $\setDOB$ 
 ({\it dependency-ordered-before}) relations between program events,
-\cite{Batty-POPL12}\cite{C11}
+\cite{batty2011mathematizing}\cite{C11}
 where $\setSW \subseteq \setITHB$ and $\setDOB \subseteq \setITHB$.
 %
 The $\setSW$ and $\setDOB$ relations can similarly be formed between
@@ -383,5 +383,14 @@ $\ws{\inv{\tau}}{}{}$ $\union$ $\hb{\inv{\tau}}{}{}$
 such as the cycle between $\mathbb{F}^\rel_1$ and 
 $\mathbb{F}^\acq_2$ in the example \hlref{sync}.
 
-Note that, 
-\snj{sc fences alone ensures optimality inno of fences, str 2 needed for opt in type of fences.}
+Note that, combining \sfence and \wfence for synthesizing only
+\sc ordered fences offers solution that is optimal in the number
+of fences synthesized. 
+%
+The \wfence strategy provides opportunity to synthesize weaker
+fences offering optimality in the number and type of fences.
+%
+In this technique if we recognize a $\hb{\inv{\tau}}{}{}$ $\union$ 
+$\ws{\inv{\tau}}{}{}$ cycle in $\events_{\inv{\tau}}$ then we
+synthesize appropriate weaker fences at the program locations  
+of synthesized fences.

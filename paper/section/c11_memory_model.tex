@@ -30,10 +30,6 @@ follows;
 		%
 		As a consequence, every event $e,e'$ \st $\seqb{\tau}{e}{e_w}$ and 
 		$\seqb{\tau}{e_r}{e'}$ are also related as $\ithb{\tau}{e}{e'}$.
-		%
-		The $\setITHB$ relation can also be formed between \cc fences 
-		\cite{batty2011mathematizing}\cite{C11}, we skip the details 
-		for brevity.
 \end{itemize}
 
 Accordingly, two events $e_1,e_2$ in an execution sequence $\tau$ are happens-before 
@@ -109,4 +105,17 @@ In our technique we attempt to break the acyclicity requirement over
 $\setHB$ and $\lto$-rules by strategically placing \cc fences in 
 the input program, as discussed in Section~\ref{sec:so theory}.
 
-\snj{add some intro to fences and fence mo orders.}
+\noindent
+{\bf Brief introduction to \cc fences}: 
+\cc fences provide additional reordering restrictions on program 
+events. Note that \cc fences are not memory barriers and do not
+provide support for flushing local write values to shared memory.
+%
+A fence can be associated with memory orders $\rel$, $\acq$, 
+$\acqrel$ and $\sc$
+providing varying degrees of reordering restrictions.
+%
+Similar to program events, $\setITHB$ relation can also be formed 
+between \cc fences 
+\cite{batty2011mathematizing}\cite{C11}, we discuss the necessary
+details of the same in the following section.
