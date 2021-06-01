@@ -133,9 +133,9 @@ then is not a valid \cc trace and the buggy trace $\tau$
 has been invalidated.
 %
 Thus, the aim of \sfence is to synthesis \sc-fences in the input program $P$
-at appropriate locations that would force a cyclic $\setSO$ order in the \sc 
-ordered events of a buggy trace $\tau$. The cycle invalidates the trace 
-for the transformed program $\fx{P}$.
+at appropriate locations that would force a cyclic $\so{\inv{\tau}}{}{}$ 
+ in the \sc ordered events of a transformed trace $\inv{\tau}$. 
+The cycle invalidates the trace for the transformed program $\fx{P}$.
 
 \setlength{\textfloatsep}{0pt}
 \begin{wrapfigure}{l}{0.5\textwidth}
@@ -165,11 +165,12 @@ and $\mathbb{F}^\sc_2$ as shown in \hlref{mutex}(ii). The \lso-rules
 \hlref{sohb} and \hlref{soFE} 
 %(as $\setSB{\implies}\setSO$ and 
 %$\setFR{\implies}\setSO$) 
- construct the $\setSO$ edges between the program events and synthesized 
- fences to form a cyclic $\setSO$ relation shown in \hlref{mutex}(ii).
-The cycle in $\setSO$ relation indicates that a valid total-order cannot
-be formed on \sc-events of $\inv{\tau}$ and thus the trace cannot
-be produced under \cc.\newline
+construct the $\so{\inv{\tau}}{}{}$ edges between the program events 
+and synthesized fences to form a cyclic $\so{\inv{\tau}}{}{}$ relation 
+shown in \hlref{mutex}(ii).
+The cycle in $\so{\inv{\tau}}{}{}$ relation indicates that a valid 
+total-order cannot be formed on \sc-events of $\inv{\tau}$ and thus the 
+trace cannot be produced under \cc.\newline
 
 \noindent
 {\bf Strategy2: Invalidate by inter-thread synchronization.
@@ -187,13 +188,14 @@ is preferred over Strategy1 wherever applicable.
 
 Two threads synchronize over \rel and \acq (or stricter) ordered
 events when an appropriate $\setRF$ is formed. Such synchronization
-form $\setSW$ and $\setDOB$ relations (formally described
-as base $\setSW$ and $\setDOB$ rules),
+form $\setSW$ ({\it synchronizes-with}) and $\setDOB$ 
+({\it dependency-ordered-before}) relations between program events,
+\cite{Batty-POPL12}\cite{C11}
 where $\setSW \subseteq \setITHB$ and $\setDOB \subseteq \setITHB$.
 %
 The $\setSW$ and $\setDOB$ relations can similarly be formed between
-fences based on appropriate $\setRF$, formally described as
-extended $\setSW$ and $\setDOB$. The rules have been formally presented 
+fences based on appropriate $\setRF$. 
+The rules have been formally presented 
 below and diagrammatically represented in Fig~\ref{fig:so rules}(ii).
 
 \begin{longtable}{|p{0.11\textwidth} p{0.88\textwidth}|}
@@ -285,9 +287,10 @@ below and diagrammatically represented in Fig~\ref{fig:so rules}(ii).
 
 \noindent
 The synchronizations further form transitive $\setITHB$ relations
-making previously available writes, unavailable to read events.
+(as described in Section~\ref{sec:c11})
+making previously available writes now unavailable to read events.
 %
-Consider the example \hlref{sync}, as all memory accesses in the
+Consider the example \hlref{sync}. As all memory accesses in the
 buggy trace $\tau$ are relaxed, 
 $\rf{\tau}{W^\rlx(x,1)}{R^\rlx(x,1)}$ does not form a synchronization
 between the respective threads. As a result, 
@@ -296,7 +299,8 @@ under \cc.
 %
 The buggy trace can be invalidated by introducing weaker fences
 $\mathbb{F}^\rel_1$ and $\mathbb{F}^\acq_2$ as shown in \hlref{sync}(ii).
-The fences $\sw{\inv{\tau}}{\mathbb{F}^\rel_1}{\mathbb{F}^\acq_2}$ form
+The fences, related as $\sw{\inv{\tau}}{\mathbb{F}^\rel_1}{\mathbb{F}^\acq_2}$
+(using \hlref{swFF}), form
 $\ithb{\inv{\tau}}{W(y,1)}{Ry(y,0)}$, which violates the coherence of 
 $\inv{\tau}$ as $\ithb{\inv{\tau}}{W(y,1)}{Ry(y,0)}$ $\^$ 
 $\fr{\inv{\tau}}{Ry(y,0)}{W(y,1)}$. 
@@ -306,10 +310,12 @@ $\mathbb{F}^\acq_2$ in \hlref{sync} and similar cases our
 technique must recognize candidate $\setSW$ or $\setDOB$
 related fence(s) that would form the necessary $\setITHB$ 
 and invalidate a buggy trace. In other words, we need to 
-recognize the program locations where a synchronization was 
-absent. To do so we introduce $\lws$-rules 
-(Fig~\ref{fig:so rules}(iii)) that essentially
-signify the absence of a synchronization.
+recognize the program locations where a desired 
+synchronization was absent. 
+%
+To do so we introduce $\lws$-rules 
+(diagrammatically shown in Fig~\ref{fig:so rules}(iii)) 
+that essentially capture the absence of a synchronization.
 
 \begin{longtable}{|p{0.11\textwidth} p{0.88\textwidth}|}
 	\hline
@@ -350,10 +356,28 @@ signify the absence of a synchronization.
 	$f^\rel_2 \in \ordfences{\moge\rel}_\tau$,
 	$w_1 \in \writes_\tau$ and $r_1 \in \reads_\tau$ \st
 	$\seqb{\tau}{f^\acq_1}{r_1}$, $\seqb{\tau}{w_1}{f^\rel_2}$
-	if $\fr{\tau}{r_1}{w_1}$ then $\ws{\tau}{f^\acq_1}{f^\rel_2$ \\
+	if $\fr{\tau}{r_1}{w_1}$ then $\ws{\tau}{f^\acq_1}{f^\rel_2}$ \\
 	& ($\setFR$ implies absence of synchronization
 	between intermediate $\moge\acq$ fence and $\moge\rel$ event) \\
+	
+	\hline
+	\multicolumn{2}{r}{\scriptsize where, 
+		$\moge\rel$ = $\{\rel,\acqrel,\sc\}$, 
+		$\moge\acq$ = $\{\acq,\acqrel,\sc\}$}
 \end{longtable}
 
+To summarize, Strategy2 builds on two sets of events:
+(i) candidate events that can form a synchronization 
+(captured with $\setSW$- and $\setDOB$-rules); and
+(ii) candidate events that are originally missing a desired
+synchronization (captured with $\setWS$-rules).
+If the two sets intersect we get the program locations
+for synthesizing fences that would prevent the buggy trace.
+We recognize the intersection by a cycle in  
+$\ws{\inv{\tau}}{}{}$ $\union$ $\hb{\inv{\tau}}{}{}$ 
+(that contains $\sw{\inv{\tau}}{}{}$ and $\dob{\inv{\tau}}{}{}$), 
+such as the cycle between $\mathbb{F}^\rel_1$ and 
+$\mathbb{F}^\acq_2$ in the example \hlref{sync}.
 
+Note that, 
 \snj{sc fences alone ensures optimality inno of fences, str 2 needed for opt in type of fences.}
