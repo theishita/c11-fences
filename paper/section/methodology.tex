@@ -8,7 +8,7 @@
 %possible set of reorderings allowed under the memory model. 
 %Since the possible set of reorderings under C11 is different 
 %than other memory models, these techniques cannot be applied 
-%to C11 as is. In face, not all C11 behaviors can be justified 
+%to C11 as is. In face, not all C11 traces can be justified 
 %using reorderings and interleavings. Hence, automatic fence insertion 
 %for C11 requires some amount of additional effort.
 
@@ -24,13 +24,13 @@
 In this section we discuss our approach of optimal \mosc fence synthesis 
 in \cc programs. 
 Our analysis focuses on \mosc fences since these are the strongest \cc 
-fences. If a behavior cannot be stopped using \mosc fences, no combination 
-of \cc fences can stop this behavior. 
-In such cases, our approach proves that the behavior cannot be 
+fences. If a trace cannot be stopped using \mosc fences, no combination 
+of \cc fences can stop this trace. 
+In such cases, our approach proves that the trace cannot be 
 stopped using \cc fences.
 Recall that \cc allows memory operations to be annotated with different 
-memory orders. For the programs where buggy behavior cannot be stopped 
-using fences, it is possible to stop the behavior by annotating some 
+memory orders. For the programs where buggy trace cannot be stopped 
+using fences, it is possible to stop the trace by annotating some 
 memory operations with stronger memory order.
 Hence, we do not claim that if \ourtechnique cannot stop a buggy \cc 
 trace, it cannot be stopped.
@@ -70,7 +70,7 @@ placement to stop the buggy trace. We find the minimal satisfying assignment of 
 			\State $ \seqb{\imm{\tau}}{}{} := $ computeSB($\setSB, \events_{\imm{\tau}}$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_{\imm{\tau}}, \setHB, \setMO, \setRF, \seqb{\imm{\tau}}{}{}$)
 			\State cycles := computeCycles($ \so{\imm{\tau}}{}{} $)
 			\If {cycles == $ \emptyset $}
-				\State \texttt{Abort} (``This behavior can't be stopped using \cc fences.'')
+				\State \texttt{Abort} (``This trace can't be stopped using \cc fences.'')
 				\State \Return
 			\EndIf
 			\State $\phi := \phi\ \^ \formula{\so{\imm{\tau}}{}{}} $ 
@@ -97,12 +97,12 @@ $ \tau $ and compute $ \lsb $ in the updated trace $ \imm{\tau} $ (i.e., with ca
 fences). 
 Line 7 computes $ \so{\imm{\tau}}{}{} $-order in counter example $ \tau $ with candidate fences.
 Line 8 finds all $ \so{\imm{\tau}}{}{} $-cycles. If there are no $ \so{\imm{\tau}}{}{} $-cycles 
-present, the behavior can't be stopped used any \cc fences. Hence, we 
+present, the trace can't be stopped used any \cc fences. Hence, we 
 terminate the algorithm at this point.
 Else, in line 12, we generate a SAT formula for the set of $ \so{\imm{\tau}}{}{} $-cycles and add it to formula $ \phi $
 Lastly, in line 13 we find the minimal model of formula $ \phi $, which 
 gives us the minimal set of fences to be inserted in order to stop the 
-buggy behaviors.
+buggy traces.
 The rest of this section discuss each of these steps in detail.
 
 \subsection{Generating Counter Examples:} 
@@ -113,7 +113,7 @@ program events.
 A program event consists of instruction label, action, memory order, variable, and value. 
 \divComment{We don't actually need value since we have rf and other relations already.}
 Our approach treats a counter example generator that reports all of this information as a black box. 
-Any technique that can generate \cc traces and find buggy behaviors can be used as counter-example generator.
+Any technique that can generate \cc traces and find buggy traces can be used as counter-example generator.
 %\divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
 Counter-examples in \texttt{dekker} program are given in 
 Figure~\ref{fig:dekker-ce}. We have omitted \lsb, \lhb from the traces for 
@@ -129,15 +129,15 @@ simplicity.
 %
 %The reason for choosing \mosc fences is that they are the strongest type 
 %of fences, as seen in Fig \ref{fig:mo_strength}. In the program described 
-%in Fig \ref{fig:dekker3}, the \moar fences cannot stop the buggy behavior.
+%in Fig \ref{fig:dekker3}, the \moar fences cannot stop the buggy trace.
 %
 %Another point to note is, inserting \mosc fences at all possible program 
-%locations might not mean that the buggy behaviors are eliminated. 
+%locations might not mean that the buggy traces are eliminated. 
 %Therefore, our tool can only prevent the assertions from being violated 
-%in cases where the behavior can be stopped using \mosc fences. Note that
+%in cases where the trace can be stopped using \mosc fences. Note that
 %if a trace cannot be stopped by \mosc fence, then no C11 fence can stop 
 %the trace. The tool also serves to minimize the total number of fences to 
-%be added to the optimal number, thereby retaining the program behaviors 
+%be added to the optimal number, thereby retaining the program traces 
 %as relaxed as possible.
 %%%%%%%%%%%%%%%%%%
 
@@ -203,9 +203,9 @@ program locations, the trace $ \imm{\tau} $ should be invalid \cc trace
 if $ \tau $ can be stopped using \mosc fences.
 Hence, if $ \imm{\tau} $ is not invalid \cc trace for some 
 the counter-examples $ \tau $ in $ \mathcal{CE} $, we determine that \mosc 
-fences are not sufficient to stop the buggy behaviors of the program.
+fences are not sufficient to stop the buggy traces of the program.
 Recall that \mosc fences are the strongest \cc fences. 
-If \mosc fences cannot stop a buggy behavior in a program, we can conclude 
+If \mosc fences cannot stop a buggy trace in a program, we can conclude 
 that \cc fences are not strong enough to render this program correct.
 Previous works \cite{LahavVafeiadis-PLDI17,Batty-POPL12} suggest that \mosc fences are not sufficient to achieve SC memory 
 model. 
@@ -300,12 +300,12 @@ every counter example, we stop all the buggy trace.
 It is possible that a counter example $ \tau $ does not have any 
 $\so{\imm{\tau}}{}{}$-cycles. Since $ \imm{\tau} $ has \mosc fences at all 
 possible program locations, we cannot add fences in such a trace to 
-make it invalid \cc execution. 
+make it invalid \cc trace. 
 Line 8 in Algorithm~\ref{alg:fence-syn} computes set $\so{\imm{\tau}}{}{}$-cycles. 
 The problem of finding cycles in a graph is well-studied area. Hence, we 
 choose to skip the details of this step.
 If there are no $\so{\imm{\tau}}{}{}$-cycle in some $ \tau $, we conclude 
-that it is not possible to stop this behavior using \cc fences in lines 
+that it is not possible to stop this trace using \cc fences in lines 
 9-11.
 
 
@@ -314,7 +314,7 @@ where a cycle $ c \in \cycles{\imm{\tau}} $ is ordered sequence of
 $ \ordevents{\sc} $. We abuse the notation $\ordevents{\sc}_c$ to 
 represent the set of events in a cycle $ c $. 
 All the read and write events in $\ordevents{\sc}_c$ are already in program $ P $. 
-Hence, to introduce a cycle $ c $ in the execution, we add the fences in $\ordevents{\sc}_c$, i.e, 
+Hence, to introduce a cycle $ c $ in the trace, we add the fences in $\ordevents{\sc}_c$, i.e, 
 $\ordfences{\sc}_c$, in the program $ P $.
 In other words, a cycle $ c $ can be introduced in a program if we insert 
 $ (\bigwedge\limits_{f \in \ordfences{\sc}_c} f)$ fences in the program $ P $, 
@@ -327,7 +327,7 @@ Hence we need to insert $ (\bigvee\limits_{c \in \cycles{\imm{\tau}}} (\bigwedge
 We use $\formula{\so{\imm{\tau}}{}{}}$ to represent the boolean formula 
 corresponding to the $ \so{\imm{\tau}}{}{} $-cycles.
 Clearly, any satisfying assignment to $ \formula{\so{\imm{\tau}}{}{}} $ 
-will give list of fences required to stop the buggy execution $ \tau $.
+will give list of fences required to stop the buggy trace $ \tau $.
 %
 Furthermore, we construct the formula for all trace 
 $ \tau \in \mathcal{CE} $ by conjuncting them in 
@@ -337,21 +337,21 @@ $ \phi \definedas (\bigwedge\limits_{\tau \in \mathcal{CE}}
 (\bigvee\limits_{c \in \cycles{\imm{\tau}}} 
 (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection \ordfences{\sc}} \fn{}))) $.
 Any satisfying assignment of the formula $\phi$ will list the fences that 
-are enough to stop the buggy behaviors in $ \mathcal{CE} $.
+are enough to stop the buggy traces in $ \mathcal{CE} $.
 
 %\begin{lemma}
-%	Introducing fences in any $\so{\imm{\tau}}{}{}$-cycle will stop the counter example $ \tau $ in actual execution of the program.
+%	Introducing fences in any $\so{\imm{\tau}}{}{}$-cycle will stop the counter example $ \tau $ in actual trace of the program.
 %\end{lemma}
 
 \begin{lemma}
-	If there are no cycles in $\so{\imm{\tau}}{}{}$ of a buggy execution 
+	If there are no cycles in $\so{\imm{\tau}}{}{}$ of a buggy trace 
 	$\tau$, the counter-example $ \tau $ cannot be stopped using any \cc 
 	fences.
 \end{lemma}
 
 \begin{theorem}
 	Any satisfying assignment to $ \formula{\so{\imm{\tau}}{}{}} $ 
-	will give list of fences required to stop the buggy execution $ \tau $
+	will give list of fences required to stop the buggy trace $ \tau $
 \end{theorem}
 
 
@@ -387,7 +387,7 @@ solver to find the minimal model. \divComment{How are we solving it?}
 
 \begin{theorem}
 	For any input program $ P $, minimal model of $ \phi $ gives optimal
-	number of fences required to stop all the buggy behaviors in 
+	number of fences required to stop all the buggy traces in 
 	$ \mathcal{CE} $.
 \end{theorem}
 

@@ -36,7 +36,7 @@ events unless specified otherwise.
 rf and mo together are insufficient and why we need hb additionally? }
 \snj{$\events_\tau$ is just a representative symbol, it is not parametric on $\tau$.
 The set $\events_\tau \subseteq \events$.}
-	A trace or a maximal execution (or simply execution) $\tau$ of the input 
+	A trace or a maximal execution $\tau$ of the input 
 	program $P$ under \cc is a tuple 
 	$\langle \events_\tau, \setHB, \setMO, \setRF \rangle$, where
 	\begin{itemize}[label=sethb,align=left,leftmargin=*]
@@ -70,7 +70,7 @@ it.
 %
 We use $\ordevents{m}_\tau$ (and accordingly $\ordwrites{m}_\tau$, 
 $\ordreads{m}_\tau$ and $\ordfences{m}_\tau$) to represent the $m$
-ordered events of an execution sequence $\tau$ (where, $m \in \moset$);
+ordered events of a trace $\tau$ (where, $m \in \moset$);
 for example $\ordwrites{\rel}_\tau$ represents the write events of 
 $\tau$ with ordering restriction \rel. 
 \svs{Why not use $o \in \moset$ representing order as a replacement?}
@@ -79,7 +79,7 @@ eg: let $x \in \events_\tau$
 $\^$ $ord(x) = \rel$ vs let $x \in \ordevents{\rel}_\tau$}
 
 \noindent
-{\bf Buggy and fixed executions}: A program $P$ may contain {\em assert} 
+{\bf Buggy and fixed traces}: A program $P$ may contain {\em assert} 
 instructions as correctness specification. 
 \added{$P$ is considered buggy} when a trace of $P$ 
 \deleted {that violates an 

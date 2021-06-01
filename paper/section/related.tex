@@ -18,7 +18,7 @@ memory model
 where \cite{fang2003automatic} also 
 provides support for IA-32 memory model, and
 \cite{joshi2015property} provides a technique applicable to
-any memory model whose behaviors can be justified using
+any memory model whose traces can be justified using
 interleaving with reordering.
 %
 \ourtechnique is the first fence synthesis technique for 
@@ -26,7 +26,7 @@ interleaving with reordering.
 
 Some of the earlier works  
 \cite{alglave2010fences,abdulla2015precise,fang2003automatic} 
-perform fence synthesis to reduce weak memory behaviors of an 
+perform fence synthesis to reduce weak memory traces of an 
 input program to those permitted under Sequential Consistency (SC)
 or its variant \cite{abdulla2015best}. Such reduction would
 make the input compatible with the existing verification 
