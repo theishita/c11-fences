@@ -57,7 +57,8 @@ such that the total order requirement in the buggy trace gets violated
 then we can invalidate the trace and stop the program behavior.
 
 We introduce an irreflexive and possibly cyclic relation
-on \sc ordered events called \sc-order ($\setSO$).
+on \sc ordered events of invalidated version $\inv{\tau}$ of $\tau$ 
+called \sc-order ($\setSO$).
 %
 To construct $\setSO$, we introduce a set of \lso-rules
 (diagrammatically shown in Figure~\ref{fig:so rules}(a) and
@@ -82,7 +83,7 @@ events with appropriately placed fences as described in
 	$\v$ $\rf{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ 
 	$\v$ $\fr{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$\\
 	\hl{sorf}, & 
-	then $\so{\tau}{wr^{\sc}_1}{wr^{\sc}_2}$ \\
+	then $\so{\inv{\tau}}{wr^{\sc}_1}{wr^{\sc}_2}$ \\
 	\hl{sofr}: & ($\setHB$, $\setMO$, $\setRF$. $\setFR$ between \sc events 
 				implies $\setSO$) \\
 	& \\
@@ -90,29 +91,29 @@ events with appropriately placed fences as described in
 	\multicolumn{2}{|l|}{\bf \lso-rules extended for fences:} \\
 	
 	\hl{soEF}: & $\forall wr^\sc_1 \in \ordevents{\sc}_\tau$, $f^\sc_1 \in
-	\ordfences{\sc}_\tau$ if $\exists wr_2 \in \events_\tau$ \st 
-	($\mo{\tau}{wr^\sc_1}{wr_2}$ $\v$ $\hb{\tau}{wr^\sc_1}{wr_2}$
-	$\v$ $\rf{\tau}{wr^\sc_1}{wr_2}$) $\^$ $\seqb{\tau}{wr_2}{f^\sc_1}$ 
-	then $\so{\tau}{wr^\sc_1}{f^\sc_1}$ \\
+	\ordfences{\sc}_{\inv{\tau}}$ if $\exists wr_2 \in \events_\tau$ \st 
+	$(wr^\sc_1,wr_2) \in$ $\setHB$ $\union$ $\setMO$ $\union$ $\setRF$
+	$\union$ $\setFR$ $\^$ $\seqb{\inv{\tau}}{wr_2}{f^\sc_1}$ 
+	then $\so{\inv{\tau}}{wr^\sc_1}{f^\sc_1}$ \\
 	& ($\setHB$, $\setMO$, $\setRF$, $\setFR$ between \sc event and relaxed 
 		event forms $\setSO$ with assistance of an appropriately placed 
 		fence) \\
 	
-	\hl{soFE}: & $\forall f^\sc_1 \in \ordfences{\sc}_\tau$, $wr^\sc_2 \in
-	\ordevents{\sc}_\tau$ if $\exists wr_1 \in \events_\tau$ \st 
-	($\mo{\tau}{wr_1}{wr^\sc_2}$ $\v$ $\hb{\tau}{wr_1}{wr^\sc_2}$
-	$\v$ $\rf{\tau}{wr_1}{wr^\sc_2}$) $\^$ $\seqb{\tau}{f^\sc_1}{wr_1}$ 
-	then $\so{\tau}{f^\sc_1}{wr^\sc_2}$ \\
+	\hl{soFE}: & $\forall f^\sc_1 \in \ordfences{\sc}_{\inv{\tau}}$, 
+	$wr^\sc_2 \in \ordevents{\sc}_\tau$ if $\exists wr_1 \in \events_\tau$ \st 
+	$(wr_1,wr^\sc_2) \in$ $\setHB$ $\union$ $\setMO$ $\union$ $\setRF$
+	$\union$ $\setFR$ $\^$ $\seqb{\inv{\tau}}{f^\sc_1}{wr_1}$ 
+	then $\so{\inv{\tau}}{f^\sc_1}{wr^\sc_2}$ \\
 	& ($\setHB$, $\setMO$, $\setRF$, $\setFR$ between relaxed event and
 	\sc event forms $\setSO$ with assistance of an appropriately placed 
 	fence) \\
 	
-	\hl{soFF}: & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_\tau$, 
+	\hl{soFF}: & $\forall f^{\sc}_1, f^{\sc}_2 \in \ordfences{\sc}_{\inv{\tau}}$, 
 	if $\exists wr_1, wr_2 \in \events_\tau$ \st 
-	($\mo{\tau}{wr_1}{wr_2}$ $\v$ $\hb{\tau}{wr_1}{wr_2}$
-	$\v$ $\rf{\tau}{wr_1}{wr_2}$) $\^$
-	($\seqb{\tau}{f^{\sc}_1}{wr_1}$, $\seqb{\tau}{wr_2}{f^{\sc}_2}$) 
-	then $\so{\tau}{f^{\sc}_1}{f^{\sc}_2}$ \\
+	$(wr_1, wr_2) \in$ $\setHB$ $\union$ $\setMO$ $\union$ $\setRF$
+	$\union$ $\setFR$ $\^$ ($\seqb{\inv{\tau}}{f^{\sc}_1}{wr_1}$,
+	 $\seqb{\inv{\tau}}{wr_2}{f^{\sc}_2}$) 
+	then $\so{\inv{\tau}}{f^{\sc}_1}{f^{\sc}_2}$ \\
 	& ($\setHB$, $\setMO$, $\setRF$, $\setFR$ between relaxed events 
 		forms $\setSO$ with assistance of appropriately placed fences) \\
 	\hline
@@ -180,8 +181,8 @@ In the second strategy we attempt to introduce synchronization
 between threads by synthesizing fences. The fences form
 $\setHB$ relation with program events \st coherence
 requirement
-$\neg(\hb{\tau}{e_1}{e_2}$ $\^$ $\fr{\tau}{e_2}{e_1})$ is
-violated.
+$\neg(\hb{\inv{\tau}}{e_1}{e_2}$ $\^$ $\fr{\inv{\tau}}{e_2}{e_1})$ is
+violated in the invalidated trace $\inv{\tau}$ of $\tau$.
 %
 Note that, this strategy invalidates a buggy trace by introducing 
 weaker fences (of memory orders \rel, \acq and \acqrel) and 
@@ -207,7 +208,7 @@ below and diagrammatically represented in Fig~\ref{fig:so rules}(ii).
 	$\forall$ $w^\rel_1 \in \ordwrites{\moge\rel}_\tau$ and
 	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$ 
 	if $\rf{\tau}{w^\rel_1}{r^\acq_1}$ then
-	$\sw{\tau}{w^\rel_1}{r^\acq_1}$ \\
+	$\sw{\inv{\tau}}{w^\rel_1}{r^\acq_1}$ \\
 	& ($\setRF$ between $\moge\rel$ and $\moge\acq$ events 
 		forms $\setSW$) \\
 	
@@ -216,7 +217,7 @@ below and diagrammatically represented in Fig~\ref{fig:so rules}(ii).
 	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$ and
 	$w_2 \in$ {\it release-sequence}($w^\rel_1$) \cite{C11}
 	if $\rf{\tau}{w_2}{r^\acq_1}$ then
-	$\dob{\tau}{w^\rel_1}{r^\acq_1}$ \\
+	$\dob{\inv{\tau}}{w^\rel_1}{r^\acq_1}$ \\
 	& ($\setRF$ between release-sequence of $\moge\rel$  
 		and $\moge\acq$ events forms $\setDOB$) \\
 		
@@ -225,10 +226,10 @@ below and diagrammatically represented in Fig~\ref{fig:so rules}(ii).
 	
 	\hl{swEF}: &
 	$\forall$ $w^\rel_1 \in \ordwrites{\moge\rel}_\tau$,
-	$r_1 \in \reads_\tau$ and $f^\acq_1 \in \ordfences{\moge\acq}_\tau$
-	\st $\seqb{\tau}{r_1}{f^\acq_1}$
+	$r_1 \in \reads_\tau$ and $f^\acq_1 \in \ordfences{\moge\acq}_{\inv{\tau}}$
+	\st $\seqb{\inv{\tau}}{r_1}{f^\acq_1}$
 	if $\rf{\tau}{w^\rel_1}{r_1}$ then
-	$\sw{\tau}{w^\rel_1}{f^\acq_1}$ \\
+	$\sw{\inv{\tau}}{w^\rel_1}{f^\acq_1}$ \\
 	& ($\setRF$ between $\moge\rel$ event and relaxed event forms 
 		$\setSW$ with assistance of an appropriately placed 
 		fence) \\
@@ -236,21 +237,22 @@ below and diagrammatically represented in Fig~\ref{fig:so rules}(ii).
 	\hl{swFE}: &
 	$\forall$ $w_1 \in \writes_\tau$,
 	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$ and 
-	$f^\rel_1 \in \ordfences{\moge\rel}_\tau$
-	\st $\seqb{\tau}{f^\rel_1}{w_1}$
+	$f^\rel_1 \in \ordfences{\moge\rel}_{\inv{\tau}}$
+	\st $\seqb{\inv{\tau}}{f^\rel_1}{w_1}$
 	if $\rf{\tau}{w_1}{r^\acq_1}$ then
-	$\sw{\tau}{f^\rel_1}{r^\acq_1}$ \\
+	$\sw{\inv{\tau}}{f^\rel_1}{r^\acq_1}$ \\
 	& ($\setRF$ between relaxed event and $\moge\acq$ event forms 
 	$\setSW$ with assistance of an appropriately placed 
 	fence) \\
 	
 	\hl{swFF}: &
 	$\forall$ $w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$,
-	$f^\rel_1 \in \ordfences{\moge\rel}_\tau$ and
-	$f^\acq_2 \in \ordfences{\moge\acq}_\tau$ \st
-	$\seqb{\tau}{f^\rel_1}{w_1}$, $\seqb{\tau}{r_1}{f^\acq_2}$
+	$f^\rel_1 \in \ordfences{\moge\rel}_{\inv{\tau}}$ and
+	$f^\acq_2 \in \ordfences{\moge\acq}_{\inv{\tau}}$ \st
+	$\seqb{\inv{\tau}}{f^\rel_1}{w_1}$, 
+	$\seqb{\inv{\tau}}{r_1}{f^\acq_2}$
 	if $\rf{\tau}{w_1}{r_1}$ then
-	$\sw{\tau}{f^\rel_1}{f^\acq_2}$ \\
+	$\sw{\inv{\tau}}{f^\rel_1}{f^\acq_2}$ \\
 	& ($\setRF$ between relaxed events forms 
 	$\setSW$ with assistance of appropriately placed 
 	fences) \\
@@ -258,10 +260,11 @@ below and diagrammatically represented in Fig~\ref{fig:so rules}(ii).
 	\hl{dobEF}: &
 	$\forall$ $w^\rel_1 \in \ordwrites{\moge\rel}_\tau$, 
 	$w_2 \in \writes_\tau$, $r_1 \in \reads_\tau$ and
-	$f^\acq_1 \in \ordfences{\moge\acq}_\tau$ \st
-	$\seqb{\tau}{w^\rel_1}{w_2}$, $\seqb{\tau}{r_1}{f^\acq_1}$
+	$f^\acq_1 \in \ordfences{\moge\acq}_{\inv{\tau}}$ \st
+	$w_2 \in$ release-sequence($w^\rel_1$), 
+	$\seqb{\inv{\tau}}{r_1}{f^\acq_1}$
 	if $\rf{\tau}{w_2}{r_1}$ then
-	$\sw{\tau}{w^\rel_1}{f^\acq_1}$ \\
+	$\dob{\inv{\tau}}{w^\rel_1}{f^\acq_1}$ \\
 	& ($\setRF$ between release-sequence of $\moge\rel$  
 	and relaxed events forms $\setDOB$ with assistance of an 
 	appropriately placed fence) \\
@@ -331,7 +334,7 @@ that essentially capture the absence of a synchronization.
 	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$,
 	$w_2 \in \writes_\tau$ and $r_2 \in \reads_\tau$ \st
 	$\seqb{\tau}{r^\acq_1}{r_2}$, $\seqb{\tau}{w_2}{w^\rel_1}$
-	if $\fr{\tau}{r_2}{w_2}$ then $\ws{\tau}{r^\acq_1}{w^\rel_1}$ \\
+	if $\fr{\tau}{r_2}{w_2}$ then $\ws{\inv{\tau}}{r^\acq_1}{w^\rel_1}$ \\
 	& ($\setFR$ implies absence of synchronization
 		between intermediate $\moge\acq$ and $\moge\rel$ events) \\
 		
@@ -339,29 +342,30 @@ that essentially capture the absence of a synchronization.
 	\multicolumn{2}{|l|}{\bf \lws-rules extended for fences} \\
 	
 	\hl{wsEF}: & 
-	$\forall f^\rel_1 \in \ordfences{\moge\rel}_\tau$,
+	$\forall f^\rel_1 \in \ordfences{\moge\rel}_{\inv{\tau}}$,
 	$r^\acq_1 \in \ordreads{\moge\acq}_\tau$,
 	$w_1 \in \writes_\tau$ and $r_2 \in \reads_\tau$ \st
-	$\seqb{\tau}{r^\acq_1}{r_2}$, $\seqb{\tau}{w_1}{f^\rel_1}$
-	if $\fr{\tau}{r_2}{w_1}$ then $\ws{\tau}{r^\acq_1}{f^\rel_1}$ \\
+	$\seqb{\tau}{r^\acq_1}{r_2}$, $\seqb{\inv{\tau}}{w_1}{f^\rel_1}$
+	if $\fr{\tau}{r_2}{w_1}$ then $\ws{\inv{\tau}}{r^\acq_1}{f^\rel_1}$ \\
 	& ($\setFR$ implies absence of synchronization
 	between intermediate $\moge\acq$ event and $\moge\rel$ fence) \\
 	
 	\hl{wsFE}: & 
 	$\forall w^\rel_1 \in \ordwrites{\moge\rel}_\tau$,
-	$f^\acq_1 \in \ordfences{\moge\acq}_\tau$,
+	$f^\acq_1 \in \ordfences{\moge\acq}_{\inv{\tau}}$,
 	$w_2 \in \writes_\tau$ and $r_1 \in \reads_\tau$ \st
-	$\seqb{\tau}{f^\acq_1}{r_1}$, $\seqb{\tau}{w_2}{w^\rel_1}$
-	if $\fr{\tau}{r_1}{w_2}$ then $\ws{\tau}{f^\acq_1}{w^\rel_1}$ \\
+	$\seqb{\inv{\tau}}{f^\acq_1}{r_1}$, $\seqb{\tau}{w_2}{w^\rel_1}$
+	if $\fr{\tau}{r_1}{w_2}$ then $\ws{\inv{\tau}}{f^\acq_1}{w^\rel_1}$ \\
 	& ($\setFR$ implies absence of synchronization
 	between intermediate $\moge\acq$ fence and $\moge\rel$ event) \\
 	
 	\hl{wsFF}: & 
-	$\forall f^\acq_1 \in \ordfences{\moge\acq}_\tau$,
-	$f^\rel_2 \in \ordfences{\moge\rel}_\tau$,
+	$\forall f^\acq_1 \in \ordfences{\moge\acq}_{\inv{\tau}}$,
+	$f^\rel_2 \in \ordfences{\moge\rel}_{\inv{\tau}}$,
 	$w_1 \in \writes_\tau$ and $r_1 \in \reads_\tau$ \st
-	$\seqb{\tau}{f^\acq_1}{r_1}$, $\seqb{\tau}{w_1}{f^\rel_2}$
-	if $\fr{\tau}{r_1}{w_1}$ then $\ws{\tau}{f^\acq_1}{f^\rel_2}$ \\
+	$\seqb{\inv{\tau}}{f^\acq_1}{r_1}$, 
+	$\seqb{\inv{\tau}}{w_1}{f^\rel_2}$
+	if $\fr{\tau}{r_1}{w_1}$ then $\ws{\inv{\tau}}{f^\acq_1}{f^\rel_2}$ \\
 	& ($\setFR$ implies absence of synchronization
 	between intermediate $\moge\acq$ fence and $\moge\rel$ event) \\
 	

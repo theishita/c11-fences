@@ -1,0 +1,286 @@
+\ourtechnique attempts to invalidate a buggy trace (\aka counter
+example) by one of the following two strategies:
+\begin{itemize}[label=strategy1,align=left,leftmargin=*]
+	\item [Strategy1]:
+		Invalidate by violating \sc-total-order.
+	\item [Strategy2]:
+		Invalidate by inter-thread synchronization.
+\end{itemize}
+
+\noindent
+{\bf Strategy1: Invalidate by violating \sc-total-order. 
+	(\sfence)}\newline
+Consider a buggy input program $P$.
+%
+As discussed in Section~\ref{sec:c11}, in a valid trace of $P$ 
+(including a buggy trace), 
+the \sc ordered events must form a total order ($\setTO$).
+%
+Contrarily, if we synthesize \sc ordered fences in the input program 
+such that the total order requirement in the buggy trace gets violated 
+then we can invalidate the trace and stop the program behavior.
+
+We introduce an irreflexive and possibly cyclic relation
+on \sc ordered events of invalidated version $\inv{\tau}$ of $\tau$ 
+called \sc-order ($\setSO$).
+%
+The $\setSO$ relation is directly implied from
+the \lto-rules, \hlref{toHb}, \hlref{toMo} \hlref{toFr} 
+and \hlref{toRf} (Section~\ref{sec:c11}) wherever applicable
+%
+and extended to relaxed events with appropriately placed fences 
+as described in \cc \cite{C11}\cite{Batty-POPL12}.
+
+\begin{definition}{\bf \sc-order ($\setSO$)}\newline
+	$\forall e_1, e_2 \in \events_\tau$ \st 
+	$(e_1,e_2) \in$ $\setHB$ $\union$ $\setMO$ $\union$ $\setRF$ 
+	$\union$ $\setFR$
+	
+	if
+	$e_1, e_2 \in \ordevents{\sc}_\tau$ then 
+	$\so{\inv{\tau}}{e_1}{e_2}$;
+	
+	if
+	$e_1 \in \ordevents{\sc}_\tau$, 
+	$\exists \mathbb{F}^\sc \in \ordfences{\sc}_{\inv{\tau}}$ where
+	$\seqb{\inv{\tau}}{e_2}{\mathbb{F}^\sc}$ then
+	$\so{\inv{\tau}}{e_1}{\mathbb{F}^\sc}$;
+	
+	if
+	$e_2 \in \ordevents{\sc}_\tau$, 
+	$\exists \mathbb{F}^\sc \in \ordfences{\sc}_{\inv{\tau}}$ where
+	$\seqb{\inv{\tau}}{\mathbb{F}^\sc}{e_1}$ then
+	$\so{\inv{\tau}}{\mathbb{F}^\sc}{e_2}$;
+	
+	if
+	$\exists \mathbb{F}^\sc_1$, $\mathbb{F}^\sc_2$ 
+	$\in \ordfences{\sc}_{\inv{\tau}}$ where
+	$\seqb{\inv{\tau}}{\mathbb{F}^\sc_1}{e_1}$ and 
+	$\seqb{\inv{\tau}}{e_2}{\mathbb{F}^\sc_2}$ then
+	$\so{\inv{\tau}}{\mathbb{F}^\sc_1}{\mathbb{F}^\sc_1}$.
+\end{definition}
+
+Consider a \cc trace $\tau$ and a transformation
+$\inv{\tau}$ of $\tau$ \st $\events_{\inv{\tau}}$ = $\events_\tau$
+$\union$ set of synthesized fences, then;
+%
+\begin{theorem} \label{thm:to-so}
+	$\to{\inv{\tau}}{}{}$ = (transitive closure of $\setSO$).
+	\snj{proof in appendix.}
+\end{theorem}
+%
+Using Theorem~\ref{thm:to-so} we can state that,
+a cyclic $\setSO$ implies that there does not exist a 
+total order on \sc ordered events of $\inv{\tau}$. 
+The trace $\inv{\tau}$
+then is not a valid \cc trace and the buggy trace $\tau$ 
+has been invalidated.
+%
+Thus, the aim of \sfence is to synthesis \sc-fences in the input program $P$
+at appropriate locations that would force a cyclic $\setSO$ 
+ in the \sc ordered events of a transformed trace $\inv{\tau}$. 
+The cycle invalidates the trace for the transformed program $\fx{P}$.
+
+\setlength{\textfloatsep}{0pt}
+\begin{wrapfigure}{l}{0.5\textwidth}
+	\vspace{-2.5em}
+	\begin{tabular}{|c|}
+		\multicolumn{1}{c}{Initially $Flag_1 = 0, Flag_2 = 0$} \\
+		\hline
+		\resizebox{0.45\textwidth}{!}{\input{figures/egStrongFence_1.tex}} \\
+		\hline
+		\resizebox{0.49\textwidth}{!}{\input{figures/egStrongFence_2.tex}} \\
+		\hline
+		\multicolumn{1}{c}{\hl{mutex}}
+	\end{tabular}
+	\vspace{-2.5em}
+\end{wrapfigure}
+
+Consider the example \hlref{mutex}. If the reads of $Flag_1$ and $Flag_2$ 
+read the initial value $0$ (as shown in \hlref{mutex}(i)) 
+then the program violates mutual exclusion
+property. Note that, the relation $\setFR$ is not a \cc relation, it has
+been introduced in this work to assist with forming $\setSO$ relation.
+In the absence of $\setFR$, the trace $\tau$ does not violate any coherence
+rule and is possible under \cc.
+%
+The buggy trace can be invalidated by introducing \sc-fences $\mathbb{F}^\sc_1$
+and $\mathbb{F}^\sc_2$ as shown in \hlref{mutex}(ii). 
+$\setSO$ edges between the program events 
+and synthesized fences to form a cycle
+shown in \hlref{mutex}(ii).
+The cycle in $\setSO$ relation indicates that a valid 
+total-order cannot be formed on \sc-events of $\inv{\tau}$ and thus the 
+trace cannot be produced under \cc.\newline
+
+\noindent
+{\bf Strategy2: Invalidate by inter-thread synchronization.
+(\wfence)}\newline
+In the second strategy we attempt to introduce synchronization
+between threads by synthesizing fences. The fences form
+$\setHB$ relation with program events \st coherence
+requirement
+$\neg(\hb{\inv{\tau}}{e_1}{e_2}$ $\^$ $\fr{\inv{\tau}}{e_2}{e_1})$ is
+violated in the invalidated trace $\inv{\tau}$ of $\tau$.
+%
+Note that, this strategy invalidates a buggy trace by introducing 
+weaker fences (of memory orders \rel, \acq and \acqrel) and 
+is preferred over Strategy1 wherever applicable.
+
+Two threads synchronize over \rel and \acq (or stricter) ordered
+events when an appropriate $\setRF$ is formed. Such synchronization
+form $\setSW$ ({\it synchronizes-with}) and $\setDOB$ 
+({\it dependency-ordered-before}) relations between program events,
+\cite{batty2011mathematizing}\cite{C11}
+where $\setSW \subseteq \setITHB$ and $\setDOB \subseteq \setITHB$.
+%
+The $\setSW$ and $\setDOB$ relations can similarly be formed between
+fences based on appropriate $\setRF$.
+
+\begin{definition}{\bf synchronizes-with $\setSW$}\newline
+		$\forall e_1, e_2 \in \events_\tau$ \st $\rf{\tau}{e_1}{e_2}$
+		
+		if
+		$e_1 \in \ordwrites{\moge\rel}_\tau$ and
+		$e_2 \in \ordreads{\moge\acq}_\tau$ then 
+		$\sw{\inv{\tau}}{e_1}{e_2}$;
+		
+		if
+		$e_1 \in \ordwrites{\moge\rel}_\tau$, 
+		$\exists \mathbb{F}^\acq \in \ordfences{\moge\acq}_{\inv{\tau}}$ where
+		$\seqb{\inv{\tau}}{e_2}{\mathbb{F}^\acq}$ then
+		$\sw{\inv{\tau}}{e_1}{\mathbb{F}^\acq}$;
+		
+		if
+		$e_2 \in \ordreads{\moge\acq}_\tau$, 
+		$\exists \mathbb{F}^\rel \in \ordfences{\moge\rel}_{\inv{\tau}}$ where
+		$\seqb{\inv{\tau}}{\mathbb{F}^\rel}{e_1}$ then
+		$\sw{\inv{\tau}}{\mathbb{F}^\rel}{e_2}$;
+		
+		if
+		$\exists \mathbb{F}^\rel \in \ordfences{\moge\rel}_{\inv{\tau}}$,
+		$\mathbb{F}^\acq \in \ordfences{\moge\acq}_{\inv{\tau}}$ where
+		$\seqb{\inv{\tau}}{\mathbb{F}^\rel}{e_1}$,
+		$\seqb{\inv{\tau}}{e_2}{\mathbb{F}^\acq}$ 
+		
+		then
+		$\sw{\inv{\tau}}{\mathbb{F}^\rel}{\mathbb{F}^\acq}$.
+\end{definition}
+
+\begin{definition}{dependency-ordered-before $\setDOB$}\newline
+	$\forall e_1, e_2 \in \events_\tau$, 
+	$e_1' \in \ordwrites{\moge\rel}_\tau$ \st $\rf{\tau}{e_1}{e_2}$
+	and $e_1 \in$ {\em release-sequence}($e_1'$)\cite{C11}
+	
+	if $e_2 \in \ordreads{\moge\acq}_\tau$ then 
+	$\dob{\inv{\tau}}{e_1'}{e_2}$;
+	
+	if $\exists \mathbb{F}^\acq \in \ordfences{\moge\acq}_{\inv{\tau}}$ 
+	where $\seqb{\inv{\tau}}{e_2}{\mathbb{F}^\acq}$ then
+	$\dob{\inv{\tau}}{e_1'}{\mathbb{F}^\acq}$.
+\end{definition}
+
+\noindent
+The sets $\moge\rel$ = $\{\rel,\acqrel,\sc\}$ and
+$\moge\acq$ = $\{\acq,\acqrel,\sc\}$.
+
+\setlength{\textfloatsep}{0pt}
+\begin{wrapfigure}{l}{0.6\textwidth}
+	\vspace{-2.5em}
+	\begin{tabular}{|c|c|}
+		\multicolumn{2}{c}{Initially $x = 0, y = 0$} \\
+		
+		\hline
+		\resizebox{0.29\textwidth}{!}{\input{figures/egWeakFence_1.tex}} &
+		\resizebox{0.29\textwidth}{!}{\input{figures/egWeakFence_2.tex}} \\
+		\hline
+
+		\multicolumn{2}{r}{\scriptsize 
+		$W/R^m(o,v)$: $m$ ordered write/read of object $o$ and value $v$} \\
+		\multicolumn{2}{c}{\hl{sync}}
+	\end{tabular}
+	\vspace{-2.5em}
+\end{wrapfigure}
+
+\noindent
+The synchronizations further form transitive $\setITHB$ relations
+(as described in Section~\ref{sec:c11})
+making previously available writes now unavailable to read events.
+%
+Consider the example \hlref{sync}. As all memory accesses in the
+buggy trace $\tau$ are relaxed, 
+$\rf{\tau}{W^\rlx(x,1)}{R^\rlx(x,1)}$ does not form a synchronization
+between the respective threads. As a result, 
+$\nithb{\tau}{W^\rlx(y,1)}{R^\rlx(y,0)}$ and the trace $\tau$ is valid
+under \cc. 
+%
+The buggy trace can be invalidated by introducing weaker fences
+$\mathbb{F}^\rel_1$ and $\mathbb{F}^\acq_2$ as shown in \hlref{sync}(ii).
+The fences, related as 
+$\sw{\inv{\tau}}{\mathbb{F}^\rel_1}{\mathbb{F}^\acq_2}$, form
+$\ithb{\inv{\tau}}{W(y,1)}{Ry(y,0)}$, which violates the coherence of 
+$\inv{\tau}$ as $\ithb{\inv{\tau}}{W(y,1)}{Ry(y,0)}$ $\^$ 
+$\fr{\inv{\tau}}{Ry(y,0)}{W(y,1)}$. 
+
+To successfully synthesize fences $\mathbb{F}^\rel_1$ and 
+$\mathbb{F}^\acq_2$ in \hlref{sync} and similar cases our
+technique must recognize candidate $\setSW$ or $\setDOB$
+related fence(s) that would form the necessary $\setITHB$ 
+and invalidate a buggy trace. In other words, we need to 
+recognize the program locations where a desired 
+synchronization was absent. 
+%
+To do so we introduce $\setWS$ relation
+that essentially captures the absence of a synchronization.
+
+\begin{definition}{synchronization-absence $\setWS$}\newline
+	$\forall e_1,e_2 \in  \events_\tau$ \st
+	$\fr{\tau}{e_2}{e_1}$,
+	%
+	if $\exists e_1' \in$ $\ordwrites{\moge\rel}_{\inv{\tau}}$ 
+	$\union$ $\ordfences{\moge\rel}_{\inv{\tau}}$ and
+	$e_2' \in$ $\ordreads{\moge\acq}_{\inv{\tau}}$ $\union$ 
+	$\ordfences{\moge\acq}_{\inv{\tau}}$ where 
+	$\seqb{\inv{\tau}}{e_1}{e_1'}$ and 
+	$\seqb{\inv{\tau}}{e_2'}{e_2}$
+	then
+	$\ws{\inv{\tau}}{e_2'}{e_1'}$.
+\end{definition}
+
+\noindent
+The definition of $\setWS$ has been formed with the following rationale,
+	$\exists$ $\fr{\tau}{e_2}{e_1}$ $\implies$
+	$\nithb{\tau}{e_1}{e_2}$ $\implies$
+	$\neg(\sw{\inv{\tau}}{e_1'}{e_2'} \v \dob{\inv{\tau}}{e_1'}{e_2'})$ 
+	$\implies$ $\ws{\inv{\tau}}{e_2'}{e_1'}$.
+
+\begin{theorem} \label{thm:ws exhaustive}
+	\lws-rules exhaustively capture absence of synchronization.
+	\snj{proof in appendix.}
+\end{theorem}
+
+To summarize, Strategy2 builds on two sets of events:
+(i) candidate events that can form a synchronization 
+(captured with $\sw{\inv{\tau}}{}{}$ and 
+$\dob{\inv{\tau}}{}{}$); and
+(ii) candidate events that are originally missing a desired
+synchronization (captured with $\setWS$).
+If the two sets intersect we get the program locations
+for synthesizing fences that would prevent the buggy trace.
+We recognize the intersection by a cycle in  
+$\setWS$ $\union$ $\hb{\inv{\tau}}{}{}$ 
+(that contains $\sw{\inv{\tau}}{}{}$ and $\dob{\inv{\tau}}{}{}$), 
+such as the cycle between $\mathbb{F}^\rel_1$ and 
+$\mathbb{F}^\acq_2$ in the example \hlref{sync}.
+
+Note that, combining \sfence and \wfence for synthesizing only
+\sc ordered fences offers solution that is optimal in the number
+of fences synthesized. 
+%
+The \wfence strategy provides opportunity to synthesize weaker
+fences offering optimality in the number and type of fences.
+%
+In this technique if we recognize a $\hb{\inv{\tau}}{}{}$ $\union$ 
+$\ws{\inv{\tau}}{}{}$ cycle in $\events_{\inv{\tau}}$ then we
+synthesize appropriate weaker fences at the program locations  
+of synthesized fences.
