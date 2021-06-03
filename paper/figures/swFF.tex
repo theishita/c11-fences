@@ -1,0 +1,19 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+\tikzstyle{every node}=[font=\normalfont]
+\node (f1) [inner sep=2pt] {$ f^\rel_1 $};
+\node (f2) [right=25pt of f1,inner sep=2pt] {$ f^\acq_2 $};
+\node (w1) [below left=20pt and -15pt of f1,inner sep=2pt] {$ w_1 $};
+\node (r1) [below left=20pt and -15pt of f2,inner sep=2pt] {$ r_1 $};
+\node (swff) [below right=-2pt and -5pt of wr1] {\hlref{swFF}};
+
+`\draw [->,>=stealth,color=Magenta] (f1) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lsw$ } (f2);
+\draw [->,>=stealth,color=PineGreen] (w1) -- node[midway,above=-2pt,font=\scriptsize,color=black]{\lrf} (r1);
+\draw [->,>=stealth,color=CarnationPink] (f1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (w1);
+\draw [->,>=stealth,color=CarnationPink] (r1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (f2);
+
+%\draw [->,>=stealth,color=orange] ($ (ew1.south east)+(.5,-5pt) $) to[out=135,in=-135] node[midway,right=-2pt,font=\scriptsize] {mo} ($ (ew2.south east)+(0.4,-5pt) $);
+%\draw [->,>=stealth,color=red] ($ (ew1.south west)+(-.3,-5pt) $) to[out=45,in=-45] node[midway,left=-2pt,font=\scriptsize] {c::hb} ($ (ew2.south west)+(-0.3,-5pt) $);
+
+
+\end{tikzpicture}

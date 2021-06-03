@@ -1,0 +1,16 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+	\tikzstyle{every node}=[font=\normalfont]
+	\node (f1) [inner sep=2pt] {$ f^\acq_1 $};
+	\node (f2) [right=25pt of f1,inner sep=2pt] {$ f^\rel_2 $};
+	\node (r1) [below left=25pt and -13pt of f1, inner sep=1pt] {$ r_1 $};
+	\node (w1) [below left=25pt and -15pt of wx, inner sep=1pt] {$ w_1 $};
+	%\node (w1) [below right=2pt and 1pt of f1,inner sep=2pt] {$ w_2 $};
+	\node (wsFF) [below right=0pt and 5pt of r1] {\hlref{wsFF}};
+	
+	\draw [->,>=stealth,color=CarnationPink] (f1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (r1);
+	\draw [->,>=stealth,color=CarnationPink] (w2) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (wx);
+	\draw [->,>=stealth,color=Mahogany] (f1) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lws$ } (wx);
+	\draw [->,>=stealth,color=RoyalPurple] (r2) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lfr$ } (w2);
+	
+\end{tikzpicture}

@@ -24,7 +24,7 @@ MO	= 3						# memory order
 ADDR = 4					# memory address where instr is stored
 VALUE = 5					# value of variable/thread in the instruction
 RF = 6						# rf serial no
-LINE_NO = 7					# line number in source code
+LINE_NO = 7				# line number in source code
 
 # files and CDS Checker related constants
 class file_info:

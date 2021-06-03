@@ -1,0 +1,13 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+\tikzstyle{every node}=[font=\normalfont]
+\node (w1) [inner sep=2pt] {$ w^\rel_1 $};
+\node (r1) [right=25pt of w1,inner sep=2pt] {$ r^\acq_1 $};
+\node (w2) [below left=21pt and -15pt of w1,inner sep=2pt] {$ w_2 $};
+\node (dob) [below right=0pt and -5pt of w2] {\hlref{dob}};
+
+`\draw [->,>=stealth,color=Mulberry] (w1.east) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\ldob$ } (r1.west);
+\draw [->,>=stealth,color=PineGreen] (w2) -- node[midway,below=-2pt,font=\scriptsize,color=black] { $ \lrf $ }  (r1);
+\draw [->,>=stealth,color=CarnationPink] (w1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (w2);
+
+\end{tikzpicture}

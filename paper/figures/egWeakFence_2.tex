@@ -1,0 +1,22 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+\tikzstyle{every node}=[font=\normalfont]
+\node (wy) [inner sep=2pt] {$W^\rlx(y,1)$};
+\node (rx) [right=10pt of wy, inner sep=2pt] {$R^\rlx(x,1)$};
+\node (f1) [below=20pt of wy, inner sep=2pt] {$\mathbb{F}^\rel_1$};
+\node (f2) [below=20pt of rx, inner sep=2pt] {$\mathbb{F}^\acq_2$};
+\node (wx) [below=20pt of f1, inner sep=2pt] {$W^\rlx(x,1)$};
+\node (ry) [below=20pt of f2, inner sep=2pt] {$R^\rlx(y,0)$};
+\node (t) [below right=-1pt and -42pt of wx] {(ii) {\tt Invalid ($\inv{\tau}$)}};
+%
+\draw [->,>=stealth,color=Mahogany] (wy) -- node[midway,left=-2pt,font=\small,color=black] { $\lsb$ } (f1);
+\draw [->,>=stealth,color=Mahogany] (rx) -- node[midway,right=-2pt,font=\small,color=black] { $\lsb$ } (f2);
+\draw [->,>=stealth,color=Mahogany] (f1) -- node[midway,left=-2pt,font=\small,color=black] { $\lsb$ } (wx);
+\draw [->,>=stealth,color=Mahogany] (f2) -- node[midway,right=-2pt,font=\small,color=black] { $\lsb$ } (ry);
+\draw [->,>=stealth,color=PineGreen,opacity=0.5] (wx) -- node[midway,left=-2pt,font=\small,color=black] { $\lrf$ } (rx);
+\draw [->,>=stealth,color=Magenta] (f1.north east) to[out=-165,in=-15] node[midway,above=6pt,font=\small,color=black] { $\lsw$ } node[midway,above=-1pt,font=\small,color=black] {\tt \textcolor{Sepia}{(swFF)} } (f2.north west);
+\draw [->,>=stealth,color=Mahogany] (f2.south west) to[out=15,in=165] node[midway,below=0pt,font=\small,color=black] { $\lws$ } node[midway,below=5pt,font=\small,color=black] {\tt \textcolor{Sepia}{(wsFF)} } (f1.south east);
+
+%(wr1.south east)+(.3,-5pt) $) to[out=135,in=-135]
+
+\end{tikzpicture}

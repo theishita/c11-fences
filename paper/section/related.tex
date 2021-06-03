@@ -1,9 +1,9 @@
 The literature in the  fence synthesis is dominated by 
-techniques targeting the x86-TSO and sparc PSO memory models
+techniques targeting the x86-TSO and sparc-PSO memory models
 such as \cite{abdulla2012counter,alglave2010fences,alglave2014don,linden2011verification,abdulla2012automatic,abdulla2015best,bender2015declarative} 
 for x86-TSO,
 \cite{abdulla2015precise,linden2013verification} 
-for sparc PSO and \cite{liu2012dynamic,meshman2014synthesis,abdulla2013memorax,joshi2015property,kuperstein2012automatic}
+for sparc-PSO and \cite{liu2012dynamic,meshman2014synthesis,abdulla2013memorax,joshi2015property,kuperstein2012automatic}
 for both TSO and PSO.
 %
 The technique \cite{bender2015declarative} additionally
@@ -16,12 +16,35 @@ fence synthesis techniques have been proposed for Power
 memory model 
 \cite{alglave2010fences,abdulla2015precise,fang2003automatic}, 
 where \cite{fang2003automatic} also 
-provides support for IA-32 memory model.
-
-Some of the earlier works in the area 
-\cite{alglave2010fences,abdulla2015precise,fang2003automatic} 
-perform fence synthesis to reduce weak memory behaviors of an 
-input program to those permitted under Sequential Consistency (SC)
-or its variant \cite{abdulla2015best}.
+provides support for IA-32 memory model, and
+\cite{joshi2015property} provides a technique applicable to
+any memory model whose traces can be justified using
+interleaving with reordering.
 %
-%Most techniques \cite{
+\ourtechnique is the first fence synthesis technique for 
+\cc memory model.
+
+Some of the earlier works  
+\cite{alglave2010fences,abdulla2015precise,fang2003automatic} 
+perform fence synthesis to reduce weak memory traces of an 
+input program to those permitted under Sequential Consistency (SC)
+or its variant \cite{abdulla2015best}. Such reduction would
+make the input compatible with the existing verification 
+techniques  for SC memory model.
+%
+Most fence synthesis techniques (including \ourtechnique)
+\cite{meshman2014synthesis}\cite{abdulla2012counter}\cite{abdulla2013memorax}\cite{joshi2015property}\cite{abdulla2015precise}\cite{linden2011verification}\cite{kuperstein2012automatic}\cite{abdulla2012automatic}\cite{linden2013verification}, however, 
+use safety property specifications (usually provided as assert
+statements in the input program) and attempt to remove 
+program traces that violate a safety property.
+
+Some of the techniques discussed above
+\cite{meshman2014synthesis}\cite{taheri2019polynomial}\cite{abdulla2012counter}\cite{abdulla2013memorax}\cite{joshi2015property}\cite{abdulla2015precise}\cite{kuperstein2012automatic}\cite{bender2015declarative} perform optimal fence synthesis, 
+same as \ourtechnique, for their respective memory models.
+%
+The techniques \cite{linden2011verification}\cite{linden2013verification} 
+extend their solution to cyclic programs.
+%
+The technique \cite{joshi2015property} proposes a bounded 
+fence synthesis technique, where they bound the number of 
+reordering to a constant $k$.

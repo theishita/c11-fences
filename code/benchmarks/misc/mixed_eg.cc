@@ -1,3 +1,7 @@
+/**
+ * misc - mixed_eg
+*/
+
 #include <iostream>
 #include <threads.h>
 #include <atomic>

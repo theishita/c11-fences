@@ -1,6 +1,7 @@
-\ourtechnique attempts to invalidate a buggy trace (\aka counter
-example) by inserting \sc ordered fences in the input program $P$
-by the technique discussed in Section~\ref{sec:methodology}.
+\ourtechnique attempts to invalidate a buggy trace 
+by inserting \cc fences in the input program $P$
+by the technique discussed in Sections~\ref{sec:so theory} and
+\ref{sec:methodology}.
 %
 The technique relies on a {\em counter example generator} to provide
 (i) buggy traces (or counter examples) along with (ii)
@@ -12,11 +13,11 @@ owing to the following reasons;
 
 \begin{enumerate}
 	\item \cds is a stateless model checker that returns traces 
-		with assert violations (\aka buggy traces) if any.
+		with assert violations (or buggy traces) if any.
 	
 	\item Unlike competing alternatives, \cds does not halt at the detection 
 		of the first buggy trace instead it continues to provide all buggy 
-		traces.
+		traces as required by \ourtechnique.
 	
 	\item \cds also provides $\setRF$ and $\setSB$ relations between the events 
 		of the buggy trace. The information returned by \cds is sufficient
@@ -45,12 +46,14 @@ discussed in Section~\ref{sec:methodology}.
 The core technique and the pre-processing has been implemented in 
 {\tt Python}.
 \ourtechnique uses {\em Johnson's} algorithm provided in {\em networkx}
-library to detect cycles in the $\setSO$ relation that are built over the \sc
+library to detect cycles in the $\setSO$, $\setHB$ and $\setWS$ relations 
+that are built over 
 events of the intermediate trace that has the complete set 
 of candidate fences (line 8, Algorithm~\ref{alg:fence-syn}).
 %
 Upon finding cycles, \ourtechnique uses \z theorem prover to find the 
-{\em min-model} for the formula containing $\setSO$ cycles (line 13, 
+{\em min-model} (cycle with smallest number of synthesized fences) 
+for the formula representing the detected cycles (line 13, 
 Algorithm~\ref{alg:fence-syn}).
 
 {\bf Time efficient alternative technique:} It was observed that analysis
@@ -60,18 +63,22 @@ by the number of buggy traces returned by \cds.
 As a counter measure we propose a time efficient alternative to the core 
 technique that considers one buggy trace at a time.
 %
-This technique picks any one buggy traces of input program $P$,
-fixes the same by inserting \sc fences and  transforms $P$ to $P'$,
-where $P'$ contains the newly added \sc fences along with the events already
-in $P$. 
+This technique picks any one buggy trace of input program $P$,
+fixes the same by inserting fences and  transforms $P$ to $P'$,
+where $P'$ contains the newly added fences along with the events 
+originally in $P$. 
 %
 The technique then looks for the next buggy trace by invoking \cds 
 with $P'$ as the input program. 
 The process repeats till \cds returns no buggy traces, or
-finds a buggy trace that cannot be fixed with \sc fences.
+finds a buggy trace that cannot be fixed with \cc fences.
 
 \begin{wrapfigure}{l}{0.45\textwidth}
+	\vspace{-2.5em}
 	\begin{tabular}{|l|}
+		\multicolumn{1}{r}{\scriptsize $e_i$: program events,
+			$f_i$: candidate fences} \\
+		
 		\hline
 		$\so{\tau_1}{}{}$ cycles in $\tau_1$\\
 		\tab$\so{\tau_1}{\so{\tau_1}{\so{\tau_1}{f_1}{f_2}}{e_1}}{f_3}$\\
@@ -82,23 +89,23 @@ finds a buggy trace that cannot be fixed with \sc fences.
 		\tab$\so{\tau_2}{\so{\tau_2}{f_3}{f_4}}{f_3}$\\
 		$\formula{\so{\tau_2}{}{}}$ = ($f_3 \^ f_4$)\\
 		\hline
-		\multicolumn{1}{r}{\scriptsize $e_i$: program events,
-					$f_i$: candidate fences}
+				
+		\multicolumn{1}{c}{\footnotesize\hl{3-strong-fence}}
 	\end{tabular}
-	\caption{example showing non-optimality of the efficient version }
-	\label{fig:eg}
+	\vspace{-3em}
 \end{wrapfigure}
 
-The technique is sound, \ie if the buggy behavior(s) can be stopped by 
-inserting \sc fences in the program then the technique will successfully
-invalidate the behavior(s);
+The technique is sound, \ie if the buggy traces can be stopped by 
+inserting \cc fences in the program then the technique will successfully
+invalidate those traces;
 but the technique is not optimal in the number of fences inserted.
 The non-optimality of the efficient version is a result of the reduction
 in information that the technique has to work with (from all buggy traces
 to just one at a time). As a consequence of considering one trace per
 iteration the \z formula is attenuated with terms only from one trace.
 %
-Consider the example in Figure~\ref{fig:eg} depicting $\setSO$ cycles in 
+Consider the example in Figure~\hlref{3-strong-fence} 
+depicting $\setSO$ cycles in 
 two buggy traces of an input program. The primary \ourtechnique 
 technique would provide the formula $\formula{\so{\tau_1}{}{}}$ $\^$ 
 $\formula{\so{\tau_2}{}{}}$ to \z and thus recognize $(f_3 \^ f_4 \^ f_1)$ 
@@ -111,6 +118,6 @@ optimal solution.
 
 However, it was observed from the experimental results that the time
 efficient technique significantly outperforms the primary technique in terms of 
-the analysis time while adding a reasonably small number of extra \sc
+the analysis time while adding a reasonably small number of extra
 fences. The experimental results have been discussed in detail in the 
 following section.
