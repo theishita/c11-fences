@@ -6,7 +6,7 @@ A trace is {\em coherent} (or valid) under \cc if
 the $\setHB$ relation does not violate any {\em coherence rule}
 \cite{batty2011mathematizing}\cite{C11}.
 In this paper we discuss only subsets of $\setHB$ and 
-coherence rules that are relevant to this work.
+coherence rules that are relevant to this work. 
 %
 %
 Let $\setRF$ represent a {\em reads-from} relation \st 
@@ -30,11 +30,16 @@ follows;
 		%
 		As a consequence, every event $e,e'$ \st $\seqb{\tau}{e}{e_w}$ and 
 		$\seqb{\tau}{e_r}{e'}$ are also related as $\ithb{\tau}{e}{e'}$.
+                \svs{If there are other rules that introduce ithb edges among events,
+                then mention it here and say that why they are not need for the
+                exposition of this work.}
 \end{itemize}
 
 Accordingly, two events $e_1,e_2$ in a trace $\tau$ are happens-before 
 related \ie
 $\hb{\tau}{e_1}{e_2}$ if $\seqb{\tau}{e_1}{e_2}$ $\v$ $\ithb{\tau}{e_1}{e_2}$.
+\svs{Is $\hb{\tau}{}{}$ = $\seqb{\tau}{}{} \cup \ithb{\tau}{}{}$ or
+$\hb{\tau}{}{} \Rightarrow \seqb{\tau}{}{} \cup \ithb{\tau}{}{}$?}
 %
 Further, in a trace $\tau$, all write events of an object $x$ are related by a 
 total order called {\em modification-order} ($\setMO$).
@@ -66,7 +71,8 @@ The $\setMO$ order is constructed in compliance to $\setHB$ and $\setRF$.
 %\end{itemize}
 %
 We introduce an irreflexive relation {\em from-reads} ($\setFR$) to relate  
-reads with writes ordered {\em after} it.
+reads with writes ordered {\em after} it. \svs{Why is there a need for this
+relation? Please motivate!}
 
 \begin{definition}[{\em from-reads} $\setFR$]\newline
 	$\forall$ $r {\in} \reads_\tau$, $w {\in} \writes_\tau$
@@ -82,6 +88,9 @@ $\neg(\hb{\tau}{e_1}{e_2}$ $\^$ $\fr{\tau}{e_2}{e_1})$;
 order \sc, called \sc{\em -total-order} ($\setTO$) 
 \cite{LahavVafeiadis-PLDI17} \st
 $\forall e^\sc_1, e^\sc_2 \in \ordevents{\sc}$,
+
+\svs{The rules below start abruptly. Please stitch up some text before
+you list the rules. Why are the needed? What are you going to do with them? }
 
 \begin{itemize}[label=to,align=left,leftmargin=*]
 	\item [\hl{toHb}:]
@@ -119,3 +128,4 @@ Similar to program events, $\setITHB$ relation can also be formed
 between \cc fences 
 \cite{batty2011mathematizing}\cite{C11}, we discuss the necessary
 details of the same in the following section.
+\svs{Give couple of pictorial examples and use them in your explanations.}
