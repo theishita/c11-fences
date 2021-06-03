@@ -1,5 +1,6 @@
 \ourtechnique attempts to invalidate a buggy trace (\aka counter
-example) by one of the following two strategies:
+example) by one of the following two strategies. \svs{why two separate strategies
+are required (one for sc and one for non-sc)? You must motivate this first.}:
 \begin{itemize}[label=strategy1,align=left,leftmargin=*]
 	\item [Strategy1]:
 		Invalidate by violating \sc-total-order.
@@ -7,6 +8,9 @@ example) by one of the following two strategies:
 		Invalidate by inter-thread synchronization.
 \end{itemize}
 
+\svs{I don't like the word invalidating traces when semantically you are
+suggesting that these invalidated traces are actually fixed traces. Suggest
+some alternatives. }
 \noindent
 {\bf Strategy1: Invalidate by violating \sc-total-order. 
 	(\sfence)}\newline
