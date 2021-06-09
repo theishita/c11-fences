@@ -11,7 +11,7 @@ class hb:
 		# print(trace)
 		# self.sb_edges = []									# list of all sb edges between instructions
 		self.sw_edges = []									# list of all sw edges between instructions
-		self.to_edges = []									# list of to edges between instructions
+		self.so_edges = []									# list of to edges between instructions
 		self.size = max(map(lambda x: x[0], trace))			# number of instructions in the execution trace
 		self.size += 1
 		self.mat = Graph(self.size)
@@ -22,7 +22,7 @@ class hb:
 		self.complete_matrix()
 
 	def get(self):
-		return self.mat, self.size, self.to_edges
+		return self.mat, self.size, self.so_edges
 
 	# adds all transitive relations
 	def complete_matrix(self):
@@ -65,7 +65,7 @@ class hb:
 				v2 = v1+1
 				self.mat.addEdge(v1,v2)
 				# self.sw_edges.append((v1,v2))
-				self.to_edges.append((v1,v2))
+				self.so_edges.append((v1,v2))
 
 
 			# create sw's between thread finish and join statements
@@ -77,7 +77,7 @@ class hb:
 						v2 = trace[i][S_NO]
 						# self.sw_edges.append((v1,v2))
 						self.mat.addEdge(v1,v2)
-						self.to_edges.append((v1,v2))
+						self.so_edges.append((v1,v2))
 
 			# create sw's between read/rmw and write/rmw statements - based on rf
 			if trace[i][TYPE] == READ or trace[i][TYPE] == RMW:
@@ -90,7 +90,7 @@ class hb:
 					self.mat.addEdge(trace[j][S_NO],trace[i][S_NO])
 					# if they are of memory order sc, then they need to also be counted as TO edges
 					if trace[j][MO] == SEQ_CST and trace[i][MO] == SEQ_CST:
-						self.to_edges.append((trace[j][S_NO],trace[i][S_NO]))
+						self.so_edges.append((trace[j][S_NO],trace[i][S_NO]))
 			
 				# dob rule
 				# elif trace[j][MO] not in write_models and trace[i][MO] in read_models:
@@ -103,5 +103,5 @@ class hb:
 				# 			self.mat.addEdge(trace[a][S_NO],trace[i][S_NO])
 				# 			# if they are of memory order sc, then they need to also be counted as TO edges
 				# 			if trace[a][MO] == SEQ_CST and trace[i][MO] == SEQ_CST:
-				# 				self.to_edges.append((trace[a][S_NO],trace[i][S_NO]))
+				# 				self.so_edges.append((trace[a][S_NO],trace[i][S_NO]))
 

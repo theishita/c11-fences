@@ -5,7 +5,7 @@ def preprocessing(order):
   writes = []
 
   for i in range(len(order)):
-    if order[i][TYPE] == WRITE or order[i][TYPE] == RMW:
+    if order[i][TYPE] == WRITE or order[i][TYPE] == RMW or order[i][TYPE] == INIT:
       writes.append(order[i-1])
       writes.append(order[i])
       writes.append(order[i+1])

@@ -13,6 +13,7 @@
 from pre_calculators.hb_calculator.hb import hb
 from pre_calculators.mo_calculator.mo import mo
 from preprocessing import preprocessing
+from edges_computation import edges_computation
 from to import to
 from cycle import Cycles
 from z3translate import z3translate
@@ -39,7 +40,8 @@ class Processing:
 			self.sc_sb_edges = []										# list of sb edge pairs between all sc events
 			self.fences_thread = []										# list of fences in each thread
 			self.fences_in_trace = []									# list of fences already present in the program
-			self.to_edges = []											# list of all TO edge tuples
+			self.so_edges = []											# list of all SO edge tuples
+			self.hb_edges = []											# list of all SW+DOB+WS edge tuples
 			self.cycles = []                                            # list of all cycles between the fences and events
 			self.loc_info = {}                                          # information regarding the required fence locations
 
@@ -49,11 +51,11 @@ class Processing:
 			pre_calc_start = time.time()
 			# HB
 			hb_graph = hb(trace)
-			hb_matrix, size, self.to_edges = hb_graph.get()
+			hb_matrix, size, self.so_edges = hb_graph.get()
 
 			# MO
-			get_mo = mo(trace, hb_matrix, size, self.to_edges)
-			mo_edges, self.to_edges = get_mo.get()
+			get_mo = mo(trace, hb_matrix, size, self.so_edges)
+			mo_edges, self.so_edges = get_mo.get()
 			# print("mo =",mo_edges)
 			pre_calc_end = time.time()
 			self.pre_calc_total += (pre_calc_end-pre_calc_start)
@@ -66,18 +68,28 @@ class Processing:
 
 			# transitive SB
 			self.sb()
-			self.to_edges += self.sc_sb_edges
+			self.so_edges += self.sc_sb_edges
 
 			# pre-process and obtain separately reads, writes with neighbouring fences
 			reads, writes = preprocessing(order)
 
 			# TO
-			calc_to = to(order, reads, writes, self.fences_thread, mo_edges, self.to_edges)
-			self.to_edges = calc_to.get()
-			# print("to =",self.to_edges)
+			# calc_to = to(order, reads, writes, self.fences_thread, mo_edges, self.so_edges)
+			# self.so_edges = calc_to.get()
+			# print("to =",self.so_edges)
+
+			# CALC EDGES
+			calc_edges = edges_computation(order, reads, writes, self.fences_thread, self.so_edges, mo_edges)
+			calc_edges.compute_all_edges()
+			self.so_edges, self.hb_edges = calc_edges.get()
+			print("so = ", self.so_edges)
+			print("hb = ", self.hb_edges)
 			
 			# CYCLES
-			cycles = Cycles(self.to_edges)
+			so_cycles = Cycles(self.so_edges)
+			hb_cycles = Cycles(self.hb_edges)
+			# hb_cycles = []
+			cycles = so_cycles + hb_cycles
 			# print("no cycles=",len(cycles))
 			# print("cycles =",cycles)
 

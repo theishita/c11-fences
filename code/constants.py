@@ -26,6 +26,10 @@ VALUE = 5					# value of variable/thread in the instruction
 RF = 6						# rf serial no
 LINE_NO = 7				# line number in source code
 
+# models
+write_models = [REL, ACQ_REL, SEQ_CST]
+read_models = [ACQ, ACQ_REL, SEQ_CST]
+
 # files and CDS Checker related constants
 class file_info:
 	Z3_FILE = "compute_fences"
