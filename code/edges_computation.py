@@ -13,7 +13,6 @@ class edges_computation:
 		self.hb_edges = []
 	
 	def compute_all_edges(self):
-		# self.test()
 		self.rffr()
 		self.mo()
 	
@@ -21,16 +20,6 @@ class edges_computation:
 		self.so_edges = list(set(self.so_edges))
 		self.hb_edges = list(set(self.hb_edges))
 		return self.so_edges, self.hb_edges
-	
-	def test(self):
-		for wr2_index in range(len(self.reads)):
-			wr2 = self.reads[wr2_index]
-
-			if (type(wr2) is list):
-				try: wr1_index = next(i for i,v in enumerate(self.writes)
-						if (type(v) is list) and (v[S_NO] == wr2[RF]))
-				except: continue
-				wr1 = self.writes[wr1_index]
 
 	def rffr(self):
 		# rf
@@ -153,7 +142,7 @@ class edges_computation:
 					
 					wr4_SNOs = []
 					wr5_SNOs = []
-					for wr5_index in range(wr3_index, len(self.writes)):
+					for wr5_index in range(wr3_index+1, len(self.writes)):
 						wr5 = self.writes[wr5_index]
 						if (type(wr5) is list) and (wr5[T_NO] == wr3[T_NO]) and (wr5[MO] in write_models):
 							wr5_SNOs.append(wr5[S_NO])
