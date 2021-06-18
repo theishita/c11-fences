@@ -31,6 +31,8 @@ class Processing:
 		self.fences_present_locs = []
 		self.error_string = ''
 		self.pre_calc_total = 0									# time taken for calculation of initial values - HB, MO, SB
+		self.hb_cycles = []
+		self.so_cycles = []
 
 		trace_no = 0
 		# print("traces=",traces)
@@ -42,8 +44,8 @@ class Processing:
 			self.fences_in_trace = []									# list of fences already present in the program
 			self.so_edges = []											# list of all SO edge tuples
 			self.hb_edges = []											# list of all SW+DOB+WS edge tuples
-			self.cycles = []                                            # list of all cycles between the fences and events
-			self.loc_info = {}                                          # information regarding the required fence locations
+			self.cycles = []                        # list of all cycles between the fences and events
+			loc_info = {}                                          # information regarding the required fence locations
 
 			trace_no += 1
 			# print("---------Trace",trace_no,"---------")
@@ -82,41 +84,59 @@ class Processing:
 			calc_edges = edges_computation(order, reads, writes, self.fences_thread, self.so_edges, mo_edges)
 			calc_edges.compute_all_edges()
 			self.so_edges, self.hb_edges = calc_edges.get()
-			print("so = ", self.so_edges)
-			print("hb = ", self.hb_edges)
+			# print("so = ", self.so_edges)
+			# print("hb = ", self.hb_edges)
 			
 			# CYCLES
 			so_cycles = Cycles(self.so_edges)
 			hb_cycles = Cycles(self.hb_edges)
 			# hb_cycles = []
 			cycles = so_cycles + hb_cycles
+			cycles = [list(item) for item in set(tuple(row) for row in cycles)] # removing duplicate values
 			# print("no cycles=",len(cycles))
 			# print("cycles =",cycles)
 
-			unique_fences = list(sorted(set(x for l in cycles for x in l)))
-			unique_fences = [uf for uf in unique_fences if 'F' in uf]
+			cycles_with_only_fences = []
+			for i in range(len(cycles)):
+				cycles_with_only_fences.append([c for c in cycles[i] if type(c) is str])
+			cycles_with_only_fences = [list(item) for item in set(tuple(sorted(row)) for row in cycles_with_only_fences)] # removing duplicate values
+			unique_fences = list(sorted(set(x for l in cycles_with_only_fences for x in l)))
 			# print("unique_fences=",unique_fences)
-			# converted_cycs = []
+			# print("cycles_with_only_fences =",cycles_with_only_fences)
+
 			if len(unique_fences)>0:
 				for fence in unique_fences:
 					i = order.index(fence)
 					fence_name = order[i]
 					var_name = 'l'+str(order[i-1][LINE_NO])
-					self.loc_info[fence_name] = var_name
+					loc_info[fence_name] = var_name
 					
 					# check for the fences already present in input prgm and replace them with these variables
 					if (fence in self.fences_in_trace) and (var_name not in self.fences_present):
 						self.fences_present.append(var_name)
 						self.fences_present_locs.append(order[i-1][LINE_NO])
 			
-				# for cyc in cycles:
-				# 	x = []
-				# 	for c in cyc:
-				# 		x.append(self.loc_info[c])
-				# 	converted_cycs.append(x)
-				# print("cycles =",converted_cycs)
+				# print("fences loc_info =",loc_info)
 
-				get_translation = z3translate(cycles, self.loc_info)
+				for cyc in so_cycles:
+					x = []
+					for c in cyc:
+						if type(c) is str:
+							x.append(loc_info[c])
+						else:
+							x.append(c)
+					self.so_cycles.append(x)
+
+				for cyc in hb_cycles:
+					x = []
+					for c in cyc:
+						if type(c) is str:
+							x.append(loc_info[c])
+						else:
+							x.append(c)
+					self.hb_cycles.append(x)
+
+				get_translation = z3translate(cycles_with_only_fences, loc_info)
 				consts, translation = get_translation.get()
 
 				for con in consts:
@@ -182,4 +202,4 @@ class Processing:
 					self.sc_sb_edges.append((i[j],i[k]))
 
 	def get(self):
-		return self.fences_present, self.fences_present_locs, self.z3vars, self.disjunctions, self.error_string, self.pre_calc_total
+		return self.fences_present, self.fences_present_locs, self.z3vars, self.disjunctions, self.error_string, self.pre_calc_total, self.hb_cycles, self.so_cycles, self.hb_edges

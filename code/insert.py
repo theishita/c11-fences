@@ -1,5 +1,6 @@
 from operator import itemgetter
 from constants import file_info as fi
+from constants import *
 
 def insert(loc, filename, fences_present_locs):
 	with open(filename) as f:
@@ -12,7 +13,7 @@ def insert(loc, filename, fences_present_locs):
 		filename_new = filename[:extension_length]+fi.OUTPUT_FILE_APPEND_STRING
 
 	output_file = open(filename_new,'w')
-	fence_instr = fi.FENCE_INSTRUCTION+'\n'
+	fence_instr = fi.FENCE_INSTRUCTIONS[SEQ_CST]+'\n'
 
 	for i in loc:
 		if i not in fences_present_locs:

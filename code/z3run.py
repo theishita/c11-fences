@@ -21,7 +21,7 @@ def z3run(z3vars, disjunctions, fences_present):
 	z3_end = time.time()
 	output = output.decode('utf-8')
 
-	req_locs = []														# list of the final required locations
+	req_fences = []														# list of the final required locations
 
 	output = output.split('\n')
 	in_model = 0														# flag to tell whether the output is describing the model or not
@@ -37,12 +37,12 @@ def z3run(z3vars, disjunctions, fences_present):
 				val = output[i+1][6]									# variable's value (0 or 1)
 
 				if val == '1':											# if value is one, the location is a required location
-					req_locs.append(int(var[1:]))
+					req_fences.append(var)
 
 		if line == '(model ':
 			in_model += 1												# model is starting now
 
-	return req_locs, (z3_end-z3_start)
+	return req_fences, (z3_end-z3_start)
 
 # obtains index location where the variable name ends
 def get_var(line):
