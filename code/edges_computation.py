@@ -93,7 +93,7 @@ class edges_computation:
 				for wr3_index in range(wr1_index):
 					wr3 = self.writes[wr3_index]
 					if (type(wr3) is list) and (wr3[T_NO] == wr1[T_NO]) and (wr3[MO] in write_models):
-						f = self.writes[wr3_index+1]
+						f = self.reads[wr2_index+1]
 						f_index = self.fences_thread[wr2_thread].index(f)
 
 						for f_in_sb_index in range(f_index, len(self.fences_thread[wr2_thread])):
