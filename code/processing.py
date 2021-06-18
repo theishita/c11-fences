@@ -88,10 +88,10 @@ class Processing:
 			# print("hb = ", self.hb_edges)
 			
 			# CYCLES
-			so_cycles = Cycles(self.so_edges)
-			hb_cycles = Cycles(self.hb_edges)
+			self.so_cycles = Cycles(self.so_edges)
+			self.hb_cycles = Cycles(self.hb_edges)
 			# hb_cycles = []
-			cycles = so_cycles + hb_cycles
+			cycles = self.so_cycles + self.hb_cycles
 			cycles = [list(item) for item in set(tuple(row) for row in cycles)] # removing duplicate values
 			# print("no cycles=",len(cycles))
 			# print("cycles =",cycles)
@@ -117,24 +117,6 @@ class Processing:
 						self.fences_present_locs.append(order[i-1][LINE_NO])
 			
 				# print("fences loc_info =",loc_info)
-
-				for cyc in so_cycles:
-					x = []
-					for c in cyc:
-						if type(c) is str:
-							x.append(loc_info[c])
-						else:
-							x.append(c)
-					self.so_cycles.append(x)
-
-				for cyc in hb_cycles:
-					x = []
-					for c in cyc:
-						if type(c) is str:
-							x.append(loc_info[c])
-						else:
-							x.append(c)
-					self.hb_cycles.append(x)
 
 				get_translation = z3translate(cycles_with_only_fences, loc_info)
 				consts, translation = get_translation.get()
@@ -182,7 +164,10 @@ class Processing:
 					self.fences_thread.append(fences_in_thread)
 				continue
 
-			fence_name = 'F'+str(current_thread)+'n'+str(fence_no)
+			if trace[i][LINE_NO] != 'NA':
+				fence_name = 'l'+str(trace[i][LINE_NO])
+			else:
+				fence_name = 'F'+str(current_thread)+'n'+str(fence_no)
 			fence_no += 1
 
 			order.append(fence_name)
