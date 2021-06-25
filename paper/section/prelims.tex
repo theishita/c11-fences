@@ -37,12 +37,14 @@ rf and mo together are insufficient and why we need hb additionally? }
 \snj{$\events_\tau$ is just a representative symbol, it is not parametric on $\tau$.
 The set $\events_\tau \subseteq \events$.}
 \svs{I don't buy this argument. Read below how you have defined $\events_\tau$!}
+\snj{rewritten, is it better?}
 	A trace or a maximal execution $\tau$ of the input 
 	program $P$ under \cc is a tuple 
 	$\langle \events_\tau, \setHB, \setMO, \setRF \rangle$, where
 	\begin{itemize}[label=sethb,align=left,leftmargin=*]
-		\item [$\events_\tau$] represents the set of events in the trace $\tau$,
-		\item [$\setHB$] ({\em Happen\added{s}-before}) is a partial order relation
+		\item [$\events_\tau$] $\subseteq \events$ represents the set of 
+			events in the trace $\tau$,
+		\item [$\setHB$] ({\em Happens-before}) is a partial order relation
 			$\subseteq \events_\tau \times \events_\tau$\added{, which captures}
                         \deleted{represent} the event interactions and inter-thread
 			synchronizations, discussed in Section~\ref{sec:c11},
@@ -130,7 +132,8 @@ program $P$ {\em fixed} or free of bugs (represented as $\fx{P}$).
 
 \noindent
 {\bf Relational Operators}: 
-We use $R^{-1}$ to represent the inverse of a relation $R$ and 
+We use $R^{-1}$ to represent the inverse of a relation $R$,
+$R^+$ to represent the transitive closure of $R$ and 
 $R_1;R_2$ to represent the composition of relations $R_1$ and $R_2$.
 Let $\onsc{R}$ represent a subset of a relation $R$ on \sc events;
 \ie $(e_1,e_2) \in \onsc{R}$ $\iff$ $(e_1,e_2) \in R$ $\^$
@@ -138,3 +141,5 @@ $e_1,e_2 \in \ordevents{\sc}$. Note that we also use the infix
 notation $e_1Re_2$ for $(e_1,e_2) \in R$.
 \svs{Complete the discussion. Also mention $R^{+}$, etc. I read later the use of
 $R^{-}$, and I do not like it. It is better to use $\notin$ operator instead.}
+\snj{$R^+$ added. By $R^-$ are you referring to $R^{-1}$? $R^{-1}$ gives a relation
+	= inverse of a relation $R$. $\notin$ gives a boolean, they are not the same.}

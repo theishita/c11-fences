@@ -1,117 +1,110 @@
+As discussed in Section~\ref{sec:preliminaries},
+the \cc memory model defines a program trace by forming a set
+of relations on the program events that follow \cc {\em coherence
+rules}. 
+%
+\cc maintains {\em release sequences} in a trace that assist in
+forming the event relations. A release sequence is the longest 
+contiguous sequence of write (or rmw) events on an object $o$,
+headed by a \rel or stricter write (or rmw) event, called a
+{\em release head}. 
+%
+The sequence includes all events modification-ordered after the
+release head and is broken by a weak write event from another thread.
+
 The \cc memory model introduces an irreflexive and acyclic relation 
 over the events of a trace $\tau$ called the {\em happens-before} 
 relation ($\setHB$),
  \st $\setHB \subseteq \events_\tau {\times} \events_\tau$.
-A trace is {\em coherent} (or valid) under \cc if 
-the $\setHB$ relation does not violate any {\em coherence rule}
-\cite{batty2011mathematizing}\cite{C11}.
-In this paper we discuss only subsets of $\setHB$ and 
-coherence rules that are relevant to this work. 
 %
-%
-Let $\setRF$ represent a {\em reads-from} relation \st 
-$\rf{\tau}{w_1}{r_1}$ signifies that $r_1 \in \reads_\tau$ 
-read its value from $w_1 \in \writes_\tau$ in trace $\tau$.
-The events of a trace $\tau$ are related by the $\setHB$ as 
-follows;
-\begin{itemize}
-	\item {\em Intra-thread-hb}: Events of a thread $P_i$  are 
-		related by {\em sequenced-before} relation ($\setSB$) in 
-		their order of occurrence in $P_i$.
+The happens-before relation is constructed by taking a union
+of {\em sequenced-before} ($\setSB$) and {\em inter-thread-hb}
+($\setITHB$). The components of happens-before are discussed
+below.
+
+\noindent
+{\bf Sequenced-before($\setSB$)}: Events of a thread $P_i$  are 
+	related by the {\em sequenced-before} relation ($\setSB$) in 
+	their order of occurrence in $P_i$.
 	
-	\item {\em Inter-thread-hb}: When a strict write $e_w$ (memory order
-		\rel or stricter) and a strict read $e_r$ (memory order \acq or
-		stricter) from different threads are related as 
-		$\rf{\tau}{e_w}{e_r}$, they are also 
-		related by an {\em inter-thread-hb} relation ($\setITHB$).
-		%
-		This forms a synchronization between the threads of $e_w$
-		and $e_r$. 
-		%
-		As a consequence, every event $e,e'$ \st $\seqb{\tau}{e}{e_w}$ and 
-		$\seqb{\tau}{e_r}{e'}$ are also related as $\ithb{\tau}{e}{e'}$.
-                \svs{If there are other rules that introduce ithb edges among events,
-                then mention it here and say that why they are not need for the
-                exposition of this work.}
-\end{itemize}
+\noindent
+{\bf Synchronizes-with($\setSW$)}: When a strict write $e_w$ 
+	(memory order \rel or stricter) and a strict read $e_r$ 
+	(memory order \acq or stricter) from different threads are 
+	related as $\rf{\tau}{e_w}{e_r}$, they are also 
+	related by the synchronizes-with as
+	$\sw{\tau}{e_w}{e_r}$.
 
-Accordingly, two events $e_1,e_2$ in a trace $\tau$ are happens-before 
+\noindent
+{\bf Dependency-ordered-before($\setDOB$)}: When a strict read 
+	$e_r$ (memory order \acq or stricter) is related to a write
+	$e_w$ as $\rf{\tau}{e_w}{e_r}$ where $e_w$ belongs to the
+	release sequence of a strict write $e_w'$ (memory order \rel 
+	or stricter), $e_w'$ and $e_r$ are also related by the
+	dependency-ordered-before \ie $\dob{\tau}{e_w'}{e_r}$.
+	
+\noindent
+{\bf Inter-thread-hb($\setITHB$)}: The $\setSW$ and $\setDOB$
+	relations form an inter-thread-hb between their corresponding 
+	threads \ie $\sw{\tau}{e_w}{e_r}$ or $\dob{\tau}{e_w}{e_r}$
+	$\implies$ $\ithb{\tau}{e_w}{e_r}$. Further
+	all events $e,e'$ \st $\seqb{\tau}{e}{e_w}$ and 
+	$\seqb{\tau}{e_r}{e'}$ are also related as $\ithb{\tau}{e}{e'}$.
+
+Thus, two events $e_1,e_2$ in a trace $\tau$ are happens-before 
 related \ie
-$\hb{\tau}{e_1}{e_2}$ if $\seqb{\tau}{e_1}{e_2}$ $\v$ $\ithb{\tau}{e_1}{e_2}$.
-\svs{Is $\hb{\tau}{}{}$ = $\seqb{\tau}{}{} \cup \ithb{\tau}{}{}$ or
-$\hb{\tau}{}{} \Rightarrow \seqb{\tau}{}{} \cup \ithb{\tau}{}{}$?}
+$\hb{\tau}{e_1}{e_2}$ if $\seqb{\tau}{e_1}{e_2}$ $\v$ 
+$\ithb{\tau}{e_1}{e_2}$.
 %
-Further, in a trace $\tau$, all write events of an object $x$ are related by a 
-total order called {\em modification-order} ($\setMO$).
+As discussed previously, in a trace $\tau$, all write events of 
+an object $o$ are related by a total order called 
+{\em modification-order} ($\setMO$).
 %
-The $\setMO$ order is constructed in compliance to $\setHB$ and $\setRF$. 
+The $\setMO$ order is constructed in compliance with $\setHB$ and 
+$\setRF$ such that $\setMO$, $\setRF$ and $\setHB$ must not 
+disagree.
 %
-%The set of $\setMO$ rules are,
-%\begin{itemize}[label=moWW,align=left,leftmargin=*]
-%	\item [\hl{moWW}:] $\forall w_1, w_2 \in \writes_\tau$ if $\hb{\tau}{w_1}{w_2}$ then
-%						$\mo{\tau}{w_1}{w_2}$\newline
-%						($\setHB$ ordered writes are ordered by $\setMO$);
-%	\item [\hl{moRR}:] $\forall r_1, r_2 \in \reads_\tau$ \st $\hb{\tau}{r_1}{r_2}$
-%						and $\exists \rf{\tau}{w_1}{r_1}$
-%						then $\rf{\tau}{w_1}{r_2}$ $\v$ $\exists \rf{\tau}{w_2}{r_2}$
-%						and $\mo{\tau}{w_1}{w_2}$\newline
-%						($\setHB$ between reads forms $\setMO$ between their source
-%						writes (if they are different events));
-%	\item [\hl{moRW}:] $\forall r_1 \in \reads_\tau$, $w_1 \in \writes_\tau$ \st
-%						$\hb{\tau}{r_1}{w_1}$ then $\exists \rf{\tau}{w_2}{r_1}$ and
-%						$\mo{\tau}{w_2}{w_1}$\newline
-%						($\setHB$ order from a read to a write forms $\setMO$ between the
-%						source of the read and the hb-after write);
-%	\item [\hl{moWR}:] $\forall w_1 \in \writes_\tau$, $r_1 \in \reads_\tau$ \st
-%						$\hb{\tau}{w_1}{r_1}$ then $\rf{\tau}{w_1}{r_1}$ $\v$
-%						$\exists \rf{\tau}{w_2}{r_1}$ and $\mo{\tau}{w_1}{w_2}$\newline
-%						($\setHB$ order from a write to a read forms $\setMO$ between
-%						the write and the source of the read (if the two are
-%						different events)).
-%\end{itemize}
+To meet the requirement \cc introduces a set of
+coherence rules listed below \cite{LahavVafeiadis-PLDI17}.
+A valid \cc trace must satisfy the conjunction
+of the coherence rules.
 %
-We introduce an irreflexive relation {\em from-reads} ($\setFR$) to relate  
-reads with writes ordered {\em after} it. \svs{Why is there a need for this
-relation? Please motivate!}
+\newline $\setHB$ is irreflexive
+\newline $\setRF;\setHB$ is irreflexive
+\newline $\setMO;\setRF;\setHB$ is irreflexive
+\newline $\setMO;\setHB$ is irreflexive
+\newline $\setMO;\setHB;\setRF^{-1}$ is irreflexive
+\newline $\setMO;\setRF;\setHB;\setRF^{-1}$ is irreflexive
 
-\begin{definition}[{\em from-reads} $\setFR$]\newline
-	$\forall$ $r {\in} \reads_\tau$, $w {\in} \writes_\tau$
-	if $(r,w){\in}\setRF^{-1}{;}\setMO$ then $\fr{\tau}{r}{w}$.
+Finally, all \sc ordered events in a trace $\tau$ must be related
+by a total order ($\setTO$) that concurs with the coherence rules.
+%
+We introduce an irreflexive relation called {\em from-reads} $\setFR$ 
+that relates read events with write events ordered after it.
+%
+The relation from-reads is typically used for stricter memory models 
+that relate all events of a trace by a total order,
+such as sequentially-consistent memory model or TSO memory model.
+\cc model constitutes a similar requirement on the \sc ordered
+events of a trace and we use $\setFR$ it to define the $\setTO$
+relation.
+%
+\begin{definition}[{\em from-reads} $\setFR$]
+	$\setFR$ = $\setRF^{-1}$;$\setMO$
 \end{definition}
-% 
-A coherent \cc trace must:
-(i) forbid read of a write that is happens-before 
-hidden by a later write in $\setMO$, in other words, 
-$\neg(\hb{\tau}{e_1}{e_2}$ $\^$ $\fr{\tau}{e_2}{e_1})$;
 %
-(ii) form a total order on all events with memory
-order \sc, called \sc{\em -total-order} ($\setTO$) 
-\cite{LahavVafeiadis-PLDI17} \st
-$\forall e^\sc_1, e^\sc_2 \in \ordevents{\sc}$,
+Thus, the $\setTO$ must be constructed such that,
 
-\svs{The rules below start abruptly. Please stitch up some text before
-you list the rules. Why are the needed? What are you going to do with them? }
+if 
+$\to{\tau}{e^\sc_1}{e^\sc_2}$ then 
+$\nhb{\tau}{e^\sc_2}{e^\sc_1}$ $\^$
+$\nmo{\tau}{e^\sc_2}{e^\sc_1}$ $\^$
+$\nrf{\tau}{e^\sc_2}{e^\sc_1}$ $\^$
+$\nfr{\tau}{e^\sc_2}{e^\sc_1}$.
 
-\begin{itemize}[label=to,align=left,leftmargin=*]
-	\item [\hl{toHb}:]
-			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nhb{\tau}{e^\sc_2}{e^\sc_1}$ 
-			(\sc-total-order is coherent \wrt $\setHB$)
-	\item [\hl{toMo}:]
-			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nmo{\tau}{e^\sc_2}{e^\sc_1}$
-			(\sc-total-order is coherent \wrt $\setMO$)
-	\item [\hl{toFr}:] 
-			$\to{\tau}{e^\sc_1}{e^\sc_2}$ $\implies$ $\nfrsc{\tau}{e^\sc_2}{e^\sc_1}$
-			(\sc-total-order is coherent \wrt $\setFR$)
-%\item $$
-	\item [\hl{toRf}:] if 
-			$\rf{\tau}{e_w}{e^\sc_2}$ then $\nexists$ $e^\sc_1 \in \ordwrites{\sc}_\tau$
-			\st $\to{\tau}{\mo{\tau}{e_w}{e^\sc_1}}{e^\sc_2}$.\newline
-			(an \sc read must read from its immediate \lmo before write)
-\end{itemize}
-%
-
-In our technique we attempt to break the acyclicity requirement over
-$\setHB$ and $\lto$-rules by strategically placing \cc fences in 
+\noindent
+In our technique we attempt to break the irreflexivity of either
+a coherence rules or $\setTO$ by strategically placing \cc fences in 
 the input program, as discussed in Section~\ref{sec:so theory}.
 
 \noindent
@@ -124,8 +117,68 @@ A fence can be associated with memory orders $\rel$, $\acq$,
 $\acqrel$ and $\sc$
 providing varying degrees of reordering restrictions.
 %
-Similar to program events, $\setITHB$ relation can also be formed 
-between \cc fences 
-\cite{batty2011mathematizing}\cite{C11}, we discuss the necessary
-details of the same in the following section.
-\svs{Give couple of pictorial examples and use them in your explanations.}
+Similar to program events, $\setSW$ and $\setDOB$ relations can also 
+be formed between \cc fences and program events
+\cite{batty2011mathematizing}\cite{C11} where an appropriately
+placed fence assists a relaxed event in forming the necessary 
+synchronization, as shown in the figure below.
+%
+\begin{figure}[h]
+	\begin{tabular}{|c|c|c|c||c|c|}
+		\hline
+		\resizebox{0.13\textwidth}{!}{\input{figures/sw.tex}} &
+		\resizebox{0.14\textwidth}{!}{\input{figures/swEF.tex}} &
+		\resizebox{0.14\textwidth}{!}{\input{figures/swFE.tex}} &
+		\resizebox{0.17\textwidth}{!}{\input{figures/swFF.tex}} &
+		
+		\resizebox{0.16\textwidth}{!}{\input{figures/dob.tex}} &
+		\resizebox{0.17\textwidth}{!}{\input{figures/dobEF.tex}} \\
+		\hline
+		\multicolumn{4}{c}{(a) \lsw relation} &
+		\multicolumn{2}{c}{(b) \ldob relation} \\
+	\end{tabular}
+	\label{fig:sw}
+\end{figure}
+
+\noindent
+Formally, $\setSW$ relation is formed using fences as,
+
+$\forall e_1, e_2 \in \events_\tau$ \st $\rf{\tau}{e_1}{e_2}$
+
+if
+$e_1 \in \ordwrites{\moge\rel}_\tau$, 
+$\exists \mathbb{F}^\acq \in \ordfences{\moge\acq}_{\tau}$ where
+$\seqb{\tau}{e_2}{\mathbb{F}^\acq}$ then
+$\sw{\tau}{e_1}{\mathbb{F}^\acq}$;
+
+if
+$e_2 \in \ordreads{\moge\acq}_\tau$, 
+$\exists \mathbb{F}^\rel \in \ordfences{\moge\rel}_{\tau}$ where
+$\seqb{\tau}{\mathbb{F}^\rel}{e_1}$ then
+$\sw{\tau}{\mathbb{F}^\rel}{e_2}$;
+
+if
+$\exists \mathbb{F}^\rel \in \ordfences{\moge\rel}_{\tau}$,
+$\mathbb{F}^\acq \in \ordfences{\moge\acq}_{\tau}$ where
+$\seqb{\tau}{\mathbb{F}^\rel}{e_1}$,
+$\seqb{\tau}{e_2}{\mathbb{F}^\acq}$ 
+
+then
+$\sw{\tau}{\mathbb{F}^\rel}{\mathbb{F}^\acq}$.
+
+\noindent
+Similarly, $\setDOB$ relation is formed using fences as,
+
+$\forall e_1, e_2 \in \events_\tau$, 
+$e_1' \in \ordwrites{\moge\rel}_\tau$ \st $\rf{\tau}{e_1}{e_2}$
+and $e_1 \in$ {\em release-sequence}($e_1'$)
+
+if $\exists \mathbb{F}^\acq \in \ordfences{\moge\acq}_{\tau}$ 
+where $\seqb{\tau}{e_2}{\mathbb{F}^\acq}$ then
+$\dob{\tau}{e_1'}{\mathbb{F}^\acq}$.
+
+\noindent
+Further, as is the case with program events,
+if $\sw{\tau}{e_1}{e_2}$ or $\dob{\tau}{e_1}{e_2}$ then
+events $e_1',e_2'$ \st $\seqb{\tau}{e_1'}{e_1}$ and 
+$\seqb{\tau}{e_2}{e_2'}$ are related as $\ithb{\tau}{e}{e'}$.
