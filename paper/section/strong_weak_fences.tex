@@ -15,7 +15,7 @@ some alternatives. }
 fixed the trace has been removed from the set of traces.}
 \noindent
 {\bf Strategy1: Invalidate by violating \sc-total-order. 
-	(\sfence)}\newline
+	(\stfence)}\newline
 Consider a buggy input program $P$.
 %
 As discussed in Section~\ref{sec:c11}, in a valid trace of $P$ 
@@ -82,7 +82,7 @@ The trace $\inv{\tau}$
 then is not a valid \cc trace and the buggy trace $\tau$ 
 has been invalidated.
 %
-Thus, the aim of \sfence is to synthesis \sc-fences in the input program $P$
+Thus, the aim of \stfence is to synthesis \sc-fences in the input program $P$
 at appropriate locations that would force a cyclic $\setSO$ 
  in the \sc ordered events of a transformed trace $\inv{\tau}$. 
 The cycle invalidates the trace for the transformed program $\fx{P}$.
@@ -121,7 +121,7 @@ trace cannot be produced under \cc.\newline
 
 \noindent
 {\bf Strategy2: Invalidate by inter-thread synchronization.
-(\wfence)}\newline
+(\wkfence)}\newline
 In the second strategy we attempt to introduce synchronization
 between threads by synthesizing fences. The fences form
 $\setHB$ relation with program events \st coherence
@@ -279,11 +279,11 @@ $\setWS$ $\union$ $\hb{\inv{\tau}}{}{}$
 such as the cycle between $\mathbb{F}^\rel_1$ and 
 $\mathbb{F}^\acq_2$ in the example \hlref{sync}.
 
-Note that, combining \sfence and \wfence for synthesizing only
+Note that, combining \stfence and \wkfence for synthesizing only
 \sc ordered fences offers solution that is optimal in the number
 of fences synthesized. 
 %
-The \wfence strategy provides opportunity to synthesize weaker
+The \wkfence strategy provides opportunity to synthesize weaker
 fences offering optimality in the number and type of fences.
 %
 In this technique if we recognize a $\hb{\inv{\tau}}{}{}$ $\union$ 

@@ -1,7 +1,7 @@
 As discussed in Section~\ref{sec:preliminaries},
 the \cc memory model defines a program trace by forming a set
 of relations on the program events that follow \cc {\em coherence
-rules}. 
+conditions}. 
 %
 \cc maintains {\em release sequences} in a trace that assist in
 forming the event relations. A release sequence is the longest 
@@ -65,9 +65,9 @@ $\setRF$ such that $\setMO$, $\setRF$ and $\setHB$ must not
 disagree.
 %
 To meet the requirement \cc introduces a set of
-coherence rules listed below \cite{LahavVafeiadis-PLDI17}.
+\hl{coherence conditions} listed below \cite{LahavVafeiadis-PLDI17}.
 A valid \cc trace must satisfy the conjunction
-of the coherence rules.
+of the conditions.
 %
 \newline $\setHB$ is irreflexive
 \newline $\setRF;\setHB$ is irreflexive
@@ -77,7 +77,7 @@ of the coherence rules.
 \newline $\setMO;\setRF;\setHB;\setRF^{-1}$ is irreflexive
 
 Finally, all \sc ordered events in a trace $\tau$ must be related
-by a total order ($\setTO$) that concurs with the coherence rules.
+by a total order ($\setTO$) that concurs with the coherence conditions.
 %
 We introduce an irreflexive relation called {\em from-reads} $\setFR$ 
 that relates read events with write events ordered after it.
@@ -103,9 +103,15 @@ $\nrf{\tau}{e^\sc_2}{e^\sc_1}$ $\^$
 $\nfr{\tau}{e^\sc_2}{e^\sc_1}$.
 
 \noindent
+Further, a trace is coherent if in conjunction with the
+above stated coherence conditions the following is also satisfied: 
+($\onsc{\setHB}$ $\union$ $\onsc{\setMO}$ $\union$ 
+$\onsc{\setRF}$ $\union$ $\onsc{\setFR}$)$^+$
+is irreflexive.
+
 In our technique we attempt to break the irreflexivity of either
-a coherence rules or $\setTO$ by strategically placing \cc fences in 
-the input program, as discussed in Section~\ref{sec:so theory}.
+a coherence condition or $\setTO$ by strategically placing \cc fences 
+in the input program, as discussed in Section~\ref{sec:invalidating ce}.
 
 \noindent
 {\bf Brief introduction to \cc fences}: 
@@ -122,6 +128,9 @@ be formed between \cc fences and program events
 \cite{batty2011mathematizing}\cite{C11} where an appropriately
 placed fence assists a relaxed event in forming the necessary 
 synchronization, as shown in the figure below.
+%
+Consider the set $\moge\rel$ = $\{\rel, \acqrel, \sc\}$ and
+set $\moge\acq$ = $\{\acq, \acqrel, \sc\}$.
 %
 \begin{figure}[h]
 	\begin{tabular}{|c|c|c|c||c|c|}

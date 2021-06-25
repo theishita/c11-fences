@@ -76,8 +76,8 @@
 \newcommand{\genmc}{GenMC\xspace}
 \newcommand{\tracer}{Tracer\xspace}
 \newcommand{\z}{\texttt{Z3}\xspace}
-\newcommand{\sfence}{\textcolor{black}{Strong-\ourtechniquename}\xspace}
-\newcommand{\wfence}{\textcolor{black}{Weak-\ourtechniquename}\xspace}
+\newcommand{\stfence}{\textcolor{black}{Strong-\ourtechniquename}\xspace}
+\newcommand{\wkfence}{\textcolor{black}{Weak-\ourtechniquename}\xspace}
 
 % sets and entitites
 \newcommand{\program}{$P$\xspace} %input program
@@ -101,10 +101,12 @@
 \newcommand{\writes}{\events^\wt{}\xspace}
 \newcommand{\reads}{\events^\rd{}\xspace}
 \newcommand{\fences}{\events^\fn{}\xspace}
+\newcommand{\sfences}{\overline{\fences}\xspace}
 \newcommand{\ordevents}[1]{\events^{(#1)}\xspace}
 \newcommand{\ordwrites}[1]{\events^\wt{(#1)}\xspace}
 \newcommand{\ordreads}[1]{\events^\rd{(#1)}\xspace}
 \newcommand{\ordfences}[1]{\events^\fn{(#1)}\xspace}
+\newcommand{\ordsfences}[1]{\overline{\ordfences{#1}}\xspace}
 % cycles
 \newcommand{\scycles}[1]{\texttt{Scycles}(#1)\xspace}
 \newcommand{\rcycles}[1]{\texttt{Rcycles}(#1)\xspace}
@@ -159,7 +161,7 @@
 \newcommand{\setHB}{\hb{\tau}{}{}\xspace}
 \newcommand{\setMO}{\mo{\tau}{}{}\xspace}
 \newcommand{\setTO}{\to{\tau}{}{}\xspace}
-\newcommand{\setSO}{\so{\inv{\tau}}{}{}\xspace}
+\newcommand{\setSO}{\so{\tau}{}{}\xspace}
 \newcommand{\setWS}{\ws{\inv{\tau}}{}{}\xspace}
 \newcommand{\nsetHB}{\nhb{\tau}{}{}\xspace}
 \newcommand{\nsetMO}{\nmo{\tau}{}{}\xspace}

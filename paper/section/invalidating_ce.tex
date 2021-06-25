@@ -1,0 +1,109 @@
+As discussed in Section~\ref{sec:c11}, in a valid trace of the
+input program $P$ (including a buggy trace), 
+the program events must satisfy the \hlref{coherence conditions}.
+%
+Contrarily, if we synthesize \cc fences in the input program 
+such that the irreflexivity of any of the coherence conditions 
+or the total order on \sc events in the buggy trace gets violated 
+then we can invalidate the trace and stop the program behavior.
+
+Assume a set of synthesized \cc fences $\overline{\fences_{\tau'}}$
+in a transformation $\tau'$ of a buggy trace $\tau$. 
+%
+The synthesized fences inflate the 
+$\setSB$, $\setSW$ and $\setDOB$ relation sets by adding 
+relations between program events ($\events_\tau$) and newly 
+added fences ($\sfences_{\tau'}$) to form corresponding 
+$\seqb{\tau'}{}{}$, $\sw{\tau'}{}{}$ and $\dob{\tau'}{}{}$ relations. 
+%
+Further, the $\ithb{\tau'}{}{}$ relation contains  
+program event pairs as a consequence of the freshly formed 
+$\sw{\tau'}{}{}$ and $\dob{\tau'}{}{}$ relations in addition
+to the event pairs in $\setITHB$.
+%
+The $\mo{\tau'}{}{}$, $\rf{\tau'}{}{}$ and $\fr{\tau'}{}{}$ 
+relations remain the same as the corresponding relations of 
+$\tau$.
+
+We propose two strategies, namely \stfence and \wkfence, to 
+detect invalidation of the program trace $\tau$. 
+%
+The \wkfence strategy detects violation of a coherence condition.
+If such a case exists then we can stop the behavior with a 
+weaker fences (memory orders \rel, \acq, \acqrel). 
+%
+However, if a coherence condition is not violated then we move
+to \stfence strategy to break the total order requirement on
+\sc ordered events.
+%
+The strategies are discussed below.\newline
+
+\noindent
+{\bf Invalidate by violating coherence condition (\wkfence)}\newline
+The \wkfence strategy simply attempts to detect a cycle in 
+one of the \hlref{coherence conditions} (listed in 
+Section~\ref{sec:c11}).
+\newline
+
+\noindent
+{\bf Invalidating by violating \sc total-order (\stfence)}\newline
+If the \wkfence strategy fails to violate the buggy trace then
+we attempt to violate the total-order on \sc events.
+%
+Since the coherence condition did on violate on the events of $\tau'$ 
+it implies that conditions do not violate on the \sc ordered events
+of $\tau'$ either. 
+%
+As a result in the \stfence strategy we attempt to violate the 
+irreflexivity condition on 
+$(\onsc{\hb{\tau'}{}{}}$ $\union$ $\onsc{\mo{\tau'}{}{}}$ $\union$ 
+$\onsc{\rf{\tau'}{}{}}$ $\union$ $\onsc{\fr{\tau'}{}{}})^+$. 
+
+We introduce a possibly reflexive relation on \sc-ordered
+events of $\tau'$, called {\em \sc-order} $(\so{\tau'}{}{})$ to 
+capture the ordering between the \sc events. 
+%
+\begin{definition}{\bf \sc-order ($\so{\tau'}{}{}$)}\newline
+	$\forall e_1, e_2 \in \events_\tau$ \st 
+	$(e_1,e_2) \in$ $\setHB$ $\union$ $\setMO$ $\union$ $\setRF$ 
+	$\union$ $\setFR$
+	
+	if
+	$e_1, e_2 \in \ordevents{\sc}_\tau$ then 
+	$\so{\tau'}{e_1}{e_2}$;
+	
+	if
+	$e_1 \in \ordevents{\sc}_\tau$, 
+	$\exists \mathbb{F}^\sc \in \ordfences{\sc}_{\tau'}$ where
+	$\seqb{\tau'}{e_2}{\mathbb{F}^\sc}$ then
+	$\so{\tau'}{e_1}{\mathbb{F}^\sc}$;
+	
+	if
+	$e_2 \in \ordevents{\sc}_\tau$, 
+	$\exists \mathbb{F}^\sc \in \ordfences{\sc}_{\tau'}$ where
+	$\seqb{\tau'}{\mathbb{F}^\sc}{e_1}$ then
+	$\so{\tau'}{\mathbb{F}^\sc}{e_2}$;
+	
+	if
+	$\exists \mathbb{F}^\sc_1$, $\mathbb{F}^\sc_2$ 
+	$\in \ordfences{\sc}_{\tau'}$ where
+	$\seqb{\tau'}{\mathbb{F}^\sc_1}{e_1}$ and 
+	$\seqb{\tau'}{e_2}{\mathbb{F}^\sc_2}$ then
+	$\so{\tau'}{\mathbb{F}^\sc_1}{\mathbb{F}^\sc_1}$.
+\end{definition}
+%
+Note that, $\setSO \subseteq \setTO$ for any trace $\tau$. It
+does not contains pairs of \sc events that do not have a definite
+order. Consider the example below, $\to{}{W^\sc(x,1)}{W^\sc(y,1)}$
+and $\to{}{W^\sc(y,1)}{W^\sc(x,1)}$ are both valid total-orders
+on the \sc events of the trace.
+%
+The set $\setSO$ does not contain either of the two cases and 
+would be empty in this example.
+%
+Such a candidate pair of events cannot contribute to the 
+reflexivity of $\setSO$ and can be safely ignored for the
+purpose of this work. 
+\begin{figure}[h]
+	\resizebox{0.29\textwidth}{!}{\input{figures/egSO_TO.tex}}
+\end{figure}
