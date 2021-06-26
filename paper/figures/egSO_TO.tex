@@ -1,12 +1,15 @@
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
 \begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
 \tikzstyle{every node}=[font=\normalfont]
-\node (fl1) [inner sep=2pt] {$ W^\sc(x,1) 1 $};
-\node (fl2) [right=35pt of fl1, inner sep=2pt] {$W^\sc(y,1)$};
-\node (rfl2) [below=22pt of fl1, inner sep=2pt] {if $R^\rlx(y,0)$:};
-\node (rfl1) [below=22pt of fl2, inner sep=2pt] {if $R^\rlx(x,0)$:};
+\node (wx) [inner sep=2pt] {$ W^\sc(x,1) $};
+\node (wy) [right=20pt of wx, inner sep=2pt] {$W^\sc(y,1)$};
+\node (ry) [below=22pt of wx, inner sep=2pt] {$R^\rlx(y,0)$:};
+\node (rx) [below=22pt of wy, inner sep=2pt] {$R^\rlx(x,0)$:};
 %
-\draw [->,>=stealth,color=CarnationPink] (fl1) -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } (rfl2);
-\draw [->,>=stealth,color=CarnationPink] (fl2) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (rfl1);
+\draw [->,>=stealth,color=CarnationPink] (wx) -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } (ry);
+\draw [->,>=stealth,color=CarnationPink] (wy) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (rx);
+
+\draw (-3.4,-0.5) -- (-3.4,4);
+\draw (-3.6,-0.5) -- (-3.6,4);
 
 \end{tikzpicture}

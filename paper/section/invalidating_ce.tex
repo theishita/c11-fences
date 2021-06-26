@@ -14,7 +14,8 @@ The synthesized fences inflate the
 $\setSB$, $\setSW$ and $\setDOB$ relation sets by adding 
 relations between program events ($\events_\tau$) and newly 
 added fences ($\sfences_{\tau'}$) to form corresponding 
-$\seqb{\tau'}{}{}$, $\sw{\tau'}{}{}$ and $\dob{\tau'}{}{}$ relations. 
+$\seqb{\tau'}{}{}$, $\sw{\tau'}{}{}$ and $\dob{\tau'}{}{}$ 
+relations (as explained in Section~\ref{sec:c11}). 
 %
 Further, the $\ithb{\tau'}{}{}$ relation contains  
 program event pairs as a consequence of the freshly formed 
@@ -23,31 +24,73 @@ to the event pairs in $\setITHB$.
 %
 The $\mo{\tau'}{}{}$, $\rf{\tau'}{}{}$ and $\fr{\tau'}{}{}$ 
 relations remain the same as the corresponding relations of 
-$\tau$.
+$\tau$, as fences do not contribute to these relations.
 
 We propose two strategies, namely \stfence and \wkfence, to 
 detect invalidation of the program trace $\tau$. 
 %
 The \wkfence strategy detects violation of a coherence condition.
-If such a case exists then we can stop the behavior with a 
-weaker fences (memory orders \rel, \acq, \acqrel). 
+If such a case exists then we can stop the behavior by
+synthesizing weaker fences (memory orders \rel, \acq, \acqrel). 
 %
 However, if a coherence condition is not violated then we move
 to \stfence strategy to break the total order requirement on
-\sc ordered events.
+\sc ordered events and stop the behavior by synthesizing 
+strong (\sc ordered) fences.
 %
 The strategies are discussed below.\newline
+
+\begin{figure}[t]
+	\begin{tabular}{|c|c|c|}
+		\hline
+		\resizebox{0.33\textwidth}{!}{\input{figures/egMutex.tex}} &
+		\resizebox{0.33\textwidth}{!}{\input{figures/egMutex_all_fences.tex}} &
+		\resizebox{0.33\textwidth}{!}{\input{figures/egMutex_inv.tex}} \\
+		\hline
+		\multicolumn{1}{c}{\hl{mutex}} &
+		\multicolumn{1}{c}{\hl{mutex-fences}} &
+		\multicolumn{1}{c}{\hl{mutex-invalidated}} 
+	\end{tabular}
+\end{figure}
 
 \noindent
 {\bf Invalidate by violating coherence condition (\wkfence)}\newline
 The \wkfence strategy simply attempts to detect a cycle in 
-one of the \hlref{coherence conditions} (listed in 
-Section~\ref{sec:c11}).
+one of the \hlref{coherence conditions} listed in 
+Section~\ref{sec:c11}.
+%
+Consider the example \hlref{WRIR}. Since, the trace does not 
+violate any coherence condition it is a valid trace under \cc. 
+Assume that the trace shown in the figure is a counter example.
+%
+Synthesizing release fence $\mathbb{F^\rel}$ and acquire fence 
+$\mathbb{F^\acq}$ as shown in \hlref{WRIR-invalidated} forms
+a cycle in $\setMO;\setRF;\setHB;\setRF^{-1}$ thus violating the
+coherence of the trace.
+%
+\begin{figure}[h]
+	\begin{tabular}{|c|c|}
+		\hline
+		\resizebox{0.5\textwidth}{!}{\input{figures/egRF_HB.tex}} &
+		\resizebox{0.5\textwidth}{!}{\input{figures/egRF_HB_inv.tex}} \\
+		\hline
+		\multicolumn{1}{c}{\hl{WRIR}} &
+		\multicolumn{1}{c}{\hl{WRIR-invalidated}}
+	\end{tabular}
+\end{figure}
+
+However, inserting fences in a buggy trace may not be sufficient for 
+violating a coherence condition. Consider example \hlref{mutex} and
+its transformation \hlref{mutex-fences} with synthesized fences. 
+%
+As can be seen from \hlref{mutex-fences}, even after inserting fences 
+at every location in the buggy trace, the trace still satisfies all 
+coherence conditions and is thus valid.
 \newline
 
 \noindent
 {\bf Invalidating by violating \sc total-order (\stfence)}\newline
-If the \wkfence strategy fails to violate the buggy trace then
+If the \wkfence strategy fails to invalidate the buggy trace then
 we attempt to violate the total-order on \sc events.
 %
 Since the coherence condition did on violate on the events of $\tau'$ 
@@ -74,36 +117,69 @@ capture the ordering between the \sc events.
 	
 	if
 	$e_1 \in \ordevents{\sc}_\tau$, 
-	$\exists \mathbb{F}^\sc \in \ordfences{\sc}_{\tau'}$ where
+	$\exists \mathbb{F}^\sc \in \ordsfences{\sc}_{\tau'}$ where
 	$\seqb{\tau'}{e_2}{\mathbb{F}^\sc}$ then
 	$\so{\tau'}{e_1}{\mathbb{F}^\sc}$;
 	
 	if
 	$e_2 \in \ordevents{\sc}_\tau$, 
-	$\exists \mathbb{F}^\sc \in \ordfences{\sc}_{\tau'}$ where
+	$\exists \mathbb{F}^\sc \in \ordsfences{\sc}_{\tau'}$ where
 	$\seqb{\tau'}{\mathbb{F}^\sc}{e_1}$ then
 	$\so{\tau'}{\mathbb{F}^\sc}{e_2}$;
 	
 	if
 	$\exists \mathbb{F}^\sc_1$, $\mathbb{F}^\sc_2$ 
-	$\in \ordfences{\sc}_{\tau'}$ where
+	$\in \ordsfences{\sc}_{\tau'}$ where
 	$\seqb{\tau'}{\mathbb{F}^\sc_1}{e_1}$ and 
 	$\seqb{\tau'}{e_2}{\mathbb{F}^\sc_2}$ then
 	$\so{\tau'}{\mathbb{F}^\sc_1}{\mathbb{F}^\sc_1}$.
 \end{definition}
 %
 Note that, $\setSO \subseteq \setTO$ for any trace $\tau$. It
-does not contains pairs of \sc events that do not have a definite
-order. Consider the example below, $\to{}{W^\sc(x,1)}{W^\sc(y,1)}$
+does not contain pairs of \sc events that do not have a definite
+order. 
+%
+Consider the example \hlref{WRWR}, $\to{}{W^\sc(x,1)}{W^\sc(y,1)}$
 and $\to{}{W^\sc(y,1)}{W^\sc(x,1)}$ are both valid total-orders
 on the \sc events of the trace.
 %
 The set $\setSO$ does not contain either of the two cases and 
-would be empty in this example.
+would be empty for this example.
 %
 Such a candidate pair of events cannot contribute to the 
 reflexivity of $\setSO$ and can be safely ignored for the
 purpose of this work. 
+\setlength{\textfloatsep}{0pt}
+%\begin{wrapfigure}{l}{0.3\textwidth}
+%	\vspace{-2em}
+%	\begin{tabular}{|c|}
+%		\hline
+%		\resizebox{0.3\textwidth}{!}{\input{figures/egSO_TO.tex}} \\
+%		\hline
+%		\multicolumn{1}{c}{\hl{WRWR}}
+%	\end{tabular}
+%\end{wrapfigure}
 \begin{figure}[h]
-	\resizebox{0.29\textwidth}{!}{\input{figures/egSO_TO.tex}}
+	\begin{tabular}{|c|}
+		\hline
+		\resizebox{0.3\textwidth}{!}{\input{figures/egSO_TO.tex}} \\
+		\hline
+		\multicolumn{1}{c}{\hl{WRWR}}
+	\end{tabular}
 \end{figure}
+
+Consider again the example \hlref{mutex} without synthesized fences.
+Upon synthesizing \sc fences $\mathbb{F}^\sc_1$ and 
+$\mathbb{F}^\sc_2$ as shown in \hlref{mutex-invalidated} the
+transformed trace forms the following $\so{}{}{}$ relations:
+
+$\seqb{}{W^\sc(Flag_1,1)}{\mathbb{F}^\sc_1}$ $\implies$ $\so{}{W^\sc(Flag_1,1)}{\mathbb{F}^\sc_1}$
+
+$\seqb{}{W^\sc(Flag_2,1)}{\mathbb{F}^\sc_2}$ $\implies$ $\so{}{W^\sc(Flag_2,1)}{\mathbb{F}^\sc_2}$
+
+$\fr{}{R^\rlx(Flag_1,0)}{W^\sc(Flag_1,1)}$ $\implies$ $\so{}{\mathbb{F}^\sc_2}{W^\sc(Flag_1,1)}$
+
+$\fr{}{R^\rlx(Flag_2,0)}{W^\sc(Flag_2,1)}$ $\implies$ $\so{}{\mathbb{F}^\sc_1}{W^\sc(Flag_2,1)}$
+
+thus violating the total-order requirement on \sc events and
+invalidating the trace with strong fences.

@@ -1,0 +1,25 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+\tikzstyle{every node}=[font=\normalfont]
+\node (ix) [inner sep=2pt,color=Brown] {$\mathbb{I}(x,0)$};
+\node (iy) [right=30pt of ix, inner sep=2pt,color=Brown] {$\mathbb{I}(y,0)$};
+\node (wx) [below left=15pt and -5pt of ix, inner sep=2pt] {$ W^\rlx(x,1)$};
+\node (rx1) [right=20pt of wx, inner sep=2pt] {$R^\rlx(x,1)$};
+\node (wy) [below=25pt of rx1, inner sep=2pt] {$W^\rlx(y,1)$};
+\node (ry) [right=20pt of rx1, inner sep=2pt] {$R^\rlx(y,1)$};
+\node (rx0) [below=25pt of ry, inner sep=2pt] {$R^\rlx(x,0)$};
+%
+\draw [->,>=stealth,color=RedOrange] (ix) -- node[pos=0.3,left=-1pt,font=\scriptsize,color=black] { $\lmo$ } (wx);
+\draw [->,>=stealth,color=RedOrange] (iy.south) to[in=-135,out=90] node[pos=0.1,left=-2pt,font=\scriptsize,color=black] { $\lmo$ } (wy);
+\draw [->,>=stealth,color=PineGreen] (wx) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lrf$ } (rx1);
+\draw [->,>=stealth,color=CarnationPink] (rx1) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (wy);
+\draw [->,>=stealth,color=PineGreen] (wy) -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lrf$ } (ry);
+\draw [->,>=stealth,color=CarnationPink] (ry) -- node[midway,left=-2pt,font=\scriptsize,color=black] { $\lsb$ } (rx0);
+
+\draw [opacity=0.3] (-0.1,1.5) -- (-0.1,7);
+\draw [opacity=0.3] (0.1,1.5) -- (0.1,7);
+
+\draw [opacity=0.3] (-7.3,1.5) -- (-7.3,7);
+\draw [opacity=0.3] (-7.5,1.5) -- (-7.5,7);
+
+\end{tikzpicture}

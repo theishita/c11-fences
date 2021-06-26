@@ -32,7 +32,7 @@ below.
 	(memory order \rel or stricter) and a strict read $e_r$ 
 	(memory order \acq or stricter) from different threads are 
 	related as $\rf{\tau}{e_w}{e_r}$, they are also 
-	related by the synchronizes-with as
+	related by synchronizes-with \ie
 	$\sw{\tau}{e_w}{e_r}$.
 
 \noindent
@@ -86,14 +86,14 @@ The relation from-reads is typically used for stricter memory models
 that relate all events of a trace by a total order,
 such as sequentially-consistent memory model or TSO memory model.
 \cc model constitutes a similar requirement on the \sc ordered
-events of a trace and we use $\setFR$ it to define the $\setTO$
-relation.
+events of a trace and we, thus, use $\setFR$ to form the order
+bertween \sc events.
 %
 \begin{definition}[{\em from-reads} $\setFR$]
 	$\setFR$ = $\setRF^{-1}$;$\setMO$
 \end{definition}
 %
-Thus, the $\setTO$ must be constructed such that,
+Consequently, the total order $\setTO$ must be constructed such that,
 
 if 
 $\to{\tau}{e^\sc_1}{e^\sc_2}$ then 
@@ -190,4 +190,4 @@ $\dob{\tau}{e_1'}{\mathbb{F}^\acq}$.
 Further, as is the case with program events,
 if $\sw{\tau}{e_1}{e_2}$ or $\dob{\tau}{e_1}{e_2}$ then
 events $e_1',e_2'$ \st $\seqb{\tau}{e_1'}{e_1}$ and 
-$\seqb{\tau}{e_2}{e_2'}$ are related as $\ithb{\tau}{e}{e'}$.
+$\seqb{\tau}{e_2}{e_2'}$ are related as $\ithb{\tau}{e_1'}{e_2'}$.
