@@ -1,0 +1,46 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=1,xscale=1]
+\tikzstyle{every node}=[font=\small]
+
+% other nodes
+\node (init) {$Initially$, $x=0$, $y=0$};
+\node (f11) [below left=0pt and 20pt of init,color=White] { $F^\sc_{11}$ };
+\node (wx1) [below=8pt of f11] {$ W^\sc(x,1) $};
+\node (f12) [below=8pt of wx1,color=White] { $F^\sc_{12}$ };
+
+\node (f21) [right=30pt of f11,color=White] { $F^\sc_{21}$ };
+\node (rx1) [below=8pt of f21] {if $ R^\sc(x,1) $};
+\node (f22) [below=8pt of rx1,color=White] { $F^\sc_{22}$ };
+\node (ry0) [below=8pt of f22] {\tab$ R^\sc(y,0) $};
+\node (f23) [below=8pt of ry0,color=White] { $F^\sc_{23}$ };
+
+\node (f31) [right=30pt of f21,color=White] { $F^\sc_{31}$ };
+\node (wy1) [below=8pt of f31] {$ W^\sc(y,1) $};
+\node (f32) [below=8pt of wy1,color=White] { $F^\sc_{32}$ };
+
+\node (f41) [right=30pt of f31,color=White] { $F^\sc_{41}$ };
+\node (ry1) [below=8pt of f41] {if $ R^\sc(y,1) $};
+\node (f42) [below=8pt of ry1,color=White] { $F^\sc_{42}$ };
+\node (rx0) [below=8pt of f42] {\tab$ R^\sc(x,0) $};
+\node (f43) [below=8pt of rx0,color=White] { $F^\sc_{43}$ };
+
+\draw [->,>=stealth,color=Brown] (rx1) -- (ry0);
+\draw [->,>=stealth,color=Brown] (ry1) -- (rx0);
+
+\draw [->,>=stealth,color=Brown] ($ (wx1.east)+(-3pt,0) $) -- ($ (rx1.west)+(3pt,0) $);
+\draw [->,>=stealth,color=Brown] (ry0) -- (wy1);
+\draw [->,>=stealth,color=Brown] ($ (wy1.east)+(-3pt,0) $) -- ($ (ry1.west)+(3pt,0) $);
+\draw [color=Brown] (rx0.south)+(0,3pt) -- ($ (rx0.south)+(0,-10pt) $);
+\draw [color=Brown] ($ (rx0.south)+(0,-10pt) $) -- ($ (wx1.south)+(0,-56.85pt) $);
+\draw [->,>=stealth,color=Brown] ($ (wx1.south)+(0,-56.85pt) $) -- (wx1);
+
+\draw [gray,opacity=0.5] (-6.2,-1.0) -- (-6.2,-12.5);
+\draw [gray,opacity=0.5] (-6.0,-1.0) -- (-6.0,-12.5);
+
+\draw [gray,opacity=0.5] (-0.1,-1.0) -- (-0.1,-12.5);
+\draw [gray,opacity=0.5] (0.1,-1.0) -- (0.1,-12.5);
+
+\draw [gray,opacity=0.5] (5.0,-1.0) -- (5.0,-12.5);
+\draw [gray,opacity=0.5] (5.2,-1.0) -- (5.2,-12.5);
+
+\end{tikzpicture}

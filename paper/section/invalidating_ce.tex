@@ -171,7 +171,7 @@ purpose of this work.
 Consider again the example \hlref{mutex} without synthesized fences.
 Upon synthesizing \sc fences $\mathbb{F}^\sc_1$ and 
 $\mathbb{F}^\sc_2$ as shown in \hlref{mutex-invalidated} the
-transformed trace forms the following $\so{}{}{}$ relations:
+transformed trace forms the following $\so{}{}{}$ relations,
 
 $\seqb{}{W^\sc(Flag_1,1)}{\mathbb{F}^\sc_1}$ $\implies$ $\so{}{W^\sc(Flag_1,1)}{\mathbb{F}^\sc_1}$
 
@@ -179,7 +179,50 @@ $\seqb{}{W^\sc(Flag_2,1)}{\mathbb{F}^\sc_2}$ $\implies$ $\so{}{W^\sc(Flag_2,1)}{
 
 $\fr{}{R^\rlx(Flag_1,0)}{W^\sc(Flag_1,1)}$ $\implies$ $\so{}{\mathbb{F}^\sc_2}{W^\sc(Flag_1,1)}$
 
-$\fr{}{R^\rlx(Flag_2,0)}{W^\sc(Flag_2,1)}$ $\implies$ $\so{}{\mathbb{F}^\sc_1}{W^\sc(Flag_2,1)}$
+$\fr{}{R^\rlx(Flag_2,0)}{W^\sc(Flag_2,1)}$ $\implies$ $\so{}{\mathbb{F}^\sc_1}{W^\sc(Flag_2,1)}$,
 
 thus violating the total-order requirement on \sc events and
 invalidating the trace with strong fences.
+
+\ourtechnique, thus, attempts to stop a buggy trace from
+manifesting in an execution by invalidating it using either 
+the \wkfence or \stfence strategy.
+%
+However, 
+as discussed in Section~\ref{sec:c11} \cc fences are weak
+fences that introduce reordering restrictions on program
+events. The \sc ordered fences additionally introduce a 
+total order between \sc fences and other \sc events. 
+%
+It is noteworthy that \cc \sc fences are weaker that \sc
+ordered memory access events. In fact inserting \sc 
+fences between every two program events does not restore
+sequential consistency \cite{LahavVafeiadis-PLDI17}.
+%
+As a consequence, it may be possible to stop a buggy 
+trace by modifying the memory orders of program events
+to stricter orders but fail to stop the same by 
+inserting even the strictest \cc fences.
+
+\begin{figure}[h]
+	\begin{tabular}{|c|c|}
+		\hline
+		\resizebox{0.49\textwidth}{!}{\input{figures/egIRIW_inv.tex}} &
+		\resizebox{0.49\textwidth}{!}{\input{figures/egIRIW.tex}} \\
+		\hline
+		\multicolumn{1}{c}{\hl{iriw-invalid}} & 
+		\multicolumn{1}{c}{\hl{iriw-valid}}
+	\end{tabular}
+\end{figure}
+Consider the example \hlref{iriw-invalid}, the trace shown in
+figure is not a valid \cc trace as we cannot form a total 
+order on the \sc program events that agrees with the other event
+relations. The Figure~\hlref{iriw-valid} shows a version 
+of the example where the read and write events are \rlx ordered,
+under such a setting there is no possible placement of 
+program fences that can stop the trace.
+%
+\ourtechnique using \wkfence and \stfence can stop buggy
+traces can be stopped by inserting \cc fences, thus, buggy
+traces such as \hlref{iriw-valid}, without the fences shown 
+in the figure, cannot be stopped by \ourtechnique.

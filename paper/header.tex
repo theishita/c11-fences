@@ -9,8 +9,7 @@
 \usepackage{array,multirow}
 \usepackage{caption}
 \usepackage{longtable}
-\usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
+\usepackage[ruled,vlined,linesnumbered,noend]{algorithm2e}
 \usepackage{framed,enumitem}
 \usepackage{wrapfig}
 
@@ -151,6 +150,8 @@
 \newcommand{\ws}[3]{\reln{\textbf{\textcolor{Mahogany}{ws}}}{#1}{#2}{#3}} %sc-sw
 \newcommand{\frsc}[3]{\reln{\textbf{\textcolor{RoyalPurple}{\onsc{fr}}}}{#1}{#2}{#3}\xspace} %rb/fr
 \newcommand{\nfrsc}[3]{#2\onsc{\nrightarrow^{{\bf\textcolor{RoyalPurple}{fr}}}_{#1}}#3\xspace}
+\newcommand{\rfinv}[3]{#2 \rightarrow^{ \textcolor{PineGreen}{ \textbf{rf}^{-\textbf{1}} } }_{#1} #3\xspace} 
+\newcommand{\nrfinv}[3]{#2 \nrightarrow^{ \textcolor{PineGreen}{ \textbf{rf}^{-\textbf{1}} } }_{#1} #3\xspace}
 
 % relation name without events
 \newcommand{\setSB}{\seqb{\tau}{}{}\xspace}

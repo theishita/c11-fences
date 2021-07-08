@@ -1,3 +1,130 @@
+Given a buggy input program $P$, \ourtechnique attempts to 
+stop the buggy traces or counter examples (traces with 
+assert statement violations) by inserting \cc fences.
+%
+To do so the technique must work out 
+(i) whether the buggy trace can be stopped by synthesizing 
+\cc fences,
+(ii) the placement of optimal number of synthesized fences 
+(\ie the least number synthesized fences possible), and
+(iii) the optimal memory order of the synthesized fences
+(\ie the weakest memory order of synthesized fences that
+is sufficient to stop the trace).
+%
+We present the \ourtechnique-algorithm (Algorithm
+\ref{alg:main algo}) that takes a \cc program as input
+and determines the optimal fence placement that can stop
+the buggy traces of the input program or determines that
+the program cannot be made bug-free with \cc fences.
+
+\begin{algorithm}[h]
+	\caption{Fence Synthesis}
+	\label{alg:main algo}
+	\DontPrintSemicolon
+	\SetAlgoLined
+	
+	\SetKwFunction{Fmain}{\ourtechnique}
+	\SetKwFunction{Fceg}{generateCounterExamples}
+	\SetKwFunction{FcandidateF}{candidateFences}
+	\SetKwFunction{Frel}{computeRelations}
+	\SetKwFunction{Fwk}{weakFensying}
+	\SetKwFunction{Fst}{strongFensying}
+	\SetKwFunction{Fmin}{minModel}
+	
+	\SetKwData{satquery}{$\Phi$}
+	\SetKwData{ce}{CE}
+	\SetKwData{wk}{weakFences}
+	\SetKwData{st}{strongFences}
+	
+	\SetKwProg{Fn}{Function}{:}{}
+	
+	\Fn{\Fmain{input program $P$}}{		
+		\satquery $:=$ $\top$\;
+		\ce $:=$ \Fceg{$P$}\;
+		\ForAll(\tcc*[f]{$\tau = \langle \events_\tau, \setHB, \setMO, \setRF \rangle$}) {$\tau \in$ \ce}{
+			$\events_{\imm{\tau}}$ $:=$ $\events_\tau$ $\union$ \FcandidateF{$\tau$}\;
+			$(\hb{\imm{\tau}}{}{}, \mo{\imm{\tau}}{}{}, \rf{\imm{\tau}}{}{}, \rfinv{\imm{\tau}}{}{}, \fr{\imm{\tau}}{}{})$ 
+				$:=$ \Frel{$\tau,\events_{\imm{\tau}}$}\;
+			\wk $:=$ \Fwk{$\imm{\tau}$}\;
+			\st $:=$ \Fst{$\imm{\tau}$}\;
+			\If{\wk $= \emptyset$ $\^$ \st $= \emptyset$} {
+				\KwRet $\emptyset$
+				\tcc*{cannot stop $\tau$}
+			}			
+		}
+	
+		\satquery $:=$ \satquery $\^$ $\formula{$\wk $\v$ \st$}$\;
+		\KwRet \Fmin{\satquery}
+	}
+		
+		
+%		\State 
+%		\State $ \seqb{\imm{\tau}}{}{} := $ computeSB($\setSB, \events_{\imm{\tau}}$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_{\imm{\tau}}, \setHB, \setMO, \setRF, \seqb{\imm{\tau}}{}{}$)
+%		\State cycles := computeCycles($ \so{\imm{\tau}}{}{} $)
+%		\If {cycles == $ \emptyset $}
+%		\State \texttt{Abort} (``This trace can't be stopped using \cc fences.'')
+%		\State \Return
+%		\EndIf
+%		\State $\phi := \phi\ \^ \formula{\so{\imm{\tau}}{}{}} $ 
+%		%			\State $ \phi := \phi_\tau $
+%		\EndFor
+%		\State F:= MinModel($ \phi $)
+%		\State \Return F
+
+
+
+%		% no enabled events left ie maximal sequence explored
+%		\lIf{\FunexploredEv{$\tau$} = $\emptyset$}{\KwRet 
+%			\tcc*[f]{maximal sequence explored}}
+%		
+%		% if there is no sequence and no constraint sequence
+%		\If(\tcc*[f]{find next event to explore}){$S = \emptysequence$}{
+%			\If(\tcc*[f]{multiple leads possible}){
+%				$\exists (e_r, e_w) \in$ \FunexploredRW{$\tau, F$}}{
+%				\lForAll{$e_w' \in \ui{\tau}{F}{e_r}$}{
+%					\Fupdate($\tau, e_w', F$)
+%				}
+%				\nexte := $e_r$
+%			}
+%			\lElse{
+%				\nexte := any event $\in$ \FunexploredEv{$\tau$};
+%			}
+%			
+%			% updateLeads wrt to selected event
+%			\Fupdate($\tau$, \nexte, $F$)
+%		}
+%		
+%		% there is a sequence to be explored
+%		\lElse{
+%			\nexte := $\hd{S}$
+%		}
+%		
+%		%		\lIf(\tcc*[f]{if no branch explore \nexte})
+%		\lIf
+%		{$S = \emptysequence \^$ \FunexploredLd{$\tau$} = $\emptyset$}{
+%			$\ld{\s{\tau}} \cunioneq (\emptysequence,\ \seq{${\nexte}$},\ F)$
+%		}
+%		
+%		\lElseIf(\tcc*[f]{explore next event in $S$}){$S \neq \emptysequence$}{
+%			$\ld{\s{\tau}} \cunioneq (\emptysequence,\ S,\ F)$
+%		}
+%		
+%		\While(\tcc*[f]{explore all leads})
+%		{$\exists l \in$ \FunexploredLd{$\tau$}}{
+%			\nextseq := $l^s \cmerge l^c$\;
+%			\Dprime := $\{\tau' \| \hd{${\nextseq}$}.\tau' \in Dn(\s{\tau})\}$\;
+%			\Fexplore{$\tau.\hd{${\nextseq}$},\ \tl{${\nextseq}$}$, \Dprime, $l^F$}\;
+%			$\dn{\s{\tau}} \unioneq$ \nextseq
+%		}
+%	}
+\end{algorithm}
+
+
+
+
+
+
+
 % --------- INTRO PART -------------
 %\divComment{This para is motivation. Not needed here}
 %We have developed a novel solution to the fence-synthesis problem. 
@@ -59,33 +186,7 @@ We use $ \setSO $-order and $ \setSO $-cycle to generate an SAT formula.
 Any satisfying assignment of this SAT formula is a possible fence 
 placement to stop the buggy trace. We find the minimal satisfying assignment of this SAT formula to find optimal fence placement. 
 
-\begin{algorithm}
-	\caption{\ourtechnique}
-	\begin{algorithmic}[1]	
-		\Procedure{\ourtechnique}{$ P $}
-		\State $\phi := \top$
-		\State $ \mathcal{CE} := $CounterExampleGenerator($P$)
-		\For{$ \tau \in \mathcal{CE} $}\Comment{$\tau$ = $ \langle \events_\tau, \setHB, \setMO, \setRF, \setSB  \rangle $}
-			\State $ \events_{\imm{\tau}} := \events_\tau\ \union $ candidate fences
-			\State $ \seqb{\imm{\tau}}{}{} := $ computeSB($\setSB, \events_{\imm{\tau}}$) \State $ \so{\tau^{\mathtt{im}}}{}{} := $ computeSO($\events_{\imm{\tau}}, \setHB, \setMO, \setRF, \seqb{\imm{\tau}}{}{}$)
-			\State cycles := computeCycles($ \so{\imm{\tau}}{}{} $)
-			\If {cycles == $ \emptyset $}
-				\State \texttt{Abort} (``This trace can't be stopped using \cc fences.'')
-				\State \Return
-			\EndIf
-			\State $\phi := \phi\ \^ \formula{\so{\imm{\tau}}{}{}} $ 
-%			\State $ \phi := \phi_\tau $
-		\EndFor
-		\State F:= MinModel($ \phi $)
-		\State \Return F
-%		
-%		\State create\_\z\_file()
-%		\State fences\_required = run\_\z\_file()
-%		\State insert\_into\_input\_file(fences\_required)
-		\EndProcedure
-		\label{alg:fence-syn}
-	\end{algorithmic}
-\end{algorithm}
+
 
 The \ourtool uses Algorithm~\ref{alg:fence-syn} to insert fences in an 
 input program $ P $. The algorithm start by initializing the 
