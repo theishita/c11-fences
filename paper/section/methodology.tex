@@ -1,18 +1,21 @@
 Given a buggy input program $P$, \ourtechnique attempts to 
 stop the buggy traces or counter examples (traces with 
-assert statement violations) by inserting \cc fences.
+assert statement violations) of $P$ by inserting \cc fences.
 %
-To do so the technique must work out 
-(i) whether the buggy trace can be stopped by synthesizing 
-\cc fences,
-(ii) the placement of optimal number of synthesized fences 
-(\ie the least number synthesized fences possible), and
-(iii) the optimal memory order of the synthesized fences
-(\ie the weakest memory order of synthesized fences that
-is sufficient to stop the trace).
+To do so the technique must accomplish three objectives
+(O1) determine whether the buggy trace can be stopped by 
+synthesizing \cc fences,
+(O2) determine the placement of optimal number of synthesized 
+fences (\ie the least number of program locations where fences 
+must be synthesized that is sufficient to stop the trace), 
+and
+(O3) determine the optimal memory order of the synthesized 
+fences (\ie the weakest memory order of synthesized fences 
+that is sufficient to stop the trace).
 %
 We present the \ourtechnique-algorithm (Algorithm
-\ref{alg:main algo}) that takes a \cc program as input
+\ref{alg:main algo}) that realizes the three objectives.
+The algorithm takes a \cc program as input
 and determines the optimal fence placement that can stop
 the buggy traces of the input program or determines that
 the program cannot be made bug-free with \cc fences.
@@ -33,8 +36,8 @@ the program cannot be made bug-free with \cc fences.
 	
 	\SetKwData{satquery}{$\Phi$}
 	\SetKwData{ce}{CE}
-	\SetKwData{wk}{weakFences}
-	\SetKwData{st}{strongFences}
+	\SetKwData{wk}{weakCycles}
+	\SetKwData{st}{strongCycles}
 	
 	\SetKwProg{Fn}{Function}{:}{}
 	
@@ -118,270 +121,174 @@ the program cannot be made bug-free with \cc fences.
 %		}
 %	}
 \end{algorithm}
-
-
-
-
-
-
-
-% --------- INTRO PART -------------
-%\divComment{This para is motivation. Not needed here}
-%We have developed a novel solution to the fence-synthesis problem. 
-%To the best of our knowledge, 
-%there are no push-button fence synthesis techniques for C11 
-%programs as of now. Although, there are some such techniques for 
-%other memory models, all of those heavily depends on the 
-%possible set of reorderings allowed under the memory model. 
-%Since the possible set of reorderings under C11 is different 
-%than other memory models, these techniques cannot be applied 
-%to C11 as is. In face, not all C11 traces can be justified 
-%using reorderings and interleavings. Hence, automatic fence insertion 
-%for C11 requires some amount of additional effort.
-
-% Overview:
-%% why only sc fences: if sc fence can't stop none can
-%% brief overview of our approach
-% Sections:
-%% counter example generator and its specifications/requirements
-%% inserting candidate fences and computing SO
-%%% mention a trivial solution here
-%% Fence minimization
-
-In this section we discuss our approach of optimal \mosc fence synthesis 
-in \cc programs. 
-Our analysis focuses on \mosc fences since these are the strongest \cc 
-fences. If a trace cannot be stopped using \mosc fences, no combination 
-of \cc fences can stop this trace. 
-In such cases, our approach proves that the trace cannot be 
-stopped using \cc fences.
-Recall that \cc allows memory operations to be annotated with different 
-memory orders. For the programs where buggy trace cannot be stopped 
-using fences, it is possible to stop the trace by annotating some 
-memory operations with stronger memory order.
-Hence, we do not claim that if \ourtechnique cannot stop a buggy \cc 
-trace, it cannot be stopped.
 \divComment{Can we give termination guarantee?}
 
-Unlike common fence synthesis approaches \divComment{Need references}, 
-\ourtechnique does not try to \emph{add} fences optimally in a program.
-Rather, it assumes that the input program has \mosc 
-fences at all possible program locations, i.e, before and after every 
-program instruction. We call these fences candidate fences. Our technique 
-tries to \emph{remove} the unnecessary fences from the set of candidate 
-fences based on axiomatic relations of \cc. 
-Our approach grantees that the program resulted after removing the 
-unnecessary fences, has minimal number of \mosc fences required in that 
-program to stop the buggy traces. 
-
-\ourtechnique takes a set of counter examples as input.
-We use \cc 's $\setSB$, $\setHB$, $\setMO$, $\setRF$ relations to compute 
-$ \setSO $-order assuming the existence of candidate fences.
-We prove that the transitive closure of $ \setSO $-order is the same as 
-$ \setTO $ in any valid \cc trace. 
-Since $ \setTO $ is a total order, any valid \cc trace can not have a 
-cycle formed by transitive sequence of ordered pair in $ \setSO $-order. 
-We call such cycles $\setSO$-cycle. 
-We use $ \setSO $-order and $ \setSO $-cycle to generate an SAT formula. 
-Any satisfying assignment of this SAT formula is a possible fence 
-placement to stop the buggy trace. We find the minimal satisfying assignment of this SAT formula to find optimal fence placement. 
-
-
-
-The \ourtool uses Algorithm~\ref{alg:fence-syn} to insert fences in an 
-input program $ P $. The algorithm start by initializing the 
-SAT formula $ \phi $ with true.  Line 2 uses a counter-example generator 
-to compute the set of counter examples in the program $ P $. 
-Lines 4-12 generates SAT formula for each counter-example $ \tau $.
-Lines 5 and 6 add candidate fences in the set of events of counter-example 
-$ \tau $ and compute $ \lsb $ in the updated trace $ \imm{\tau} $ (i.e., with candidate 
-fences). 
-Line 7 computes $ \so{\imm{\tau}}{}{} $-order in counter example $ \tau $ with candidate fences.
-Line 8 finds all $ \so{\imm{\tau}}{}{} $-cycles. If there are no $ \so{\imm{\tau}}{}{} $-cycles 
-present, the trace can't be stopped used any \cc fences. Hence, we 
-terminate the algorithm at this point.
-Else, in line 12, we generate a SAT formula for the set of $ \so{\imm{\tau}}{}{} $-cycles and add it to formula $ \phi $
-Lastly, in line 13 we find the minimal model of formula $ \phi $, which 
-gives us the minimal set of fences to be inserted in order to stop the 
-buggy traces.
-The rest of this section discuss each of these steps in detail.
-
-\subsection{Generating Counter Examples:} 
-\ourtechnique requires a set of counter examples $ \mathcal{CE} $. 
-Each of these counter-examples $ \tau $ should consist a list program events 
-$ \events_\tau $ and $ \setHB, \setMO, \setRF, \setSB $ relations over the 
-program events. 
-A program event consists of instruction label, action, memory order, variable, and value. 
-\divComment{We don't actually need value since we have rf and other relations already.}
-Our approach treats a counter example generator that reports all of this information as a black box. 
-Any technique that can generate \cc traces and find buggy traces can be used as counter-example generator.
-%\divComment{Should we also include $ \setSB $ in counter example? Or we can assume it is available in $ \events_\tau $?}
-Counter-examples in \texttt{dekker} program are given in 
-Figure~\ref{fig:dekker-ce}. We have omitted \lsb, \lhb from the traces for 
-simplicity. 
-
-%%%% Move to motivation %%%%
-%However, this comes at the cost of making program 
-%stricter than required. Therefore, in our solution to retain maximum 
-%flexibility, after inserting fences at all places, we must now eliminate 
-%the ones which are not required and bring the number of fences down to 
-%an optimum or minimum. To do this, we need to find relations between 
-%all instructions and understand their semantics.
+\noindent
+{\bf Algorithm~\ref{alg:main algo} overview:} 
+The algorithm assumes the knowledge of the set of counter
+examples in the form of traces (\ie a set of events and 
+the sets of relations on the events, as defined in Section
+\ref{sec:preliminaries}).
 %
-%The reason for choosing \mosc fences is that they are the strongest type 
-%of fences, as seen in Fig \ref{fig:mo_strength}. In the program described 
-%in Fig \ref{fig:dekker3}, the \moar fences cannot stop the buggy trace.
+Broadly the algorithm places candidate fences before and
+after every program event then works towards eliminating 
+fences that do not contribute to the optimal solution.
 %
-%Another point to note is, inserting \mosc fences at all possible program 
-%locations might not mean that the buggy traces are eliminated. 
-%Therefore, our tool can only prevent the assertions from being violated 
-%in cases where the trace can be stopped using \mosc fences. Note that
-%if a trace cannot be stopped by \mosc fence, then no C11 fence can stop 
-%the trace. The tool also serves to minimize the total number of fences to 
-%be added to the optimal number, thereby retaining the program traces 
-%as relaxed as possible.
-%%%%%%%%%%%%%%%%%%
+The elimination is a two-phase process where in the first
+phase the algorithm discards candidate fences that do not 
+contribute to the violation of either a coherence condition 
+or the \sc total order. 
+Further, in the second phase the algorithm reduces the 
+remaining candidate fences to the optimal number with
+the optimal memory order.
+
+The algorithm takes a \cc program as input and relies on a 
+counter example generator to return the set of counter 
+examples or buggy traces of the input program (line 3).
+It then transforms the buggy traces $\tau$ to an intermediate 
+trace $\imm{\tau}$ by synthesizing candidate 
+fences (lines 5,6).
+%
+The algorithm iterates over each counter example to 
+collect cycles in coherence conditions or \sc total order
+(lines 7,8) and aborts the process if for any buggy trace
+the set of cycles is empty indicating the trace cannot be 
+stopped by synthesizing \cc fences (lines 9,10).
+This step constitutes the phase one where any fence not
+involved in a cycle is discarded.
+%
+On the fences involved in the discovered cycles, we use a
+SAT solver to compute the minimum number of fences
+(line 11,12). 
+%
+The fences that contribute to the optimal (in number of
+fences) set of of fences are then mapped back to their 
+corresponding cycle to ascertain the memory order of 
+the fence.
+%
+This step along with the previous step using a SAT solver
+performs the phase two of elimination of candidate fences.
+%
+The final form of the buggy trace (with the optimal 
+synthesized fences) renders the trace invalidated,
+represented as $\inv{\tau}$, ensuring that the trace 
+does not belong to the set of traces of the transformed
+(fixed) program $\fx{P}$. 
+%
+We discuss the details of each step below.
+
+\noindent
+{\bf Counter examples and candidate fences:}
+\ourtechnique is a fence synthesis technique to stop
+buggy traces that requires a set of buggy traces to 
+perform its analysis. We thus rely on an external counter
+example generator that takes the input program $P$ and
+returns the set of buggy traces (line 3) where each buggy 
+trace is a tuple $\langle \events_\tau, \setHB, \setMO, 
+\setRF \rangle$.
+%
+Consider the \hlref{mutex-input-program} where two 
+threads are racing to mutually exclusively update the
+value of $x$. The program under \cc violates the 
+mutual exclusion property and a counter example generator
+returns two buggy traces diagrammatically represented in
+\hlref{mutex-bt1} and \hlref{mutex-bt2}.
 
 \begin{figure}[!htb]
 	\begin{center}
-		\texttt{(Dekker)} \\ \ \\
-		\begin{tabular}{l||l}
-			$ \store{y}{1}{} $ & $ \store{x}{1}{} $ \\
-			$ \load{a}{x}{} $ & $ \load{c}{y}{} $ \\
-			\textbf{if} $ (a=0) $ & \textbf{if} $ (c=0) $ \\
-			\quad $ \store{z}{1}{} $ & \quad $ \store{z}{2}{} $ \\
-%			\quad $ \load{b}{z}{} $   & \quad$ \load{d}{z}{} $ \\
-			\quad assert($ z=1 $) & \quad assert($ z=2 $) \\
+		\setlength{\tabcolsep}{5pt}
+		\begin{tabular}{|l||l|}
+			\hline
+			\multicolumn{2}{|c|}{Initially: $Flag_1=0, Flag_2 = 0, x=0$} \\
+			
+			$ Flag_1 :=_\rlx 1 $ & $ Flag_2 :=_\rlx 1  $ \\
+			\textbf{if} $ (Flag_2 =_\rlx 0) $ & \textbf{if} $ (Flag_1 =_\rlx 0) $ \\
+			\quad $ x :=_\rlx 1 $ & \quad $ x :=_\rlx 2 $ \\
+			\quad assert($ x =_\rlx 1 $) & \quad assert($ x =_\rlx 2 $) \\
+			\hline
+			
+			\multicolumn{2}{c}{\hl{mutex-input-program}}
 		\end{tabular} 
-%		\caption{Dekker's Mutual Exclusion program}\label{fig:dekker}
 	\end{center}
 \end{figure}
 
 \begin{figure}[!h]
-	\input{figures/dekker-ce1.tex}
-	\input{figures/dekker-ce2.tex}
-	\caption{Counter-examples in Dekker}
-	\label{fig:dekker-ce}
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		\resizebox{0.24\textwidth}{!}{\input{figures/egMutex_ce1.tex}} &
+		\resizebox{0.24\textwidth}{!}{\input{figures/egMutex_ce1_fences.tex}} &
+		\resizebox{0.24\textwidth}{!}{\input{figures/egMutex_ce2.tex}} &
+		\resizebox{0.24\textwidth}{!}{\input{figures/egMutex_ce2_fences.tex}} \\
+		\hline
+		
+		\multicolumn{1}{c}{\hl{mutex-bt1}} &
+		\multicolumn{1}{c}{$\imm{\hl{mutex-bt1}}$}  &
+		\multicolumn{1}{c}{\hl{mutex-bt2}} &
+		\multicolumn{1}{c}{$\imm{\hl{mutex-bt2}}$} \\
+		
+		\multicolumn{1}{c}{buggy trace 1} &
+		\multicolumn{1}{c}{intermediate} &
+		\multicolumn{1}{c}{buggy trace 2} &
+		\multicolumn{1}{c}{intermediate} \\
+	
+		\multicolumn{1}{c}{} &
+		\multicolumn{1}{c}{buggy trace 1} &
+		\multicolumn{1}{c}{} &
+		\multicolumn{1}{c}{buggy trace 2} \\
+	\end{tabular}
 \end{figure}
 
-% --------------- FIG all pseudo fences -------------
-%\begin{figure}[!htb]
-%\begin{center}
-%\texttt{
-%init y := 0, x := 0;\\
-%	\begin{tabular}{c l || c l}
-%		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
-%		(1) & W$\mathtt{_{rel}}$y(1) & (5) & W$\mathtt{_{rel}}$x(1)\\
-%		& F$\mathtt{_{sc}}$ & & F$\mathtt{_{sc}}$\\
-%		(2) & if R$\mathtt{_{rel}x}$ == 0 & (6) & if R$\mathtt{_{rel}y}$ == 0\\
-%		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
-%		(3) & \qquad W$\mathtt{_{rel}}$c(1) & (7) & \qquad W$\mathtt{_{rel}}$c(0)\\
-%		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
-%		(4) & \qquad assert($\mathtt{R_{rel}c}$ == 1) & (8) & \qquad assert($\mathtt{R_{rel}c}$ == 0)\\
-%		& \qquad F$\mathtt{_{sc}}$ & & \qquad F$\mathtt{_{sc}}$\\
-%	\end{tabular}
-%}
+Algorithm~\ref{alg:main algo} iterates over each buggy trace
+$\tau$ (line 4) and transforms the trace to an intermediate 
+trace $\imm{\tau}$ (line 5). The algorithm further updates the 
+event relations accordingly (line 6). As discussed in Section
+\ref{sec:invalidating ce} a change is witnessed in the 
+$\setHB$ relation. The transformed intermediate traces 
+corresponding to buggy traces \hlref{mutex-bt1} and 
+\hlref{mutex-bt2}, along with the updated event relations are 
+represented in $\imm{\hlref{mutex-bt1}}$ and 
+$\imm{\hlref{mutex-bt2}}$ respectively.
 
-%\divComment{All of the memory orders are rel. Is that correct?}
-%	\caption{Dekker's Mutual Exclusion program}\label{fig:dekker3}
-%\end{center}
-%\end{figure}
-
-
-\subsection{Computing SO relation}
-\noindent\textbf{Inserting Candidate Fences:}
-For each counter-example $ \tau $ of buggy program $ P $, we 
-construct an intermediate trace $ \imm{\tau} $ by assuming the existance candidate fences in the trace $ \tau $.
-Our approach assumes all possible program locations as a valid location 
-for candidate fences. 
-Hence the $ \imm{\tau} $ will have at least one \mosc fence before and after every program event in $ \tau $.
-It is possible to start with a smaller set of program locations for 
-candidate fences. 
-In this case our approach will return the optimal fence placement wrt the 
-set of candidate fences.
-Since we are assuming existence of candidate fences at all possible 
-program locations, the trace $ \imm{\tau} $ should be invalid \cc trace 
-if $ \tau $ can be stopped using \mosc fences.
-Hence, if $ \imm{\tau} $ is not invalid \cc trace for some 
-the counter-examples $ \tau $ in $ \mathcal{CE} $, we determine that \mosc 
-fences are not sufficient to stop the buggy traces of the program.
-Recall that \mosc fences are the strongest \cc fences. 
-If \mosc fences cannot stop a buggy trace in a program, we can conclude 
-that \cc fences are not strong enough to render this program correct.
-Previous works \cite{LahavVafeiadis-PLDI17,Batty-POPL12} suggest that \mosc fences are not sufficient to achieve SC memory 
-model. 
-Hence it is possible that a valid SC program is buggy under \cc with all 
-possible \mosc fences inserted. 
-In some of these cases strengthening `the memory order annotated for some 
-of the program instructions might render the program correct. 
-However, strengthening the memory order annotation is out of the scope of this work. 
-
-%\begin{figure}[!htb]
-%	\begin{center}
-%%		\texttt{(Dekker)} \\ \ \\
-%		\begin{tabular}{l||l}
-%			$ \fenceev{11} $ & $ \fenceev{21} $ \\
-%			$ \store{y}{1}{} $ & $ \store{x}{1}{} $ \\
-%			$ \fenceev{12} $ & $ \fenceev{22} $ \\
-%			$ \load{a}{x}{} $ & $ \load{c}{y}{} $ \\
-%			$ \fenceev{13} $ & $ \fenceev{23} $ \\
-%			\textbf{if} $ (a=0) $ & \textbf{if} $ (c=0) $ \\
-%			\quad $ \fenceev{14} $ & \quad $ \fenceev{24} $ \\
-%			\quad $ \store{z}{1}{} $ & \quad $ \store{z}{2}{} $ \\
-%			%			\quad $ \load{b}{z}{} $   & \quad$ \load{d}{z}{} $ \\
-%			\quad $ \fenceev{15} $ & \quad $ \fenceev{25} $ \\
-%			\quad assert($ z=1 $) & \quad assert($ z=2 $) \\
-%			\quad $ \fenceev{16} $ & \quad $ \fenceev{26} $ \\
-%		\end{tabular} 
-%		\caption{Dekker with Candidate Fence}\label{fig:dekker-im}
-%	\end{center}
-%\end{figure}
-
-\noindent\textbf{Computing \lsb in Intermediate Traces:} 
-In line 5 of the Algorithm~\ref{alg:fence-syn}, we compute set of program 
-events in trace $ \imm{\tau} $. Naturally, this set will consist of 
-candidate fences along with all the program events in trace $ \tau $.
-The set $ \setSB $ represents the pair of program events related by 
-relation $ \lsb $ in the trace $ \tau $. We compute the set 
-$ \seqb{\imm{\tau}}{}{} $ for the events of the trace $ \imm{\tau} $. 
-The computeSB function takes set of \lsb event pairs in $ \tau $ 
-($ \setSB $), the set of events in trace $ \imm{\tau} $ 
-($ \events_{\imm{\tau}} $) as input and computes the set of \lsb in 
-$ \imm{\tau} $ based on instruction labels, their position in the program $ P $. \divComment{Do we need event action to compute the \lsb?}
-
-\noindent\textbf{Computing \lso in Intermediate Traces:} 
-%In \textsection\ref{sec:so theory}, we explain the rules to compute \lso relation given \lhb, \lmo, \lrf and \lsb relations. 
-The line 7 of Algorithm~\ref{alg:fence-syn} uses the rules defined in 
-\textsection\ref{sec:so theory} to compute the \lso relation in the trace 
-$ \imm{\tau} $ using the relations \lhb, \lmo, \lrf and \lsb. 
-We use relations $ \setHB, \setMO, \setRF $ and $ \seqb{\imm{\tau}}{}{} $ to compute $ \so{\imm{\tau}}{}{} $.
-Note that we have used the \lhb, \lmo and \lrf for trace $ \tau $ and \lsb 
-for trace $ \imm{\tau} $. 
-Since \lmo is a relation between write events, fences will not be a part 
-of it. Although, these fences may induce \lmo between some write event 
-pairs in an actual trace. 
-\divComment{How do we know these induces \lmo will not effect \lso?}
-The same argument hold for \lrf relation as well.
-\divComment{Need an argument for \lhb too.}
-%We have already computed $ \seqb{\imm{\tau}}{}{} $
- 
-\snj{Why hb, mo computed for $\tau$ and not $\imm{\tau}$}\newline
-Note that, the intermediate trace $\imm{\tau}$ may be invalid under 
-\cc due to a possible cycle in the $\so{\imm{\tau}}{}{}$ relation. 
-As a result, the coherence rules of \cc do not apply to $\imm{\tau}$. 
-In the absence of \cc coherence rules the $\hb{\imm{\tau}}{}{}$ and 
-the $\mo{\imm{\tau}}{}{}$ relations cannot be formed on the events of 
-$\imm{\tau}$.
+\noindent
+{\bf Detecting cyclic relations indicating violation of 
+	trace coherence}
+In each intermediate buggy trace, the algorithm proceeds 
+to perform \wkfence (line 7) and return cycles in compositions 
+of event relations that define a coherence condition 
+(Section~\ref{sec:c11}). For the intermediate traces 
+$\imm{\hlref{mutex-bt1}}$ and $\imm{\hlref{mutex-bt2}}$
+\wkfence would return an empty set.
 %
-Secondly, attempting to form $\hb{\imm{\tau}}{}{}$ and 
-$\mo{\imm{\tau}}{}{}$ relations would modify the $\setHB$ and $\setMO$
-effectively changing the buggy trace $\tau$.
+The algorithm then proceeds to perform \stfence (line 8) that 
+computes the $\so{\imm{\tau}}{}{}$ relation on \sc 
+events and returns the cycles in $\so{\imm{\tau}}{}{}$.
+The cyclic $\so{\imm{\tau}}{}{}$ relations in the intermediate
+traces $\imm{\hlref{mutex-bt1}}$ and $\imm{\hlref{mutex-bt2}}$
+are shown in $\imm{\hlref{mutex-bt1-so}}$ and 
+$\imm{\hlref{mutex-bt2-so}}$. Note that, $\so{\imm{\tau}}{}{}$ 
+would also be formed between every fence before 
+$\mathbb{F}^\sc_{13}$ and every fence including and after 
+$\mathbb{F}^\sc_{24}$ in $\imm{\hlref{mutex-bt1-so}}$ 
+(correspondingly in $\imm{\hlref{mutex-bt1-so}}$), however, we 
+have skipped the edges in the figures for better readability.
 
-We, thus, only construct the relation $\so{\imm{\tau}}{}{}$ and 
-$\seqb{\imm{\tau}}{}{}$ (needed for $\so{\imm{\tau}}{}{}$) 
-between the candidate fences inserted in $\imm{\tau}$ and the events
-of $\tau$. The two relations are sufficient as the goal is to
-find $\so{\imm{\tau}}{}{}$ cycle and invalidate the trace under \cc.
+\begin{figure}[!h]
+	\begin{tabular}{|c|c|}
+		\hline
+		\resizebox{0.24\textwidth}{!}{\input{figures/egMutex_ce1_fences_so.tex}} &
+		\resizebox{0.24\textwidth}{!}{\input{figures/egMutex_ce2_fences_so.tex}} \\
+		\hline
+		
+		\multicolumn{1}{c}{$\imm{\hl{mutex-bt1-so}}$}  &
+		\multicolumn{1}{c}{$\imm{\hl{mutex-bt2-so}}$-} \\
+		
+		\multicolumn{1}{c}{intermediate} &
+		\multicolumn{1}{c}{intermediate} \\
+		
+		\multicolumn{1}{c}{buggy trace 1} &
+		\multicolumn{1}{c}{buggy trace 2} \\
+	\end{tabular}
+\end{figure}
 
 
 \subsection{Reducing Fence Synthesis to SAT problem}

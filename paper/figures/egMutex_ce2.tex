@@ -1,0 +1,46 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{tikzpicture}[x=1em,y=1em,yscale=-1,xscale=-1]
+	\tikzstyle{every node}=[font=\normalfont]
+	
+	\node (ifl1) [inner sep=2pt,color=Brown] {$\mathbb{I}(Flag_1,0)$};
+	\node (ifl2) [right=30pt,inner sep=2pt,color=Brown] {$\mathbb{I}(Flag_2,0)$};
+	
+	\node (f11) [below left=10pt and -30pt of ifl1,inner sep=2pt, color=White] {$\mathbb{F}_{11}$};
+	\node (fl1) [below=10pt of f11, inner sep=2pt] {$ W^\sc(Flag_1,1) $};
+	\node (f12) [below=10pt of fl1, inner sep=2pt, color=White] {$\mathbb{F}_{12}$};
+	\node (rfl2) [below=10pt of f12, inner sep=2pt] {$R^\rlx(Flag_2,0)$:};
+	\node (f13) [below=10pt of rfl2, inner sep=2pt, color=White] {$\mathbb{F}_{13}$};
+	\node (cs11) [below=10pt of f13, inner sep=2pt] {$ W^\rlx(x,1) $};
+	\node (f14) [below=10pt of cs11, inner sep=2pt, color=White] {$\mathbb{F}_{14}$};
+	\node (cs12) [below=10pt of f14, inner sep=2pt] {$ R^\rlx(x,) $};
+	\node (f15) [below=10pt of cs12, inner sep=2pt, color=White] {$\mathbb{F}_{15}$};
+	
+	\node (f21) [right=50pt of f11, inner sep=2pt, color=White] {$\mathbb{F}_{21}$};
+	\node (fl2) [below=10pt of f21, inner sep=2pt] {$W^\sc(Flag_2,1)$};
+	\node (f22) [below=10pt of fl2, inner sep=2pt, color=White] {$\mathbb{F}_{22}$};
+	\node (rfl1) [below=10pt of f22, inner sep=2pt] {$R^\rlx(Flag_1,0)$:};
+	\node (f23) [below=10pt of rfl1, inner sep=2pt, color=White] {$\mathbb{F}_{23}$};
+	\node (cs21) [below=10pt of f23, inner sep=2pt] {$ W^\rlx(x,2) $};
+	\node (f24) [below=10pt of cs21, inner sep=2pt, color=White] {$\mathbb{F}_{24}$};
+	\node (cs22) [below=10pt of f24, inner sep=2pt] {$ R^\rlx(x,2) $};
+	\node (f25) [below=10pt of cs22, inner sep=2pt, color=White] {$\mathbb{F}_{23}$};
+	%
+	\draw [->,>=stealth,color=RedOrange] ($ (ifl1.south east)+(0.8,-5pt) $) -- node[pos=0.3,left=-2pt,font=\scriptsize,color=black] { $\lmo$ } ($ (fl1.north east)+(1.2,-5pt) $);
+	\draw [->,>=stealth,color=RedOrange] ($ (ifl2.south west)+(-1.2,-5pt) $) -- node[pos=0.3,right=-2pt,font=\scriptsize,color=black] { $\lmo$ } ($ (fl2.north west)+(-0.7,-5pt) $);
+	
+	\draw [->,>=stealth,color=PineGreen] ($ (ifl1.south east)+(0.8,-5pt) $) -- node[pos=0.8,right=-2pt,font=\scriptsize,color=black] { $\lrf$ } ($ (rfl1.north west)+(-1.2,-5pt) $);
+	\draw [->,>=stealth,color=PineGreen] ($ (ifl2.south west)+(-1.2,-5pt) $) -- node[pos=0.8,left=-2pt,font=\scriptsize,color=black] { $\lrf$ } ($ (rfl2.north east)+(1.2,-5pt) $);
+	
+	\draw [->,>=stealth,color=RedOrange] (cs11)  -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lmo$ } (cs21);
+	\draw [->,>=stealth,color=PineGreen] (cs21)  -- node[midway,above=-2pt,font=\scriptsize,color=black] { $\lrf$ } (cs12);
+	\draw [->,>=stealth,color=PineGreen] ($ (cs21.south)+(-10.4pt,0) $)  -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lrf$ } ($ (cs22.north)+(-10.4pt,0) $);
+	
+	\draw [->,>=stealth,color=CarnationPink] (fl1)  -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } (rfl2);
+	\draw [->,>=stealth,color=CarnationPink] (rfl2) -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } (cs11);
+	\draw [->,>=stealth,color=CarnationPink] (cs11) -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } (cs12);
+	
+	\draw [->,>=stealth,color=CarnationPink] (fl2)  -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } (rfl1);
+	\draw [->,>=stealth,color=CarnationPink] (rfl1) -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } (cs21);
+	\draw [->,>=stealth,color=CarnationPink] (cs21) -- node[midway,right=-2pt,font=\scriptsize,color=black] { $\lsb$ } (cs22);
+	
+\end{tikzpicture}
