@@ -185,19 +185,17 @@ thus violating the total-order requirement on \sc events and
 invalidating the trace with strong fences.
 
 \ourtechnique, thus, attempts to stop a buggy trace from
-manifesting in an execution by invalidating it using either 
-the \wkfence or \stfence strategy.
+manifesting as an execution by synthesizing fences to 
+invalidate the trace, by using either the \wkfence or 
+\stfence strategy.
 %
 However, 
 as discussed in Section~\ref{sec:c11} \cc fences are weak
-fences that introduce reordering restrictions on program
-events. The \sc ordered fences additionally introduce a 
-total order between \sc fences and other \sc events. 
+fences.
 %
-It is noteworthy that \cc \sc fences are weaker that \sc
-ordered memory access events. In fact inserting \sc 
-fences between every two program events does not restore
-sequential consistency \cite{LahavVafeiadis-PLDI17}.
+It is noteworthy that introducing \cc fences in a program 
+with weakly ordered events may not impose strong enough
+reordering restrictions as strongly ordered events would.
 %
 As a consequence, it may be possible to stop a buggy 
 trace by modifying the memory orders of program events
@@ -214,15 +212,21 @@ inserting even the strictest \cc fences.
 		\multicolumn{1}{c}{\hl{iriw-valid}}
 	\end{tabular}
 \end{figure}
-Consider the example \hlref{iriw-invalid}, the trace shown in
-figure is not a valid \cc trace as we cannot form a total 
-order on the \sc program events that agrees with the other event
-relations. The Figure~\hlref{iriw-valid} shows a version 
-of the example where the read and write events are \rlx ordered,
-under such a setting there is no possible placement of 
-program fences that can stop the trace.
+The examples \hlref{iriw-invalid} and \hlref{iriw-valid} 
+highlight the difference. As we can see in \hlref{iriw-valid},
+the trace cannot be invalidated by \cc fences but the same 
+can be achieved by changing the memory order of read and 
+write events as shown in \hlref{iriw-invalid}.
 %
-\ourtechnique using \wkfence and \stfence can stop buggy
-traces can be stopped by inserting \cc fences, thus, buggy
+%Consider the example \hlref{iriw-invalid}, the trace shown in
+%figure is not a valid \cc trace as we cannot form a total 
+%order on the \sc program events that agrees with the other event
+%relations. The Figure~\hlref{iriw-valid} shows a version 
+%of the example where the read and write events are \rlx ordered,
+%under such a setting there is no possible placement of 
+%program fences that can stop the trace.
+%
+\ourtechnique attempts to invalidate traces by synthesizing 
+\cc fences, thus, buggy
 traces such as \hlref{iriw-valid}, without the fences shown 
 in the figure, cannot be stopped by \ourtechnique.
