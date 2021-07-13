@@ -1,4 +1,15 @@
 Future work:
+In some cases, a fence at certain program location maybe more expensive 
+than at other program location. For example, a fence inside a loop is may 
+execute several times. Hence, such a fence may be more expensive than a 
+fence placed outside the loop body.
+%
+\ourtechnique can handle such constraints by using weighted minimal model 
+problem \divComment{need references}, where weight of each fence 
+corresponds how expensive the fence is. 
+The Algorithm~\ref{alg:fence-syn} can be modified to take weight 
+function as input. 
+
 The theory and this tool can be further worked upon
 by introducing many new features and optimizations. A feature in the
 theory which can provide substantial optimization is to consider
@@ -6,7 +17,7 @@ theory which can provide substantial optimization is to consider
 kinds of fences, hence introducing a much stricter model as compared with
 other fences. On the other hand, \moar fences
 being of a weaker nature can be mixed in along with the \mosc
-fences. A way to implement this is by exploring \setSW 
+fences. A way to implement this is by exploring \lsw 
 paths in the input program after introducing
 pseudo fences and then observing their semantics. Introducing \moar fences
 along with \mosc fences (if required at all) would result in a
@@ -21,7 +32,7 @@ instructions can be switched to a \morel/\moacq, \moar, or a \mosc memory order.
 
 The tool can be further worked upon as well. Currently it does not have support
 for locks. Functionality for detecting locks and using their semantics
-in the theory for \setSC relations can be additionally explored. Another optimization
+in the theory for \lso relations can be additionally explored. Another optimization
 to consider can be the detection of loops in the program. A single fence
 inserted inside the scope of a loop in actuality is not a single fence, since
 the contents of the loop will run multiple times. In this case, inserting extra fences
