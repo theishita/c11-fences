@@ -33,8 +33,11 @@ the program cannot be made bug-free with \cc fences.
 	\SetKwFunction{Fwk}{weakFensying}
 	\SetKwFunction{Fst}{strongFensying}
 	\SetKwFunction{Fmin}{minModel}
+	\SetKwFunction{Fmo}{assignMO}
 	
 	\SetKwData{satquery}{$\Phi$}
+	\SetKwData{minmodel}{min$\Phi$}
+	\SetKwData{cyclesall}{$\mathcal{C}$}
 	\SetKwData{ce}{CE}
 	\SetKwData{wk}{weakCycles}
 	\SetKwData{st}{strongCycles}
@@ -42,7 +45,7 @@ the program cannot be made bug-free with \cc fences.
 	\SetKwProg{Fn}{Function}{:}{}
 	
 	\Fn{\Fmain{input program $P$}}{		
-		\satquery $:=$ $\top$\;
+		\satquery $:=$ $\top$; \cyclesall $:= \emptyset$ \;
 		\ce $:=$ \Fceg{$P$}\;
 		\ForAll(\tcc*[f]{$\tau = \langle \events_\tau, \setHB, \setMO, \setRF \rangle$}) {$\tau \in$ \ce}{
 			$\events_{\imm{\tau}}$ $:=$ $\events_\tau$ $\union$ \FcandidateF{$\tau$}\;
@@ -52,12 +55,14 @@ the program cannot be made bug-free with \cc fences.
 			\st $:=$ \Fst{$\imm{\tau}$}\;
 			\If{\wk $= \emptyset$ $\^$ \st $= \emptyset$} {
 				\KwRet $\emptyset$
-				\tcc*{cannot stop $\tau$}
-			}			
+				\tcc*{{\tt ABORT}: cannot stop $\tau$ with \cc fences}
+			}
+			\satquery $:=$ \satquery $\^$ $\formula{$\wk $\v$ \st$}$\;
+			\cyclesall $:=$ \cyclesall $\union$ \wk $\union$ \st \;
 		}
 	
-		\satquery $:=$ \satquery $\^$ $\formula{$\wk $\v$ \st$}$\;
-		\KwRet \Fmin{\satquery}
+		\minmodel $:=$ \Fmin{\satquery}\;
+		\KwRet \Fmo{\minmodel, \cyclesall}
 	}
 		
 		
@@ -132,6 +137,7 @@ the sets of relations on the events, as defined in Section
 %
 Broadly the algorithm places candidate fences before and
 after every program event then works towards eliminating 
+candidate
 fences that do not contribute to the optimal solution.
 %
 The elimination is a two-phase process where in the first
@@ -152,19 +158,19 @@ fences (lines 5,6).
 The algorithm iterates over each counter example to 
 collect cycles in coherence conditions or \sc total order
 (lines 7,8) and aborts the process if for any buggy trace
-the set of cycles is empty indicating the trace cannot be 
-stopped by synthesizing \cc fences (lines 9,10).
+the set of cycles is empty, indicating that the trace cannot 
+be stopped by synthesizing \cc fences (lines 9,10).
 This step constitutes the phase one where any fence not
 involved in a cycle is discarded.
 %
 On the fences involved in the discovered cycles, we use a
 SAT solver to compute the minimum number of fences
-(line 11,12). 
+(lines 11,13). 
 %
 The fences that contribute to the optimal (in number of
 fences) set of of fences are then mapped back to their 
 corresponding cycle to ascertain the memory order of 
-the fence.
+the fence (lines 12,14).
 %
 This step along with the previous step using a SAT solver
 performs the phase two of elimination of candidate fences.
@@ -180,7 +186,7 @@ We discuss the details of each step below.
 \noindent
 {\bf Counter examples and candidate fences:}
 \ourtechnique is a fence synthesis technique to stop
-buggy traces that requires a set of buggy traces to 
+buggy traces that requires the set of buggy traces to 
 perform its analysis. We thus rely on an external counter
 example generator that takes the input program $P$ and
 returns the set of buggy traces (line 3) where each buggy 
@@ -241,7 +247,7 @@ returns two buggy traces diagrammatically represented in
 Algorithm~\ref{alg:main algo} iterates over each buggy trace
 $\tau$ (line 4) and transforms the trace to an intermediate 
 trace $\imm{\tau}$ (line 5). The algorithm further updates the 
-event relations accordingly (line 6). As discussed in Section
+event relations accordingly (line 6), as discussed in Section
 \ref{sec:invalidating ce} a change is witnessed in the 
 $\setHB$ relation. The transformed intermediate traces 
 corresponding to buggy traces \hlref{mutex-bt1} and 
@@ -251,26 +257,54 @@ $\imm{\hlref{mutex-bt2}}$ respectively.
 
 \noindent
 {\bf Detecting cyclic relations indicating violation of 
-	trace coherence}
+	trace coherence:}
 In each intermediate buggy trace, the algorithm proceeds 
 to perform \wkfence (line 7) and return cycles in compositions 
-of event relations that define a coherence condition 
-(Section~\ref{sec:c11}). For the intermediate traces 
-$\imm{\hlref{mutex-bt1}}$ and $\imm{\hlref{mutex-bt2}}$
-\wkfence would return an empty set.
+of event relations that define \hlref{coherence conditions} 
+(Section~\ref{sec:c11}). 
 %
+Consider an intermediate buggy trace $\imm{\tau}$ that 
+contains the following event relation: 
+$\rf{\imm{\tau}}{e_1}{e_2}$, $\hb{\imm{\tau}}{e_2}{\mathbb{F}_1}$,
+$\hb{\imm{\tau}}{\mathbb{F}_1}{e_1}$, where $e_i \in 
+\events_\tau$ and $\mathbb{F}_1$ is a candidate fence.
+The intermediate trace contains a weak cycle violating
+the $\rf{\imm{\tau}}{}{}$;$\hb{\imm{\tau}}{}{}$ 
+irreflexivity. The cycle is represented by the set of events
+$\{e_1, e_2, \mathbb{F}_1\}$ and would belong the set
+{\tt weakCycles} for $\imm{\tau}$.
+%
+For the intermediate traces 
+$\imm{\hlref{mutex-bt1}}$ and $\imm{\hlref{mutex-bt2}}$
+\wkfence would return an empty set and thus 
+{\tt weakCycles} = $\emptyset$.
+
 The algorithm then proceeds to perform \stfence (line 8) that 
 computes the $\so{\imm{\tau}}{}{}$ relation on \sc 
 events and returns the cycles in $\so{\imm{\tau}}{}{}$.
 The cyclic $\so{\imm{\tau}}{}{}$ relations in the intermediate
-traces $\imm{\hlref{mutex-bt1}}$ and $\imm{\hlref{mutex-bt2}}$
+traces $\imm{\hlref{mutex-bt1}}$ and $\imm{\hlref{mutex-bt2}}$ 
 are shown in $\imm{\hlref{mutex-bt1-so}}$ and 
-$\imm{\hlref{mutex-bt2-so}}$. Note that, $\so{\imm{\tau}}{}{}$ 
+$\imm{\hlref{mutex-bt2-so}}$. 
+%
+Note that, $\so{\imm{\tau}}{}{}$ 
 would also be formed between every fence before 
 $\mathbb{F}^\sc_{13}$ and every fence including and after 
 $\mathbb{F}^\sc_{24}$ in $\imm{\hlref{mutex-bt1-so}}$ 
 (correspondingly in $\imm{\hlref{mutex-bt1-so}}$), however, we 
 have skipped the edges in the figures for better readability.
+%
+As we can see from the figures, the $\so{\imm{\tau}}{}{}$ 
+relation contains a cycle $\{\mathbb{F}^\sc_{12}, 
+\mathbb{F}^\sc_{22}\}$. The algorithm discards all candidate 
+fences, sparing $\mathbb{F}^\sc_{12}$ and $\mathbb{F}^\sc_{22}$, 
+from the solution and determines that the buggy traces 
+can be stopped with fences as the set of cycles for each of the 
+two buggy traces in not empty (lines 9,10).
+%
+The algorithm collects the cycles as solutions (line 12) and 
+proceeds to phase two for reducing the solution to the optimal 
+solution.
 
 \begin{figure}[!h]
 	\begin{tabular}{|c|c|}
@@ -290,112 +324,88 @@ have skipped the edges in the figures for better readability.
 	\end{tabular}
 \end{figure}
 
-
-\subsection{Reducing Fence Synthesis to SAT problem}
-Recall that transitive closure of $ \so{\imm{\tau}}{}{} $ is same as 
-$ \to{\imm{\tau}}{}{} $ in a valid \cc trace. Since  
-$ \to{\imm{\tau}}{}{} $ is a total order, a valid \cc trace should not 
-have a cycle in $ \so{\imm{\tau}}{}{} $. Conversely, if a trace has 
-$ \so{\imm{\tau}}{}{} $-cycle, it cannot be a valid \cc trace. 
-In order to make a trace $ \tau $ invalid under \cc, we force a \lso-cycle by inserting appropriate fences. 
-Since $ \imm{\tau} $ assumes \mosc fences at all possible program locations,
-any such cycle must exists in $ \so{\imm{\tau}}{}{} $. 
-Hence, our problem is reduced to finding appropriate cycle in 
-$\so{\imm{\tau}}{}{} $ and introducing these fences in the program to 
-invalidate the trace $ \tau $.
-If we introduced enough fences to cause at least \lso-cycle in 
-every counter example, we stop all the buggy trace. 
-It is possible that a counter example $ \tau $ does not have any 
-$\so{\imm{\tau}}{}{}$-cycles. Since $ \imm{\tau} $ has \mosc fences at all 
-possible program locations, we cannot add fences in such a trace to 
-make it invalid \cc trace. 
-Line 8 in Algorithm~\ref{alg:fence-syn} computes set $\so{\imm{\tau}}{}{}$-cycles. 
-The problem of finding cycles in a graph is well-studied area. Hence, we 
-choose to skip the details of this step.
-If there are no $\so{\imm{\tau}}{}{}$-cycle in some $ \tau $, we conclude 
-that it is not possible to stop this trace using \cc fences in lines 
-9-11.
-
-
-Let $ \cycles{\imm{\tau}} $ be the set of \lso-cycles in a trace $ \imm{\tau} $, 
-where a cycle $ c \in \cycles{\imm{\tau}} $ is ordered sequence of 
-$ \ordevents{\sc} $. We abuse the notation $\ordevents{\sc}_c$ to 
-represent the set of events in a cycle $ c $. 
-All the read and write events in $\ordevents{\sc}_c$ are already in program $ P $. 
-Hence, to introduce a cycle $ c $ in the trace, we add the fences in $\ordevents{\sc}_c$, i.e, 
-$\ordfences{\sc}_c$, in the program $ P $.
-In other words, a cycle $ c $ can be introduced in a program if we insert 
-$ (\bigwedge\limits_{f \in \ordfences{\sc}_c} f)$ fences in the program $ P $, 
-where the truth assignment to a fence corresponds to inserting that fence 
-in the program.
-Recall that we need to stop at least one cycle from the set 
-$ \cycles{\imm{\tau}} $ in order to make a trace $ \tau $ invalid.
-Hence we need to insert $ (\bigvee\limits_{c \in \cycles{\imm{\tau}}} (\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection 
-\ordfences{\sc}} \fn{})) $ to stop a trace $ \tau $. 
-We use $\formula{\so{\imm{\tau}}{}{}}$ to represent the boolean formula 
-corresponding to the $ \so{\imm{\tau}}{}{} $-cycles.
-Clearly, any satisfying assignment to $ \formula{\so{\imm{\tau}}{}{}} $ 
-will give list of fences required to stop the buggy trace $ \tau $.
+\noindent
+{\bf Reducing to optimal number of synthesized fences 
+	using SAT solvers:}
+While iterating over the set of buggy traces, Algorithm
+\ref{alg:main algo} collects a set of cycles in coherent 
+conditions or \sc total order from each buggy trace. 
+To stop the buggy traces at least one cycle from each 
+buggy trace must be present in the optimal solution.
 %
-Furthermore, we construct the formula for all trace 
-$ \tau \in \mathcal{CE} $ by conjuncting them in 
-line 12 of Algorithm~\ref{alg:fence-syn}, i.e., 
-at the end of the for loop in lines 4-12, the formula 
-$ \phi \definedas (\bigwedge\limits_{\tau \in \mathcal{CE}} 
-(\bigvee\limits_{c \in \cycles{\imm{\tau}}} 
-(\bigwedge\limits_{\fn{} \in \ordevents{\sc}_c \intersection \ordfences{\sc}} \fn{}))) $.
-Any satisfying assignment of the formula $\phi$ will list the fences that 
-are enough to stop the buggy traces in $ \mathcal{CE} $.
-
-%\begin{lemma}
-%	Introducing fences in any $\so{\imm{\tau}}{}{}$-cycle will stop the counter example $ \tau $ in actual trace of the program.
-%\end{lemma}
-
-\begin{lemma}
-	If there are no cycles in $\so{\imm{\tau}}{}{}$ of a buggy trace 
-	$\tau$, the counter-example $ \tau $ cannot be stopped using any \cc 
-	fences.
-\end{lemma}
-
-\begin{theorem}
-	Any satisfying assignment to $ \formula{\so{\imm{\tau}}{}{}} $ 
-	will give list of fences required to stop the buggy trace $ \tau $
-\end{theorem}
-
-
-\subsection{Finding Optimal Placement of the Fences}
-One possible satisfying assignment to formula $ \phi $ is assigning the 
-value true to all fences. Clearly such a solution is very expensive.
-The number of truth assignments in the solution of formula $ \phi $ is 
-equal to the number of fences inserted in the program.
-%A satisfying assignment of the formula $ \phi $ with lesser number 
-%of fences will give us a more optimal fence placement. 
-Hence, a satisfying assignment of the formula $ \phi $ with the least 
-number of fences will give us the optimal fence placement. 
-Therefore, we reduce the problem of finding optimal fence placement to the 
-minimal model of a SAT formula. 
-
-The problem of minimal model computation has been studied in 
-\divComment{need references}. \divComment{Need complexity argument for min model}.
-
-In some cases, a fence at certain program location maybe more expensive 
-than at other program location. For example, a fence inside a loop is may 
-execute several times. Hence, such a fence may be more expensive than a 
-fence placed outside the loop body.
+The algorithm uses a SAT query to determine the minimal
+number of candidate fences to form an optimal
+solution. 
 %
-\ourtechnique can handle such constraints by using weighted minimal model 
-problem \divComment{need references}, where weight of each fence 
-corresponds how expensive the fence is. 
-The Algorithm~\ref{alg:fence-syn} can be modified to take weight 
-function as input. 
+To form the SAT query, from each cycle of a buggy trace 
+we take a conjunction of the candidate fences that belong 
+to the cycle. Further, to retain at least one cycle 
+corresponding to each buggy trace we take a disjunction
+of the product formula of each cycle.
+The disjunction represents the SAT query corresponding to 
+each buggy trace computed as $\formula{{\tt weakCycles} \v 
+{\tt strongCycles}}$ (line 11).
 %
-The current implementation of \ourtechnique uses repeated calls to Z3 SAT 
-solver to find the minimal model. \divComment{How are we solving it?}
+Finally, we take the SAT queries of each buggy trace and 
+conjunct them to form the SAT query representing a 
+non-optimal solution to stop all buggy traces of $P$ 
+(line 11).
+The SAT query is represented in Equation~\ref{eq:sat query},
+where ${\tt \bf W_\tau}$ and ${\tt \bf S_\tau}$ represent
+the {\tt weakCycles} and {\tt strongCycles} in the iteration
+corresponding to $\tau \in$ {\tt CE}.
+\begin{equation}\label{eq:sat query}
+	\Phi = \bigwedge\limits_{\tau \in {\tt CE}}
+		(
+		(\bigvee\limits_{{\tt W} \in {\tt \bf W_\tau}}
+			\bigwedge\limits_{\mathbb{F}_{\tt w} \in {\tt W}} 
+			\mathbb{F}_{\tt w})
+		\v
+		(\bigvee\limits_{{\tt S} \in {\tt \bf S_\tau}}
+			\bigwedge\limits_{\mathbb{F}_{\tt s} \in {\tt S}} 
+			\mathbb{F}_{\tt s})
+		)
+\end{equation}
+We use a SAT solver to compute the {\em min-model} of the 
+SAT query. The min-model returns the smallest set of candidate 
+fences sufficient to satisfy the query \ie the smallest set
+of candidate fences sufficient to stop all buggy traces of 
+$P$ (line 13).
+%
+Consider the buggy traces \hlref{mutex-bt1} and \hlref{mutex-bt2},
+for both traces the {\tt weakCycles} = $\emptyset$ and
+{\tt strongCycles} = $\{\mathbb{F}^\sc_{12}, \mathbb{F}^\sc_{22}\}$.
+The sat query for \hlref{mutex-input-program}, $\Phi$ = 
+($\mathbb{F}^\sc_{12}$ $\^$ $\mathbb{F}^\sc_{22}$) $\^$ 
+($\mathbb{F}^\sc_{12}$ $\^$ $\mathbb{F}^\sc_{22}$) and 
+{\tt min}$\Phi$ = $\{\mathbb{F}^\sc_{12}, \mathbb{F}^\sc_{22}\}$.
+\noindent
+{\bf Determining optimal memory orders of fences:}
+Upon receiving the optimal set of fences from min-model
+computation, the algorithm maps the fences back to their 
+cycles to determine their weakest memory orders (line 14)
+based on their relation to other events in the cycle.
 
-
-\begin{theorem}
-	For any input program $ P $, minimal model of $ \phi $ gives optimal
-	number of fences required to stop all the buggy traces in 
-	$ \mathcal{CE} $.
-\end{theorem}
-
+Let min-cycles be the set of weak and strong cycles of 
+all buggy traces \st every candidate fence in the cycle
+belongs to {\tt min}$\Phi$ then the memory order of 
+fences in {\tt min}$\Phi$ is determined as follows:
+%
+Consider a fence $\mathbb{F} \in$ {\tt min}$\Phi$. If an 
+intermediate trace $\imm{\tau}$ contains a weak cycle $W$ on 
+relation $R$ belonging to min-cycles 
+\st $\mathbb{F} \in W$ and $\exists e \in W$
+where $eR\mathbb{F}$ then we assign the memory order \rel 
+to $\mathbb{F}$. Similarly, if $\exists e \in W$
+where $\mathbb{F}Re$ then we assign the memory order \acq
+and if $\exists e,e' \in W$
+where $eR\mathbb{F}$ and $\mathbb{F}Re'$ then we assign the 
+memory order \acqrel to $\mathbb{F}$.
+%
+Further, all fences that belong to a strongCycle in 
+min-cycles are assigned the memory order \sc.
+%
+Accordingly, the fences in {\tt min}$\Phi$ = 
+$\{\mathbb{F}^\sc_{12}, \mathbb{F}^\sc_{22}\}$  for 
+\hlref{mutex-bt1} and \hlref{mutex-bt1} are assigned the 
+memory order \sc.
